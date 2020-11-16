@@ -1,0 +1,16 @@
+PODS:
+  - OneginiSDKiOS (9.0.0)
+
+DEPENDENCIES:
+  - OneginiSDKiOS (= 9.0.0)
+
+SPEC REPOS:
+  https://repo.onegini.com/artifactory/api/pods/cocoapods-public:
+    - OneginiSDKiOS
+
+SPEC CHECKSUMS:
+  OneginiSDKiOS: 0d97ea0c6a311d86474d893c9dde25ae945ab58f
+
+PODFILE CHECKSUM: 59be8ed12e852802c7b0a735051d020df46bb49a
+
+COCOAPODS: 1.10.0
