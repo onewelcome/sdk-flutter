@@ -8,7 +8,7 @@ import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-class SecuredResourceClient(private val mainActivity: MainActivity) {
+class SecuredResourceClient(private val mainActivity: Context) {
     fun getAnonymousClient(): AnonymousClient {
         val okHttpClient: OkHttpClient? = OneginiSDK.getOneginiClient(mainActivity)?.deviceClient?.anonymousResourceOkHttpClient
         return prepareSecuredRetrofitClient(AnonymousClient::class.java, mainActivity, okHttpClient!!)
