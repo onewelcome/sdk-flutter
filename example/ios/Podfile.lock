@@ -1,0 +1,29 @@
+PODS:
+  - Flutter (1.0.0)
+  - onegini (0.0.1):
+    - Flutter
+    - OneginiSDKiOS (= 9.0.0)
+  - OneginiSDKiOS (9.0.0)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - onegini (from `.symlinks/plugins/onegini/ios`)
+
+SPEC REPOS:
+  https://repo.onegini.com/artifactory/api/pods/cocoapods-public:
+    - OneginiSDKiOS
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  onegini:
+    :path: ".symlinks/plugins/onegini/ios"
+
+SPEC CHECKSUMS:
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
+  onegini: e915a8f98ba240b1a93e4a2ecfeb37098ebc26c3
+  OneginiSDKiOS: 0d97ea0c6a311d86474d893c9dde25ae945ab58f
+
+PODFILE CHECKSUM: 1b89d19f38b858efad6224b333eda571f8bd0563
+
+COCOAPODS: 1.10.0
