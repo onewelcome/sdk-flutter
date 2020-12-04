@@ -13,5 +13,6 @@ interface Constants {
         const val COMMAND_ASK_TO_ACCEPT_OR_DENY = "ask"
         const val EVENT_OPEN_PIN = "event_open_pin"
         const val EVENT_CLOSE_PIN = "event_close_pin"
+        const val EVENT_OPEN_PIN_CONFIRMATION = "event_open_pin_confirmation"
     }
 }

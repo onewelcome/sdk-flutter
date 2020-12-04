@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.NonNull
+import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.*
 import com.onegini.mobile.sdk.android.handlers.error.*
@@ -13,6 +14,7 @@ import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.plugin.onegini.handlers.CreatePinRequestHandler
+import com.onegini.plugin.onegini.model.Provider
 import com.onegini.plugin.onegini.util.DeregistrationUtil
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
@@ -93,25 +95,32 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         if (call.method == "deregisterUser") {
             deregisterUser(result)
         }
-        if (call.method == "registrationCustomIdentityProvider") {
+        if(call.method == "getIdentityProviders"){
+            val identityProviders = OneginiSDK.getOneginiClient(context)!!.userClient.identityProviders
+            val providers : ArrayList<Provider> = ArrayList()
+            for (identityProvider in identityProviders)
+                providers.add(Provider(identityProvider.id,identityProvider.name))
+            result.success(Gson().toJson(providers))
+        }
+        if (call.method == "registrationWithIdentityProvider") {
+            val identityProviderId = call.argument<String>("identityProviderId")
             val identityProviders = OneginiSDK.getOneginiClient(context)!!.userClient.identityProviders
             for (identityProvider in identityProviders) {
-                Log.v("provider", "${identityProvider.id}  ${identityProvider.name}")
-//                if(identityProvider.id == "2-way-otp-api"){
-//                    registerUser(identityProvider,result)
-//                }
+                if(identityProvider.id == identityProviderId){
+                    registerUser(identityProvider,result)
+                    break
+                }
             }
         }
 
     }
 
     private fun getClientResource(result: Result) {
-        UserService(activity).devices.subscribe { response ->
-           Toast.makeText(context,"size -> ${response.devices.size} \n " +
-                   "details -> ${response.devices[0].deviceFullInfo}",Toast.LENGTH_SHORT).show()
+        UserService(activity).devices.subscribe({
+            result.success(Gson().toJson(it))},{result.error(it.message,it.message,it.cause)})
         }
 
-    }
+
 
 
     private fun getImplicitUserDetails(result: Result) {
@@ -123,13 +132,13 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         OneginiSDK.getOneginiClient(context)!!.userClient
                 .authenticateUserImplicitly(userProfile, arrayOf("read"), object : OneginiImplicitAuthenticationHandler {
                     override fun onSuccess(profile: UserProfile) {
-                        ImplicitUserService(activity).userDetails.subscribe({ Toast.makeText(context,"decorated user id => $it",Toast.LENGTH_SHORT).show() }, {
-                            Log.v("error", it.message ?: "")
+                        ImplicitUserService(activity).userDetails.subscribe({ result.success(it.toString()) }, {
+                            result.error(it.message,it.message,it.cause)
                         })
                     }
 
                     override fun onError(error: OneginiImplicitTokenRequestError) {
-
+                        result.error(error.message,error.message,error.cause)
                     }
                 })
     }
@@ -150,9 +159,7 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         OneginiSDK.getOneginiClient(context)?.deviceClient?.authenticateDevice(arrayOf("application-details"), object : OneginiDeviceAuthenticationHandler {
             override fun onSuccess() {
                 AnonymousService(activity).applicationDetails
-                        .subscribe { details -> Toast.makeText(context, "version -> ${details.applicationVersion}" +
-                                " \n platform -> ${details.applicationPlatform}" +
-                                " \n identifier -> ${details.applicationIdentifier}", Toast.LENGTH_SHORT).show() }
+                        .subscribe { details -> result.success(Gson().toJson(details)) }
             }
 
             override fun onError(error: OneginiDeviceAuthenticationError) {

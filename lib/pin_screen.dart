@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:onegini/onegini.dart';
 
 class PinScreen extends StatefulWidget {
+  final bool confirmation;
+
+  const PinScreen({Key key, this.confirmation = false}) : super(key: key);
+
   @override
   _PinScreenState createState() => _PinScreenState();
 }
@@ -52,7 +56,7 @@ class _PinScreenState extends State<PinScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SizedBox(height: 50,),
-            Text("Enter PIN code",style: TextStyle(fontSize: 30),textAlign: TextAlign.center,),
+            Text(widget.confirmation ? "Confirm PIN code" : "Enter PIN code",style: TextStyle(fontSize: 30),textAlign: TextAlign.center,),
             Spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

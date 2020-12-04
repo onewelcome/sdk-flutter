@@ -1,6 +1,7 @@
 package com.onegini.plugin.onegini.handlers
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import com.onegini.mobile.sdk.android.handlers.OneginiPinValidationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
@@ -9,6 +10,7 @@ import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallba
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.plugin.onegini.Constants.Companion.EVENT_CLOSE_PIN
 import com.onegini.plugin.onegini.Constants.Companion.EVENT_OPEN_PIN
+import com.onegini.plugin.onegini.Constants.Companion.EVENT_OPEN_PIN_CONFIRMATION
 import com.onegini.plugin.onegini.OneginiEventsSender
 import com.onegini.plugin.onegini.OneginiSDK
 import com.onegini.plugin.onegini.R
@@ -60,8 +62,10 @@ class CreatePinRequestHandler(private var context: Context?) : OneginiCreatePinR
         private fun firstPinProvided(pin: CharArray?) {
             OneginiSDK.getOneginiClient(context)?.userClient?.validatePinWithPolicy(pin, object : OneginiPinValidationHandler {
                 override fun onSuccess() {
+                    Log.v("PIN","FIRST PIN")
                     PinWithConfirmationHandler.pin = pin
-                    secondPinProvided(pin)
+                    OneginiEventsSender.events?.success(EVENT_CLOSE_PIN)
+                    OneginiEventsSender.events?.success(EVENT_OPEN_PIN_CONFIRMATION)
                 }
 
                 override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
@@ -72,8 +76,8 @@ class CreatePinRequestHandler(private var context: Context?) : OneginiCreatePinR
 
         
         private fun secondPinProvided(pin: CharArray?) {
+            Log.v("PIN","SECOND PIN")
             val pinsEqual: Boolean = Arrays.equals(PinWithConfirmationHandler.pin, pin)
-            nullifyPinArray()
             if (pinsEqual) {
                 /**
                  * [acceptAuthenticationRequest] method for accept pin and end registration/logIn flow

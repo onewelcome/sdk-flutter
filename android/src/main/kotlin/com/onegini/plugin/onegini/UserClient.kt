@@ -31,6 +31,12 @@ class Device() {
     @SerializedName("platform")
     val platform: String? = null
 
+    @SerializedName("created_at")
+    val createdAt: String? = null
+
+    @SerializedName("last_login")
+    val lastLogin: String? = null
+
     @SerializedName("mobile_authentication_enabled")
     val isMobileAuthenticationEnabled: Boolean = false
 

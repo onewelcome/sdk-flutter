@@ -1,9 +1,15 @@
 
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/pin_screen.dart';
+
+import 'model/Provider.dart';
+import 'model/applicationDetails.dart';
+import 'model/clientResource.dart';
+
 
 
 
@@ -29,7 +35,8 @@ class Onegini {
   static const String getInfoMethod = "getInfo";
   static const String getSendPinMethod = "sendPin";
   static const String deregisterUserMethod = "deregisterUser";
-  static const String registrationCustomIdentityProviderMethod = "registrationCustomIdentityProvider";
+  static const String getIdentityProvidersMethod = "getIdentityProviders";
+  static const String registrationWithIdentityProviderMethod = "registrationWithIdentityProvider";
   static const String getClientResourceMethod = "getClientResource";
   static const String getImplicitUserDetailsMethod = "getImplicitUserDetails";
 
@@ -49,6 +56,12 @@ class Onegini {
           MaterialPageRoute(builder: (context) => PinScreen()),
         );
       }
+      if(event == "event_open_pin_confirmation"){
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PinScreen(confirmation: true,)),
+        );
+      }
       if(event == "event_close_pin"){
         Navigator.of(context).pop();
       }
@@ -58,32 +71,37 @@ class Onegini {
     return appStarted;
   }
 
-  static Future<void> getApplicationDetails() async {
+  static Future<ApplicationDetails> getApplicationDetails() async {
     try {
       var resource = await _channel
-          .invokeMethod(getApplicationDetailsMethod, {"username": "stanislaw@onegini.com"});
-      print(resource);
+          .invokeMethod(getApplicationDetailsMethod);
+      return ApplicationDetails.fromJson(jsonDecode(resource));
     } on PlatformException catch (error) {
-      print(error);
+      throw error;
     }
   }
 
-  static Future<void> getClientResource() async {
+  static Future<ClientResource> getClientResource() async {
     try {
       var resource = await _channel
           .invokeMethod(getClientResourceMethod);
+      return clientResourceFromJson(resource);
     } on PlatformException catch (error) {
-      print(error);
+      print(error.details.toString());
+      throw error;
+    } on Exception catch (error){
+      throw error;
     }
   }
 
 
-  static Future<void> getImplicitUserDetails() async {
+  static Future<String> getImplicitUserDetails() async {
     try {
       var resource = await _channel
           .invokeMethod(getImplicitUserDetailsMethod);
+      return resource;
     } on PlatformException catch (error) {
-      print(error);
+      throw error;
     }
   }
 
@@ -98,10 +116,22 @@ class Onegini {
     }
   }
 
-  static Future<String> registrationCustomIdentityProvider() async {
+  static Future<List<Provider>> getIdentityProviders() async {
+    try {
+      var providers = await _channel
+          .invokeMethod(getIdentityProvidersMethod);
+      return providerFromJson(providers);
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  static Future<String> registrationWithIdentityProvider(String identityProviderId) async {
     try {
       var userId = await _channel
-          .invokeMethod(registrationCustomIdentityProviderMethod);
+          .invokeMethod(registrationWithIdentityProviderMethod, <String, String>{
+      'identityProviderId': identityProviderId,
+      });
       return userId;
     } on PlatformException catch (error) {
       throw error;

@@ -1,6 +1,8 @@
 package com.onegini.plugin.onegini_example
 
 import android.content.Context
+import android.widget.Toast
+import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomTwoStepRegistrationAction
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiCustomRegistrationCallback
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
@@ -13,10 +15,12 @@ class TwoWayOtpRegistrationAction(private val context: Context) : OneginiCustomT
 
     override fun finishRegistration(callback: OneginiCustomRegistrationCallback, customInfo: CustomInfo) {
         CALLBACK = callback
-        val str = customInfo.data
-        if(customInfo.status <4000)
-        CALLBACK!!.returnSuccess(str)
-        else CALLBACK!!.returnError(Exception("Something went wrong"))
+        if(customInfo.status <2001){
+            EventStorage.events?.success(Gson().toJson(Events("OPEN_OTP",customInfo.data)))
+        }else {
+            Toast.makeText(context,"Error. Status code => ${customInfo.status}",Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     companion object {
