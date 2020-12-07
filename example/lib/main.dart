@@ -5,7 +5,6 @@ import 'package:onegini/onegini.dart';
 import 'loginScreen.dart';
 
 
-final String oneginiLogo = 'assets/oneginiLogo.svg';
 void main() {
   runApp(MyApp());
 }
@@ -46,15 +45,15 @@ class _BodyWidgetState extends State<BodyWidget> {
 
   @override
   void initState() {
-    _startApplication(context);
+    _startApplication();
     super.initState();
   }
 
-  void _startApplication(BuildContext context) async {
+  void _startApplication() async {
 
 
     /// init Onegini sdk on native side
-    _appStarted = await Onegini.startApplication(context).catchError((error) => appError = error
+    _appStarted = await Onegini.startApplication().catchError((error) => appError = error
     );
     if(_appStarted){
       Navigator.pushReplacement(

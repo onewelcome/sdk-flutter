@@ -84,6 +84,7 @@ class CreatePinRequestHandler(private var context: Context?) : OneginiCreatePinR
                  * If all ok callback will be in [RegistrationHelper.registerUser] (MainActivity) in onSuccess method.
                  */
                 originalHandler.acceptAuthenticationRequest(pin)
+                nullifyPinArray()
             } else {
                 Toast.makeText(context,context?.getString(R.string.pin_error_not_equal), Toast.LENGTH_SHORT).show()
             }

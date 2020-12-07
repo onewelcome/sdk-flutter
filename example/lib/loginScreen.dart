@@ -35,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   openWeb() async {
     /// Start registration
-    var userId = await Onegini.registration()
+    var userId = await Onegini.registration(context)
         .catchError((error) => print(error.toString()));
     if (userId != null)
         Navigator.pushReplacement(

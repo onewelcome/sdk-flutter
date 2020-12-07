@@ -16,6 +16,8 @@ import 'model/clientResource.dart';
 
 class Onegini {
 
+  static BuildContext context;
+
   static const MethodChannel _channel =
       const MethodChannel('onegini');
 
@@ -41,7 +43,7 @@ class Onegini {
   static const String getImplicitUserDetailsMethod = "getImplicitUserDetails";
 
 
-  static Future<bool> startApplication(BuildContext context) async {
+  static Future<bool> startApplication() async {
     var appStarted = false;
     try {
       appStarted = await _channel.invokeMethod(startAppMethod);
@@ -106,7 +108,8 @@ class Onegini {
   }
 
 
-  static Future<String> registration() async {
+  static Future<String> registration(BuildContext context) async {
+    Onegini.context = context;
     try {
       var userId = await _channel
           .invokeMethod(registrationMethod);
