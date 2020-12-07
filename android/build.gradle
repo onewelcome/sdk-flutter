@@ -41,6 +41,8 @@ android {
         minSdkVersion 21
     }
     lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
         disable 'InvalidPackage'
     }
 }
