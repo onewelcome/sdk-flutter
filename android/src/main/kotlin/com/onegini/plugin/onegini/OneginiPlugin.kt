@@ -2,19 +2,22 @@ package com.onegini.plugin.onegini
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.annotation.NonNull
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.*
 import com.onegini.mobile.sdk.android.handlers.error.*
 import com.onegini.mobile.sdk.android.handlers.error.OneginiDeregistrationError.DeregistrationErrorType
+import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.plugin.onegini.handlers.CreatePinRequestHandler
-import com.onegini.plugin.onegini.model.Provider
 import com.onegini.plugin.onegini.util.DeregistrationUtil
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
@@ -96,11 +99,16 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             deregisterUser(result)
         }
         if(call.method == "getIdentityProviders"){
+            val gson = GsonBuilder().serializeNulls().create()
             val identityProviders = OneginiSDK.getOneginiClient(context)!!.userClient.identityProviders
-            val providers : ArrayList<Provider> = ArrayList()
-            for (identityProvider in identityProviders)
-                providers.add(Provider(identityProvider.id,identityProvider.name))
-            result.success(Gson().toJson(providers))
+            val providers : ArrayList<Map<String,String>> = ArrayList()
+            for (identityProvider in identityProviders){
+                val map  = mutableMapOf<String,String>()
+                map["id"] = identityProvider.id
+                map["name"] = identityProvider.name
+                providers.add(map)
+            }
+            result.success(gson.toJson(providers))
         }
         if (call.method == "registrationWithIdentityProvider") {
             val identityProviderId = call.argument<String>("identityProviderId")
@@ -186,6 +194,7 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 if (errorMessage == null) {
                     errorMessage = oneginiRegistrationError.message
                 }
+                Toast.makeText(context,errorMessage,Toast.LENGTH_SHORT).show()
                 result.error(errorType.toString(), errorMessage ?: "", null)
             }
         })
@@ -223,6 +232,32 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             DeregistrationUtil(context).onDeviceDeregistered()
         }
         Toast.makeText(context, "Deregistration error: " + oneginiDeregistrationError.message, Toast.LENGTH_SHORT).show()
+    }
+
+
+   private fun startSingleSignOn() {
+        val targetUri: Uri = Uri.parse("https://demo-cim.onegini.com/personal/dashboard")
+        val oneginiClient = OneginiSDK.getOneginiClient(context)
+        oneginiClient!!.userClient.getAppToWebSingleSignOn(targetUri, object : OneginiAppToWebSingleSignOnHandler{
+            override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {
+                val intent = Intent(Intent.ACTION_VIEW, oneginiAppToWebSingleSignOn.redirectUrl)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+                context.startActivity(intent)
+            }
+
+            override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
+                val errorType: Int = oneginiSingleSignOnError.errorType
+                if (errorType == OneginiDeregistrationError.DEVICE_DEREGISTERED) {
+                    // Single Sign-On failed due to missing device credentials. Register app once again.
+                    DeregistrationUtil(context).onDeviceDeregistered()
+                }
+
+                // other errors don't really require our reaction, but you might consider displaying some message to the user
+                Toast.makeText(context,"Single Sign-On error: " + oneginiSingleSignOnError.message,Toast.LENGTH_SHORT).show()
+            }
+
+        })
     }
 
 

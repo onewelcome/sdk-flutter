@@ -14,19 +14,7 @@ buildscript {
     }
 }
 
-rootProject.allprojects {
-    repositories {
-        google()
-        jcenter()
-        maven {
-            url "https://repo.onegini.com/artifactory/onegini-sdk"
-            credentials {
-                username "igor.luczko@develocraft.com"
-                password "5nhZ1PBGFwhZH6YFT^9"
-            }
-        }
-    }
-}
+
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'

@@ -1,7 +1,8 @@
-package com.onegini.plugin.onegini
+package com.onegini.plugin.onegini_example
 
 import android.os.Build
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
+
 
 
 class OneginiConfigModel : OneginiClientConfigModel {
