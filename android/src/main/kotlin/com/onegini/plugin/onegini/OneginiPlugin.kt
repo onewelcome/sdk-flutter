@@ -92,6 +92,9 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             val pin = call.argument<String>("pin")
             CreatePinRequestHandler.CALLBACK?.onPinProvided(pin?.toCharArray())
         }
+        if(call.method == "singleSignOn"){
+            startSingleSignOn()
+        }
         if (call.method == "logOut") {
             logOut(result)
         }
@@ -236,7 +239,7 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
 
    private fun startSingleSignOn() {
-        val targetUri: Uri = Uri.parse("https://demo-cim.onegini.com/personal/dashboard")
+        val targetUri: Uri = Uri.parse("https://login-mobile.test.onegini.com/personal/dashboard")
         val oneginiClient = OneginiSDK.getOneginiClient(context)
         oneginiClient!!.userClient.getAppToWebSingleSignOn(targetUri, object : OneginiAppToWebSingleSignOnHandler{
             override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {

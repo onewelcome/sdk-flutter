@@ -91,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> {
               height: 20,
             ),
             FutureBuilder<List<Provider>>(
-              future: Onegini.getIdentityProviders(),
+              future: Onegini.getIdentityProviders(context),
               builder: (BuildContext context, snapshot) {
                 return snapshot.hasData
                     ? PopupMenuButton<String>(

@@ -41,6 +41,7 @@ class Onegini {
   static const String registrationWithIdentityProviderMethod = "registrationWithIdentityProvider";
   static const String getClientResourceMethod = "getClientResource";
   static const String getImplicitUserDetailsMethod = "getImplicitUserDetails";
+  static const String getSingleSignOnMethod = "singleSignOn";
 
 
   static Future<bool> startApplication() async {
@@ -119,7 +120,8 @@ class Onegini {
     }
   }
 
-  static Future<List<Provider>> getIdentityProviders() async {
+  static Future<List<Provider>> getIdentityProviders(BuildContext context) async {
+    Onegini.context = context;
     try {
       var providers = await _channel
           .invokeMethod(getIdentityProvidersMethod);
@@ -136,6 +138,15 @@ class Onegini {
       'identityProviderId': identityProviderId,
       });
       return userId;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  static Future<void> singleSingOn() async {
+    try {
+      await _channel
+          .invokeMethod(getSingleSignOnMethod);
     } on PlatformException catch (error) {
       throw error;
     }

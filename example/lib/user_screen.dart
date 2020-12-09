@@ -63,6 +63,9 @@ class _UserScreenState extends State<UserScreen> {
 
 class Home extends StatelessWidget {
 
+
+
+
   logOut(BuildContext context) async {
     var isLogOut =
         await Onegini.logOut().catchError((error) => print(error.toString()));
@@ -93,6 +96,17 @@ class Home extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Onegini.singleSingOn();
+              },
+              child: Text('Single Sign On'),
+            ),
+
+
             SizedBox(
               height: 20,
             ),
