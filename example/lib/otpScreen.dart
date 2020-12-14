@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:onegini_example/event.dart';
 import 'package:onegini_example/loginScreen.dart';
-import 'package:onegini_example/user_screen.dart';
 
 class OtpScreen extends StatefulWidget {
   final String password;
@@ -18,18 +16,10 @@ class _OtpScreenState extends State<OtpScreen> {
   final myController = TextEditingController();
 
   ok() async {
-   String userId =  await _channel.invokeMethod("otpOk", <String, String>{
+  _channel.invokeMethod("otpOk", <String, String>{
       'password': myController.text,
     });
-   if(userId!=null){
-     Navigator.pushReplacement(
-       context,
-       MaterialPageRoute(
-           builder: (context) => UserScreen(
-             userProfileId: userId,
-           )),
-     );
-   }
+
   }
 
   cancel() async {

@@ -21,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _eventChannel.receiveBroadcastStream().listen((str){
       Event event  = eventFromJson(str);
       if(event.key == "OPEN_OTP"){
-        Navigator.pushReplacement(
+        Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => OtpScreen(
@@ -38,12 +38,12 @@ class _LoginScreenState extends State<LoginScreen> {
     var userId = await Onegini.registration(context)
         .catchError((error) => print(error.toString()));
     if (userId != null)
-        Navigator.pushReplacement(
+        Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
               builder: (context) => UserScreen(
                     userProfileId: userId,
-                  )),
+                  )),(Route<dynamic> route) => false
         );
 
   }
@@ -52,12 +52,12 @@ class _LoginScreenState extends State<LoginScreen> {
     var userId = await Onegini.registrationWithIdentityProvider(identityProviderId)
         .catchError((error) => print(error.toString()));
     if (userId != null)
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => UserScreen(
-                  userProfileId: userId,
-                )),
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => UserScreen(
+                userProfileId: userId,
+              )),(Route<dynamic> route) => false
       );
   }
 
