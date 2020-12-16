@@ -10,6 +10,7 @@ dependencies:
         url: git@gitlab.com:develocraft/onegini-flutter-sdk-wrapper.git
 
 `flutter clean`
+
 `flutter pub get`
 
 The first time running you have to fetch flutter packages.
