@@ -5,8 +5,11 @@
 in pubspec.yaml add this:
 
 dependencies:
+
   onegini:
+
       git:
+
         url: git@gitlab.com:develocraft/onegini-flutter-sdk-wrapper.git
 
 `flutter clean`
@@ -21,6 +24,10 @@ The user is able to run the example of SDK in the 'Example' section of the libra
 
 1. Get access to https://repo.onegini.com/artifactory/onegini-sdk
 2. Use https://github.com/Onegini/onegini-sdk-configurator on your application (instructions can be found there)
+
+## Onegini Documentation
+1. Android https://docs.onegini.com/msp/stable/android-sdk/.com/msp/stable/ios-sdk/
+2. iOS https://docs.onegini.com/msp/stable/ios-sdk/
 
 ## App Configuration
 
@@ -128,3 +135,25 @@ The user is able to run the example of SDK in the 'Example' section of the libra
 ### IOS >= 12.0
 
 `cd ios && pod install`
+
+#### Example
+
+Download manually SDK. Find `example` folder. Other steps are the same as for package integration, instead, you don't need to modify `pubspec.yaml`.
+
+
+# Functional scope
+## Done on the Android/iOS:
+### Milestone 1:
+    - Start
+    - Security Controls and Configuration of the SDK
+    - User registration
+       - Browser
+    - User deregistration
+### Milestone 2:
+    -  Secure resource access -  `user-id-decorated`, `devices`, `application-details`.
+### Milestone 3:
+    - User authentication with PIN
+    - Logout
+### Milestone 4:
+    - User registration
+        - Custom identity provider
