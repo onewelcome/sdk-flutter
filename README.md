@@ -175,7 +175,7 @@ Download manually SDK. Find `example` folder. Other steps are the same as for pa
 
 5. Future<String> registration(BuildContext context) async - return `profileId` of `ONGUserProfil` object after success registration.
 
-6. Future<List<Provider>> getIdentityProviders - return availeble list of identity providers.
+6. Future<List<Provider>> getIdentityProviders - return available list of identity providers.
 
 7. Future<String> registrationWithIdentityProvider(String identityProviderId) async - register user with selected identity provider.
 
