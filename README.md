@@ -157,3 +157,32 @@ Download manually SDK. Find `example` folder. Other steps are the same as for pa
 ### Milestone 4:
     - User registration
         - Custom identity provider
+
+
+## Supported Methods
+
+### Access to plugin Methods
+    - `Onegini`class - the main facade of the plugin. This class exposes the other Onegini client objects (UserClient and DeviceClient) that you can access from flutter code.
+    - every method will generate exceptions if something will go wrong.
+    
+1. Future<bool> startApplication() async - start configuration via SDK configurator. Has to be called as the first plugin method in the app.
+
+2. Future<ApplicationDetails> getApplicationDetails() async - return security resources for `application-details`.
+
+3. Future<String> getImplicitUserDetails() async - return security resources for `user-id-decorated`.
+
+4. Future<ClientResource> getClientResource() async - return security resources for `devices`.
+
+5. Future<String> registration(BuildContext context) async - return `profileId` of `ONGUserProfil` object after success registration.
+
+6. Future<List<Provider>> getIdentityProviders - return availeble list of identity providers.
+
+7. Future<String> registrationWithIdentityProvider(String identityProviderId) async - register user with selected identity provider.
+
+8. Future<void> singleSingOn() async - single sign In by app2web [only Android]
+
+9. Future<bool> logOut() async - logout
+
+10. Future<bool> deregisterUser() async - deregister user
+
+11. Future<String> sendPin(String pinCode) async - send entered pin. Now is added Pin screen to the plugin, so it's connected to this screen. For the custom Pin screen, the approach has to changed.
