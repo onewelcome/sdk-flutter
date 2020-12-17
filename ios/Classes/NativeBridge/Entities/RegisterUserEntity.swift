@@ -4,11 +4,13 @@ import OneginiCrypto
 class RegisterUserEntity: BrowserViewControllerEntityProtocol, PinViewControllerEntityProtocol {
     var registrationUserURL: URL?
     var browserRegistrationChallenge: ONGBrowserRegistrationChallenge?
+    var customRegistrationChallenge: ONGCustomRegistrationChallenge?
     var createPinChallenge: ONGCreatePinChallenge?
     var pin: String?
     var pinError: SdkError?
     var pinLength: Int?
     var redirectURL: URL?
+    var customInfo: [String: Any?]?
     
     var responseCode: String?
     var challengeCode: String?

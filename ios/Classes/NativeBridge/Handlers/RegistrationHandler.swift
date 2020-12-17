@@ -2,11 +2,13 @@ import OneginiSDKiOS
 import OneginiCrypto
 
 protocol BridgeToRegisterViewProtocol: AnyObject {
-    func signUp(completion: @escaping (Bool, ONGUserProfile?, SdkError?) -> Void)
+    func signUp(_ providerId: String?, completion: @escaping (Bool, ONGUserProfile?, SdkError?) -> Void)
     func handleRedirectURL(url: URL)
     func cancelRegistration()
-    func logout(completion: @escaping ( SdkError?) -> Void)
+    func logout(completion: @escaping (SdkError?) -> Void)
     func deregister(completion: @escaping (SdkError?) -> Void)
+    func identityProviders() -> Array<ONGIdentityProvider>
+    func handleOTPRegistration(code: String?)
 }
 
 protocol RegisterPresenterToViewProtocol: AnyObject {
@@ -33,6 +35,25 @@ class RegistrationHandler {
 }
 
 extension RegistrationHandler : BridgeToRegisterViewProtocol {
+    func identityProviders() -> Array<ONGIdentityProvider> {
+        var list = self.registerUserInteractor.identityProviders()
+        
+        if let _providerId =  OneginiModuleSwift.sharedInstance.customIdentifier, list.filter({$0.identifier == _providerId}).count == 0  {
+            
+            let identityProvider = ONGIdentityProvider()
+            identityProvider.name = _providerId
+            identityProvider.identifier = _providerId
+            
+            list.append(identityProvider)
+        }
+        
+        return list//self.registerUserInteractor.identityProviders()
+    }
+    
+    func handleOTPRegistration(code: String?) {
+        self.registerUserInteractor.handleOTPCode(code: code)
+    }
+    
     func logout(completion: @escaping ( SdkError?) -> Void) {
         logoutUserInteractor.logout(completion: completion)
     }
@@ -41,9 +62,17 @@ extension RegistrationHandler : BridgeToRegisterViewProtocol {
         deregisterUserInteractor.disconnect(completion: completion)
     }
     
-    func signUp(completion: @escaping (Bool, ONGUserProfile?, SdkError?) -> Void) {
+    func signUp(_ providerId: String?, completion: @escaping (Bool, ONGUserProfile?, SdkError?) -> Void) {
         signUpCompletion = completion
-        registerUserViewToPresenterProtocol.signUp(nil)
+        
+        var identityProvider = identityProviders().first(where: { $0.identifier == providerId})
+        if let _providerId = providerId, identityProvider == nil {
+            identityProvider = ONGIdentityProvider()
+            identityProvider?.name = _providerId
+            identityProvider?.identifier = _providerId
+        }
+        
+        registerUserViewToPresenterProtocol.signUp(identityProvider)
     }
     
     func handleRedirectURL(url: URL) {
@@ -52,8 +81,8 @@ extension RegistrationHandler : BridgeToRegisterViewProtocol {
     }
     
     func cancelRegistration() {
-        registerUserInteractor.registerUserEntity.redirectURL = nil
-        registerUserViewToPresenterProtocol.handleRedirectURL()
+        registerUserInteractor.registerUserEntity.cancelled = true
+        self.registerUserInteractor.handleOTPCode(code: nil)
     }
 }
 

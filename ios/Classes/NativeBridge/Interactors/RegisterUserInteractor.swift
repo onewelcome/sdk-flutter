@@ -6,6 +6,8 @@ protocol RegisterUserInteractorProtocol: AnyObject {
     func startUserRegistration(identityProvider: ONGIdentityProvider?)
     func handleRedirectURL()
     func handleCreatedPin()
+    func handleOTPCode(code: String?)
+    func customIdentifier() -> String?
 }
 
 class RegisterUserInteractor: NSObject {
@@ -22,6 +24,20 @@ class RegisterUserInteractor: NSObject {
 }
 
 extension RegisterUserInteractor: RegisterUserInteractorProtocol {
+    func customIdentifier() -> String? {
+        return OneginiModuleSwift.sharedInstance.customIdentifier
+    }
+    
+    func handleOTPCode(code: String?) {
+        guard let customRegistrationChallenge = registerUserEntity.customRegistrationChallenge else { return }
+        if registerUserEntity.cancelled {
+            registerUserEntity.cancelled = false
+            customRegistrationChallenge.sender.cancel(customRegistrationChallenge)
+        } else {
+            customRegistrationChallenge.sender.respond(withData: code, challenge: customRegistrationChallenge)
+        }
+    }
+    
     
     func identityProviders() -> Array<ONGIdentityProvider> {
         let identityProviders = ONGUserClient.sharedInstance().identityProviders()
@@ -29,6 +45,9 @@ extension RegisterUserInteractor: RegisterUserInteractorProtocol {
     }
 
     func startUserRegistration(identityProvider: ONGIdentityProvider? = nil) {
+        let list = identityProviders()
+        list.forEach({ print($0.identifier) })
+        
         ONGUserClient.sharedInstance().registerUser(with: identityProvider, scopes: ["read"], delegate: self)
     }
 
@@ -51,7 +70,7 @@ extension RegisterUserInteractor: RegisterUserInteractorProtocol {
     }
     
     fileprivate func mapErrorMessageFromStatus(_ status: Int) {
-        if status == 2000 {
+        if status <= 2000 {
             registerUserEntity.errorMessage = nil
         } else if status == 4002 {
             registerUserEntity.errorMessage = "This code is not initialized on portal."
@@ -85,6 +104,25 @@ extension RegisterUserInteractor: ONGRegistrationDelegate {
         } else {
             let mappedError = ErrorMapper().mapError(error)
             registerUserPresenter?.registerUserActionFailed(mappedError)
+        }
+    }
+    
+    func userClient(_: ONGUserClient, didReceiveCustomRegistrationInitChallenge challenge: ONGCustomRegistrationChallenge) {
+        if challenge.identityProvider.identifier == customIdentifier() {
+            challenge.sender.respond(withData: nil, challenge: challenge)
+        }
+    }
+
+    func userClient(_: ONGUserClient, didReceiveCustomRegistrationFinish challenge: ONGCustomRegistrationChallenge) {
+        if challenge.identityProvider.identifier == customIdentifier() {
+            if let info = challenge.info {
+                registerUserEntity.challengeCode = info.data
+                mapErrorMessageFromStatus(info.status)
+            }
+            registerUserEntity.customRegistrationChallenge = challenge
+            
+            // *****
+            registerUserPresenter?.presentTwoWayOTPRegistrationView(registerUserEntity: registerUserEntity)
         }
     }
 }

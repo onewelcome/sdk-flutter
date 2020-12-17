@@ -67,8 +67,8 @@ class ChangePinHandler {
         pinEntryToVerify = pinEntry
         mode = .registrationConfirm
         //TODO: Direct transition to pin step confirmation
-        //sendConnectorNotification(PinNotification.confirm, mode, nil)
-        processPin(pinEntry: pinEntry)
+        sendConnectorNotification(PinNotification.confirm, mode, nil)
+        //processPin(pinEntry: pinEntry)
     }
     
     private func handleConfirmRegistrationPin(_ pinEntry: Array<String>, _ pincode: String) {
@@ -115,7 +115,7 @@ extension ChangePinHandler : ChangePinConnectorToViewProtocol {
         let pinArray: Array<String> = Array(arrayLiteral: characters)
     
         //TODO: Direct transition to setting the pin step
-        self.mode = .registration
+        //self.mode = .registrationConfirm
         processPin(pinEntry: pinArray)
     }
   

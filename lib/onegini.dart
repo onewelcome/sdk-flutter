@@ -1,4 +1,3 @@
-
 import 'dart:async';
 import 'dart:convert';
 
@@ -9,21 +8,15 @@ import 'package:onegini/pin_screen.dart';
 import 'model/Provider.dart';
 import 'model/applicationDetails.dart';
 import 'model/clientResource.dart';
-
-
-
-
+import 'model/event.dart';
 
 class Onegini {
-
   static BuildContext context;
 
-  static const MethodChannel _channel =
-      const MethodChannel('onegini');
+  static const MethodChannel _channel = const MethodChannel('onegini');
 
   static const EventChannel _eventChannel =
       const EventChannel("onegini_events");
-
 
   static Future<String> get platformVersion async {
     final String version = await _channel.invokeMethod('getPlatformVersion');
@@ -43,7 +36,6 @@ class Onegini {
   static const String getImplicitUserDetailsMethod = "getImplicitUserDetails";
   static const String getSingleSignOnMethod = "singleSignOn";
 
-
   static Future<bool> startApplication() async {
     var appStarted = false;
     try {
@@ -51,33 +43,42 @@ class Onegini {
     } on PlatformException catch (error) {
       throw error;
     }
-    if(appStarted)
-    _eventChannel.receiveBroadcastStream().listen((event) {
-      if(event == "event_open_pin"){
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => PinScreen()),
-        );
-      }
-      if(event == "event_open_pin_confirmation"){
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => PinScreen(confirmation: true,)),
-        );
-      }
-      if(event == "event_close_pin"){
-        Navigator.of(context).pop();
-      }
-    }).onError((error){
-      print(error.toString());
-    });
+    if (appStarted)
+      _eventChannel.receiveBroadcastStream("onegini_events").listen((event) {
+        if (event == "event_open_pin") {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => PinScreen()),
+          );
+        } else if (event == "event_open_pin_confirmation") {
+          Navigator.of(context)..pop()..push(
+            MaterialPageRoute(
+                builder: (context) => PinScreen(
+                      confirmation: true,
+                    )),
+          );
+        } else if (event == "event_close_pin") {
+          Navigator.of(Onegini.context).canPop();
+        } else if (event != null) {
+          Event value = eventFromJson(event);
+          if (value != null && value.key == "show_error_pin") {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(value.value.toString()),
+                duration: const Duration(seconds: 2),
+              ),
+            );
+          }
+        }
+      }).onError((error) {
+        print(error.toString());
+      });
     return appStarted;
   }
 
   static Future<ApplicationDetails> getApplicationDetails() async {
     try {
-      var resource = await _channel
-          .invokeMethod(getApplicationDetailsMethod);
+      var resource = await _channel.invokeMethod(getApplicationDetailsMethod);
       return ApplicationDetails.fromJson(jsonDecode(resource));
     } on PlatformException catch (error) {
       throw error;
@@ -86,56 +87,52 @@ class Onegini {
 
   static Future<ClientResource> getClientResource() async {
     try {
-      var resource = await _channel
-          .invokeMethod(getClientResourceMethod);
+      var resource = await _channel.invokeMethod(getClientResourceMethod);
       return clientResourceFromJson(resource);
     } on PlatformException catch (error) {
       print(error.details.toString());
       throw error;
-    } on Exception catch (error){
+    } on Exception catch (error) {
       throw error;
     }
   }
 
-
   static Future<String> getImplicitUserDetails() async {
     try {
-      var resource = await _channel
-          .invokeMethod(getImplicitUserDetailsMethod);
+      var resource = await _channel.invokeMethod(getImplicitUserDetailsMethod);
       return resource;
     } on PlatformException catch (error) {
       throw error;
     }
   }
 
-
   static Future<String> registration(BuildContext context) async {
     Onegini.context = context;
     try {
-      var userId = await _channel
-          .invokeMethod(registrationMethod);
+      var userId = await _channel.invokeMethod(registrationMethod);
       return userId;
     } on PlatformException catch (error) {
       throw error;
     }
   }
 
-  static Future<List<Provider>> getIdentityProviders(BuildContext context) async {
+  static Future<List<Provider>> getIdentityProviders(
+      BuildContext context) async {
     Onegini.context = context;
     try {
-      var providers = await _channel
-          .invokeMethod(getIdentityProvidersMethod);
+      var providers = await _channel.invokeMethod(getIdentityProvidersMethod);
       return providerFromJson(providers);
     } on PlatformException catch (error) {
       throw error;
     }
   }
 
-  static Future<String> registrationWithIdentityProvider(String identityProviderId) async {
+  static Future<String> registrationWithIdentityProvider(
+      String identityProviderId) async {
     try {
-      var userId = await _channel
-          .invokeMethod(registrationWithIdentityProviderMethod, <String, String>{
-      'identityProviderId': identityProviderId,
+      var userId = await _channel.invokeMethod(
+          registrationWithIdentityProviderMethod, <String, String>{
+        'identityProviderId': identityProviderId,
       });
       return userId;
     } on PlatformException catch (error) {
@@ -145,40 +142,34 @@ class Onegini {
 
   static Future<void> singleSingOn() async {
     try {
-      await _channel
-          .invokeMethod(getSingleSignOnMethod);
+      await _channel.invokeMethod(getSingleSignOnMethod);
     } on PlatformException catch (error) {
       throw error;
     }
   }
-
 
   static Future<bool> logOut() async {
     try {
-      var isSuccess = await _channel
-          .invokeMethod(logOutMethod);
+      var isSuccess = await _channel.invokeMethod(logOutMethod);
       return isSuccess;
     } on PlatformException catch (error) {
       throw error;
     }
   }
-
 
   static Future<bool> deregisterUser() async {
     try {
-      var isSuccess = await _channel
-          .invokeMethod(deregisterUserMethod);
+      var isSuccess = await _channel.invokeMethod(deregisterUserMethod);
       return isSuccess;
     } on PlatformException catch (error) {
       throw error;
     }
   }
 
-
   static Future<String> sendPin(String pinCode) async {
     try {
-      var userId = await _channel
-          .invokeMethod(getSendPinMethod ,<String, dynamic>{
+      var userId =
+          await _channel.invokeMethod(getSendPinMethod, <String, dynamic>{
         'pin': pinCode,
       });
       return userId;
@@ -186,5 +177,4 @@ class Onegini {
       throw error;
     }
   }
-
 }

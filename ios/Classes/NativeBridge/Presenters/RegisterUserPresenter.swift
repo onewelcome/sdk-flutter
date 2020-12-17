@@ -10,6 +10,7 @@ protocol RegisterUserInteractorToPresenterProtocol: AnyObject {
     func registerUserActionSuccess(authenticatedUserProfile: ONGUserProfile)
     func registerUserActionFailed(_ error: SdkError)
     func registerUserActionCancelled()
+    func presentTwoWayOTPRegistrationView(registerUserEntity: RegisterUserEntity)
 }
 
 protocol RegisterUserViewToPresenterProtocol: AnyObject {
@@ -19,6 +20,7 @@ protocol RegisterUserViewToPresenterProtocol: AnyObject {
 }
 
 class RegisterUserPresenter: RegisterUserPresenterProtocol {
+    
     var registerUserInteractor: RegisterUserInteractorProtocol
     var browserConntroller: BrowserViewControllerProtocol?
     weak var registerViewController: RegisterPresenterToViewProtocol?
@@ -43,6 +45,14 @@ class RegisterUserPresenter: RegisterUserPresenterProtocol {
             }
         }
     }
+    
+    func presentTwoWayOTPRegistrationView(registerUserEntity: RegisterUserEntity) {
+        if registerUserEntity.errorMessage != nil {
+            BridgeConnector.sharedInstance?.sendBridgeEvent(eventName: OneginiBridgeEvents.errorNotification, data: ["errorMsg": registerUserEntity.errorMessage])
+        } else {
+            BridgeConnector.sharedInstance?.sendBridgeEvent(eventName: OneginiBridgeEvents.otpOpen, data: String.stringify(json: ["value": registerUserEntity.challengeCode, "key": "OPEN_OTP"]))
+        }
+    }
 
     func presentCreatePinView(registerUserEntity: RegisterUserEntity) {
         if(pinViewController == nil) {
@@ -52,9 +62,9 @@ class RegisterUserPresenter: RegisterUserPresenterProtocol {
         if let error = registerUserEntity.pinError {
             pinViewController?.notifyOnError(error)
         } else {
-            //pinViewController?.openViewWithMode(.registration)
+            pinViewController?.openViewWithMode(.registration)
             // TODO: Routing to set PIN action, here is used a default value for testing
-            OneginiModuleSwift.sharedInstance.submitPinAction(PinAction.provide.rawValue, isCreatePinFlow: NSNumber.init(value: 1), pin: OneginiModuleSwift.pinTestValue)
+//            OneginiModuleSwift.sharedInstance.submitPinAction(PinAction.provide.rawValue, isCreatePinFlow: NSNumber.init(value: 1), pin: OneginiModuleSwift.pinTestValue)
         }
     }
   

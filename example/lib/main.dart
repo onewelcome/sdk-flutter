@@ -50,8 +50,6 @@ class _BodyWidgetState extends State<BodyWidget> {
   }
 
   void _startApplication() async {
-
-
     /// init Onegini sdk on native side
     _appStarted = await Onegini.startApplication().catchError((error) => appError = error
     );

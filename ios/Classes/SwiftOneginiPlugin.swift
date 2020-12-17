@@ -15,14 +15,29 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     switch call.method {
     case "startApp":
         OneginiModuleSwift.sharedInstance.startOneginiModule(callback: result)
-    case "getResource":
-        OneginiModuleSwift.sharedInstance.getResources(callback:result)
+    case "getClientResource":
+        OneginiModuleSwift.sharedInstance.fetchDevicesList(callback: result)
+    case "getApplicationDetails":
+        OneginiModuleSwift.sharedInstance.getApplicationDetails(callback: result)
+    case "getImplicitUserDetails":
+        OneginiModuleSwift.sharedInstance.fetchImplicitResources(callback: result)
+    case "getIdentityProviders":
+        OneginiModuleSwift.sharedInstance.identityProviders(callback: result)
     case "logOut":
         OneginiModuleSwift.sharedInstance.logOut(callback:result)
     case "deregisterUser":
         OneginiModuleSwift.sharedInstance.deregisterUser(callback:result)
     case "registration": do {
         OneginiModuleSwift.sharedInstance.registerUser(nil, callback: result)
+    }
+    case "registrationWithIdentityProvider": do {
+        guard let _arg = call.arguments as! [String: String]?, let _identifier = _arg["identityProviderId"] else { break; }
+        
+        OneginiModuleSwift.sharedInstance.registerUser(_identifier, callback: result)
+    }
+    case "sendPin": do {
+        guard let _arg = call.arguments as! [String: String]?, let _pin = _arg["pin"] else { break; }
+        OneginiModuleSwift.sharedInstance.submitPinAction(PinAction.provide.rawValue, isCreatePinFlow: true, pin: _pin)
     }
         
     default:

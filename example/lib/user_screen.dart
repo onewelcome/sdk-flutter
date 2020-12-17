@@ -63,9 +63,6 @@ class _UserScreenState extends State<UserScreen> {
 
 class Home extends StatelessWidget {
 
-
-
-
   logOut(BuildContext context) async {
     var isLogOut =
         await Onegini.logOut().catchError((error) => print(error.toString()));
@@ -132,158 +129,166 @@ class Home extends StatelessWidget {
   }
 }
 
-class Info extends StatelessWidget {
+class Info extends StatefulWidget {
   final String userProfileId;
 
   const Info({Key key, this.userProfileId}) : super(key: key);
 
   @override
+  _InfoState createState() => _InfoState();
+}
+
+class _InfoState extends State<Info> {
+  @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(20),
-      child: Column(
-        children: [
-          SizedBox(
-            height: 20,
-          ),
-          Row(
-            children: [
-              Text(
-                "User profile id => ",
-                style: TextStyle(fontSize: 20),
-              ),
-              Text(userProfileId, style: TextStyle(fontSize: 20)),
-            ],
-          ),
-          SizedBox(
-            height: 20,
-          ),
-          FutureBuilder<String>(
-              future: Onegini.getImplicitUserDetails(),
+    return Stack(
+          children: [ Container(
+        margin: EdgeInsets.all(20),
+        child: Column(
+          children: [
+            SizedBox(
+              height: 20,
+            ),
+            Row(
+              children: [
+                Text(
+                  "User profile id => ",
+                  style: TextStyle(fontSize: 20),
+                ),
+                Text(widget.userProfileId, style: TextStyle(fontSize: 20)),
+              ],
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            FutureBuilder<String>(
+                future: Onegini.getImplicitUserDetails(),
+                builder: (context, snapshot) {
+                  return snapshot.hasData
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Decorated profile id:",
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            Text(snapshot.data, style: TextStyle(fontSize: 20)),
+                          ],
+                        )
+                      : SizedBox.shrink();
+                }),
+            SizedBox(
+              height: 20,
+            ),
+            FutureBuilder<ApplicationDetails>(
+              future: Onegini.getApplicationDetails(),
               builder: (context, snapshot) {
                 return snapshot.hasData
                     ? Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "Decorated profile id:",
-                            style: TextStyle(fontSize: 20),
-                          ),
-                          Text(snapshot.data, style: TextStyle(fontSize: 20)),
-                        ],
-                      )
-                    : SizedBox.shrink();
-              }),
-          SizedBox(
-            height: 20,
-          ),
-          FutureBuilder<ApplicationDetails>(
-            future: Onegini.getApplicationDetails(),
-            builder: (context, snapshot) {
-              return snapshot.hasData
-                  ? Column(
-                      children: [
-                        Row(
-                          children: [
-                            Text(
-                              "application identifier => ",
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            Text(
-                              snapshot.data.applicationIdentifier,
-                              style: TextStyle(fontSize: 18),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "application platform => ",
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            Text(
-                              snapshot.data.applicationPlatform,
-                              style: TextStyle(fontSize: 18),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                        Row(
-                          children: [
-                            Text(
-                              "application version => ",
-                              style: TextStyle(fontSize: 18),
-                            ),
-                            Text(
-                              snapshot.data.applicationVersion,
-                              style: TextStyle(fontSize: 18),
-                            )
-                          ],
-                        ),
-                        SizedBox(
-                          height: 10,
-                        ),
-                      ],
-                    )
-                  : Text("");
-            },
-          ),
-          Expanded(
-            child: FutureBuilder<ClientResource>(
-              future: Onegini.getClientResource(),
-              builder: (context, snapshot) {
-                return snapshot.hasData
-                    ? ListView.builder(
-                        itemCount: snapshot.data.devices.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return ExpansionTile(
-                            title: Text(snapshot.data.devices[index].name),
-                            expandedCrossAxisAlignment:
-                                CrossAxisAlignment.start,
+                          Row(
                             children: [
                               Text(
-                                "Id => ${snapshot.data.devices[index].id}",
+                                "application identifier => ",
                                 style: TextStyle(fontSize: 18),
-                              ),
-                              SizedBox(
-                                height: 10,
                               ),
                               Text(
-                                "Application => ${snapshot.data.devices[index].application}",
+                                snapshot.data.applicationIdentifier,
                                 style: TextStyle(fontSize: 18),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "Mobile authentication enabled => ${snapshot.data.devices[index].mobileAuthenticationEnabled.toString()}",
-                                style: TextStyle(fontSize: 18),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
-                              Text(
-                                "Platform => ${snapshot.data.devices[index].platform}",
-                                style: TextStyle(fontSize: 18),
-                              ),
-                              SizedBox(
-                                height: 10,
-                              ),
+                              )
                             ],
-                          );
-                        },
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "application platform => ",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              Text(
+                                snapshot.data.applicationPlatform,
+                                style: TextStyle(fontSize: 18),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                          Row(
+                            children: [
+                              Text(
+                                "application version => ",
+                                style: TextStyle(fontSize: 18),
+                              ),
+                              Text(
+                                snapshot.data.applicationVersion,
+                                style: TextStyle(fontSize: 18),
+                              )
+                            ],
+                          ),
+                          SizedBox(
+                            height: 10,
+                          ),
+                        ],
                       )
-                    : SizedBox.shrink();
+                    : Text("");
               },
             ),
-          ),
-        ],
+            Expanded(
+              child: FutureBuilder<ClientResource>(
+                future: Onegini.getClientResource(),
+                builder: (context, snapshot) {
+                  return snapshot.hasData
+                      ? ListView.builder(
+                          itemCount: snapshot.data.devices.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return ExpansionTile(
+                              title: Text(snapshot.data.devices[index].name),
+                              expandedCrossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  "Id => ${snapshot.data.devices[index].id}",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  "Application => ${snapshot.data.devices[index].application}",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  "Mobile authentication enabled => ${snapshot.data.devices[index].mobileAuthenticationEnabled.toString()}",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  "Platform => ${snapshot.data.devices[index].platform}",
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                              ],
+                            );
+                          },
+                        )
+                      : SizedBox.shrink();
+                },
+              ),
+            ),
+          ],
+        ),
       ),
+      ],
     );
   }
 }
