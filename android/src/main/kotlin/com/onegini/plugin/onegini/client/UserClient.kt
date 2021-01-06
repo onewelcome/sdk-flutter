@@ -1,6 +1,7 @@
-package com.onegini.plugin.onegini
+package com.onegini.plugin.onegini.client
 
 import com.google.gson.annotations.SerializedName
+import com.onegini.plugin.onegini.constants.Constants
 import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
 

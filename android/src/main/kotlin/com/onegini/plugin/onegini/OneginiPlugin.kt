@@ -2,23 +2,25 @@ package com.onegini.plugin.onegini
 
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import android.widget.Toast
 import androidx.annotation.NonNull
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.*
 import com.onegini.mobile.sdk.android.handlers.error.*
-import com.onegini.mobile.sdk.android.handlers.error.OneginiDeregistrationError.DeregistrationErrorType
 import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onegini.plugin.onegini.constants.Constants
 import com.onegini.plugin.onegini.handlers.CreatePinRequestHandler
-import com.onegini.plugin.onegini.util.DeregistrationUtil
+import com.onegini.plugin.onegini.helpers.OneginiEventsSender
+import com.onegini.plugin.onegini.helpers.RegistrationHelper
+import com.onegini.plugin.onegini.service.AnonymousService
+import com.onegini.plugin.onegini.service.ImplicitUserService
+import com.onegini.plugin.onegini.service.UserService
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -59,97 +61,97 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
-        if (call.method == "getPlatformVersion") {
+        if (call.method == Constants.METHOD_GET_PLATFORM_VERSION) {
             result.success("Android ${android.os.Build.VERSION.RELEASE}")
         }
-        if (call.method == "startApp") {
+        if (call.method == Constants.METHOD_START_APP) {
             Log.d("Start_app", "START APP")
-            val oneginiClient: OneginiClient = OneginiSDK.getOneginiClient(context)!!
-            oneginiClient.start(object : OneginiInitializationHandler {
+            val oneginiClient: OneginiClient? = OneginiSDK.getOneginiClient(context)
+            oneginiClient?.start(object : OneginiInitializationHandler {
                 override fun onSuccess(removedUserProfiles: Set<UserProfile?>?) {
-                    result.success(true)
+                    result.success(Gson().toJson(removedUserProfiles))
                 }
 
                 override fun onError(error: OneginiInitializationError?) {
-                    Log.d("Start_app", error?.message!!)
-                    print(error)
+                    result.error(error?.errorType.toString(),error?.message,error?.errorDetails)
                 }
             })
         }
-        if (call.method == "getApplicationDetails") {
+        if (call.method == Constants.METHOD_GET_APPLICATION_DETAILS) {
             authenticateDevice(result)
         }
-        if (call.method == "getClientResource") {
+        if (call.method == Constants.METHOD_GET_CLIENT_RESOURCE) {
             getClientResource(result)
         }
-        if (call.method == "getImplicitUserDetails") {
+        if (call.method == Constants.METHOD_GET_IMPLICIT_USER_DETAILS) {
             getImplicitUserDetails(result)
         }
-        if (call.method == "registration") {
-            registerUser(null, result)
+        if (call.method == Constants.METHOD_REGISTRATION) {
+            val scopes = call.argument<String>("scopes")!!
+            registerUser(null,arrayOf(scopes),result)
         }
-        if (call.method == "sendPin") {
+        if (call.method == Constants.METHOD_SEND_PIN) {
             val pin = call.argument<String>("pin")
             CreatePinRequestHandler.CALLBACK?.onPinProvided(pin?.toCharArray())
         }
-        if(call.method == "singleSignOn"){
-            startSingleSignOn()
+        if (call.method == Constants.METHOD_SINGLE_SIGN_ON) {
+            startSingleSignOn(result)
         }
-        if (call.method == "logOut") {
+        if (call.method == Constants.METHOD_LOG_OUT) {
             logOut(result)
         }
-        if (call.method == "deregisterUser") {
+        if (call.method == Constants.METHOD_DEREGISTER_USER) {
             deregisterUser(result)
         }
-        if(call.method == "getIdentityProviders"){
+        if (call.method == Constants.METHOD_GET_IDENTITY_PROVIDERS) {
             val gson = GsonBuilder().serializeNulls().create()
-            val identityProviders = OneginiSDK.getOneginiClient(context)!!.userClient.identityProviders
-            val providers : ArrayList<Map<String,String>> = ArrayList()
-            for (identityProvider in identityProviders){
-                val map  = mutableMapOf<String,String>()
-                map["id"] = identityProvider.id
-                map["name"] = identityProvider.name
-                providers.add(map)
-            }
+            val identityProviders = OneginiSDK.getOneginiClient(context)?.userClient?.identityProviders
+            val providers: ArrayList<Map<String, String>> = ArrayList()
+            if (identityProviders != null)
+                for (identityProvider in identityProviders) {
+                    val map = mutableMapOf<String, String>()
+                    map["id"] = identityProvider.id
+                    map["name"] = identityProvider.name
+                    providers.add(map)
+                }
             result.success(gson.toJson(providers))
         }
-        if (call.method == "registrationWithIdentityProvider") {
+        if (call.method == Constants.METHOD_REGISTRATION_WITH_IDENTITY_PROVIDER) {
             val identityProviderId = call.argument<String>("identityProviderId")
-            val identityProviders = OneginiSDK.getOneginiClient(context)!!.userClient.identityProviders
-            for (identityProvider in identityProviders) {
-                if(identityProvider.id == identityProviderId){
-                    registerUser(identityProvider,result)
-                    break
+            val scopes = call.argument<String>("scopes")!!
+            val identityProviders = OneginiSDK.getOneginiClient(context)?.userClient?.identityProviders
+            if (identityProviders != null)
+                for (identityProvider in identityProviders) {
+                    if (identityProvider.id == identityProviderId) {
+                        registerUser(identityProvider, arrayOf(scopes),result)
+                        break
+                    }
                 }
-            }
         }
 
     }
 
     private fun getClientResource(result: Result) {
-        UserService(activity).devices.subscribe({
-            result.success(Gson().toJson(it))},{result.error(it.message,it.message,it.cause)})
-        }
-
-
+        UserService(activity).devices?.subscribe({
+            result.success(Gson().toJson(it))
+        }, { result.error("", it.message, it.cause) })
+    }
 
 
     private fun getImplicitUserDetails(result: Result) {
         val userProfile = OneginiSDK.getOneginiClient(context)?.userClient?.authenticatedUserProfile
-        if (userProfile == null) {
-            Toast.makeText(context, "userProfile == null", Toast.LENGTH_SHORT).show()
-            return
-        }
-        OneginiSDK.getOneginiClient(context)!!.userClient
-                .authenticateUserImplicitly(userProfile, arrayOf("read"), object : OneginiImplicitAuthenticationHandler {
+                ?: return
+        //todo if need show error use OneginiEventSender
+        OneginiSDK.getOneginiClient(context)?.userClient
+                ?.authenticateUserImplicitly(userProfile, arrayOf("read"), object : OneginiImplicitAuthenticationHandler {
                     override fun onSuccess(profile: UserProfile) {
-                        ImplicitUserService(activity).userDetails.subscribe({ result.success(it.toString()) }, {
-                            result.error(it.message,it.message,it.cause)
+                        ImplicitUserService(activity).userDetails?.subscribe({ result.success(it.toString()) }, {
+                            result.error("", it.message, it.cause)
                         })
                     }
 
                     override fun onError(error: OneginiImplicitTokenRequestError) {
-                        result.error(error.message,error.message,error.cause)
+                        result.error(error.errorType.toString(), error.message, error.cause)
                     }
                 })
     }
@@ -161,7 +163,7 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             }
 
             override fun onError(error: OneginiLogoutError?) {
-                result.error("0", error?.message, error?.errorDetails)
+                result.error(error?.errorType.toString(), error?.message, error?.errorDetails)
             }
         })
     }
@@ -170,11 +172,11 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         OneginiSDK.getOneginiClient(context)?.deviceClient?.authenticateDevice(arrayOf("application-details"), object : OneginiDeviceAuthenticationHandler {
             override fun onSuccess() {
                 AnonymousService(activity).applicationDetails
-                        .subscribe { details -> result.success(Gson().toJson(details)) }
+                        ?.subscribe { details -> result.success(Gson().toJson(details)) }
             }
 
             override fun onError(error: OneginiDeviceAuthenticationError) {
-                result.error("0", error.message, error.errorDetails)
+                result.error(error.errorType.toString(), error.message, error.errorDetails)
             }
         }
         )
@@ -182,10 +184,10 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     /**
      * Start registration / LogIn flow
-     * when [RegistrationRequestHandler] handled callback, check method [startPinCreation] in [CreatePinRequestHandler]
+     * when RegistrationRequestHandler handled callback, check method startPinCreation in [CreatePinRequestHandler]
      */
-    private fun registerUser(identityProvider: OneginiIdentityProvider?, result: Result) {
-        RegistrationHelper.registerUser(context, identityProvider, object : OneginiRegistrationHandler {
+    private fun registerUser(identityProvider: OneginiIdentityProvider?, scopes: Array<String>,result: Result) {
+        RegistrationHelper.registerUser(context, identityProvider,scopes ,object : OneginiRegistrationHandler {
             override fun onSuccess(userProfile: UserProfile?, customInfo: CustomInfo?) {
                 if (userProfile != null)
                     result.success(userProfile.profileId)
@@ -197,8 +199,7 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 if (errorMessage == null) {
                     errorMessage = oneginiRegistrationError.message
                 }
-                Toast.makeText(context,errorMessage,Toast.LENGTH_SHORT).show()
-                result.error(errorType.toString(), errorMessage ?: "", null)
+                result.error(errorType.toString(), errorMessage ?: "", oneginiRegistrationError.errorDetails)
             }
         })
     }
@@ -207,20 +208,15 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private fun deregisterUser(result: Result) {
 
         val userProfile = OneginiSDK.getOneginiClient(context)?.userClient?.authenticatedUserProfile
-        if (userProfile == null) {
-            Toast.makeText(context, "userProfile == null", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        DeregistrationUtil(context).onUserDeregistered(userProfile)
+                ?: return
+        //todo DeregistrationUtil(context).onUserDeregistered(userProfile)
         OneginiSDK.getOneginiClient(context)?.userClient?.deregisterUser(userProfile, object : OneginiDeregisterUserProfileHandler {
             override fun onSuccess() {
                 result.success(true)
             }
 
             override fun onError(oneginiDeregistrationError: OneginiDeregistrationError) {
-                onUserDeregistrationError(oneginiDeregistrationError)
-                result.success(false)
+                result.error(oneginiDeregistrationError.errorType.toString(), oneginiDeregistrationError.message, oneginiDeregistrationError.errorDetails)
             }
 
         }
@@ -228,36 +224,16 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     }
 
-
-    private fun onUserDeregistrationError(oneginiDeregistrationError: OneginiDeregistrationError) {
-        @DeregistrationErrorType val errorType = oneginiDeregistrationError.errorType
-        if (errorType == OneginiDeregistrationError.DEVICE_DEREGISTERED) {
-            DeregistrationUtil(context).onDeviceDeregistered()
-        }
-        Toast.makeText(context, "Deregistration error: " + oneginiDeregistrationError.message, Toast.LENGTH_SHORT).show()
-    }
-
-
-   private fun startSingleSignOn() {
+    private fun startSingleSignOn(result: Result) {
         val targetUri: Uri = Uri.parse("https://login-mobile.test.onegini.com/personal/dashboard")
         val oneginiClient = OneginiSDK.getOneginiClient(context)
-        oneginiClient!!.userClient.getAppToWebSingleSignOn(targetUri, object : OneginiAppToWebSingleSignOnHandler{
+        oneginiClient?.userClient?.getAppToWebSingleSignOn(targetUri, object : OneginiAppToWebSingleSignOnHandler {
             override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {
-                val intent = Intent(Intent.ACTION_VIEW, oneginiAppToWebSingleSignOn.redirectUrl)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-                context.startActivity(intent)
+                 result.success(Gson().toJson(oneginiAppToWebSingleSignOn))
             }
 
             override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
-                val errorType: Int = oneginiSingleSignOnError.errorType
-                if (errorType == OneginiDeregistrationError.DEVICE_DEREGISTERED) {
-                    // Single Sign-On failed due to missing device credentials. Register app once again.
-                    DeregistrationUtil(context).onDeviceDeregistered()
-                }
-
-                // other errors don't really require our reaction, but you might consider displaying some message to the user
-                Toast.makeText(context,"Single Sign-On error: " + oneginiSingleSignOnError.message,Toast.LENGTH_SHORT).show()
+                result.error(oneginiSingleSignOnError.errorType.toString(), oneginiSingleSignOnError.message, oneginiSingleSignOnError.errorDetails)
             }
 
         })

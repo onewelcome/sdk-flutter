@@ -1,4 +1,4 @@
-package com.onegini.plugin.onegini_example
+package com.onegini.plugin.onegini_example.providers
 
 import android.content.Context
 import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomRegistrationAction

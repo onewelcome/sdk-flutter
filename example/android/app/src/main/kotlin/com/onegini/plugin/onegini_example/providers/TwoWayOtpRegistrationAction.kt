@@ -1,4 +1,4 @@
-package com.onegini.plugin.onegini_example
+package com.onegini.plugin.onegini_example.providers
 
 import android.content.Context
 import android.util.Log
@@ -8,6 +8,8 @@ import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomTwoStepRegist
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiCustomRegistrationCallback
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.plugin.onegini.OneginiSDK
+import com.onegini.plugin.onegini_example.EventStorage
+import com.onegini.plugin.onegini_example.Events
 
 
 class TwoWayOtpRegistrationAction(private val context: Context) : OneginiCustomTwoStepRegistrationAction {
@@ -19,7 +21,7 @@ class TwoWayOtpRegistrationAction(private val context: Context) : OneginiCustomT
         CALLBACK = callback
         if(customInfo.status <2001){
             OneginiSDK.getOneginiClient(context)?.userClient?.userProfiles?.map { Log.v("id", it.profileId) }
-            EventStorage.events?.success(Gson().toJson(Events("OPEN_OTP",customInfo.data)))
+            EventStorage.events?.success(Gson().toJson(Events("OPEN_OTP", customInfo.data)))
         }else {
             Toast.makeText(context,"Error. Status code => ${customInfo.status}",Toast.LENGTH_SHORT).show()
         }

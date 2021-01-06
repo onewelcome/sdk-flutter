@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:onegini/model/applicationDetails.dart';
-import 'package:onegini/model/clientResource.dart';
+import 'package:onegini/model/application_details.dart';
+import 'package:onegini/model/client_resource.dart';
 import 'package:onegini/onegini.dart';
-import 'package:onegini_example/loginScreen.dart';
+
+import 'login_screen.dart';
 
 class UserScreen extends StatefulWidget {
   final String userProfileId;
@@ -69,18 +70,20 @@ class Home extends StatelessWidget {
     if (isLogOut) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
+        MaterialPageRoute(builder: (_) => LoginScreen()),
       );
     }
   }
 
   deregister(BuildContext context) async {
     var isLogOut = await Onegini.deregisterUser()
-        .catchError((error) => print(error.toString()));
+        .catchError((error) => {
+          //todo OneginiDeregistrationError
+    });
     if (isLogOut) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
+        MaterialPageRoute(builder: (_) => LoginScreen()),
       );
     }
   }

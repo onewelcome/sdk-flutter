@@ -3,82 +3,40 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:onegini/pin_screen.dart';
-
-import 'model/Provider.dart';
-import 'model/applicationDetails.dart';
-import 'model/clientResource.dart';
-import 'model/event.dart';
+import 'package:onegini/constants/constants.dart';
+import 'package:onegini/model/application_details.dart';
+import 'package:onegini/model/client_resource.dart';
+import 'package:onegini/model/onegini_identity_provider.dart';
+import 'package:onegini/onegini_event_listener.dart';
 
 class Onegini {
-  static BuildContext context;
+  static OneginiEventListener _eventListener;
 
   static const MethodChannel _channel = const MethodChannel('onegini');
 
-  static const EventChannel _eventChannel =
-      const EventChannel("onegini_events");
-
   static Future<String> get platformVersion async {
-    final String version = await _channel.invokeMethod('getPlatformVersion');
+    final String version =
+        await _channel.invokeMethod(Constants.getPlatformVersion);
     return version;
   }
 
-  static const String startAppMethod = 'startApp';
-  static const String getApplicationDetailsMethod = 'getApplicationDetails';
-  static const String registrationMethod = 'registration';
-  static const String logOutMethod = 'logOut';
-  static const String getInfoMethod = "getInfo";
-  static const String getSendPinMethod = "sendPin";
-  static const String deregisterUserMethod = "deregisterUser";
-  static const String getIdentityProvidersMethod = "getIdentityProviders";
-  static const String registrationWithIdentityProviderMethod = "registrationWithIdentityProvider";
-  static const String getClientResourceMethod = "getClientResource";
-  static const String getImplicitUserDetailsMethod = "getImplicitUserDetails";
-  static const String getSingleSignOnMethod = "singleSignOn";
-
-  static Future<bool> startApplication() async {
+  static Future<bool> startApplication(
+      OneginiEventListener eventListener) async {
+    _eventListener = eventListener;
     var appStarted = false;
     try {
-      appStarted = await _channel.invokeMethod(startAppMethod);
+      appStarted = await _channel.invokeMethod(Constants.startAppMethod);
     } on PlatformException catch (error) {
       throw error;
     }
-    if (appStarted)
-      _eventChannel.receiveBroadcastStream("onegini_events").listen((event) {
-        if (event == "event_open_pin") {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => PinScreen()),
-          );
-        } else if (event == "event_open_pin_confirmation") {
-          Navigator.of(context)..pop()..push(
-            MaterialPageRoute(
-                builder: (context) => PinScreen(
-                      confirmation: true,
-                    )),
-          );
-        } else if (event == "event_close_pin") {
-          Navigator.of(Onegini.context).canPop();
-        } else if (event != null) {
-          Event value = eventFromJson(event);
-          if (value != null && value.key == "show_error_pin") {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(value.value.toString()),
-                duration: const Duration(seconds: 2),
-              ),
-            );
-          }
-        }
-      }).onError((error) {
-        print(error.toString());
-      });
+    if (appStarted) eventListener.listen();
     return appStarted;
   }
 
   static Future<ApplicationDetails> getApplicationDetails() async {
     try {
-      var resource = await _channel.invokeMethod(getApplicationDetailsMethod);
+      var resource =
+          await _channel.invokeMethod(Constants.getApplicationDetailsMethod);
       return ApplicationDetails.fromJson(jsonDecode(resource));
     } on PlatformException catch (error) {
       throw error;
@@ -87,7 +45,8 @@ class Onegini {
 
   static Future<ClientResource> getClientResource() async {
     try {
-      var resource = await _channel.invokeMethod(getClientResourceMethod);
+      var resource =
+          await _channel.invokeMethod(Constants.getClientResourceMethod);
       return clientResourceFromJson(resource);
     } on PlatformException catch (error) {
       print(error.details.toString());
@@ -99,28 +58,32 @@ class Onegini {
 
   static Future<String> getImplicitUserDetails() async {
     try {
-      var resource = await _channel.invokeMethod(getImplicitUserDetailsMethod);
+      var resource =
+          await _channel.invokeMethod(Constants.getImplicitUserDetailsMethod);
       return resource;
     } on PlatformException catch (error) {
       throw error;
     }
   }
 
-  static Future<String> registration(BuildContext context) async {
-    Onegini.context = context;
+  static Future<String> registration(BuildContext context,String scopes) async {
+    _eventListener?.context = context;
     try {
-      var userId = await _channel.invokeMethod(registrationMethod);
+      var userId = await _channel.invokeMethod(Constants.registrationMethod, <String, String>{
+        'scopes': scopes
+      });
       return userId;
     } on PlatformException catch (error) {
       throw error;
     }
   }
 
-  static Future<List<Provider>> getIdentityProviders(
+  static Future<List<OneginiIdentityProvider>> getIdentityProviders(
       BuildContext context) async {
-    Onegini.context = context;
+    _eventListener?.context = context;
     try {
-      var providers = await _channel.invokeMethod(getIdentityProvidersMethod);
+      var providers =
+          await _channel.invokeMethod(Constants.getIdentityProvidersMethod);
       return providerFromJson(providers);
     } on PlatformException catch (error) {
       throw error;
@@ -128,11 +91,12 @@ class Onegini {
   }
 
   static Future<String> registrationWithIdentityProvider(
-      String identityProviderId) async {
+      String identityProviderId,String scopes) async {
     try {
       var userId = await _channel.invokeMethod(
-          registrationWithIdentityProviderMethod, <String, String>{
+          Constants.registrationWithIdentityProviderMethod, <String, String>{
         'identityProviderId': identityProviderId,
+        'scopes': scopes
       });
       return userId;
     } on PlatformException catch (error) {
@@ -142,7 +106,7 @@ class Onegini {
 
   static Future<void> singleSingOn() async {
     try {
-      await _channel.invokeMethod(getSingleSignOnMethod);
+      await _channel.invokeMethod(Constants.getSingleSignOnMethod);
     } on PlatformException catch (error) {
       throw error;
     }
@@ -150,7 +114,7 @@ class Onegini {
 
   static Future<bool> logOut() async {
     try {
-      var isSuccess = await _channel.invokeMethod(logOutMethod);
+      var isSuccess = await _channel.invokeMethod(Constants.logOutMethod);
       return isSuccess;
     } on PlatformException catch (error) {
       throw error;
@@ -159,7 +123,8 @@ class Onegini {
 
   static Future<bool> deregisterUser() async {
     try {
-      var isSuccess = await _channel.invokeMethod(deregisterUserMethod);
+      var isSuccess =
+          await _channel.invokeMethod(Constants.deregisterUserMethod);
       return isSuccess;
     } on PlatformException catch (error) {
       throw error;
@@ -168,8 +133,8 @@ class Onegini {
 
   static Future<String> sendPin(String pinCode) async {
     try {
-      var userId =
-          await _channel.invokeMethod(getSendPinMethod, <String, dynamic>{
+      var userId = await _channel
+          .invokeMethod(Constants.getSendPinMethod, <String, dynamic>{
         'pin': pinCode,
       });
       return userId;

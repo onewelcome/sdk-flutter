@@ -1,8 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:onegini/onegini.dart';
+import 'package:onegini_example/screens/login_screen.dart';
 
-import 'loginScreen.dart';
+import 'onegini_listener.dart';
+
 
 
 void main() {
@@ -51,9 +53,8 @@ class _BodyWidgetState extends State<BodyWidget> {
 
   void _startApplication() async {
     /// init Onegini sdk on native side
-    _appStarted = await Onegini.startApplication().catchError((error) => appError = error
-    );
-    if(_appStarted){
+    _appStarted = await Onegini.startApplication(OneginiListener());
+    if (_appStarted) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => LoginScreen()),
@@ -66,4 +67,3 @@ class _BodyWidgetState extends State<BodyWidget> {
     return CircularProgressIndicator();
   }
 }
-

@@ -4,13 +4,21 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.NonNull
 import com.onegini.plugin.onegini.OneginiSDK
-import com.onegini.plugin.onegini.RegistrationHelper
-import com.onegini.plugin.onegini.StorageIdentityProviders
+import com.onegini.plugin.onegini.helpers.RegistrationHelper
+import com.onegini.plugin.onegini_example.providers.TwoWayOtpIdentityProvider
+import com.onegini.plugin.onegini_example.providers.TwoWayOtpRegistrationAction
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+
+object SecurityController {
+    const val debugDetection = false
+    const val rootDetection = false
+    const val debugLogs = true
+}
+
 
 class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler {
 
@@ -18,10 +26,14 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler {
     private lateinit var channel: MethodChannel
     private lateinit var eventChannel: EventChannel
 
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        StorageIdentityProviders.oneginiCustomIdentityProviders.add(TwoWayOtpIdentityProvider(this.applicationContext))
+        OneginiSDK.addCustomIdentityProvider(TwoWayOtpIdentityProvider(this.applicationContext))
         OneginiSDK.setOneginiClientConfigModel(OneginiConfigModel())
+        OneginiSDK.setSecurityController(SecurityController::class.java)
+        OneginiSDK.setReadTimeout(25)
+        OneginiSDK.setConnectionTimeout(5)
 
 
     }

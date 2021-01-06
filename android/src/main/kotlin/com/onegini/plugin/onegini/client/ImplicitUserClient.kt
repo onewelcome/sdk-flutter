@@ -1,4 +1,4 @@
-package com.onegini.plugin.onegini
+package com.onegini.plugin.onegini.client
 
 import com.google.gson.annotations.SerializedName
 import io.reactivex.rxjava3.core.Single
@@ -13,8 +13,8 @@ interface ImplicitUserClient {
 
 class ImplicitUserDetails {
     @SerializedName("decorated_user_id")
-    private val decoratedUserId: String? = null
+    private val decoratedUserId: String = ""
     override fun toString(): String {
-        return decoratedUserId!!
+        return decoratedUserId
     }
 }

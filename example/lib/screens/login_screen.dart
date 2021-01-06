@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:onegini/model/Provider.dart';
+import 'package:onegini/model/onegini_identity_provider.dart';
 import 'package:onegini/onegini.dart';
-import 'package:onegini_example/otpScreen.dart';
-import 'package:onegini_example/user_screen.dart';
+import 'package:onegini_example/constants.dart';
+import 'package:onegini_example/models/event.dart';
+import 'package:onegini_example/screens/otp_screen.dart';
+import 'package:onegini_example/screens/user_screen.dart';
 
-import 'event.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -35,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   openWeb() async {
     /// Start registration
-    var userId = await Onegini.registration(context)
+    var userId = await Onegini.registration(context,Constants.DEFAULT_SCOPES)
         .catchError((error) => print(error.toString()));
     if (userId != null)
         Navigator.pushAndRemoveUntil(
@@ -49,7 +50,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   registrationWithIdentityProvider(String identityProviderId) async {
-    var userId = await Onegini.registrationWithIdentityProvider(identityProviderId)
+    var userId = await Onegini.registrationWithIdentityProvider(identityProviderId,Constants.DEFAULT_SCOPES)
         .catchError((error) => print(error.toString()));
     if (userId != null)
       Navigator.pushAndRemoveUntil(
@@ -63,7 +64,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(
         title: Padding(
@@ -90,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
             SizedBox(
               height: 20,
             ),
-            FutureBuilder<List<Provider>>(
+            FutureBuilder<List<OneginiIdentityProvider>>(
               future: Onegini.getIdentityProviders(context),
               builder: (BuildContext context, snapshot) {
                 return snapshot.hasData

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:onegini_example/loginScreen.dart';
+
+import 'login_screen.dart';
 
 class OtpScreen extends StatefulWidget {
   final String password;

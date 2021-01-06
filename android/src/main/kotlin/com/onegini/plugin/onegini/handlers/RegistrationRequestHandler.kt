@@ -7,18 +7,18 @@ import com.onegini.mobile.sdk.android.handlers.request.OneginiBrowserRegistratio
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiBrowserRegistrationCallback
 
 
-class RegistrationRequestHandler(var context: Context?) : OneginiBrowserRegistrationRequestHandler {
+class RegistrationRequestHandler(var context: Context) : OneginiBrowserRegistrationRequestHandler {
 
 
     companion object {
-        var CALLBACK: OneginiBrowserRegistrationCallback? = null
+        private var CALLBACK: OneginiBrowserRegistrationCallback? = null
 
         /**
          * Finish registration action with result from web browser
          */
         fun handleRegistrationCallback(uri: Uri?) {
             if (CALLBACK != null) {
-                CALLBACK!!.handleRegistrationCallback(uri)
+                CALLBACK?.handleRegistrationCallback(uri)
                 CALLBACK = null
             }
         }
@@ -28,7 +28,7 @@ class RegistrationRequestHandler(var context: Context?) : OneginiBrowserRegistra
          */
         fun onRegistrationCanceled() {
             if (CALLBACK != null) {
-                CALLBACK!!.denyRegistration()
+                CALLBACK?.denyRegistration()
                 CALLBACK = null
             }
         }
@@ -41,7 +41,7 @@ class RegistrationRequestHandler(var context: Context?) : OneginiBrowserRegistra
         val intent = Intent(Intent.ACTION_VIEW, uri)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-        context!!.startActivity(intent)
+        context.startActivity(intent)
     }
 
 }

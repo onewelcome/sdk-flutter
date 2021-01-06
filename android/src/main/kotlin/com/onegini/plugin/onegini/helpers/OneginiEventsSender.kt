@@ -1,4 +1,4 @@
-package com.onegini.plugin.onegini
+package com.onegini.plugin.onegini.helpers
 
 import io.flutter.plugin.common.EventChannel
 

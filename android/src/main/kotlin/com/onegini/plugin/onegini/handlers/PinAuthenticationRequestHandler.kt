@@ -6,7 +6,7 @@ import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallba
 import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 
-class PinAuthenticationRequestHandler(var context: Context?) : OneginiPinAuthenticationRequestHandler {
+class PinAuthenticationRequestHandler(var context: Context) : OneginiPinAuthenticationRequestHandler {
     companion object{
         var CALLBACK: OneginiPinCallback ? = null
 
