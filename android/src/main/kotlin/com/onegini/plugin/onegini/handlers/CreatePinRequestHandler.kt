@@ -38,7 +38,7 @@ class CreatePinRequestHandler(private var context: Context) : OneginiCreatePinRe
     }
 
     override fun onNextPinCreationAttempt(oneginiPinValidationError: OneginiPinValidationError?) {
-        Toast.makeText(context, oneginiPinValidationError?.message, Toast.LENGTH_SHORT).show()
+        OneginiEventsSender.events?.error(oneginiPinValidationError?.errorType.toString(),oneginiPinValidationError?.message, oneginiPinValidationError?.errorDetails)
     }
 
     override fun finishPinCreation() {

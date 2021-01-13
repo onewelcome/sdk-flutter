@@ -9,7 +9,9 @@ interface Constants {
          */
         const val EVENT_OPEN_PIN = "eventOpenPin"
         const val EVENT_CLOSE_PIN = "eventClosePin"
+        const val EVENT_OPEN_PIN_AUTH = "eventOpenPinAuth"
         const val EVENT_OPEN_PIN_CONFIRMATION = "eventOpenPinConfirmation"
+        const val EVENT_INFO = "eventInfo"
 
         /**
          * MethodsName
@@ -26,5 +28,6 @@ interface Constants {
         const val METHOD_DEREGISTER_USER ="deregisterUser"
         const val METHOD_GET_IDENTITY_PROVIDERS ="getIdentityProviders"
         const val METHOD_REGISTRATION_WITH_IDENTITY_PROVIDER ="registrationWithIdentityProvider"
+        const val METHOD_PIN_AUTHENTICATION = "pinAuthentication"
     }
 }

@@ -15,9 +15,12 @@ class Constants{
   static const String getClientResourceMethod = "getClientResource";
   static const String getImplicitUserDetailsMethod = "getImplicitUserDetails";
   static const String getSingleSignOnMethod = "singleSignOn";
+  static const String pinAuthentication = 'pinAuthentication';
+
 
   /// Onegini events
   static const String eventOpenPin = "eventOpenPin";
+  static const String eventOpenPinAuth = "eventOpenPinAuth";
   static const String eventOpenPinConfirmation = "eventOpenPinConfirmation";
   static const String eventClosePin = "eventClosePin";
 }

@@ -3,8 +3,9 @@ import 'package:onegini/onegini.dart';
 
 class PinScreen extends StatefulWidget {
   final bool confirmation;
+  final bool isAuth;
 
-  const PinScreen({Key key, this.confirmation = false}) : super(key: key);
+  const PinScreen({Key key, this.confirmation = false,this.isAuth = false}) : super(key: key);
 
   @override
   _PinScreenState createState() => _PinScreenState();
@@ -44,7 +45,7 @@ class _PinScreenState extends State<PinScreen> {
       pin+=element;
     });
 
-   Onegini.sendPin(pin);
+   Onegini.sendPin(pin,widget.isAuth);
   }
 
   @override

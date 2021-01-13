@@ -36,12 +36,20 @@ class OneginiListener extends OneginiEventListener {
 
   @override
   void eventOther(BuildContext buildContext, OneginiEvent event) {
-
+    print(event.value);
   }
 
   @override
   void eventError(BuildContext buildContext,PlatformException error) {
     print(error.message);
+  }
+
+  @override
+  void openPinScreenAuth(BuildContext buildContext) {
+    Navigator.push(
+      buildContext,
+      MaterialPageRoute(builder: (context) => PinScreen(isAuth: true,)),
+    );
   }
 
 }

@@ -1,10 +1,13 @@
 package com.onegini.plugin.onegini.handlers
 
 import android.content.Context
+import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.handlers.request.OneginiPinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallback
 import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onegini.plugin.onegini.constants.Constants
+import com.onegini.plugin.onegini.helpers.OneginiEventsSender
 
 class PinAuthenticationRequestHandler(var context: Context) : OneginiPinAuthenticationRequestHandler {
     companion object{
@@ -14,15 +17,16 @@ class PinAuthenticationRequestHandler(var context: Context) : OneginiPinAuthenti
     override fun startAuthentication(userProfile: UserProfile?, oneginiPinCallback: OneginiPinCallback?, attemptCounter: AuthenticationAttemptCounter?) {
         var userProfileId = userProfile?.profileId
         CALLBACK = oneginiPinCallback
+        OneginiEventsSender.events?.success(Constants.EVENT_OPEN_PIN_AUTH)
 
     }
 
-    override fun onNextAuthenticationAttempt(p0: AuthenticationAttemptCounter?) {
-        TODO("Not yet implemented")
+    override fun onNextAuthenticationAttempt(attemptCounter: AuthenticationAttemptCounter?) {
+       OneginiEventsSender.events?.success(mapOf(Pair(Constants.EVENT_INFO,Gson().toJson(attemptCounter))))
     }
 
     override fun finishAuthentication() {
-        TODO("Not yet implemented")
+        OneginiEventsSender.events?.success(Constants.EVENT_CLOSE_PIN)
     }
 
 }

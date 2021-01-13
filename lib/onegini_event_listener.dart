@@ -19,11 +19,14 @@ abstract class OneginiEventListener {
     _eventChannel.receiveBroadcastStream(chanel_name).listen((event) {
       if (event == Constants.eventOpenPin) {
         openPinScreen(_context);
+      } else if(event == Constants.eventOpenPinAuth){
+        openPinScreenAuth(_context);
       } else if (event == Constants.eventOpenPinConfirmation) {
         openPinConfirmation(_context);
       } else if (event == Constants.eventClosePin) {
         eventClosePin(_context);
       } else if (event != null) {
+        print(event);
         OneginiEvent value = eventFromJson(event);
         eventOther(_context, value);
       }
@@ -33,6 +36,8 @@ abstract class OneginiEventListener {
   }
 
   void openPinScreen(BuildContext buildContext);
+
+  void openPinScreenAuth(BuildContext buildContext);
 
   void openPinConfirmation(BuildContext buildContext);
 

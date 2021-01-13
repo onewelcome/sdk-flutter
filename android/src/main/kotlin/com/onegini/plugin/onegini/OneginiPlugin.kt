@@ -16,11 +16,9 @@ import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.plugin.onegini.constants.Constants
 import com.onegini.plugin.onegini.handlers.CreatePinRequestHandler
+import com.onegini.plugin.onegini.handlers.PinAuthenticationRequestHandler
 import com.onegini.plugin.onegini.helpers.OneginiEventsSender
 import com.onegini.plugin.onegini.helpers.RegistrationHelper
-import com.onegini.plugin.onegini.service.AnonymousService
-import com.onegini.plugin.onegini.service.ImplicitUserService
-import com.onegini.plugin.onegini.service.UserService
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -77,22 +75,22 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
             })
         }
-        if (call.method == Constants.METHOD_GET_APPLICATION_DETAILS) {
-            authenticateDevice(result)
-        }
-        if (call.method == Constants.METHOD_GET_CLIENT_RESOURCE) {
-            getClientResource(result)
-        }
-        if (call.method == Constants.METHOD_GET_IMPLICIT_USER_DETAILS) {
-            getImplicitUserDetails(result)
-        }
         if (call.method == Constants.METHOD_REGISTRATION) {
             val scopes = call.argument<String>("scopes")!!
             registerUser(null,arrayOf(scopes),result)
         }
         if (call.method == Constants.METHOD_SEND_PIN) {
             val pin = call.argument<String>("pin")
-            CreatePinRequestHandler.CALLBACK?.onPinProvided(pin?.toCharArray())
+            val auth = call.argument<Boolean>("isAuth")
+            if(auth !=null && auth){
+                PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin?.toCharArray())
+            }else{
+                CreatePinRequestHandler.CALLBACK?.onPinProvided(pin?.toCharArray())
+            }
+
+        }
+        if(call.method == Constants.METHOD_PIN_AUTHENTICATION){
+            authenticateUser(null,result)
         }
         if (call.method == Constants.METHOD_SINGLE_SIGN_ON) {
             startSingleSignOn(result)
@@ -131,30 +129,29 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     }
 
-    private fun getClientResource(result: Result) {
-        UserService(activity).devices?.subscribe({
-            result.success(Gson().toJson(it))
-        }, { result.error("", it.message, it.cause) })
+
+
+
+    private fun authenticateUser(profileId: String?, result: Result) {
+        val userProfile = OneginiSDK.getOneginiClient(context)?.userClient?.userProfiles?.first()
+        if(userProfile == null) {
+            result.error("0","User profile is null","")
+            return
+        }
+        Log.v("USER AUTH PROFILE",userProfile.profileId)
+        OneginiSDK.getOneginiClient(context)?.userClient?.authenticateUser(userProfile, object : OneginiAuthenticationHandler {
+            override fun onSuccess(userProfile: UserProfile?, customInfo: CustomInfo?) {
+                if (userProfile != null)
+                    result.success(userProfile.profileId)
+            }
+
+            override fun onError(error: OneginiAuthenticationError) {
+                result.error(error.errorType.toString(), error.message ?: "", error.errorDetails)
+            }
+        })
     }
 
 
-    private fun getImplicitUserDetails(result: Result) {
-        val userProfile = OneginiSDK.getOneginiClient(context)?.userClient?.authenticatedUserProfile
-                ?: return
-        //todo if need show error use OneginiEventSender
-        OneginiSDK.getOneginiClient(context)?.userClient
-                ?.authenticateUserImplicitly(userProfile, arrayOf("read"), object : OneginiImplicitAuthenticationHandler {
-                    override fun onSuccess(profile: UserProfile) {
-                        ImplicitUserService(activity).userDetails?.subscribe({ result.success(it.toString()) }, {
-                            result.error("", it.message, it.cause)
-                        })
-                    }
-
-                    override fun onError(error: OneginiImplicitTokenRequestError) {
-                        result.error(error.errorType.toString(), error.message, error.cause)
-                    }
-                })
-    }
 
     private fun logOut(result: Result) {
         OneginiSDK.getOneginiClient(context)?.userClient?.logout(object : OneginiLogoutHandler {
@@ -168,19 +165,7 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         })
     }
 
-    private fun authenticateDevice(result: Result) {
-        OneginiSDK.getOneginiClient(context)?.deviceClient?.authenticateDevice(arrayOf("application-details"), object : OneginiDeviceAuthenticationHandler {
-            override fun onSuccess() {
-                AnonymousService(activity).applicationDetails
-                        ?.subscribe { details -> result.success(Gson().toJson(details)) }
-            }
 
-            override fun onError(error: OneginiDeviceAuthenticationError) {
-                result.error(error.errorType.toString(), error.message, error.errorDetails)
-            }
-        }
-        )
-    }
 
     /**
      * Start registration / LogIn flow
@@ -233,7 +218,7 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             }
 
             override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
-                result.error(oneginiSingleSignOnError.errorType.toString(), oneginiSingleSignOnError.message, oneginiSingleSignOnError.errorDetails)
+                result.error(oneginiSingleSignOnError.errorType.toString(), oneginiSingleSignOnError.message, Gson().toJson(oneginiSingleSignOnError.errorDetails))
             }
 
         })

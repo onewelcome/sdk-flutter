@@ -1,11 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/constants/constants.dart';
-import 'package:onegini/model/application_details.dart';
-import 'package:onegini/model/client_resource.dart';
 import 'package:onegini/model/onegini_identity_provider.dart';
 import 'package:onegini/onegini_event_listener.dart';
 
@@ -25,45 +22,16 @@ class Onegini {
     _eventListener = eventListener;
     var appStarted = false;
     try {
-      appStarted = await _channel.invokeMethod(Constants.startAppMethod);
+      String removedUserProfiles = await _channel.invokeMethod(Constants.startAppMethod);
+      print(removedUserProfiles);
+      if(removedUserProfiles != null){
+        appStarted = true;
+      }
     } on PlatformException catch (error) {
       throw error;
     }
     if (appStarted) eventListener.listen();
     return appStarted;
-  }
-
-  static Future<ApplicationDetails> getApplicationDetails() async {
-    try {
-      var resource =
-          await _channel.invokeMethod(Constants.getApplicationDetailsMethod);
-      return ApplicationDetails.fromJson(jsonDecode(resource));
-    } on PlatformException catch (error) {
-      throw error;
-    }
-  }
-
-  static Future<ClientResource> getClientResource() async {
-    try {
-      var resource =
-          await _channel.invokeMethod(Constants.getClientResourceMethod);
-      return clientResourceFromJson(resource);
-    } on PlatformException catch (error) {
-      print(error.details.toString());
-      throw error;
-    } on Exception catch (error) {
-      throw error;
-    }
-  }
-
-  static Future<String> getImplicitUserDetails() async {
-    try {
-      var resource =
-          await _channel.invokeMethod(Constants.getImplicitUserDetailsMethod);
-      return resource;
-    } on PlatformException catch (error) {
-      throw error;
-    }
   }
 
   static Future<String> registration(BuildContext context,String scopes) async {
@@ -104,9 +72,21 @@ class Onegini {
     }
   }
 
+
+  static Future<String> pinAuthentication(BuildContext context) async {
+    _eventListener?.context = context;
+    try {
+      var userId = await _channel.invokeMethod(Constants.pinAuthentication);
+      return userId;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
   static Future<void> singleSingOn() async {
     try {
-      await _channel.invokeMethod(Constants.getSingleSignOnMethod);
+      var oneginiAppToWebSingleSignOn =  await _channel.invokeMethod(Constants.getSingleSignOnMethod);
+      //todo use oneginiAppToWebSingleSignOn
     } on PlatformException catch (error) {
       throw error;
     }
@@ -131,11 +111,12 @@ class Onegini {
     }
   }
 
-  static Future<String> sendPin(String pinCode) async {
+  static Future<String> sendPin(String pinCode,bool isAuth) async {
     try {
       var userId = await _channel
           .invokeMethod(Constants.getSendPinMethod, <String, dynamic>{
         'pin': pinCode,
+        'isAuth' : isAuth
       });
       return userId;
     } on PlatformException catch (error) {

@@ -7,27 +7,25 @@ import 'package:onegini_example/models/event.dart';
 import 'package:onegini_example/screens/otp_screen.dart';
 import 'package:onegini_example/screens/user_screen.dart';
 
-
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
-
   EventChannel _eventChannel = const EventChannel("exemple_events");
+
   @override
-  initState(){
-    _eventChannel.receiveBroadcastStream().listen((str){
-      Event event  = eventFromJson(str);
-      if(event.key == "OPEN_OTP"){
+  initState() {
+    _eventChannel.receiveBroadcastStream().listen((str) {
+      Event event = eventFromJson(str);
+      if (event.key == "OPEN_OTP") {
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => OtpScreen(
-                password: event.value,
-              )),
+                    password: event.value,
+                  )),
         );
       }
     });
@@ -36,30 +34,43 @@ class _LoginScreenState extends State<LoginScreen> {
 
   openWeb() async {
     /// Start registration
-    var userId = await Onegini.registration(context,Constants.DEFAULT_SCOPES)
-        .catchError((error) => print(error.toString()));
-    if (userId != null)
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (context) => UserScreen(
-                    userProfileId: userId,
-                  )),(Route<dynamic> route) => false
-        );
-
-  }
-
-  registrationWithIdentityProvider(String identityProviderId) async {
-    var userId = await Onegini.registrationWithIdentityProvider(identityProviderId,Constants.DEFAULT_SCOPES)
+    var userId = await Onegini.registration(context, Constants.DEFAULT_SCOPES)
         .catchError((error) => print(error.toString()));
     if (userId != null)
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
               builder: (context) => UserScreen(
-                userProfileId: userId,
-              )),(Route<dynamic> route) => false
-      );
+                    userProfileId: userId,
+                  )),
+          (Route<dynamic> route) => false);
+  }
+
+  registrationWithIdentityProvider(String identityProviderId) async {
+    var userId = await Onegini.registrationWithIdentityProvider(
+            identityProviderId, Constants.DEFAULT_SCOPES)
+        .catchError((error) => print(error.toString()));
+    if (userId != null)
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => UserScreen(
+                    userProfileId: userId,
+                  )),
+          (Route<dynamic> route) => false);
+  }
+
+  pinAuthentication() async {
+    var userId = await Onegini.pinAuthentication(context)
+        .catchError((error) => print(error.toString()));
+    if (userId != null)
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => UserScreen(
+                    userProfileId: userId,
+                  )),
+          (Route<dynamic> route) => false);
   }
 
   @override
@@ -81,6 +92,15 @@ class _LoginScreenState extends State<LoginScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            ElevatedButton(
+              onPressed: () {
+                pinAuthentication();
+              },
+              child: Text('Authenticate'),
+            ),
+            SizedBox(
+              height: 20,
+            ),
             ElevatedButton(
               onPressed: () {
                 openWeb();

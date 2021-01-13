@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:onegini/model/application_details.dart';
 import 'package:onegini/model/client_resource.dart';
 import 'package:onegini/onegini.dart';
@@ -142,6 +145,42 @@ class Info extends StatefulWidget {
 }
 
 class _InfoState extends State<Info> {
+  final MethodChannel _channel = const MethodChannel('example');
+
+
+  Future<ApplicationDetails> getApplicationDetails() async {
+    try {
+      var resource =
+      await _channel.invokeMethod("getApplicationDetails");
+      return ApplicationDetails.fromJson(jsonDecode(resource));
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  Future<ClientResource> getClientResource() async {
+    try {
+      var resource = await _channel.invokeMethod("getClientResource");
+      return clientResourceFromJson(resource);
+    } on PlatformException catch (error) {
+      print(error.details.toString());
+      throw error;
+    } on Exception catch (error) {
+      throw error;
+    }
+  }
+
+  Future<String> getImplicitUserDetails() async {
+    try {
+      var resource = await _channel.invokeMethod("getImplicitUserDetails");
+      return resource;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+
+  
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -165,7 +204,8 @@ class _InfoState extends State<Info> {
               height: 20,
             ),
             FutureBuilder<String>(
-                future: Onegini.getImplicitUserDetails(),
+              //implicit
+                future:  getImplicitUserDetails(),
                 builder: (context, snapshot) {
                   return snapshot.hasData
                       ? Column(
@@ -184,7 +224,7 @@ class _InfoState extends State<Info> {
               height: 20,
             ),
             FutureBuilder<ApplicationDetails>(
-              future: Onegini.getApplicationDetails(),
+              future: getApplicationDetails(),
               builder: (context, snapshot) {
                 return snapshot.hasData
                     ? Column(
@@ -241,7 +281,7 @@ class _InfoState extends State<Info> {
             ),
             Expanded(
               child: FutureBuilder<ClientResource>(
-                future: Onegini.getClientResource(),
+                future: getClientResource(),
                 builder: (context, snapshot) {
                   return snapshot.hasData
                       ? ListView.builder(
