@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:onegini/model/authentication_attempt.dart';
 import 'package:onegini/model/onegini_event.dart';
 import 'package:onegini/onegini_event_listener.dart';
 import 'package:onegini_example/screens/pin_screen.dart';
@@ -8,7 +9,7 @@ import 'package:onegini_example/screens/pin_screen.dart';
 
 class OneginiListener extends OneginiEventListener {
   @override
-  void eventClosePin(BuildContext buildContext) {
+  void closePin(BuildContext buildContext) {
     Navigator.of(buildContext).canPop();
   }
 
@@ -35,8 +36,8 @@ class OneginiListener extends OneginiEventListener {
   }
 
   @override
-  void eventOther(BuildContext buildContext, OneginiEvent event) {
-    print(event.value);
+  void eventOther(BuildContext buildContext, Event event) {
+    print(event.eventValue);
   }
 
   @override
@@ -51,5 +52,12 @@ class OneginiListener extends OneginiEventListener {
       MaterialPageRoute(builder: (context) => PinScreen(isAuth: true,)),
     );
   }
+
+  @override
+  void nextAuthenticationAttempt(BuildContext buildContext, AuthenticationAttempt authenticationAttempt) {
+   print(authenticationAttempt.maxAttempts);
+  }
+
+
 
 }

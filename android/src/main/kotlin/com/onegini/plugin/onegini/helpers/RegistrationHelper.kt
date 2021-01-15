@@ -16,11 +16,7 @@ import com.onegini.plugin.onegini.handlers.RegistrationRequestHandler
 
 class RegistrationHelper {
     companion object {
-        fun getRedirectUri(packageContext: Context): String? {
-            val client: OneginiClient? = OneginiSDK.getOneginiClient(packageContext.applicationContext)
-            return client?.configModel?.redirectUri
-        }
-
+        
         fun registerUser(packageContext: Context, @Nullable identityProvider: OneginiIdentityProvider?, scopes: Array<String>,registrationHandler: OneginiRegistrationHandler) {
             val oneginiClient: OneginiClient? = OneginiSDK.getOneginiClient(packageContext)
             oneginiClient?.userClient?.registerUser(identityProvider, scopes, registrationHandler)

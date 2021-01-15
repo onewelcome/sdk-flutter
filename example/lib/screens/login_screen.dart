@@ -15,6 +15,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   EventChannel _eventChannel = const EventChannel("exemple_events");
 
+  bool isRegistrationFlow = false;
+  bool isAuthFlow = false;
+
   @override
   initState() {
     _eventChannel.receiveBroadcastStream().listen((str) {
@@ -34,8 +37,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   openWeb() async {
     /// Start registration
+    setState(() => isRegistrationFlow = true);
     var userId = await Onegini.registration(context, Constants.DEFAULT_SCOPES)
-        .catchError((error) => print(error.toString()));
+        .catchError((error) => setState(() => isRegistrationFlow = false));
     if (userId != null)
       Navigator.pushAndRemoveUntil(
           context,
@@ -47,9 +51,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   registrationWithIdentityProvider(String identityProviderId) async {
+    setState(() => isRegistrationFlow = true);
     var userId = await Onegini.registrationWithIdentityProvider(
             identityProviderId, Constants.DEFAULT_SCOPES)
-        .catchError((error) => print(error.toString()));
+        .catchError((error) => setState(() => isRegistrationFlow = false));
     if (userId != null)
       Navigator.pushAndRemoveUntil(
           context,
@@ -61,8 +66,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   pinAuthentication() async {
+    setState(() => isAuthFlow = true);
     var userId = await Onegini.pinAuthentication(context)
-        .catchError((error) => print(error.toString()));
+        .catchError((error) => setState(() => isAuthFlow = false));
     if (userId != null)
       Navigator.pushAndRemoveUntil(
           context,
@@ -71,6 +77,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     userProfileId: userId,
                   )),
           (Route<dynamic> route) => false);
+  }
+
+  cancelRegistration() async {
+    Onegini.cancelRegistration().catchError((error) =>setState(() => isRegistrationFlow = false));
+  }
+
+  cancelAuth() async {
+    Onegini.cancelAuth().catchError((error) =>setState(() => isAuthFlow = false));
   }
 
   @override
@@ -87,62 +101,81 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
         centerTitle: true,
       ),
-      body: Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                pinAuthentication();
-              },
-              child: Text('Authenticate'),
+      body: isRegistrationFlow || isAuthFlow
+          ? Center(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      isRegistrationFlow ? cancelRegistration() : cancelAuth();
+                    },
+                    child: Text('Cancel'),
+                  ),
+                ],
+              ),
+          )
+          : Center(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      pinAuthentication();
+                    },
+                    child: Text('Authenticate'),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      openWeb();
+                    },
+                    child: Text('Run WEB'),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  FutureBuilder<List<OneginiIdentityProvider>>(
+                    future: Onegini.getIdentityProviders(context),
+                    builder: (BuildContext context, snapshot) {
+                      return snapshot.hasData
+                          ? PopupMenuButton<String>(
+                              child: Container(
+                                padding: EdgeInsets.all(20),
+                                color: Colors.blue,
+                                child: Text(
+                                  "Run with providers",
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w700),
+                                ),
+                              ),
+                              onSelected: (value) {
+                                registrationWithIdentityProvider(value);
+                              },
+                              itemBuilder: (context) {
+                                return snapshot.data
+                                    .map((e) => PopupMenuItem<String>(
+                                          child: Text(e.name),
+                                          value: e.id,
+                                        ))
+                                    .toList();
+                              })
+                          : SizedBox.shrink();
+                    },
+                  ),
+                ],
+              ),
             ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                openWeb();
-              },
-              child: Text('Run WEB'),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            FutureBuilder<List<OneginiIdentityProvider>>(
-              future: Onegini.getIdentityProviders(context),
-              builder: (BuildContext context, snapshot) {
-                return snapshot.hasData
-                    ? PopupMenuButton<String>(
-                        child: Container(
-                          padding: EdgeInsets.all(20),
-                          color: Colors.blue,
-                          child: Text(
-                            "Run with providers",
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.w700),
-                          ),
-                        ),
-                        onSelected: (value) {
-                          registrationWithIdentityProvider(value);
-                        },
-                        itemBuilder: (context) {
-                          return snapshot.data
-                              .map((e) => PopupMenuItem<String>(
-                                    child: Text(e.name),
-                                    value: e.id,
-                                  ))
-                              .toList();
-                        })
-                    : SizedBox.shrink();
-              },
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -123,4 +123,20 @@ class Onegini {
       throw error;
     }
   }
+
+  static Future<void> cancelRegistration() async {
+    try{
+       await _channel.invokeMethod(Constants.cancelRegistrationMethod);
+    }on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  static Future<void> cancelAuth() async {
+    try{
+      await _channel.invokeMethod(Constants.cancelPinAuth);
+    }on PlatformException catch (error) {
+      throw error;
+    }
+  }
 }

@@ -1,25 +1,25 @@
 import 'dart:convert';
 
-OneginiEvent eventFromJson(String str) => OneginiEvent.fromJson(json.decode(str));
+Event eventFromJson(String str) => Event.fromJson(json.decode(str));
 
-String eventToJson(OneginiEvent data) => json.encode(data.toJson());
+String eventToJson(Event data) => json.encode(data.toJson());
 
-class OneginiEvent {
-  OneginiEvent({
-    this.key,
-    this.value,
+class Event {
+  Event({
+    this.eventName,
+    this.eventValue,
   });
 
-  String key;
-  dynamic value;
+  String eventName;
+  String eventValue;
 
-  factory OneginiEvent.fromJson(Map<String, dynamic> json) => OneginiEvent(
-    key: json["key"],
-    value: json["value"],
+  factory Event.fromJson(Map<String, dynamic> json) => Event(
+    eventName: json["eventName"],
+    eventValue: json["eventValue"],
   );
 
   Map<String, dynamic> toJson() => {
-    "key": key,
-    "value": value,
+    "eventName": eventName,
+    "eventValue": eventValue,
   };
 }

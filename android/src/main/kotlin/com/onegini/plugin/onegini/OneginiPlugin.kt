@@ -79,6 +79,12 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             val scopes = call.argument<String>("scopes")!!
             registerUser(null,arrayOf(scopes),result)
         }
+        if (call.method == Constants.METHOD_CANCEL_REGISTRATION) {
+           RegistrationHelper.cancelRegistration()
+        }
+        if (call.method == Constants.METHOD_CANCEL_PIN_AUTH) {
+            PinAuthenticationRequestHandler.CALLBACK?.denyAuthenticationRequest()
+        }
         if (call.method == Constants.METHOD_SEND_PIN) {
             val pin = call.argument<String>("pin")
             val auth = call.argument<Boolean>("isAuth")
@@ -138,7 +144,6 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             result.error("0","User profile is null","")
             return
         }
-        Log.v("USER AUTH PROFILE",userProfile.profileId)
         OneginiSDK.getOneginiClient(context)?.userClient?.authenticateUser(userProfile, object : OneginiAuthenticationHandler {
             override fun onSuccess(userProfile: UserProfile?, customInfo: CustomInfo?) {
                 if (userProfile != null)
@@ -146,7 +151,8 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             }
 
             override fun onError(error: OneginiAuthenticationError) {
-                result.error(error.errorType.toString(), error.message ?: "", error.errorDetails)
+                Log.e("USER AUTH ERROR",error.message?: "")
+                result.error(error.errorType.toString(), error.message ?: "",null)
             }
         })
     }
@@ -184,7 +190,7 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 if (errorMessage == null) {
                     errorMessage = oneginiRegistrationError.message
                 }
-                result.error(errorType.toString(), errorMessage ?: "", oneginiRegistrationError.errorDetails)
+                result.error(errorType.toString(), errorMessage ?: "", null)
             }
         })
     }

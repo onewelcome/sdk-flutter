@@ -16,6 +16,8 @@ class Constants{
   static const String getImplicitUserDetailsMethod = "getImplicitUserDetails";
   static const String getSingleSignOnMethod = "singleSignOn";
   static const String pinAuthentication = 'pinAuthentication';
+  static const String cancelRegistrationMethod = "cancelRegistration";
+  static const String cancelPinAuth = "cancelPinAuth";
 
 
   /// Onegini events
@@ -23,4 +25,5 @@ class Constants{
   static const String eventOpenPinAuth = "eventOpenPinAuth";
   static const String eventOpenPinConfirmation = "eventOpenPinConfirmation";
   static const String eventClosePin = "eventClosePin";
+  static const String eventNextAuthenticationAttempt = "eventNextAuthenticationAttempt";
 }

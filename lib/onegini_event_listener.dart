@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'constants/constants.dart';
+import 'model/authentication_attempt.dart';
 import 'model/onegini_event.dart';
 
 abstract class OneginiEventListener {
@@ -24,11 +25,14 @@ abstract class OneginiEventListener {
       } else if (event == Constants.eventOpenPinConfirmation) {
         openPinConfirmation(_context);
       } else if (event == Constants.eventClosePin) {
-        eventClosePin(_context);
+        closePin(_context);
       } else if (event != null) {
-        print(event);
-        OneginiEvent value = eventFromJson(event);
-        eventOther(_context, value);
+        Event _event = eventFromJson(event);
+        if(_event.eventName == Constants.eventNextAuthenticationAttempt){
+          nextAuthenticationAttempt(_context,authenticationAttemptFromJson(_event.eventValue));
+        } else {
+          eventOther(_context, _event);
+        }
       }
     }).onError((error) {
       eventError(_context, error);
@@ -41,9 +45,12 @@ abstract class OneginiEventListener {
 
   void openPinConfirmation(BuildContext buildContext);
 
-  void eventClosePin(BuildContext buildContext);
+  void nextAuthenticationAttempt(BuildContext buildContext,AuthenticationAttempt authenticationAttempt);
+
+  void closePin(BuildContext buildContext);
 
   void eventError(BuildContext buildContext,PlatformException error);
 
-  void eventOther(BuildContext buildContext, OneginiEvent event);
+  void eventOther(BuildContext buildContext, Event event);
+
 }
