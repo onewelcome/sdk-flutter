@@ -6,9 +6,7 @@ import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
-import com.onegini.plugin.onegini.handlers.CreatePinRequestHandler
-import com.onegini.plugin.onegini.handlers.PinAuthenticationRequestHandler
-import com.onegini.plugin.onegini.handlers.RegistrationRequestHandler
+import com.onegini.plugin.onegini.handlers.*
 import java.util.concurrent.TimeUnit
 
 
@@ -55,12 +53,16 @@ class OneginiSDK {
             if(oneginiClientConfigModel == null) throw Exception("OneginiClientConfigModel must be not null!")
             val applicationContext = context.applicationContext ?: return null
             val registrationRequestHandler = RegistrationRequestHandler(applicationContext)
+            val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
             val pinAuthenticationRequestHandler = PinAuthenticationRequestHandler(applicationContext)
             val createPinRequestHandler = CreatePinRequestHandler(applicationContext)
+            val mobileAuthWithOtpRequestHandler = MobileAuthOtpRequestHandler(applicationContext)
             val clientBuilder = OneginiClientBuilder(applicationContext, createPinRequestHandler, pinAuthenticationRequestHandler) // handlers for optional functionalities
                     .setBrowserRegistrationRequestHandler(registrationRequestHandler)
+                    .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler)
                     .setHttpConnectTimeout(TimeUnit.SECONDS.toMillis(httpConnectionTimeout).toInt())
                     .setHttpReadTimeout(TimeUnit.SECONDS.toMillis(httpReadTimeout).toInt())
+                    .setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
                     .setSecurityController(oneginiSecurityController)
                     .setConfigModel(oneginiClientConfigModel)
             oneginiCustomIdentityProviders.map { clientBuilder.addCustomIdentityProvider(it) }

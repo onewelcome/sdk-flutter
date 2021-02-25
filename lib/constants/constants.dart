@@ -1,4 +1,6 @@
 
+import 'package:flutter/cupertino.dart';
+
 class Constants{
 
   /// Onegini methods
@@ -11,13 +13,20 @@ class Constants{
   static const String getSendPinMethod = "sendPin";
   static const String deregisterUserMethod = "deregisterUser";
   static const String getIdentityProvidersMethod = "getIdentityProviders";
+  static const String getRegisteredAuthenticators = "getRegisteredAuthenticators";
   static const String registrationWithIdentityProviderMethod = "registrationWithIdentityProvider";
+  static const String authenticateWithRegisteredAuthentication = "authenticateWithRegisteredAuthentication";
   static const String getClientResourceMethod = "getClientResource";
   static const String getImplicitUserDetailsMethod = "getImplicitUserDetails";
   static const String getSingleSignOnMethod = "singleSignOn";
   static const String pinAuthentication = 'pinAuthentication';
+  static const String registerFingerprintAuthenticator = 'registerFingerprintAuthenticator';
+  static const String fingerprintAuthentication = 'fingerprintAuthentication';
+  static const String fingerprintActivationSensor = 'fingerprintActivationSensor';
   static const String cancelRegistrationMethod = "cancelRegistration";
   static const String cancelPinAuth = "cancelPinAuth";
+  static const String changePin = "changePin";
+  static const String otpQrCodeResponse ="otpQrCodeResponse";
 
 
   /// Onegini events
@@ -26,4 +35,9 @@ class Constants{
   static const String eventOpenPinConfirmation = "eventOpenPinConfirmation";
   static const String eventClosePin = "eventClosePin";
   static const String eventNextAuthenticationAttempt = "eventNextAuthenticationAttempt";
+
+  static const String eventOpenFingerprintAuth = "eventOpenFingerprintAuth";
+  static const String eventReceivedFingerprintAuth = "eventReceivedFingerprintAuth";
+  static const String eventShowScanningFingerprintAuth = "eventShowScanningFingerprintAuth";
+  static const String eventCloseFingerprintAuth = "eventCloseFingerprintAuth";
 }

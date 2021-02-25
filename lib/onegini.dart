@@ -72,6 +72,50 @@ class Onegini {
     }
   }
 
+  static Future<List<OneginiIdentityProvider>> getRegisteredAuthenticators(
+      BuildContext context) async {
+    _eventListener?.context = context;
+    try {
+      var authenticators =
+      await _channel.invokeMethod(Constants.getRegisteredAuthenticators);
+      return providerFromJson(authenticators);
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  static Future<String> authenticationWithRegisteredAuthenticators(
+      String registeredAuthenticatorsId) async {
+    try {
+      var userId = await _channel.invokeMethod(
+          Constants.authenticateWithRegisteredAuthentication, <String, String>{
+        'registeredAuthenticatorsId': registeredAuthenticatorsId,
+      });
+      return userId;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+  static activateFingerprintSensor(BuildContext context) async {
+    _eventListener?.context = context;
+    try {
+      await _channel.invokeMethod(Constants.fingerprintActivationSensor);
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  static Future<String> registerFingerprint(BuildContext context) async {
+    _eventListener?.context = context;
+    try {
+      String data = await _channel.invokeMethod(Constants.registerFingerprintAuthenticator);
+      return data;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+
 
   static Future<String> pinAuthentication(BuildContext context) async {
     _eventListener?.context = context;
@@ -82,6 +126,8 @@ class Onegini {
       throw error;
     }
   }
+
+
 
   static Future<void> singleSingOn() async {
     try {
@@ -139,4 +185,26 @@ class Onegini {
       throw error;
     }
   }
+
+  static Future<void> changePin(BuildContext context) async {
+    _eventListener?.context = context;
+    try{
+      await _channel.invokeMethod(Constants.changePin);
+    }on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  static Future<void> sendQrCodeData(String data) async {
+    try {
+      await _channel
+          .invokeMethod(Constants.otpQrCodeResponse, <String, dynamic>{
+        'data': data,
+
+      });
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
 }

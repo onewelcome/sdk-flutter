@@ -62,7 +62,6 @@ class CreatePinRequestHandler(private var context: Context) : OneginiCreatePinRe
                 override fun onSuccess() {
                     Log.v("PIN", "FIRST PIN")
                     _pin = pin
-                    OneginiEventsSender.events?.success(EVENT_CLOSE_PIN)
                     OneginiEventsSender.events?.success(EVENT_OPEN_PIN_CONFIRMATION)
                 }
 

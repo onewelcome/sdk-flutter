@@ -18,21 +18,42 @@ abstract class OneginiEventListener {
 
   void listen() {
     _eventChannel.receiveBroadcastStream(chanel_name).listen((event) {
-      if (event == Constants.eventOpenPin) {
-        openPinScreen(_context);
-      } else if(event == Constants.eventOpenPinAuth){
-        openPinScreenAuth(_context);
-      } else if (event == Constants.eventOpenPinConfirmation) {
-        openPinConfirmation(_context);
-      } else if (event == Constants.eventClosePin) {
-        closePin(_context);
-      } else if (event != null) {
-        Event _event = eventFromJson(event);
-        if(_event.eventName == Constants.eventNextAuthenticationAttempt){
-          nextAuthenticationAttempt(_context,authenticationAttemptFromJson(_event.eventValue));
-        } else {
-          eventOther(_context, _event);
-        }
+      print("event -> $event");
+      switch (event) {
+        case Constants.eventOpenPin:
+          openPinScreen(_context);
+          break;
+        case Constants.eventOpenPinAuth:
+          openPinScreenAuth(_context);
+          break;
+        case Constants.eventOpenPinConfirmation:
+          openPinConfirmation(_context);
+          break;
+        case Constants.eventClosePin:
+          closePin(_context);
+          break;
+        case Constants.eventOpenFingerprintAuth:
+          openFingerprintScreen(_context);
+          break;
+        case Constants.eventShowScanningFingerprintAuth:
+          showScanningFingerprint(_context);
+          break;
+        case Constants.eventReceivedFingerprintAuth:
+          receivedFingerprint(_context);
+          break;
+        case Constants.eventCloseFingerprintAuth:
+          closeFingerprintScreen(_context);
+          break;
+        default:
+          if (event != null) {
+            Event _event = eventFromJson(event);
+            if (_event.eventName == Constants.eventNextAuthenticationAttempt) {
+              nextAuthenticationAttempt(
+                  _context, authenticationAttemptFromJson(_event.eventValue));
+            } else {
+              eventOther(_context, _event);
+            }
+          }
       }
     }).onError((error) {
       eventError(_context, error);
@@ -45,12 +66,20 @@ abstract class OneginiEventListener {
 
   void openPinConfirmation(BuildContext buildContext);
 
-  void nextAuthenticationAttempt(BuildContext buildContext,AuthenticationAttempt authenticationAttempt);
+  void nextAuthenticationAttempt(
+      BuildContext buildContext, AuthenticationAttempt authenticationAttempt);
 
   void closePin(BuildContext buildContext);
 
-  void eventError(BuildContext buildContext,PlatformException error);
+  void openFingerprintScreen(BuildContext buildContext);
+
+  void showScanningFingerprint(BuildContext buildContext);
+
+  void receivedFingerprint(BuildContext buildContext);
+
+  void closeFingerprintScreen(BuildContext buildContext);
+
+  void eventError(BuildContext buildContext, PlatformException error);
 
   void eventOther(BuildContext buildContext, Event event);
-
 }

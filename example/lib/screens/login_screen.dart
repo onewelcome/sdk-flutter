@@ -79,11 +79,28 @@ class _LoginScreenState extends State<LoginScreen> {
           (Route<dynamic> route) => false);
   }
 
+
+  authenticateWithRegisteredAuthenticators(String authenticatorId) async {
+    setState(() => isAuthFlow = true);
+    var userId = await Onegini.authenticationWithRegisteredAuthenticators(
+        authenticatorId)
+        .catchError((error) => setState(() => isAuthFlow = false));
+    if (userId != null)
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => UserScreen(
+                userProfileId: userId,
+              )),
+              (Route<dynamic> route) => false);
+  }
+
   cancelRegistration() async {
     Onegini.cancelRegistration().catchError((error) =>setState(() => isRegistrationFlow = false));
   }
 
   cancelAuth() async {
+    setState(() => isAuthFlow = false);
     Onegini.cancelAuth().catchError((error) =>setState(() => isAuthFlow = false));
   }
 
@@ -129,7 +146,40 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: () {
                       pinAuthentication();
                     },
-                    child: Text('Authenticate'),
+                    child: Text('Authenticate with PIN'),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  FutureBuilder<List<OneginiIdentityProvider>>(
+                    future: Onegini.getRegisteredAuthenticators(context),
+                    builder: (BuildContext context, snapshot) {
+                      return snapshot.hasData
+                          ? PopupMenuButton<String>(
+                          child: Container(
+                            padding: EdgeInsets.all(20),
+                            color: Colors.blue,
+                            child: Text(
+                              "Authenticators",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700),
+                            ),
+                          ),
+                          onSelected: (value) {
+                            authenticateWithRegisteredAuthenticators(value);
+                          },
+                          itemBuilder: (context) {
+                            return snapshot.data
+                                .map((e) => PopupMenuItem<String>(
+                              child: Text(e.name),
+                              value: e.id,
+                            ))
+                                .toList();
+                          })
+                          : SizedBox.shrink();
+                    },
                   ),
                   SizedBox(
                     height: 20,
