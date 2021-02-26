@@ -16,8 +16,17 @@ class ErrorMapper {
             } else {
                 return AuthenticationErrorDomainMapping().mapError(error)
             }
+        case ONGFetchImplicitResourceErrorDomain:
+            return FetchImplicitResourceErrorDomainMapping().mapError(error)
+        case ONGMobileAuthEnrollmentErrorDomain:
+            return MobileAuthEnrollmentErrorDomainMapping().mapError(error)
+        case ONGFetchAnonymousResourceErrorDomain:
+            return SdkError(errorDescription: error.localizedDescription, code: error.code)
         default:
-            return SdkError(errorDescription: "Something went wrong.")
+            return SdkError(errorDescription: "Something went wrong.", code: error.code)
         }
     }
+    
+    
 }
+

@@ -2,59 +2,52 @@ import AuthenticationServices
 import OneginiSDKiOS
 import OneginiCrypto
 
-protocol BrowserViewControllerProtocol {
+protocol BrowserHandlerProtocol {
     func handleUrl(url: URL)
 }
 
-protocol BrowserViewControllerEntityProtocol {
-    var browserRegistrationChallenge: ONGBrowserRegistrationChallenge? { get }
-    var registrationUserURL: URL? { get }
-    var redirectURL: URL? { get set }
-    var pin: String? { get set }
+protocol BrowserHandlerToRegisterHandlerProtocol: AnyObject {
+    func handleRedirectURL(url: URL?)
 }
 
 @available(iOS 12.0, *)
-class BrowserViewController: NSObject, BrowserViewControllerProtocol {
+class BrowserViewController: NSObject, BrowserHandlerProtocol {
     var webAuthSession: ASWebAuthenticationSession?
 
-    var registerUserEntity: BrowserViewControllerEntityProtocol
-    let registerUserViewToPresenterProtocol: RegisterUserViewToPresenterProtocol
+    let registerHandler: BrowserHandlerToRegisterHandlerProtocol
 
-    init(registerUserEntity: BrowserViewControllerEntityProtocol, registerUserViewToPresenterProtocol: RegisterUserViewToPresenterProtocol) {
-        self.registerUserEntity = registerUserEntity
-        self.registerUserViewToPresenterProtocol = registerUserViewToPresenterProtocol
+    init(registerHandlerProtocol: BrowserHandlerToRegisterHandlerProtocol) {
+        self.registerHandler = registerHandlerProtocol
     }
-  
+
     func handleUrl(url: URL) {
         let scheme = "oneginiexample";
-        
+
         webAuthSession = ASWebAuthenticationSession(url: url, callbackURLScheme: scheme, completionHandler: { callbackURL, error in
           guard error == nil, let successURL = callbackURL else {
             self.cancelButtonPressed()
             return;
           }
-          
+
           self.handleSuccessUrl(url: successURL)
         })
-      
+
         if #available(iOS 13.0, *) {
             webAuthSession?.prefersEphemeralWebBrowserSession = true
             webAuthSession?.presentationContextProvider = self;
         } else {
           // Fallback on earlier versions
         };
-      
+
         webAuthSession?.start()
     }
-  
+
     private func handleSuccessUrl(url: URL) {
-        registerUserEntity.redirectURL = url
-        registerUserViewToPresenterProtocol.handleRedirectURL()
+        registerHandler.handleRedirectURL(url: url)
     }
-  
+
     private func cancelButtonPressed() {
-        registerUserEntity.redirectURL = nil
-        registerUserViewToPresenterProtocol.handleRedirectURL()
+        registerHandler.handleRedirectURL(url: nil)
     }
 
 }
@@ -73,7 +66,7 @@ extension BrowserViewController: ASWebAuthenticationPresentationContextProviding
 
         // wait ...
         group.wait()
-        
+
         return anchor!
     }
 }

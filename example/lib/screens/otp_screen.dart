@@ -19,6 +19,8 @@ class _OtpScreenState extends State<OtpScreen> {
   ok() async {
   _channel.invokeMethod("otpOk", <String, String>{
       'password': myController.text,
+    }).catchError((error) => {
+      print(error)
     });
 
   }

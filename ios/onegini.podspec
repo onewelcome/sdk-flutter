@@ -18,7 +18,7 @@ A new flutter plugin project.
   s.platform = :ios, '12.0'
 
   # ***************************
-  s.dependency 'OneginiSDKiOS', '9.0.0'
+  s.dependency 'OneginiSDKiOS', '~> 9.6'
   s.requires_arc  = true
   # ***************************
 

@@ -9,18 +9,16 @@ protocol ConnectorToFlutterBridgeProtocol: NSObject {
 
 enum OneginiBridgeEvents : String {
     case pinNotification = "ONEGINI_PIN_NOTIFICATION"
-    case otpOpen = "ONEGINI_OTP_OPEN"
+    case customRegistrationNotification = "ONEGINI_CUSTOM_REGISTRATION_NOTIFICATION"
+    case authWithOtpNotification = "ONEGINI_MOBILE_AUTH_OTP_NOTIFICATION"
+    case otpOpen = "OPEN_OTP"
     case errorNotification = "ONEGINI_ERROR_NOTIFICATION"
 }
 
 public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, FlutterStreamHandler {
  
-    // Pin test default value
-    static let pinTestValue: String = "55668"
     var bridgeConnector: BridgeConnector
     private var eventSink: FlutterEventSink?
-    var resourcesHandler: FetchResourcesProtocol
-    var authUserProfile: ONGUserProfile?
     public var eventSinkNativePart: FlutterEventSink?
     public var eventSinkParameter: String?
     
@@ -35,7 +33,6 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
     
     override init() {
         self.bridgeConnector = BridgeConnector()
-        self.resourcesHandler = ResourcesHandler()
         super.init()
         self.bridgeConnector.bridge = self
     }
@@ -48,48 +45,60 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
         return [OneginiBridgeEvents.pinNotification.rawValue]
     }
     
-
-    func getRedirectUri(_ callback: (@escaping FlutterResult)) -> Void {
-        let redirectUri = ONGClient.sharedInstance().configModel.redirectURL;
-      
-        callback([["success" : true, "redirectUri" : redirectUri!]])
-    }
-    
     func startOneginiModule(callback: @escaping FlutterResult) {
         ONGClientBuilder().build()
         ONGClient.sharedInstance().start {
-          result1, error in
-            callback(result1)
+          result, error in
+            if let error = error {
+                let mappedError = ErrorMapper().mapError(error)
+                callback(mappedError.flutterError())
+                return
+            }
+            
+            if !result {
+                callback(SdkError(errorDescription: "Something went wrong.").flutterError())
+                return
+            }
+            
+            let profiles = ONGUserClient.sharedInstance().userProfiles()
+            let value: [[String: String?]] = profiles.compactMap({ ["profileId": $0.profileId] })
+
+            let data = String.stringify(json: value)
+            
+            callback(data)
         }
     }
     
     public func otpResourceCodeConfirmation(code: String?, callback: @escaping FlutterResult) {
-        bridgeConnector.toRegistrationHandler.handleOTPRegistration(code: code)
-    }
-    
-    func getApplicationDetails(callback: @escaping FlutterResult) {
-        self.resourcesHandler.fetchAppDetails { (data, error) in
-            print(data ?? "")
-            error != nil ? callback(FlutterError(code: "401", message: error?.errorDescription ?? "Unexpected Error.", details: error?.toJSON())) : callback(data)
+        
+        bridgeConnector.toMobileAuthConnector.mobileAuthHandler.handleOTPMobileAuth(code ?? "", customRegistrationChallenge: bridgeConnector.toRegistrationConnector.registrationHandler.currentChallenge()) {
+            (_ , error) -> Void in
+
+            error != nil ? callback(error?.flutterError()) : callback(nil)
         }
     }
     
-    func fetchDevicesList(callback: @escaping FlutterResult) {
-        self.resourcesHandler.fetchDeviceList { (data, error) in
-            error != nil ? callback(FlutterError(code: "401", message: error?.errorDescription ?? "Unexpected Error.", details: error?.toJSON())) : callback(data)
+    public func getApplicationDetails(callback: @escaping FlutterResult) {
+        self.bridgeConnector.toResourcesHandler.fetchAppDetails { (data, error) in
+            error != nil ? callback(error?.flutterError()) : callback(data)
+        }
+    }
+    
+    public func fetchDevicesList(callback: @escaping FlutterResult) {
+        self.bridgeConnector.toResourcesHandler.fetchDeviceList { (data, error) in
+            error != nil ? callback(error?.flutterError()) : callback(data)
         }
     }
 
-    func fetchImplicitResources(callback: @escaping FlutterResult) {
-        guard let _profile = self.authUserProfile else { return }
-        self.resourcesHandler.fetchImplicitResources(profile: _profile) { (data, error) in
-            debugPrint(data ?? "", error ?? "")
-            error != nil ? callback(FlutterError(code: "401", message: error?.errorDescription ?? "Unexpected Error.", details: error?.toJSON())) : callback(data)
+    public func fetchImplicitResources(callback: @escaping FlutterResult) {
+        guard let _profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else { return }
+        self.bridgeConnector.toResourcesHandler.fetchImplicitResources(profile: _profile) { (data, error) in
+            error != nil ? callback(error?.flutterError()) : callback(data)
         }
     }
     
     func identityProviders(callback: @escaping FlutterResult) {
-        let _providers = self.bridgeConnector.toRegistrationHandler.identityProviders()
+        let _providers = ONGClient.sharedInstance().userClient.identityProviders()
         let jsonData = _providers.compactMap { (identityProvider) -> [String: Any]? in
             var data = [String: Any]()
             data["id"] = identityProvider.identifier
@@ -97,48 +106,66 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
             return data
         }
         
-        let data = try? JSONSerialization.data(withJSONObject: jsonData, options: [])
-        let convertedString = data != nil ? String(data: data!, encoding: String.Encoding.utf8) : "[]"
-        callback(convertedString)
+        let data = String.stringify(json: jsonData)
+        callback(data)
     }
     
     func logOut(callback: @escaping FlutterResult) {
-        bridgeConnector.toRegistrationHandler.logout { (error) in
-            error != nil ? callback(FlutterError(code: "401", message: error?.errorDescription ?? "Unexpected Error.", details: error?.toJSON())) : callback(true)
+        bridgeConnector.toLogoutUserInteractor.logout { (error) in
+            error != nil ? callback(error?.flutterError()) : callback(true)
         }
     }
     
     func deregisterUser(callback: @escaping FlutterResult) {
-        bridgeConnector.toRegistrationHandler.deregister { (error) in
-            error != nil ? callback(FlutterError(code: "401", message: error?.errorDescription ?? "Unexpected Error.", details: error?.toJSON())) : callback(true)
+        bridgeConnector.toDeregisterUserInteractor.disconnect { (error) in
+            error != nil ? callback(SdkError.convertToFlutter(error)) : callback(true)
         }
     }
     
     func registerUser(_ identityProviderId: String? = nil, callback: @escaping FlutterResult) -> Void {
-         bridgeConnector.toRegistrationHandler.signUp(identityProviderId) { [weak self]
-           (_, userProfile, error) -> Void in
-          
-             if let userProfile = userProfile {
-                self?.authUserProfile = userProfile
-                 callback(userProfile.profileId)
-             } else {
-                 
-                 callback(FlutterError(code: "401", message: error?.errorDescription ?? "Unexpected Error.", details: error?.toJSON()))
-             }
-          
-         }
-     }
+
+        bridgeConnector.toRegistrationConnector.registrationHandler.signUp(identityProviderId) {  (_, userProfile, error) -> Void in
+
+            if let _userProfile = userProfile {
+                callback(_userProfile.profileId)
+            } else {
+                callback(SdkError.convertToFlutter(error))
+            }
+        }
+    }
     
-     func handleRegistrationCallback(_ url: (NSString)) -> Void {
-         bridgeConnector.toRegistrationHandler.handleRedirectURL(url: URL(string: url as String)!)
-     }
+    public func cancelRegistration() -> Void {
+        bridgeConnector.toRegistrationConnector.registrationHandler.cancelRegistration()
+    }
     
-     public func cancelRegistration() -> Void {
-         bridgeConnector.toRegistrationHandler.cancelRegistration()
+    func authenticateUser(_ profileId: String?,
+                          callback: @escaping FlutterResult) -> Void {
+        
+        guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
+        {
+            callback(SdkError.convertToFlutter(SdkError.init(errorDescription: "User profile is null")))
+            return
+        }
+
+        bridgeConnector.toLoginHandler.authenticateUser(profile) {
+            (userProfile, error) -> Void in
+
+            if let _userProfile = userProfile {
+                callback(_userProfile.profileId)
+            } else {
+                callback(SdkError.convertToFlutter(error))
+            }
+        }
+    }
+    
+     func handleRegistrationCallback(_ url: String) -> Void {
+        guard let _url = URL(string: url) else { return }
+        
+        bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: _url)
      }
   
      func submitPinAction(_ action: String, isCreatePinFlow: Bool, pin: String) -> Void {
-         bridgeConnector.toChangePinConnector.handlePinAction(action, isCreatePinFlow, pin)
+        bridgeConnector.toPinHandlerConnector.handlePinAction(action, isCreatePinFlow ? PinAction.provide.rawValue : PinAction.cancel.rawValue, pin)
      }
     
      func sendBridgeEvent(eventName: OneginiBridgeEvents, data: Any!) -> Void {

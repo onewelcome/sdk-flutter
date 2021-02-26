@@ -18,7 +18,6 @@ class FetchDeviceListInteractor: FetchDeviceListInteractorProtocol {
             } else {
                 if let data = response?.data, let convertedString = String(data: data, encoding: String.Encoding.utf8)
                    {
-                    print(convertedString)
                     completion(convertedString, nil)
                 } else {
                     completion(nil, nil)
@@ -28,12 +27,3 @@ class FetchDeviceListInteractor: FetchDeviceListInteractorProtocol {
     }
 }
 
-//struct Devices: Codable {
-//    var devices: [Device]
-//}
-//
-//struct Device: Codable {
-//    var name: String
-//    var id: String
-//    var application: String
-//}
