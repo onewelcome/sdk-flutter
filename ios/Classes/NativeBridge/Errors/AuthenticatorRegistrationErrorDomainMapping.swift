@@ -9,18 +9,18 @@ class AuthenticatorRegistrationErrorDomainMapping {
         switch error.code {
         case ONGAuthenticatorRegistrationError.userNotAuthenticated.rawValue:
             let errorDescription = "A user must be authenticated in order to register an authenticator."
-            return SdkError(title: title, errorDescription: errorDescription, recoverySuggestion: "Try authenticate user.")
+            return SdkError(title: title, errorDescription: errorDescription, recoverySuggestion: "Try authenticate user.", code: error.code)
 
         case ONGAuthenticatorRegistrationError.authenticatorInvalid.rawValue:
             let errorDescription = "The authenticator that you provided is invalid. It may not exist, please verify whether you have supplied the correct authenticator."
-            return SdkError(title: title, errorDescription: errorDescription)
+            return SdkError(title: title, errorDescription: errorDescription, code: error.code)
 
         case ONGAuthenticatorRegistrationError.customAuthenticatorFailure.rawValue:
             let errorDescription = "Custom authenticator registration has failed."
-            return SdkError(title: title, errorDescription: errorDescription)
+            return SdkError(title: title, errorDescription: errorDescription, code: error.code)
 
         default:
-            return SdkError(errorDescription: "Something went wrong.")
+            return SdkError(errorDescription: "Something went wrong.", code: error.code)
         }
     }
 

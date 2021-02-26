@@ -14,8 +14,8 @@ class Event {
   String eventValue;
 
   factory Event.fromJson(Map<String, dynamic> json) => Event(
-    eventName: json["eventName"],
-    eventValue: json["eventValue"],
+    eventName: json["eventName"].toString(),
+    eventValue: json["eventValue"].toString(),
   );
 
   Map<String, dynamic> toJson() => {
