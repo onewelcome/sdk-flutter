@@ -27,6 +27,10 @@ class Constants{
   static const String cancelPinAuth = "cancelPinAuth";
   static const String changePin = "changePin";
   static const String otpQrCodeResponse ="otpQrCodeResponse";
+  static const String acceptOTPAuth = "acceptOTPAuth";
+  static const String denyOTPAuth = "denyOTPAuth";
+  static const String isUserNotRegisteredFingerprint = "isUserNotRegisteredFingerprint";
+
 
 
   /// Onegini events
@@ -40,4 +44,8 @@ class Constants{
   static const String eventReceivedFingerprintAuth = "eventReceivedFingerprintAuth";
   static const String eventShowScanningFingerprintAuth = "eventShowScanningFingerprintAuth";
   static const String eventCloseFingerprintAuth = "eventCloseFingerprintAuth";
+
+  static const String eventOpenAuthOTP = "eventOpenAuthOtp";
+  static const String eventCancelAuthOTP = "eventCancelAuthOtp";
+  static const String eventCloseAuthOTP = "eventCloseAuthOtp";
 }

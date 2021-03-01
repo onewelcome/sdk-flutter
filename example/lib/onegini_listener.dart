@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/model/authentication_attempt.dart';
 import 'package:onegini/model/onegini_event.dart';
 import 'package:onegini/onegini_event_listener.dart';
+import 'package:onegini_example/screens/auth_otp_screen.dart';
 import 'package:onegini_example/screens/fingerprint_screen.dart';
 import 'package:onegini_example/screens/pin_screen.dart';
 
@@ -58,7 +60,15 @@ class OneginiListener extends OneginiEventListener {
   @override
   void nextAuthenticationAttempt(
       BuildContext buildContext, AuthenticationAttempt authenticationAttempt) {
-    print(authenticationAttempt.maxAttempts);
+    Fluttertoast.showToast(
+        msg: "failed attempts ${authenticationAttempt.failedAttempts} from ${authenticationAttempt.maxAttempts}",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red,
+        textColor: Colors.white,
+        fontSize: 16.0
+    );
   }
 
   @override
@@ -95,4 +105,20 @@ class OneginiListener extends OneginiEventListener {
   }
 
   OverlayEntry overlayEntry;
+
+  @override
+  void openAuthOtp(BuildContext buildContext, String message) {
+    Navigator.push(
+      buildContext,
+      MaterialPageRoute(
+          builder: (context) => AuthOtpScreen(
+            message: message,
+          )),
+    );
+  }
+
+  @override
+  void closeAuthOtp(BuildContext buildContext) {
+    Navigator.of(buildContext).pop();
+  }
 }

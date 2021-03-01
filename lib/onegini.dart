@@ -17,6 +17,10 @@ class Onegini {
     return version;
   }
 
+  static setEventContext(BuildContext context){
+    _eventListener.context = context;
+  }
+
   static Future<bool> startApplication(
       OneginiEventListener eventListener) async {
     _eventListener = eventListener;
@@ -195,6 +199,15 @@ class Onegini {
     }
   }
 
+  static Future<bool> isUserNotRegisteredFingerprint() async {
+    try{
+      var registered = await _channel.invokeMethod(Constants.isUserNotRegisteredFingerprint);
+      return registered;
+    }on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
   static Future<void> sendQrCodeData(String data) async {
     try {
       await _channel
@@ -207,4 +220,22 @@ class Onegini {
     }
   }
 
+  static Future<void> acceptOTPAuth(BuildContext context) async {
+    _eventListener.context = context;
+    try{
+      await _channel.invokeMethod(Constants.acceptOTPAuth);
+    }on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+
+  static Future<void> denyOTPAuth(BuildContext context) async {
+    _eventListener.context = context;
+    try{
+      await _channel.invokeMethod(Constants.denyOTPAuth);
+    }on PlatformException catch (error) {
+      throw error;
+    }
+  }
 }

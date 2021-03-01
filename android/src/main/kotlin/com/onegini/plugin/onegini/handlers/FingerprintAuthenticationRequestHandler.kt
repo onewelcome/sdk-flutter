@@ -17,19 +17,16 @@ class FingerprintAuthenticationRequestHandler(val context: Context) : OneginiFin
     }
 
     override fun onNextAuthenticationAttempt() {
-       // startFingerprintActivity(MSG_EXTRA_RECEIVED_FINGERPRINT)
         OneginiEventsSender.events?.success(Constants.EVENT_RECEIVED_FINGERPRINT_AUTH)
 
     }
 
     override fun onFingerprintCaptured() {
         OneginiEventsSender.events?.success(Constants.EVENT_SHOW_SCANNING_FINGERPRINT_AUTH)
-        // startFingerprintActivity(MSG_EXTRA_SHOW_SCANNING)
     }
 
     override fun finishAuthentication() {
         OneginiEventsSender.events?.success(Constants.EVENT_CLOSE_FINGERPRINT_AUTH)
-        // startFingerprintActivity(MSG_EXTRA_CLOSE)
     }
     
     companion object {

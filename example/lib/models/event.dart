@@ -8,20 +8,20 @@ String eventToJson(Event data) => json.encode(data.toJson());
 
 class Event {
   Event({
-    this.key,
-    this.value,
+    this.eventName,
+    this.eventValue,
   });
 
-  String key;
-  String value;
+  String eventName;
+  String eventValue;
 
   factory Event.fromJson(Map<String, dynamic> json) => Event(
-    key: json["key"],
-    value: json["value"],
+    eventName: json["eventName"],
+    eventValue: json["eventValue"],
   );
 
   Map<String, dynamic> toJson() => {
-    "key": key,
-    "value": value,
+    "eventName": eventName,
+    "eventValue": eventValue,
   };
 }

@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:onegini/model/application_details.dart';
 import 'package:onegini/model/client_resource.dart';
 import 'package:onegini/onegini.dart';
+import 'package:onegini_example/screens/qr_scan_screen.dart';
 
 import 'login_screen.dart';
 
@@ -20,6 +21,7 @@ class UserScreen extends StatefulWidget {
 class _UserScreenState extends State<UserScreen> {
   int _currentIndex = 0;
   List<Widget> _children;
+  bool isNotEnableFingerprint = true;
 
   void onTabTapped(int index) {
     setState(() {
@@ -38,6 +40,43 @@ class _UserScreenState extends State<UserScreen> {
     super.initState();
   }
 
+  logOut(BuildContext context) async {
+    Navigator.pop(context);
+    var isLogOut =
+        await Onegini.logOut().catchError((error) => print(error.toString()));
+    if (isLogOut) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => LoginScreen()),
+      );
+    }
+  }
+
+  deregister(BuildContext context) async {
+    Navigator.pop(context);
+    var isLogOut = await Onegini.deregisterUser().catchError((error) => {
+          //todo OneginiDeregistrationError
+        });
+    if (isLogOut) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => LoginScreen()),
+      );
+    }
+  }
+
+  registerFingerprint(BuildContext context) async {
+    var data = await Onegini.registerFingerprint(context)
+        .catchError((error) => print(error.toString()));
+    setState(() => isNotEnableFingerprint = data!=null );
+    Navigator.pop(context);
+  }
+
+  changePin(BuildContext context) {
+    Onegini.changePin(context);
+    Navigator.pop(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,6 +92,47 @@ class _UserScreenState extends State<UserScreen> {
         centerTitle: true,
       ),
       body: _children[_currentIndex],
+      drawer: Drawer(
+        child: Column(
+          children: [
+            DrawerHeader(
+              child: Container(),
+            ),
+            FutureBuilder<bool>(
+              future: Onegini.isUserNotRegisteredFingerprint(),
+              builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+                if (snapshot.hasData) {
+                  isNotEnableFingerprint = snapshot.data;
+                  return  snapshot.data && isNotEnableFingerprint
+                      ? ListTile(
+                          title: Text("enable fingerprint auth"),
+                          onTap: () => registerFingerprint(context),
+                    leading: Icon(Icons.fingerprint_outlined),
+                        )
+                      : SizedBox.shrink();
+                } else {
+                  return SizedBox.shrink();
+                }
+              },
+            ),
+            ListTile(
+              title: Text("Change pin"),
+              onTap: () => changePin(context),
+              leading: Icon(Icons.vpn_key_rounded),
+            ),
+            ListTile(
+              title: Text("Log Out"),
+              onTap: () => logOut(context),
+              leading: Icon(Icons.logout),
+            ),
+            ListTile(
+              title: Text("Deregister"),
+              onTap: () => deregister(context),
+              leading: Icon(Icons.app_registration),
+            )
+          ],
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: onTabTapped,
@@ -66,46 +146,13 @@ class _UserScreenState extends State<UserScreen> {
 }
 
 class Home extends StatelessWidget {
-  logOut(BuildContext context) async {
-    var isLogOut =
-        await Onegini.logOut().catchError((error) => print(error.toString()));
-    if (isLogOut) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => LoginScreen()),
-      );
-    }
-  }
-
-  deregister(BuildContext context) async {
-    var isLogOut = await Onegini.deregisterUser().catchError((error) => {
-          //todo OneginiDeregistrationError
-        });
-    if (isLogOut) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => LoginScreen()),
-      );
-    }
-  }
-
-  registerFingerprint(BuildContext context) async {
-   await Onegini.registerFingerprint(context)
-        .catchError((error) => print(error.toString()));
-  }
-
   authWithOpt(BuildContext context) async {
-//    var data = await Navigator.push(
-//      context,
-//      MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
-//    );
-//    if(data != null)
-    Onegini.sendQrCodeData("eyJ0cmFuc2FjdGlvbl9pZCI6IjA4YTE3YjEwLWE2YmMtNDM4Mi05NDRmLTU2OTEzNmI3YjdkNiIsIm90cCI6InZJVGgxZGZYeHdqRm9XVW5FcVJEQVE9PSJ9");
-  }
-
-  changePin(BuildContext context)  {
-
-    Onegini.changePin(context);
+    Onegini.setEventContext(context);
+    var data = await Navigator.push(
+      context,
+      MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
+    );
+    if (data != null) Onegini.sendQrCodeData(data);
   }
 
   @override
@@ -130,53 +177,15 @@ class Home extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                registerFingerprint(context);
-              },
-              child: Text('fingerprint'),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                  authWithOpt(context);
+                authWithOpt(context);
               },
               child: Text('auth with opt'),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                changePin(context);
-              },
-              child: Text('change pin'),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                logOut(context);
-              },
-              child: Text('logOut'),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                deregister(context);
-              },
-              child: Text('Deregister'),
             ),
           ],
         ),
       ),
     );
   }
-
-
 }
 
 class Info extends StatefulWidget {

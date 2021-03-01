@@ -44,13 +44,22 @@ abstract class OneginiEventListener {
         case Constants.eventCloseFingerprintAuth:
           closeFingerprintScreen(_context);
           break;
+        case Constants.eventCloseAuthOTP:
+          closeAuthOtp(_context);
+          break;
+        case Constants.eventCancelAuthOTP:
+
+          break;
         default:
           if (event != null) {
             Event _event = eventFromJson(event);
             if (_event.eventName == Constants.eventNextAuthenticationAttempt) {
               nextAuthenticationAttempt(
                   _context, authenticationAttemptFromJson(_event.eventValue));
-            } else {
+            }if(_event.eventName == Constants.eventOpenAuthOTP){
+              openAuthOtp(_context, _event.eventValue);
+            }
+            else {
               eventOther(_context, _event);
             }
           }
@@ -59,6 +68,11 @@ abstract class OneginiEventListener {
       eventError(_context, error);
     });
   }
+
+
+  void openAuthOtp(BuildContext buildContext,String message);
+
+  void closeAuthOtp(BuildContext buildContext);
 
   void openPinScreen(BuildContext buildContext);
 

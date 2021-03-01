@@ -2,9 +2,13 @@ package com.onegini.plugin.onegini.handlers
 
 import android.content.Context
 import android.util.Log
+import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.handlers.request.OneginiMobileAuthWithOtpRequestHandler
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiAcceptDenyCallback
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthenticationRequest
+import com.onegini.plugin.onegini.constants.Constants
+import com.onegini.plugin.onegini.helpers.OneginiEventsSender
+import com.onegini.plugin.onegini.models.OneginiEvent
 
 class MobileAuthOtpRequestHandler(private val context: Context) : OneginiMobileAuthWithOtpRequestHandler {
     private var userProfileId: String? = null
@@ -12,15 +16,17 @@ class MobileAuthOtpRequestHandler(private val context: Context) : OneginiMobileA
     override fun startAuthentication(oneginiMobileAuthenticationRequest: OneginiMobileAuthenticationRequest,
                                      oneginiAcceptDenyCallback: OneginiAcceptDenyCallback) {
         
-        Log.v("OTPRequest","test")
+        
         CALLBACK = oneginiAcceptDenyCallback
         userProfileId = oneginiMobileAuthenticationRequest.userProfile.profileId
         message = oneginiMobileAuthenticationRequest.message
-        //notifyActivity(COMMAND_START)
+        Log.v("OTPRequest","$message")
+        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_OPEN_AUTH_OTP, message ?:"")))
+        
     }
 
     override fun finishAuthentication() {
-       // notifyActivity(COMMAND_FINISH)
+        OneginiEventsSender.events?.success(Constants.EVENT_CLOSE_AUTH_OTP)
     }
     companion object {
         var CALLBACK: OneginiAcceptDenyCallback? = null

@@ -22,12 +22,12 @@ class _LoginScreenState extends State<LoginScreen> {
   initState() {
     _eventChannel.receiveBroadcastStream().listen((str) {
       Event event = eventFromJson(str);
-      if (event.key == "OPEN_OTP") {
+      if (event.eventName == "OPEN_OTP") {
         Navigator.push(
           context,
           MaterialPageRoute(
               builder: (context) => OtpScreen(
-                    password: event.value,
+                    password: event.eventValue,
                   )),
         );
       }
