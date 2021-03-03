@@ -100,7 +100,7 @@ class Onegini {
       throw error;
     }
   }
-  static activateFingerprintSensor(BuildContext context) async {
+  static Future<void> activateFingerprintSensor(BuildContext context) async {
     _eventListener?.context = context;
     try {
       await _channel.invokeMethod(Constants.fingerprintActivationSensor);
@@ -201,8 +201,8 @@ class Onegini {
 
   static Future<bool> isUserNotRegisteredFingerprint() async {
     try{
-      var registered = await _channel.invokeMethod(Constants.isUserNotRegisteredFingerprint);
-      return registered;
+      var isUserNotRegisteredFingerprint = await _channel.invokeMethod(Constants.isUserNotRegisteredFingerprint);
+      return isUserNotRegisteredFingerprint;
     }on PlatformException catch (error) {
       throw error;
     }
