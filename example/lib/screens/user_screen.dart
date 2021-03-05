@@ -168,7 +168,7 @@ class Home extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Onegini.singleSingOn();
+                Onegini.singleSingOn("https://login-mobile.test.onegini.com/personal/dashboard");
               },
               child: Text('Single Sign On'),
             ),

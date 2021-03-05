@@ -37,7 +37,11 @@ android {
         abortOnError false
         disable 'InvalidPackage'
     }
-    
+
+    testOptions {
+        unitTests.includeAndroidResources = true
+        unitTests.returnDefaultValues = true
+    }
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).

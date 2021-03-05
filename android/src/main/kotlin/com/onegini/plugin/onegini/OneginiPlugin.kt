@@ -61,6 +61,10 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         context = flutterPluginBinding.applicationContext
     }
 
+    fun setContext(context: Context) {
+        this.context = context
+    }
+
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         if (call.method == Constants.METHOD_GET_PLATFORM_VERSION) {
             result.success("Android ${android.os.Build.VERSION.RELEASE}")
@@ -79,7 +83,12 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             })
         }
         if (call.method == Constants.METHOD_REGISTRATION) {
-            val scopes = call.argument<String>("scopes")!!
+
+            val scopes = call.argument<String>("scopes")
+            if (scopes == null) {
+                result.error("0", "scope can`t be null", "")
+                return
+            }
             registerUser(null, arrayOf(scopes), result)
         }
         if (call.method == Constants.METHOD_CANCEL_REGISTRATION) {
@@ -96,26 +105,24 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         if (call.method == Constants.METHOD_SEND_PIN) {
             val pin = call.argument<String>("pin")
             val auth = call.argument<Boolean>("isAuth")
+            if(pin == null) throw Exception("Pin can`t be null")
             if (auth != null && auth) {
-                PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin?.toCharArray())
+                PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin.toCharArray())
             } else {
-                CreatePinRequestHandler.CALLBACK?.onPinProvided(pin?.toCharArray())
+                CreatePinRequestHandler.CALLBACK?.onPinProvided(pin.toCharArray())
             }
 
         }
         if (call.method == Constants.METHOD_PIN_AUTHENTICATION) {
             val userProfile = OneginiSDK.getOneginiClient(context)?.userClient?.userProfiles?.first()
-            if (userProfile == null) {
-                result.error("0", "User profile is null", "")
-                return
-            }
             authenticateUser(userProfile, null, result)
         }
         if (call.method == Constants.METHOD_REGISTER_FINGERPRINT_AUTHENTICATOR) {
             registerFingerprint(result)
         }
         if (call.method == Constants.METHOD_SINGLE_SIGN_ON) {
-            startSingleSignOn(result)
+            val url = call.argument<String>("url")
+            startSingleSignOn(url,result)
         }
         if (call.method == Constants.METHOD_LOG_OUT) {
             logOut(result)
@@ -125,14 +132,17 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
 
         if (call.method == Constants.METHOD_OTP_QR_CODE_RESPONSE) {
-            val data = call.argument<String>("data") ?: return
-            Log.v("QR", "data => $data")
+            val data = call.argument<String>("data")
+             if (data.isNullOrEmpty()){
+                 result.error("0","data can`t be null or empty",null)
+                 return
+             }
             mobileAuthWithOtp(data, result)
         }
-        
-        if(call.method == Constants.METHOD_IS_USER_NOT_REGISTERED_FINGERPRINT){
+
+        if (call.method == Constants.METHOD_IS_USER_NOT_REGISTERED_FINGERPRINT) {
             val authenticator = getNotRegisteredFingerprint()
-            if(authenticator != null){
+            if (authenticator != null) {
                 result.success(true)
             } else result.success(false)
         }
@@ -178,7 +188,11 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
         if (call.method == Constants.METHOD_REGISTRATION_WITH_IDENTITY_PROVIDER) {
             val identityProviderId = call.argument<String>("identityProviderId")
-            val scopes = call.argument<String>("scopes")!!
+            val scopes = call.argument<String>("scopes")
+            if(scopes.isNullOrEmpty()) {
+                result.error("0","scopes can`t be null or empty",null)
+                return
+            }
             val identityProviders = OneginiSDK.getOneginiClient(context)?.userClient?.identityProviders
             if (identityProviders != null)
                 for (identityProvider in identityProviders) {
@@ -226,9 +240,10 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
 
-    private fun getNotRegisteredFingerprint() : OneginiAuthenticator?{
+    private fun getNotRegisteredFingerprint(): OneginiAuthenticator? {
         var fingerprintAuthenticator: OneginiAuthenticator? = null
-        val authenticatedUserProfile = OneginiSDK.getOneginiClient(context)?.userClient?.authenticatedUserProfile ?: return null
+        val authenticatedUserProfile = OneginiSDK.getOneginiClient(context)?.userClient?.authenticatedUserProfile
+                ?: return null
         Log.v("FINGERPRINT", "user profile => $authenticatedUserProfile")
         val notRegisteredAuthenticators = OneginiSDK.getOneginiClient(context)?.userClient?.getNotRegisteredAuthenticators(authenticatedUserProfile)
                 ?: return null
@@ -282,13 +297,13 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
 
     private fun enrollMobileAuthentication(data: String, result: Result) {
-        OneginiSDK.getOneginiClient(context)?.userClient?.enrollUserForMobileAuth(object : OneginiMobileAuthEnrollmentHandler{
+        OneginiSDK.getOneginiClient(context)?.userClient?.enrollUserForMobileAuth(object : OneginiMobileAuthEnrollmentHandler {
             override fun onSuccess() {
-               handleOTPAuth(data,result)
+                handleOTPAuth(data, result)
             }
 
             override fun onError(p0: OneginiMobileAuthEnrollmentError?) {
-                Log.e("enroll",p0?.message,p0?.cause)
+                result.error(p0?.errorType.toString(),p0?.message,p0?.cause?.message.toString())
             }
 
         })
@@ -296,34 +311,45 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
 
     private fun mobileAuthWithOtp(data: String, result: Result) {
-        val userClient = OneginiSDK.getOneginiClient(context)?.userClient ?: return
+        val userClient = OneginiSDK.getOneginiClient(context)?.userClient
+        if(userClient == null){
+            result.error("0","user not found",null)
+            return
+        }
         val authenticatedUserProfile = OneginiSDK.getOneginiClient(context)?.userClient?.authenticatedUserProfile
-                ?: return
+        if(authenticatedUserProfile == null){
+            result.error("0","user is not authenticated",null)
+            return
+        }
         if (!userClient.isUserEnrolledForMobileAuth(authenticatedUserProfile)) {
-            enrollMobileAuthentication(data,result)
-        }else {
-            handleOTPAuth(data,result)
+            enrollMobileAuthentication(data, result)
+        } else {
+            handleOTPAuth(data, result)
         }
 
     }
 
 
-    private fun handleOTPAuth(data: String, result: Result){
+    private fun handleOTPAuth(data: String, result: Result) {
         OneginiSDK.getOneginiClient(context)?.userClient?.handleMobileAuthWithOtp(data, object : OneginiMobileAuthWithOtpHandler {
             override fun onSuccess() {
-                Log.v("AUTH OPT","Success")
-               result.success("success auth with otp")
+                Log.v("AUTH OPT", "Success")
+                result.success("success auth with otp")
             }
 
             override fun onError(p0: OneginiMobileAuthWithOtpError?) {
                 Log.e("QR", "${p0?.message} ", p0?.cause)
-                result.error(p0?.errorType.toString(),p0?.message,p0?.cause?.message)
+                result.error(p0?.errorType.toString(), p0?.message, p0?.cause?.message)
             }
         })
     }
 
 
-    private fun authenticateUser(userProfile: UserProfile, authenticator: OneginiAuthenticator?, result: Result) {
+    private fun authenticateUser(userProfile: UserProfile?, authenticator: OneginiAuthenticator?, result: Result) {
+        if (userProfile == null) {
+            result.error("0", "User profile is null", "")
+            return
+        }
         if (authenticator == null) {
             OneginiSDK.getOneginiClient(context)?.userClient?.authenticateUser(userProfile, object : OneginiAuthenticationHandler {
                 override fun onSuccess(userProfile: UserProfile?, customInfo: CustomInfo?) {
@@ -389,10 +415,11 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
 
     private fun deregisterUser(result: Result) {
-
         val userProfile = OneginiSDK.getOneginiClient(context)?.userClient?.authenticatedUserProfile
-                ?: return
-        //todo DeregistrationUtil(context).onUserDeregistered(userProfile)
+        if(userProfile == null){
+            result.error("0","user is not registered",null)
+            return
+        }
         OneginiSDK.getOneginiClient(context)?.userClient?.deregisterUser(userProfile, object : OneginiDeregisterUserProfileHandler {
             override fun onSuccess() {
                 result.success(true)
@@ -407,8 +434,13 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     }
 
-    private fun startSingleSignOn(result: Result) {
-        val targetUri: Uri = Uri.parse("https://login-mobile.test.onegini.com/personal/dashboard")
+    //"https://login-mobile.test.onegini.com/personal/dashboard"
+    private fun startSingleSignOn(url: String?,result: Result) {
+        if(url.isNullOrEmpty()){
+            result.error("0","ulr can`t be null or empty",null)
+            return
+        }
+        val targetUri: Uri = Uri.parse(url)
         val oneginiClient = OneginiSDK.getOneginiClient(context)
         oneginiClient?.userClient?.getAppToWebSingleSignOn(targetUri, object : OneginiAppToWebSingleSignOnHandler {
             override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {

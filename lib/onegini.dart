@@ -133,9 +133,11 @@ class Onegini {
 
 
 
-  static Future<void> singleSingOn() async {
+  static Future<void> singleSingOn(String url) async {
     try {
-      var oneginiAppToWebSingleSignOn =  await _channel.invokeMethod(Constants.getSingleSignOnMethod);
+      var oneginiAppToWebSingleSignOn =  await _channel.invokeMethod(Constants.getSingleSignOnMethod,<String, String>{
+        'url': url,
+      });
       //todo use oneginiAppToWebSingleSignOn
     } on PlatformException catch (error) {
       throw error;
