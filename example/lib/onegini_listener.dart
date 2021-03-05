@@ -11,7 +11,6 @@ import 'package:onegini_example/screens/pin_screen.dart';
 class OneginiListener extends OneginiEventListener {
   @override
   void closePin(BuildContext buildContext) {
-    Navigator.of(buildContext).pop();
     Navigator.of(buildContext).canPop();
   }
 
@@ -43,7 +42,15 @@ class OneginiListener extends OneginiEventListener {
 
   @override
   void eventError(BuildContext buildContext, PlatformException error) {
-    print(error.message);
+      Fluttertoast.showToast(
+          msg: error.message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black38,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
   }
 
   @override
@@ -65,7 +72,7 @@ class OneginiListener extends OneginiEventListener {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.black38,
         textColor: Colors.white,
         fontSize: 16.0
     );

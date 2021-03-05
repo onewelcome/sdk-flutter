@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import 'login_screen.dart';
 
@@ -20,13 +21,35 @@ class _OtpScreenState extends State<OtpScreen> {
   _channel.invokeMethod("otpOk", <String, String>{
       'password': myController.text,
     }).catchError((error) => {
-      print(error)
+  if(error is PlatformException) {
+      Fluttertoast.showToast(
+      msg: error.message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black38,
+      textColor: Colors.white,
+      fontSize: 16.0
+  )
+  }
     });
 
   }
 
   cancel() async {
-    _channel.invokeMethod("otpCancel");
+    _channel.invokeMethod("otpCancel").catchError((error){
+      if(error is PlatformException) {
+        Fluttertoast.showToast(
+            msg: error.message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black38,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }
+    });
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(

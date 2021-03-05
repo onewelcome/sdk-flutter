@@ -4,7 +4,8 @@
 
 import 'dart:convert';
 
-ClientResource clientResourceFromJson(String str) => ClientResource.fromJson(json.decode(str));
+ClientResource clientResourceFromJson(String str) =>
+    ClientResource.fromJson(json.decode(str));
 
 String clientResourceToJson(ClientResource data) => json.encode(data.toJson());
 
@@ -16,12 +17,13 @@ class ClientResource {
   List<Device> devices;
 
   factory ClientResource.fromJson(Map<String, dynamic> json) => ClientResource(
-    devices: List<Device>.from(json["devices"].map((x) => Device.fromJson(x))),
-  );
+        devices:
+            List<Device>.from(json["devices"].map((x) => Device.fromJson(x))),
+      );
 
   Map<String, dynamic> toJson() => {
-    "devices": List<dynamic>.from(devices.map((x) => x.toJson())),
-  };
+        "devices": List<dynamic>.from(devices.map((x) => x.toJson())),
+      };
 }
 
 class Device {
@@ -29,41 +31,38 @@ class Device {
     this.id,
     this.name,
     this.application,
+    this.model,
     this.platform,
-    this.createdAt,
-    this.lastLogin,
-    this.tokenTypes,
     this.mobileAuthenticationEnabled,
+    this.pushAuthenticationEnabled,
   });
 
   String id;
   String name;
   String application;
+  String model;
   String platform;
-  String createdAt;
-  String lastLogin;
-  List<String> tokenTypes;
   bool mobileAuthenticationEnabled;
+  bool pushAuthenticationEnabled;
 
   factory Device.fromJson(Map<String, dynamic> json) => Device(
-    id: json["id"],
-    name: json["name"],
-    application: json["application"],
-    platform: json["platform"],
-    createdAt: json["created_at"]?.toString(),
-    lastLogin: json["last_login"],
-    tokenTypes: List<String>.from(json["token_types"]),
-    mobileAuthenticationEnabled: json["mobile_authentication_enabled"],
-  );
+        id: json["id"] ?? "null",
+        name: json["name"] ?? "null",
+        application: json["application"] ?? "null",
+        model: json["model"] ?? "null",
+        platform: json["platform"] ?? "null",
+        mobileAuthenticationEnabled:
+            json["mobile_authentication_enabled"] ?? false,
+        pushAuthenticationEnabled: json["push_authentication_enabled"] ?? false,
+      );
 
   Map<String, dynamic> toJson() => {
-    "id": id,
-    "name": name,
-    "application": application,
-    "platform": platform,
-    "created_at": createdAt,
-    "last_login": lastLogin,
-    "token_types": List<dynamic>.from(tokenTypes.map((x) => x)),
-    "mobile_authentication_enabled": mobileAuthenticationEnabled,
-  };
+        "id": id,
+        "name": name,
+        "application": application,
+        "model": model,
+        "platform": platform,
+        "mobile_authentication_enabled": mobileAuthenticationEnabled,
+        "push_authentication_enabled": pushAuthenticationEnabled,
+      };
 }

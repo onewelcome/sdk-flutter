@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/model/application_details.dart';
 import 'package:onegini/model/client_resource.dart';
 import 'package:onegini/onegini.dart';
@@ -42,8 +43,18 @@ class _UserScreenState extends State<UserScreen> {
 
   logOut(BuildContext context) async {
     Navigator.pop(context);
-    var isLogOut =
-        await Onegini.logOut().catchError((error) => print(error.toString()));
+    var isLogOut = await Onegini.logOut().catchError((error) {
+      if (error is PlatformException) {
+        Fluttertoast.showToast(
+            msg: error.message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black38,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    });
     if (isLogOut) {
       Navigator.pushReplacement(
         context,
@@ -55,7 +66,17 @@ class _UserScreenState extends State<UserScreen> {
   deregister(BuildContext context) async {
     Navigator.pop(context);
     var isLogOut = await Onegini.deregisterUser().catchError((error) => {
-          //todo OneginiDeregistrationError
+          if (error is PlatformException)
+            {
+              Fluttertoast.showToast(
+                  msg: error.message,
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.black38,
+                  textColor: Colors.white,
+                  fontSize: 16.0)
+            }
         });
     if (isLogOut) {
       Navigator.pushReplacement(
@@ -66,14 +87,37 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   registerFingerprint(BuildContext context) async {
-    var data = await Onegini.registerFingerprint(context)
-        .catchError((error) => print(error.toString()));
-    setState(() => isNotEnableFingerprint = data!=null );
+    var data =
+        await Onegini.registerFingerprint(context).catchError((error) => {
+              if (error is PlatformException)
+                {
+                  Fluttertoast.showToast(
+                      msg: error.message,
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.BOTTOM,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.black38,
+                      textColor: Colors.white,
+                      fontSize: 16.0)
+                }
+            });
+    setState(() => isNotEnableFingerprint = data != null);
     Navigator.pop(context);
   }
 
   changePin(BuildContext context) {
-    Onegini.changePin(context);
+    Onegini.changePin(context).catchError((error) {
+      if (error is PlatformException) {
+        Fluttertoast.showToast(
+            msg: error.message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black38,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    });
     Navigator.pop(context);
   }
 
@@ -103,11 +147,11 @@ class _UserScreenState extends State<UserScreen> {
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
                 if (snapshot.hasData) {
                   isNotEnableFingerprint = snapshot.data;
-                  return  snapshot.data && isNotEnableFingerprint
+                  return snapshot.data && isNotEnableFingerprint
                       ? ListTile(
                           title: Text("enable fingerprint auth"),
                           onTap: () => registerFingerprint(context),
-                    leading: Icon(Icons.fingerprint_outlined),
+                          leading: Icon(Icons.fingerprint_outlined),
                         )
                       : SizedBox.shrink();
                 } else {
@@ -152,7 +196,55 @@ class Home extends StatelessWidget {
       context,
       MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
     );
-    if (data != null) Onegini.sendQrCodeData(data);
+    if (data != null) {
+      var isSuccess = await Onegini.sendQrCodeData(data).catchError((error) {
+        if (error is PlatformException) {
+          Fluttertoast.showToast(
+              msg: error.message,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.black38,
+              textColor: Colors.white,
+              fontSize: 16.0);
+        }
+      });
+      if (isSuccess.isNotEmpty)
+        Fluttertoast.showToast(
+            msg: isSuccess,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black38,
+            textColor: Colors.white,
+            fontSize: 16.0);
+    }
+  }
+
+  singleSignOn(BuildContext context) async {
+    var oneginiAppToWebSingleSignOn = await Onegini.singleSingOn(
+            "https://login-mobile.test.onegini.com/personal/dashboard")
+        .catchError((error) {
+      if (error is PlatformException) {
+        Fluttertoast.showToast(
+            msg: error.message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black38,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    });
+    if (oneginiAppToWebSingleSignOn != null)
+      Fluttertoast.showToast(
+          msg: oneginiAppToWebSingleSignOn,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black38,
+          textColor: Colors.white,
+          fontSize: 16.0);
   }
 
   @override
@@ -168,7 +260,7 @@ class Home extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                Onegini.singleSingOn("https://login-mobile.test.onegini.com/personal/dashboard");
+                singleSignOn(context);
               },
               child: Text('Single Sign On'),
             ),

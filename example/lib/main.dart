@@ -1,12 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini_example/screens/login_screen.dart';
-import '';
 
 import 'onegini_listener.dart';
-
-
 
 void main() {
   runApp(MyApp());
@@ -54,7 +53,19 @@ class _BodyWidgetState extends State<BodyWidget> {
 
   void _startApplication() async {
     /// init Onegini sdk on native side
-    _appStarted = await Onegini.startApplication(OneginiListener());
+    _appStarted =
+        await Onegini.startApplication(OneginiListener()).catchError((error) {
+      if (error is PlatformException) {
+        Fluttertoast.showToast(
+            msg: error.message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black38,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    });
     if (_appStarted) {
       Navigator.pushReplacement(
         context,

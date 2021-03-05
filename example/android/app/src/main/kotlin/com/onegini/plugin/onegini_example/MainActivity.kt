@@ -23,7 +23,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-
+import java.lang.Exception
 
 
 class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler {

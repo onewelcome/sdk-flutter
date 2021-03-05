@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/onegini.dart';
 
 class PinScreen extends StatefulWidget {
@@ -45,7 +47,19 @@ class _PinScreenState extends State<PinScreen> {
       pin+=element;
     });
 
-   Onegini.sendPin(pin,widget.isAuth);
+   Onegini.sendPin(pin,widget.isAuth).catchError((error){
+     if(error is PlatformException) {
+       Fluttertoast.showToast(
+           msg: error.message,
+           toastLength: Toast.LENGTH_SHORT,
+           gravity: ToastGravity.BOTTOM,
+           timeInSecForIosWeb: 1,
+           backgroundColor: Colors.black38,
+           textColor: Colors.white,
+           fontSize: 16.0
+       );
+     }
+   });
   }
 
   @override

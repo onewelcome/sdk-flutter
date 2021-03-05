@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/model/onegini_identity_provider.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini_example/constants.dart';
@@ -17,7 +18,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   bool isRegistrationFlow = false;
   bool isAuthFlow = false;
-
+  bool isPin = true;
   @override
   initState() {
     _eventChannel.receiveBroadcastStream("exemple_events").listen((str) {
@@ -54,7 +55,20 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => isRegistrationFlow = true);
     var userId = await Onegini.registrationWithIdentityProvider(
             identityProviderId, Constants.DEFAULT_SCOPES)
-        .catchError((error) => setState(() => isRegistrationFlow = false));
+        .catchError((error) {
+          setState(() => isRegistrationFlow = false);
+          if(error is PlatformException) {
+            Fluttertoast.showToast(
+                msg: error.message,
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.black38,
+                textColor: Colors.white,
+                fontSize: 16.0
+            );
+          }
+        });
     if (userId != null)
       Navigator.pushAndRemoveUntil(
           context,
@@ -66,9 +80,23 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   pinAuthentication() async {
+    setState(()=> isPin = true);
     setState(() => isAuthFlow = true);
     var userId = await Onegini.pinAuthentication(context)
-        .catchError((error) => setState(() => isAuthFlow = false));
+        .catchError((error) {
+      setState(() => isAuthFlow = false);
+      if(error is PlatformException) {
+        Fluttertoast.showToast(
+            msg: error.message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black38,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+      }
+    });
     if (userId != null)
       Navigator.pushAndRemoveUntil(
           context,
@@ -81,10 +109,28 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
   authenticateWithRegisteredAuthenticators(String authenticatorId) async {
+    switch (authenticatorId){
+      case "fingerprint": setState(() => isPin = false);
+      break;
+      default: setState(()=> isPin = true);
+    }
     setState(() => isAuthFlow = true);
     var userId = await Onegini.authenticationWithRegisteredAuthenticators(
         authenticatorId)
-        .catchError((error) => setState(() => isAuthFlow = false));
+        .catchError((error) {
+          setState(() => isAuthFlow = false);
+          if(error is PlatformException) {
+            Fluttertoast.showToast(
+                msg: error.message,
+                toastLength: Toast.LENGTH_SHORT,
+                gravity: ToastGravity.BOTTOM,
+                timeInSecForIosWeb: 1,
+                backgroundColor: Colors.black38,
+                textColor: Colors.white,
+                fontSize: 16.0
+            );
+          }
+        });
     if (userId != null)
       Navigator.pushAndRemoveUntil(
           context,
@@ -96,12 +142,36 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   cancelRegistration() async {
-    Onegini.cancelRegistration().catchError((error) =>setState(() => isRegistrationFlow = false));
+    Onegini.cancelRegistration().catchError((error)
+    {setState(() => isRegistrationFlow = false);
+    if(error is PlatformException) {
+      Fluttertoast.showToast(
+          msg: error.message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black38,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+    }});
   }
 
-  cancelAuth() async {
+  cancelAuth(bool isPin) async {
     setState(() => isAuthFlow = false);
-    Onegini.cancelAuth().catchError((error) =>setState(() => isAuthFlow = false));
+    Onegini.cancelAuth(isPin).catchError((error) {
+      setState(() => isAuthFlow = false);
+    if(error is PlatformException) {
+      Fluttertoast.showToast(
+          msg: error.message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black38,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+    }});
   }
 
   @override
@@ -130,7 +200,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      isRegistrationFlow ? cancelRegistration() : cancelAuth();
+                      isRegistrationFlow ? cancelRegistration() : cancelAuth(isPin);
                     },
                     child: Text('Cancel'),
                   ),

@@ -133,12 +133,13 @@ class Onegini {
 
 
 
-  static Future<void> singleSingOn(String url) async {
+  static Future<String> singleSingOn(String url) async {
     try {
       var oneginiAppToWebSingleSignOn =  await _channel.invokeMethod(Constants.getSingleSignOnMethod,<String, String>{
         'url': url,
       });
-      //todo use oneginiAppToWebSingleSignOn
+      print(oneginiAppToWebSingleSignOn);
+      return oneginiAppToWebSingleSignOn;
     } on PlatformException catch (error) {
       throw error;
     }
@@ -184,9 +185,11 @@ class Onegini {
     }
   }
 
-  static Future<void> cancelAuth() async {
+  static Future<void> cancelAuth(bool isPin) async {
     try{
-      await _channel.invokeMethod(Constants.cancelPinAuth);
+      await _channel.invokeMethod(Constants.cancelPinAuth, <String, dynamic>{
+        'isPin': isPin,
+      });
     }on PlatformException catch (error) {
       throw error;
     }
@@ -210,13 +213,13 @@ class Onegini {
     }
   }
 
-  static Future<void> sendQrCodeData(String data) async {
+  static Future<String> sendQrCodeData(String data) async {
     try {
-      await _channel
+      var isSuccess = await _channel
           .invokeMethod(Constants.otpQrCodeResponse, <String, dynamic>{
         'data': data,
-
       });
+      return isSuccess;
     } on PlatformException catch (error) {
       throw error;
     }
