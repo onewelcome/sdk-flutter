@@ -50,9 +50,9 @@ class Device {
     name: json["name"],
     application: json["application"],
     platform: json["platform"],
-    createdAt: json["created_at"],
+    createdAt: json["created_at"]?.toString(),
     lastLogin: json["last_login"],
-    tokenTypes: json["token_types"],
+    tokenTypes: List<String>.from(json["token_types"]),
     mobileAuthenticationEnabled: json["mobile_authentication_enabled"],
   );
 

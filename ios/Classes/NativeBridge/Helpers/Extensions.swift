@@ -18,4 +18,11 @@ extension String {
 
         return ""
     }
+    
+    func base64Encoded() -> String? {
+        if let data = self.data(using: .utf8) {
+            return data.base64EncodedString()
+        }
+        return nil
+    }
 }

@@ -2,8 +2,8 @@ PODS:
   - Flutter (1.0.0)
   - onegini (0.0.1):
     - Flutter
-    - OneginiSDKiOS (= 9.0.0)
-  - OneginiSDKiOS (9.0.0)
+    - OneginiSDKiOS (~> 9.6)
+  - OneginiSDKiOS (9.7.0)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
@@ -20,9 +20,9 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/onegini/ios"
 
 SPEC CHECKSUMS:
-  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
-  onegini: e915a8f98ba240b1a93e4a2ecfeb37098ebc26c3
-  OneginiSDKiOS: 0d97ea0c6a311d86474d893c9dde25ae945ab58f
+  Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
+  onegini: 16714e72562db883681686cf995f2f705501829b
+  OneginiSDKiOS: 52097d2b5c969dbbd939fad5c578aa78d9613184
 
 PODFILE CHECKSUM: 1b89d19f38b858efad6224b333eda571f8bd0563
 

@@ -20,7 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   initState() {
-    _eventChannel.receiveBroadcastStream().listen((str) {
+    _eventChannel.receiveBroadcastStream("exemple_events").listen((str) {
       Event event = eventFromJson(str);
       if (event.eventName == "OPEN_OTP") {
         Navigator.push(
