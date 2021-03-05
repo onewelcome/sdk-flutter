@@ -20,6 +20,7 @@ import com.onegini.plugin.onegini.handlers.CreatePinRequestHandler
 import com.onegini.plugin.onegini.handlers.FingerprintAuthenticationRequestHandler
 import com.onegini.plugin.onegini.handlers.MobileAuthOtpRequestHandler
 import com.onegini.plugin.onegini.handlers.PinAuthenticationRequestHandler
+import com.onegini.plugin.onegini.helpers.ErrorHelper
 import com.onegini.plugin.onegini.helpers.OneginiEventsSender
 import com.onegini.plugin.onegini.helpers.RegistrationHelper
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -83,16 +84,16 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
         if (call.method == Constants.METHOD_REGISTRATION) {
             val scopes = call.argument<String>("scopes")
-            registerUser(null, arrayOf(scopes?:""), result)
+            registerUser(null, arrayOf(scopes ?: ""), result)
         }
         if (call.method == Constants.METHOD_CANCEL_REGISTRATION) {
             RegistrationHelper.cancelRegistration()
         }
         if (call.method == Constants.METHOD_CANCEL_PIN_AUTH) {
             val isPin = call.argument<Boolean>("isPin")
-            if(isPin!=null && isPin){
+            if (isPin != null && isPin) {
                 PinAuthenticationRequestHandler.CALLBACK?.denyAuthenticationRequest()
-            }else{
+            } else {
                 FingerprintAuthenticationRequestHandler.fingerprintCallback?.denyAuthenticationRequest()
             }
         }
@@ -119,7 +120,7 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         }
         if (call.method == Constants.METHOD_SINGLE_SIGN_ON) {
             val url = call.argument<String>("url")
-            startSingleSignOn(url,result)
+            startSingleSignOn(url, result)
         }
         if (call.method == Constants.METHOD_LOG_OUT) {
             logOut(result)
@@ -164,7 +165,7 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
         if (call.method == Constants.METHOD_GET_REGISTERED_AUTHENTICATORS) {
             val gson = GsonBuilder().serializeNulls().create()
             val userProfile = OneginiSDK.getOneginiClient(context)?.userClient?.userProfiles?.first()
-            val registeredAuthenticators = userProfile?.let { OneginiSDK.getOneginiClient(context)?.userClient?.getRegisteredAuthenticators(it)}
+            val registeredAuthenticators = userProfile?.let { OneginiSDK.getOneginiClient(context)?.userClient?.getRegisteredAuthenticators(it) }
             val authenticators: ArrayList<Map<String, String>> = ArrayList()
             if (registeredAuthenticators != null)
                 for (registeredAuthenticator in registeredAuthenticators) {
@@ -179,25 +180,31 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             val identityProviderId = call.argument<String>("identityProviderId")
             val scopes = call.argument<String>("scopes")
             val identityProviders = OneginiSDK.getOneginiClient(context)?.userClient?.identityProviders
-            if (identityProviders != null)
-                for (identityProvider in identityProviders) {
-                    if (identityProvider.id == identityProviderId) {
-                        registerUser(identityProvider, arrayOf(scopes?:""), result)
-                        break
-                    }
+            if (identityProviders == null) {
+                result.error(ErrorHelper().identityProvidersIsNull.code, ErrorHelper().identityProvidersIsNull.message, null)
+                return
+            }
+            for (identityProvider in identityProviders) {
+                if (identityProvider.id == identityProviderId) {
+                    registerUser(identityProvider, arrayOf(scopes ?: ""), result)
+                    break
                 }
+            }
         }
         if (call.method == Constants.METHOD_AUTHENTICATE_WITH_REGISTERED_AUTHENTICATION) {
             val registeredAuthenticatorsId = call.argument<String>("registeredAuthenticatorsId")
             val userProfile = OneginiSDK.getOneginiClient(context)?.userClient?.userProfiles?.first()
             val registeredAuthenticators = userProfile?.let { OneginiSDK.getOneginiClient(context)?.userClient?.getRegisteredAuthenticators(it) }
-            if (registeredAuthenticators != null)
-                for (registeredAuthenticator in registeredAuthenticators) {
-                    if (registeredAuthenticator.id == registeredAuthenticatorsId) {
-                        authenticateUser(userProfile, registeredAuthenticator, result)
-                        break
-                    }
+            if (registeredAuthenticators == null) {
+                result.error(ErrorHelper().registeredAuthenticatorsIsNull.code, ErrorHelper().registeredAuthenticatorsIsNull.message, null)
+                return
+            }
+            for (registeredAuthenticator in registeredAuthenticators) {
+                if (registeredAuthenticator.id == registeredAuthenticatorsId) {
+                    authenticateUser(userProfile, registeredAuthenticator, result)
+                    break
                 }
+            }
         }
         if (call.method == Constants.METHOD_CHANGE_PIN) {
             startChangePinFlow(result)
@@ -248,8 +255,11 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                 }
             }
         }
-        fingerprintAuthenticator?.let {
-            OneginiSDK.getOneginiClient(context)?.userClient?.registerAuthenticator(it, object : OneginiAuthenticatorRegistrationHandler {
+        if (fingerprintAuthenticator == null) {
+            result.error(ErrorHelper().fingerprintAuthenticatorIsNull.code, ErrorHelper().fingerprintAuthenticatorIsNull.message, null)
+            return
+        }
+        OneginiSDK.getOneginiClient(context)?.userClient?.registerAuthenticator(fingerprintAuthenticator, object : OneginiAuthenticatorRegistrationHandler {
             override fun onSuccess(customInfo: CustomInfo?) {
                 result.success(customInfo?.data)
             }
@@ -259,7 +269,6 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
                         ?: "", null)
             }
         })
-        }
     }
 
 
@@ -270,7 +279,7 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             }
 
             override fun onError(p0: OneginiMobileAuthEnrollmentError?) {
-                result.error(p0?.errorType.toString(),p0?.message,p0?.cause?.message.toString())
+                result.error(p0?.errorType.toString(), p0?.message, p0?.cause?.message.toString())
             }
 
         })
@@ -280,7 +289,7 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private fun mobileAuthWithOtp(data: String?, result: Result) {
         val userClient = OneginiSDK.getOneginiClient(context)?.userClient
         val authenticatedUserProfile = OneginiSDK.getOneginiClient(context)?.userClient?.authenticatedUserProfile
-        if (authenticatedUserProfile?.let {userClient?.isUserEnrolledForMobileAuth(it) } == true) {
+        if (authenticatedUserProfile?.let { userClient?.isUserEnrolledForMobileAuth(it) } == true) {
             handleOTPAuth(data, result)
         } else {
             enrollMobileAuthentication(data, result)
@@ -290,7 +299,8 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
 
     private fun handleOTPAuth(data: String?, result: Result) {
-        OneginiSDK.getOneginiClient(context)?.userClient?.handleMobileAuthWithOtp(data?:"", object : OneginiMobileAuthWithOtpHandler {
+        OneginiSDK.getOneginiClient(context)?.userClient?.handleMobileAuthWithOtp(data
+                ?: "", object : OneginiMobileAuthWithOtpHandler {
             override fun onSuccess() {
                 result.success("success auth with otp")
             }
@@ -304,37 +314,37 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
 
     private fun authenticateUser(userProfile: UserProfile?, authenticator: OneginiAuthenticator?, result: Result) {
+        if (userProfile == null) {
+            result.error(ErrorHelper().userProfileIsNull.code, ErrorHelper().userProfileIsNull.message, null)
+            return
+        }
         if (authenticator == null) {
-            userProfile?.let {
-                OneginiSDK.getOneginiClient(context)?.userClient?.authenticateUser(it, object : OneginiAuthenticationHandler {
-                    override fun onSuccess(userProfile: UserProfile?, customInfo: CustomInfo?) {
-                        if (userProfile != null)
-                            result.success(userProfile.profileId)
-                    }
+            OneginiSDK.getOneginiClient(context)?.userClient?.authenticateUser(userProfile, object : OneginiAuthenticationHandler {
+                override fun onSuccess(userProfile: UserProfile?, customInfo: CustomInfo?) {
+                    if (userProfile != null)
+                        result.success(userProfile.profileId)
+                }
 
-                    override fun onError(error: OneginiAuthenticationError) {
-                        Log.e("USER AUTH ERROR", error.message ?: "")
-                        result.error(error.errorType.toString(), error.message ?: "", null)
-                    }
-                })
-            }
+                override fun onError(error: OneginiAuthenticationError) {
+                    Log.e("USER AUTH ERROR", error.message ?: "")
+                    result.error(error.errorType.toString(), error.message ?: "", null)
+                }
+            })
+
         } else {
-            userProfile?.let {
-                OneginiSDK.getOneginiClient(context)?.userClient?.authenticateUser(it, authenticator, object : OneginiAuthenticationHandler {
-                    override fun onSuccess(userProfile: UserProfile?, customInfo: CustomInfo?) {
-                        if (userProfile != null)
-                            result.success(userProfile.profileId)
-                    }
+            OneginiSDK.getOneginiClient(context)?.userClient?.authenticateUser(userProfile, authenticator, object : OneginiAuthenticationHandler {
+                override fun onSuccess(userProfile: UserProfile?, customInfo: CustomInfo?) {
+                    if (userProfile != null)
+                        result.success(userProfile.profileId)
+                }
 
-                    override fun onError(error: OneginiAuthenticationError) {
-                        Log.e("USER AUTH ERROR", error.message ?: "")
-                        result.error(error.errorType.toString(), error.message ?: "", null)
-                    }
-                })
-            }
+                override fun onError(error: OneginiAuthenticationError) {
+                    Log.e("USER AUTH ERROR", error.message ?: "")
+                    result.error(error.errorType.toString(), error.message ?: "", null)
+                }
+            })
         }
     }
-
 
     private fun logOut(result: Result) {
         OneginiSDK.getOneginiClient(context)?.userClient?.logout(object : OneginiLogoutHandler {
@@ -374,8 +384,11 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     private fun deregisterUser(result: Result) {
         val userProfile = OneginiSDK.getOneginiClient(context)?.userClient?.authenticatedUserProfile
-        userProfile?.let {
-            OneginiSDK.getOneginiClient(context)?.userClient?.deregisterUser(it, object : OneginiDeregisterUserProfileHandler {
+        if (userProfile == null) {
+            result.error(ErrorHelper().userProfileIsNull.code, ErrorHelper().userProfileIsNull.message, null)
+            return
+        }
+        OneginiSDK.getOneginiClient(context)?.userClient?.deregisterUser(userProfile, object : OneginiDeregisterUserProfileHandler {
             override fun onSuccess() {
                 result.success(true)
             }
@@ -386,17 +399,16 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
         }
         )
-        }
+
 
     }
 
     //"https://login-mobile.test.onegini.com/personal/dashboard"
-    private fun startSingleSignOn(url: String?,result: Result) {
+    private fun startSingleSignOn(url: String?, result: Result) {
         val targetUri: Uri = Uri.parse(url)
-        val oneginiClient = OneginiSDK.getOneginiClient(context)
-        oneginiClient?.userClient?.getAppToWebSingleSignOn(targetUri, object : OneginiAppToWebSingleSignOnHandler {
+        OneginiSDK.getOneginiClient(context)?.userClient?.getAppToWebSingleSignOn(targetUri, object : OneginiAppToWebSingleSignOnHandler {
             override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {
-                result.success(Gson().toJson(mapOf("token" to oneginiAppToWebSingleSignOn.token,"redirectUrl" to oneginiAppToWebSingleSignOn.redirectUrl)))
+                result.success(Gson().toJson(mapOf("token" to oneginiAppToWebSingleSignOn.token, "redirectUrl" to oneginiAppToWebSingleSignOn.redirectUrl)))
             }
 
             override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
