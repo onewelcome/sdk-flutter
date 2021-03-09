@@ -78,23 +78,33 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
         }
     }
     
-    public func getApplicationDetails(callback: @escaping FlutterResult) {
-        self.bridgeConnector.toResourcesHandler.fetchAppDetails { (data, error) in
-            error != nil ? callback(error?.flutterError()) : callback(data)
+    public func authenticateUserImplicitly(_ profileId: String,
+                                           callback: @escaping (Bool, FlutterError?) -> Void) {
+        guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first(where: { $0.profileId == profileId }) else {
+            callback(false, SdkError.init(errorDescription: "User profile is null").flutterError())
+            return
+        }
+
+        bridgeConnector.toResourceFetchHandler.authenticateImplicitly(profile) {
+            (data, error) -> Void in
+            error != nil ? callback(data, error?.flutterError()) : callback(data, nil)
         }
     }
-    
-    public func fetchDevicesList(callback: @escaping FlutterResult) {
-        self.bridgeConnector.toResourcesHandler.fetchDeviceList { (data, error) in
+
+    public func authenticateDeviceForResource(_ path: String, callback: @escaping FlutterResult) -> Void {
+        bridgeConnector.toResourceFetchHandler.authenticateDevice(path) {
+            (data, error) -> Void in
             error != nil ? callback(error?.flutterError()) : callback(data)
         }
     }
 
-    public func fetchImplicitResources(callback: @escaping FlutterResult) {
-        guard let _profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else { return }
-        self.bridgeConnector.toResourcesHandler.fetchImplicitResources(profile: _profile) { (data, error) in
-            error != nil ? callback(error?.flutterError()) : callback(data)
-        }
+    public func resourceRequest(_ isImplicit: Bool, parameters: [String: Any],
+                                callback: @escaping (Any?, FlutterError?) -> Void) {
+
+        bridgeConnector.toResourceFetchHandler.resourceRequest(isImplicit: isImplicit, parameters: parameters, completion: {
+            (data, error) -> Void in
+            callback(data, error?.flutterError())
+        })
     }
     
     func identityProviders(callback: @escaping FlutterResult) {
@@ -111,13 +121,13 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
     }
     
     func logOut(callback: @escaping FlutterResult) {
-        bridgeConnector.toLogoutUserInteractor.logout { (error) in
+        bridgeConnector.toLogoutUserHandler.logout { (error) in
             error != nil ? callback(error?.flutterError()) : callback(true)
         }
     }
     
     func deregisterUser(callback: @escaping FlutterResult) {
-        bridgeConnector.toDeregisterUserInteractor.disconnect { (error) in
+        bridgeConnector.toDeregisterUserHandler.disconnect { (error) in
             error != nil ? callback(SdkError.convertToFlutter(error)) : callback(true)
         }
     }

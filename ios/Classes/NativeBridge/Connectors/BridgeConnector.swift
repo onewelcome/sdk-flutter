@@ -8,11 +8,10 @@ class BridgeConnector: BridgeConnectorProtocol {
     let toPinHandlerConnector: BridgeToPinConnectorProtocol = PinConnector()
     let toLoginHandler: BridgeToLoginHandlerProtocol = LoginHandler()
     let toAppToWebHandler: AppToWebHandlerProtocol = AppToWebHandler()
-    let toResourceFetchHandler: FetchResourcesProtocol = ResourcesHandler()
+    let toResourceFetchHandler: FetchResourcesHandlerProtocol = ResourcesHandler()
     let toMobileAuthConnector: BridgeToMobileAuthConnectorProtocol = MobileAuthConnector()
-    var toLogoutUserInteractor = LogoutInteractor()
-    var toDeregisterUserInteractor = DisconnectInteractor()
-    var toResourcesHandler: FetchResourcesProtocol = ResourcesHandler()
+    var toLogoutUserHandler = LogoutHandler()
+    var toDeregisterUserHandler = DisconnectHandler()
     
     weak var bridge: ConnectorToFlutterBridgeProtocol?
     public static var shared:BridgeConnector?

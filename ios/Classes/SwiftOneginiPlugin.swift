@@ -15,12 +15,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     switch call.method {
     case Constants.Routes.startApp:
         OneginiModuleSwift.sharedInstance.startOneginiModule(callback: result)
-    case Constants.Routes.getClientResource:
-        OneginiModuleSwift.sharedInstance.fetchDevicesList(callback: result)
-    case Constants.Routes.getApplicationDetails:
-        OneginiModuleSwift.sharedInstance.getApplicationDetails(callback: result)
-    case Constants.Routes.getImplicitUserDetails:
-        OneginiModuleSwift.sharedInstance.fetchImplicitResources(callback: result)
     case Constants.Routes.getIdentityProviders:
         OneginiModuleSwift.sharedInstance.identityProviders(callback: result)
     case Constants.Routes.logOut:
