@@ -14,5 +14,13 @@ struct Constants {
         static let getApplicationDetails = "getApplicationDetails"
         static let getClientResource = "getClientResource"
         static let logOut = "logOut"
+        static let getRegisteredAuthenticators = "getRegisteredAuthenticators"
+        static let authenticateWithRegisteredAuthentication = "authenticateWithRegisteredAuthentication"
+        static let changePin = "changePin"
+        static let singleSignOn = "singleSignOn"
+        static let cancelPinAuth = "cancelPinAuth"
+        static let registerFingerprintAuthenticator = "registerFingerprintAuthenticator"
+        static let fingerprintActivationSensor = "fingerprintActivationSensor"
+        static let isUserNotRegisteredFingerprint = "isUserNotRegisteredFingerprint"
     }
 }
