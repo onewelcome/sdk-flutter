@@ -9,7 +9,7 @@ protocol AppToWebHandlerProtocol: AnyObject {
 class AppToWebHandler: AppToWebHandlerProtocol {
     func signInAppToWeb(targetURL: URL?, completion: @escaping (Dictionary<String, Any>?, SdkError?) -> Void) {
         guard let _targetURL = targetURL else {
-            completion(nil, SdkError.init(errorDescription: "Provided url is incorrect."))
+            completion(nil, SdkError.init(customType: .providedUrlIncorrect))
             return
         }
 

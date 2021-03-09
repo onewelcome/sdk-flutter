@@ -200,7 +200,7 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            signUpCompletion!(false, nil, SdkError(errorDescription: "Registration  cancelled."))
+            signUpCompletion!(false, nil, SdkError(customType: .registrationCancelled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
             signUpCompletion!(false, nil, mappedError)
