@@ -5,44 +5,44 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.annotation.NonNull
 import com.google.gson.Gson
-import com.onegini.mobile.sdk.android.handlers.OneginiDeviceAuthenticationHandler
-import com.onegini.mobile.sdk.android.handlers.OneginiImplicitAuthenticationHandler
-import com.onegini.mobile.sdk.android.handlers.error.OneginiDeviceAuthenticationError
-import com.onegini.mobile.sdk.android.handlers.error.OneginiImplicitTokenRequestError
-import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.constants.Constants
-import com.onegini.mobile.sdk.flutter.helpers.RegistrationHelper
 import com.onegini.mobile.onegini_example.providers.TwoWayOtpIdentityProvider
 import com.onegini.mobile.onegini_example.providers.TwoWayOtpRegistrationAction
 import com.onegini.mobile.onegini_example.service.AnonymousService
 import com.onegini.mobile.onegini_example.service.ImplicitUserService
 import com.onegini.mobile.onegini_example.service.UserService
+import com.onegini.mobile.sdk.android.handlers.OneginiDeviceAuthenticationHandler
+import com.onegini.mobile.sdk.android.handlers.OneginiImplicitAuthenticationHandler
+import com.onegini.mobile.sdk.android.handlers.error.OneginiDeviceAuthenticationError
+import com.onegini.mobile.sdk.android.handlers.error.OneginiImplicitTokenRequestError
+import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
+import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.constants.Constants
+import com.onegini.mobile.sdk.flutter.helpers.RegistrationHelper
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import java.lang.Exception
 
 
-class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler {
+class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
 
 
     private lateinit var channel: MethodChannel
     private lateinit var eventChannel: EventChannel
 
-    
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        OneginiSDK.addCustomIdentityProvider(TwoWayOtpIdentityProvider(this.applicationContext))
-        OneginiSDK.setOneginiClientConfigModel(OneginiConfigModel())
-        OneginiSDK.setSecurityController(SecurityController::class.java)
-        OneginiSDK.setReadTimeout(25)
-        OneginiSDK.setConnectionTimeout(5)
-
-
+        val customProviders = mutableListOf<OneginiCustomIdentityProvider>()
+        customProviders.add(TwoWayOtpIdentityProvider(this.applicationContext))
+        OneginiSDK.init(context,
+                OneginiConfigModel(),
+                SecurityController::class.java,
+                oneginiCustomIdentityProviders = customProviders)
     }
+
     private val channelName = "example"
 
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
@@ -54,6 +54,7 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler {
             override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
                 EventStorage.setEventSink(events)
             }
+
             override fun onCancel(arguments: Any?) {
 
             }
@@ -68,11 +69,11 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler {
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
-        if(call.method == "otpOk"){
+        if (call.method == "otpOk") {
             val password = call.argument<String>("password")
             TwoWayOtpRegistrationAction.CALLBACK?.returnSuccess(password)
         }
-        if(call.method == "otpCancel"){
+        if (call.method == "otpCancel") {
             TwoWayOtpRegistrationAction.CALLBACK?.returnError(Exception("Registration canceled"))
         }
         if (call.method == Constants.METHOD_GET_APPLICATION_DETAILS) {
@@ -84,7 +85,7 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler {
         if (call.method == Constants.METHOD_GET_IMPLICIT_USER_DETAILS) {
             getImplicitUserDetails(result)
         }
-        
+
     }
 
 
@@ -122,7 +123,7 @@ class MainActivity: FlutterActivity(), MethodChannel.MethodCallHandler {
                     }
                 })
     }
-    
+
     @SuppressLint("CheckResult")
     private fun getClientResource(result: MethodChannel.Result) {
         UserService(activity).devices?.subscribe({
