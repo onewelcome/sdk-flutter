@@ -10,4 +10,5 @@ class ErrorHelper {
    val identityProvidersIsNull = Error("8005","identity providers is null")
    val clientIsNull = Error("8006","Onegini client is null")
    val pinNotEquals = Error("8007","Password mismatch")
+   val methodToCallNotFound = Error("8008","method to call not found")
 }

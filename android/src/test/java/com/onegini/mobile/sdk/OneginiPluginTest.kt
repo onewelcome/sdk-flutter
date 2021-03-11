@@ -3,6 +3,7 @@ package com.onegini.mobile.sdk
 import android.content.Context
 import com.onegini.mobile.sdk.android.handlers.OneginiRegistrationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiRegistrationError
+import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneginiPlugin
@@ -26,10 +27,11 @@ class OneginiPluginTest {
 
     @Before
     fun attach() {
-        OneginiSDK.setOneginiClientConfigModel(OneginiConfigModel())
-        OneginiSDK.setSecurityController(SecurityController::class.java)
-        OneginiSDK.setReadTimeout(25)
-        OneginiSDK.setConnectionTimeout(5)
+        val customProviders = mutableListOf<OneginiCustomIdentityProvider>()
+        OneginiSDK.init(mockContext,
+                OneginiConfigModel(),
+                SecurityController::class.java,
+                oneginiCustomIdentityProviders = customProviders)
         plugin.setContext(mockContext)
     }
 
