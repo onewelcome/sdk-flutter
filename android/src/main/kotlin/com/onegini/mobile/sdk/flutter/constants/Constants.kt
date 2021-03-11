@@ -16,16 +16,14 @@ interface Constants {
         const val EVENT_SHOW_SCANNING_FINGERPRINT_AUTH = "eventShowScanningFingerprintAuth"
         const val EVENT_CLOSE_FINGERPRINT_AUTH = "eventCloseFingerprintAuth"
 
-        const val EVENT_OPEN_AUTH_OTP = "eventOpenAuthOtp";
-        const val EVENT_CANCEL_AUTH_OTP = "eventCancelAuthOtp";
-        const val EVENT_CLOSE_AUTH_OTP = "eventCloseAuthOtp";
+        const val EVENT_OPEN_AUTH_OTP = "eventOpenAuthOtp"
+        const val EVENT_CLOSE_AUTH_OTP = "eventCloseAuthOtp"
 
 
         /**
          * MethodsName
          */
         const val METHOD_START_APP ="startApp"
-        const val METHOD_GET_PLATFORM_VERSION ="getPlatformVersion"
         const val METHOD_GET_APPLICATION_DETAILS ="getApplicationDetails"
         const val METHOD_GET_CLIENT_RESOURCE ="getClientResource"
         const val METHOD_GET_IMPLICIT_USER_DETAILS ="getImplicitUserDetails"
@@ -48,5 +46,7 @@ interface Constants {
         const val METHOD_ACCEPT_OTP_AUTH = "acceptOTPAuth"
         const val METHOD_DENY_OTP_AUTH = "denyOTPAuth"
         const val METHOD_IS_USER_NOT_REGISTERED_FINGERPRINT = "isUserNotRegisteredFingerprint"
+        const val METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS = "getAllNotRegisteredAuthenticators"
+        const val METHOD_REGISTER_AUTHENTICATOR = "registerAuthenticator"
     }
 }
