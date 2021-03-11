@@ -20,7 +20,7 @@ class TwoWayOtpRegistrationAction(private val context: Context) : OneginiCustomT
     override fun finishRegistration(callback: OneginiCustomRegistrationCallback, customInfo: CustomInfo) {
         CALLBACK = callback
         if(customInfo.status <2001){
-            OneginiSDK.getOneginiClient(context)?.userClient?.userProfiles?.map { Log.v("id", it.profileId) }
+            OneginiSDK.getOneginiClient(context).userClient.userProfiles.map { Log.v("id", it.profileId) }
             EventStorage.events?.success(Gson().toJson(OneginiEvent("OPEN_OTP", customInfo.data)))
         }else {
             Toast.makeText(context,"Error. Status code => ${customInfo.status}",Toast.LENGTH_SHORT).show()

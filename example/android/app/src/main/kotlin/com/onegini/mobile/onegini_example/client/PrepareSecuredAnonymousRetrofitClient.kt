@@ -11,27 +11,27 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SecuredResourceClient(private val context: Context) {
     fun<T> getAnonymousClient(clazz: Class<T>): T? {
-        val okHttpClient: OkHttpClient? = OneginiSDK.getOneginiClient(context)?.deviceClient?.anonymousResourceOkHttpClient
+        val okHttpClient: OkHttpClient? = OneginiSDK.getOneginiClient(context).deviceClient.anonymousResourceOkHttpClient
         return prepareSecuredRetrofitClient(clazz, context, okHttpClient)
     }
 
     fun<T> getUserClient(clazz: Class<T>): T?{
-        val okHttpClient: OkHttpClient? = OneginiSDK.getOneginiClient(context)?.userClient?.resourceOkHttpClient
+        val okHttpClient: OkHttpClient? = OneginiSDK.getOneginiClient(context).userClient.resourceOkHttpClient
         return prepareSecuredRetrofitClient(clazz,context,okHttpClient)
 
     }
 
     fun<T> getSecuredImplicitUserRetrofitClient(clazz: Class<T>): T? {
-        val okHttpClient = OneginiSDK.getOneginiClient(context)?.userClient?.implicitResourceOkHttpClient
+        val okHttpClient = OneginiSDK.getOneginiClient(context).userClient.implicitResourceOkHttpClient
         return prepareSecuredRetrofitClient(clazz, context, okHttpClient)
     }
 
     private fun <T> prepareSecuredRetrofitClient(clazz: Class<T>, context: Context, okHttpClient: OkHttpClient?): T? {
-        val oneginiClient: OneginiClient? = OneginiSDK.getOneginiClient(context)
+        val oneginiClient: OneginiClient = OneginiSDK.getOneginiClient(context)
         if(okHttpClient == null) return null
         val retrofit = Retrofit.Builder()
                 .client(okHttpClient)
-                .baseUrl(oneginiClient?.configModel?.resourceBaseUrl ?: "")
+                .baseUrl(oneginiClient.configModel?.resourceBaseUrl ?: "")
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .build()

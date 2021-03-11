@@ -30,7 +30,7 @@ class OneginiSDK {
             oneginiSDK.buildSDK(context)
         }
 
-        fun getOneginiClient(context: Context): OneginiClient? {
+        fun getOneginiClient(context: Context): OneginiClient {
             var oneginiClient = OneginiClient.getInstance()
             if (oneginiClient == null) {
                 oneginiClient = OneginiSDK().buildSDK(context)
@@ -46,9 +46,9 @@ class OneginiSDK {
     var httpReadTimeout: Long = 20
     var oneginiCustomIdentityProviders = mutableListOf<OneginiCustomIdentityProvider>()
 
-    private fun buildSDK(context: Context): OneginiClient? {
+    private fun buildSDK(context: Context): OneginiClient {
         if (oneginiClientConfigModel == null) throw Exception("OneginiClientConfigModel must be not null!")
-        val applicationContext = context.applicationContext ?: return null
+        val applicationContext = context.applicationContext ?: throw  Exception ("Context can`t be null!")
         val registrationRequestHandler = RegistrationRequestHandler(applicationContext)
         val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
         val pinAuthenticationRequestHandler = PinAuthenticationRequestHandler()

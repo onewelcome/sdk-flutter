@@ -90,7 +90,7 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
 
 
     private fun authenticateDevice(result: MethodChannel.Result) {
-        OneginiSDK.getOneginiClient(context)?.deviceClient?.authenticateDevice(arrayOf("application-details"), object : OneginiDeviceAuthenticationHandler {
+        OneginiSDK.getOneginiClient(context).deviceClient?.authenticateDevice(arrayOf("application-details"), object : OneginiDeviceAuthenticationHandler {
             @SuppressLint("CheckResult")
             override fun onSuccess() {
                 AnonymousService(activity).applicationDetails
@@ -105,10 +105,10 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
     }
 
     private fun getImplicitUserDetails(result: MethodChannel.Result) {
-        val userProfile = OneginiSDK.getOneginiClient(context)?.userClient?.authenticatedUserProfile
+        val userProfile = OneginiSDK.getOneginiClient(context).userClient.authenticatedUserProfile
                 ?: return
         //todo if need show error use OneginiEventSender
-        OneginiSDK.getOneginiClient(context)?.userClient
+        OneginiSDK.getOneginiClient(context).userClient
                 ?.authenticateUserImplicitly(userProfile, arrayOf("read"), object : OneginiImplicitAuthenticationHandler {
                     @SuppressLint("CheckResult")
                     override fun onSuccess(profile: UserProfile) {
