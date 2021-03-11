@@ -30,6 +30,9 @@ class Constants{
   static const String acceptOTPAuth = "acceptOTPAuth";
   static const String denyOTPAuth = "denyOTPAuth";
   static const String isUserNotRegisteredFingerprint = "isUserNotRegisteredFingerprint";
+  static const String getAllNotRegisteredAuthenticators = "getAllNotRegisteredAuthenticators";
+  static const String registerAuthenticator = "registerAuthenticator";
+
 
 
 

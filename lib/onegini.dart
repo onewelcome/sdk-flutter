@@ -100,6 +100,38 @@ class Onegini {
       throw error;
     }
   }
+
+
+  static Future<List<OneginiIdentityProvider>> getNotRegisteredAuthenticators(
+      BuildContext context) async {
+    _eventListener?.context = context;
+    try {
+      var authenticators =
+      await _channel.invokeMethod(Constants.getAllNotRegisteredAuthenticators);
+      return providerFromJson(authenticators);
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  static Future<String> registeredAuthenticator(
+      String authenticatorId) async {
+    try {
+      var data = await _channel.invokeMethod(
+          Constants.registerAuthenticator, <String, String>{
+        'authenticatorId': authenticatorId,
+      });
+      return data;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+
+
+
+
+
   static Future<void> activateFingerprintSensor(BuildContext context) async {
     _eventListener?.context = context;
     try {

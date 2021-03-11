@@ -35,6 +35,8 @@ class OnMethodCallMapper(var context: Context) {
             Constants.METHOD_PIN_AUTHENTICATION -> AuthHelper.authenticateUser(context,OneginiSDK.getOneginiClient(context).userClient.userProfiles.first(),null,result)
             Constants.METHOD_GET_REGISTERED_AUTHENTICATORS -> AuthHelper.getRegisteredAuthenticators(context,result)
             Constants.METHOD_AUTHENTICATE_WITH_REGISTERED_AUTHENTICATION -> AuthHelper.authenticateWithRegisteredAuthenticators(context,call.argument<String>("registeredAuthenticatorsId"),result)
+            Constants.METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS -> AuthenticatorsHelper.getNotRegisteredAuthenticators(context,result)
+            Constants.METHOD_REGISTER_AUTHENTICATOR -> AuthenticatorsHelper.registerAuthenticator(context,call.argument<String>("authenticatorId"),result)
             Constants.METHOD_IS_USER_NOT_REGISTERED_FINGERPRINT -> FingerprintHelper.isUserNotRegisteredFingerprint(context,result)
             Constants.METHOD_REGISTER_FINGERPRINT_AUTHENTICATOR -> FingerprintHelper.registerFingerprint(context, result)
             Constants.METHOD_FINGERPRINT_ACTIVATION_SENSOR ->  FingerprintAuthenticationRequestHandler.fingerprintCallback?.acceptAuthenticationRequest()
