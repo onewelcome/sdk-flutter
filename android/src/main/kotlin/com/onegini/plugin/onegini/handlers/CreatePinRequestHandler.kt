@@ -2,7 +2,6 @@ package com.onegini.plugin.onegini.handlers
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import com.onegini.mobile.sdk.android.handlers.OneginiPinValidationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
 import com.onegini.mobile.sdk.android.handlers.request.OneginiCreatePinRequestHandler
@@ -38,7 +37,7 @@ class CreatePinRequestHandler(private var context: Context) : OneginiCreatePinRe
     }
 
     override fun onNextPinCreationAttempt(oneginiPinValidationError: OneginiPinValidationError?) {
-        OneginiEventsSender.events?.error(oneginiPinValidationError?.errorType.toString(),oneginiPinValidationError?.message, oneginiPinValidationError?.errorDetails)
+        OneginiEventsSender.events?.error(oneginiPinValidationError?.errorType.toString(), oneginiPinValidationError?.message, oneginiPinValidationError?.errorDetails)
     }
 
     override fun finishPinCreation() {
@@ -60,20 +59,18 @@ class CreatePinRequestHandler(private var context: Context) : OneginiCreatePinRe
         private fun firstPinProvided(pin: CharArray?) {
             OneginiSDK.getOneginiClient(context)?.userClient?.validatePinWithPolicy(pin, object : OneginiPinValidationHandler {
                 override fun onSuccess() {
-                    Log.v("PIN", "FIRST PIN")
                     _pin = pin
                     OneginiEventsSender.events?.success(EVENT_OPEN_PIN_CONFIRMATION)
                 }
 
                 override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
-                    handlePinValidationError(oneginiPinValidationError)
+                    OneginiEventsSender.events?.error(oneginiPinValidationError.errorType.toString(), oneginiPinValidationError.message, null)
                 }
             })
         }
 
 
         private fun secondPinProvided(pin: CharArray?) {
-            Log.v("PIN", "SECOND PIN")
             val pinsEqual: Boolean = Arrays.equals(_pin, pin)
             if (pinsEqual) {
                 /**
@@ -85,11 +82,6 @@ class CreatePinRequestHandler(private var context: Context) : OneginiCreatePinRe
             } else {
                 OneginiEventsSender.events?.error("", context.getString(R.string.pin_error_not_equal), null)
             }
-        }
-
-        fun pinCancelled() {
-            nullifyPinArray()
-            originalHandler?.denyAuthenticationRequest()
         }
 
         private val isPinSet: Boolean
@@ -105,19 +97,6 @@ class CreatePinRequestHandler(private var context: Context) : OneginiCreatePinRe
                 _pin = null
             }
         }
-
-       private fun handlePinValidationError(oneginiPinValidationError: OneginiPinValidationError) {
-            when (oneginiPinValidationError.errorType) {
-                OneginiPinValidationError.WRONG_PIN_LENGTH -> OneginiEventsSender.events?.error(oneginiPinValidationError.errorType.toString(), context.getString(R.string.pin_error_invalid_length), oneginiPinValidationError.cause)
-                OneginiPinValidationError.PIN_BLACKLISTED -> OneginiEventsSender.events?.error(oneginiPinValidationError.errorType.toString(), context.getString(R.string.pin_error_blacklisted), oneginiPinValidationError.cause)
-                OneginiPinValidationError.PIN_IS_A_SEQUENCE -> OneginiEventsSender.events?.error(oneginiPinValidationError.errorType.toString(), context.getString(R.string.pin_error_sequence), oneginiPinValidationError.cause)
-                OneginiPinValidationError.PIN_USES_SIMILAR_DIGITS -> OneginiEventsSender.events?.error(oneginiPinValidationError.errorType.toString(), context.getString(R.string.pin_error_similar), oneginiPinValidationError.cause)
-                OneginiPinValidationError.DEVICE_DEREGISTERED -> OneginiEventsSender.events?.error(oneginiPinValidationError.errorType.toString(), oneginiPinValidationError.message, oneginiPinValidationError.cause)
-                OneginiPinValidationError.GENERAL_ERROR -> OneginiEventsSender.events?.error(oneginiPinValidationError.errorType.toString(), context.getString(R.string.pin_error_invalid_length), oneginiPinValidationError.cause)
-                else -> OneginiEventsSender.events?.error(oneginiPinValidationError.errorType.toString(), oneginiPinValidationError.message, oneginiPinValidationError.cause)
-            }
-        }
-
     }
 
 

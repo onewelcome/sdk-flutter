@@ -1,6 +1,5 @@
 package com.onegini.plugin.onegini
 
-import android.app.Activity
 import android.content.Context
 import android.net.Uri
 import android.util.Log
@@ -42,8 +41,6 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private lateinit var channel: MethodChannel
     private lateinit var eventChannel: EventChannel
     private lateinit var context: Context
-    private lateinit var activity: Activity
-
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "onegini")
@@ -98,7 +95,6 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             }
         }
         if (call.method == Constants.METHOD_FINGERPRINT_ACTIVATION_SENSOR) {
-            Log.v("ACTIVATE SENSOR", "DONE")
             FingerprintAuthenticationRequestHandler.fingerprintCallback?.acceptAuthenticationRequest()
         }
         if (call.method == Constants.METHOD_SEND_PIN) {
@@ -371,12 +367,7 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             }
 
             override fun onError(oneginiRegistrationError: OneginiRegistrationError) {
-                val errorType = oneginiRegistrationError.errorType
-                var errorMessage: String? = RegistrationHelper.getErrorMessageByCode(errorType)
-                if (errorMessage == null) {
-                    errorMessage = oneginiRegistrationError.message
-                }
-                result.error(errorType.toString(), errorMessage ?: "", null)
+                result.error(oneginiRegistrationError.errorType.toString(), oneginiRegistrationError.message ?: "", null)
             }
         })
     }
@@ -431,7 +422,7 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        activity = binding.activity
+       
     }
 
     override fun onDetachedFromActivityForConfigChanges() {

@@ -42,6 +42,6 @@ class Device() {
     val isMobileAuthenticationEnabled: Boolean = false
 
     val deviceFullInfo: String
-        get() = (name + Constants.NEW_LINE + application + Constants.NEW_LINE + platform + Constants.NEW_LINE
+        get() = (name + "\n" + application + "\n" + platform + "\n"
                 + "Mobile authentication enabled: " + isMobileAuthenticationEnabled)
 }
