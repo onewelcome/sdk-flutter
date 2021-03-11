@@ -17,33 +17,29 @@ class Onegini {
     return version;
   }
 
-  static setEventContext(BuildContext context){
+  static setEventContext(BuildContext context) {
     _eventListener.context = context;
   }
 
-  static Future<bool> startApplication(
+  static Future<String> startApplication(
       OneginiEventListener eventListener) async {
     _eventListener = eventListener;
-    var appStarted = false;
     try {
-      String removedUserProfiles = await _channel.invokeMethod(Constants.startAppMethod);
-      print(removedUserProfiles);
-      if(removedUserProfiles != null){
-        appStarted = true;
-      }
+      String removedUserProfiles =
+          await _channel.invokeMethod(Constants.startAppMethod);
+      if (removedUserProfiles != null) eventListener.listen();
+      return removedUserProfiles;
     } on PlatformException catch (error) {
       throw error;
     }
-    if (appStarted) eventListener.listen();
-    return appStarted;
   }
 
-  static Future<String> registration(BuildContext context,String scopes) async {
+  static Future<String> registration(
+      BuildContext context, String scopes) async {
     _eventListener?.context = context;
     try {
-      var userId = await _channel.invokeMethod(Constants.registrationMethod, <String, String>{
-        'scopes': scopes
-      });
+      var userId = await _channel.invokeMethod(
+          Constants.registrationMethod, <String, String>{'scopes': scopes});
       return userId;
     } on PlatformException catch (error) {
       throw error;
@@ -63,7 +59,7 @@ class Onegini {
   }
 
   static Future<String> registrationWithIdentityProvider(
-      String identityProviderId,String scopes) async {
+      String identityProviderId, String scopes) async {
     try {
       var userId = await _channel.invokeMethod(
           Constants.registrationWithIdentityProviderMethod, <String, String>{
@@ -81,7 +77,7 @@ class Onegini {
     _eventListener?.context = context;
     try {
       var authenticators =
-      await _channel.invokeMethod(Constants.getRegisteredAuthenticators);
+          await _channel.invokeMethod(Constants.getRegisteredAuthenticators);
       return providerFromJson(authenticators);
     } on PlatformException catch (error) {
       throw error;
@@ -101,24 +97,22 @@ class Onegini {
     }
   }
 
-
   static Future<List<OneginiIdentityProvider>> getNotRegisteredAuthenticators(
       BuildContext context) async {
     _eventListener?.context = context;
     try {
-      var authenticators =
-      await _channel.invokeMethod(Constants.getAllNotRegisteredAuthenticators);
+      var authenticators = await _channel
+          .invokeMethod(Constants.getAllNotRegisteredAuthenticators);
       return providerFromJson(authenticators);
     } on PlatformException catch (error) {
       throw error;
     }
   }
 
-  static Future<String> registeredAuthenticator(
-      String authenticatorId) async {
+  static Future<String> registeredAuthenticator(String authenticatorId) async {
     try {
-      var data = await _channel.invokeMethod(
-          Constants.registerAuthenticator, <String, String>{
+      var data = await _channel
+          .invokeMethod(Constants.registerAuthenticator, <String, String>{
         'authenticatorId': authenticatorId,
       });
       return data;
@@ -126,11 +120,6 @@ class Onegini {
       throw error;
     }
   }
-
-
-
-
-
 
   static Future<void> activateFingerprintSensor(BuildContext context) async {
     _eventListener?.context = context;
@@ -144,14 +133,13 @@ class Onegini {
   static Future<String> registerFingerprint(BuildContext context) async {
     _eventListener?.context = context;
     try {
-      String data = await _channel.invokeMethod(Constants.registerFingerprintAuthenticator);
+      String data = await _channel
+          .invokeMethod(Constants.registerFingerprintAuthenticator);
       return data;
     } on PlatformException catch (error) {
       throw error;
     }
   }
-
-
 
   static Future<String> pinAuthentication(BuildContext context) async {
     _eventListener?.context = context;
@@ -163,11 +151,10 @@ class Onegini {
     }
   }
 
-
-
   static Future<String> singleSingOn(String url) async {
     try {
-      var oneginiAppToWebSingleSignOn =  await _channel.invokeMethod(Constants.getSingleSignOnMethod,<String, String>{
+      var oneginiAppToWebSingleSignOn = await _channel
+          .invokeMethod(Constants.getSingleSignOnMethod, <String, String>{
         'url': url,
       });
       print(oneginiAppToWebSingleSignOn);
@@ -196,13 +183,10 @@ class Onegini {
     }
   }
 
-  static Future<String> sendPin(String pinCode,bool isAuth) async {
+  static Future<String> sendPin(String pinCode, bool isAuth) async {
     try {
-      var userId = await _channel
-          .invokeMethod(Constants.getSendPinMethod, <String, dynamic>{
-        'pin': pinCode,
-        'isAuth' : isAuth
-      });
+      var userId = await _channel.invokeMethod(Constants.getSendPinMethod,
+          <String, dynamic>{'pin': pinCode, 'isAuth': isAuth});
       return userId;
     } on PlatformException catch (error) {
       throw error;
@@ -210,37 +194,38 @@ class Onegini {
   }
 
   static Future<void> cancelRegistration() async {
-    try{
-       await _channel.invokeMethod(Constants.cancelRegistrationMethod);
-    }on PlatformException catch (error) {
+    try {
+      await _channel.invokeMethod(Constants.cancelRegistrationMethod);
+    } on PlatformException catch (error) {
       throw error;
     }
   }
 
   static Future<void> cancelAuth(bool isPin) async {
-    try{
+    try {
       await _channel.invokeMethod(Constants.cancelPinAuth, <String, dynamic>{
         'isPin': isPin,
       });
-    }on PlatformException catch (error) {
+    } on PlatformException catch (error) {
       throw error;
     }
   }
 
   static Future<void> changePin(BuildContext context) async {
     _eventListener?.context = context;
-    try{
+    try {
       await _channel.invokeMethod(Constants.changePin);
-    }on PlatformException catch (error) {
+    } on PlatformException catch (error) {
       throw error;
     }
   }
 
   static Future<bool> isUserNotRegisteredFingerprint() async {
-    try{
-      var isUserNotRegisteredFingerprint = await _channel.invokeMethod(Constants.isUserNotRegisteredFingerprint);
+    try {
+      var isUserNotRegisteredFingerprint =
+          await _channel.invokeMethod(Constants.isUserNotRegisteredFingerprint);
       return isUserNotRegisteredFingerprint;
-    }on PlatformException catch (error) {
+    } on PlatformException catch (error) {
       throw error;
     }
   }
@@ -259,19 +244,18 @@ class Onegini {
 
   static Future<void> acceptOTPAuth(BuildContext context) async {
     _eventListener.context = context;
-    try{
+    try {
       await _channel.invokeMethod(Constants.acceptOTPAuth);
-    }on PlatformException catch (error) {
+    } on PlatformException catch (error) {
       throw error;
     }
   }
 
-
   static Future<void> denyOTPAuth(BuildContext context) async {
     _eventListener.context = context;
-    try{
+    try {
       await _channel.invokeMethod(Constants.denyOTPAuth);
-    }on PlatformException catch (error) {
+    } on PlatformException catch (error) {
       throw error;
     }
   }
