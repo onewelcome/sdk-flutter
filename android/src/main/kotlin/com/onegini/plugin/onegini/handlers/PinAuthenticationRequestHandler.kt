@@ -1,9 +1,6 @@
 package com.onegini.plugin.onegini.handlers
 
-import android.content.Context
 import com.google.gson.Gson
-import com.google.gson.JsonElement
-import com.google.gson.JsonObject
 import com.onegini.mobile.sdk.android.handlers.request.OneginiPinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallback
 import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
@@ -12,7 +9,7 @@ import com.onegini.plugin.onegini.constants.Constants
 import com.onegini.plugin.onegini.helpers.OneginiEventsSender
 import com.onegini.plugin.onegini.models.OneginiEvent
 
-class PinAuthenticationRequestHandler(var context: Context) : OneginiPinAuthenticationRequestHandler {
+class PinAuthenticationRequestHandler : OneginiPinAuthenticationRequestHandler {
     companion object{
         var CALLBACK: OneginiPinCallback ? = null
 

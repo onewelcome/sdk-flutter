@@ -2,8 +2,6 @@ package com.onegini.plugin.onegini.constants
 
 interface Constants {
     companion object {
-        const val NEW_LINE = "\n"
-
         /**
          *  events
          */
