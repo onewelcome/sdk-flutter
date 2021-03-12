@@ -1,11 +1,7 @@
 package com.onegini.mobile.sdk
 
 import android.content.Context
-import com.onegini.mobile.sdk.android.handlers.OneginiRegistrationHandler
-import com.onegini.mobile.sdk.android.handlers.error.OneginiRegistrationError
 import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
-import com.onegini.mobile.sdk.android.model.entity.CustomInfo
-import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneginiPlugin
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.constants.Constants
@@ -45,15 +41,7 @@ class OneginiPluginTest {
     fun testRegistration() {
         assertEquals(plugin.onMethodCall(MethodCall(Constants.METHOD_REGISTRATION, mapOf("scopes" to "read")), mockResult), Unit)
         assertEquals(plugin.onMethodCall(MethodCall(Constants.METHOD_REGISTRATION, mapOf("NotHaveScope" to "read")), mockResult), Unit)
-        assertEquals(RegistrationHelper.registerUser(mockContext, null, arrayOf("read"), object : OneginiRegistrationHandler {
-            override fun onSuccess(p0: UserProfile?, p1: CustomInfo?) {
-
-            }
-
-            override fun onError(p0: OneginiRegistrationError?) {
-
-            }
-        }), Unit)
+        assertEquals(RegistrationHelper.registerUser(mockContext, null, arrayOf("read"), mockResult), Unit)
     }
 
     @Test
