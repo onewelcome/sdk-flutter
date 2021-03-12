@@ -1,12 +1,11 @@
 package com.onegini.mobile.sdk
 
 import android.content.Context
-import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
+import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 import com.onegini.mobile.sdk.flutter.OneginiPlugin
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.constants.Constants
 import com.onegini.mobile.sdk.flutter.helpers.RegistrationHelper
-import com.onegini.mobile.sdk.utils.OneginiConfigModel
 import com.onegini.mobile.sdk.utils.SecurityController
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -19,15 +18,23 @@ class OneginiPluginTest {
 
     private val mockResult = Mockito.mock(MethodChannel.Result::class.java)
     private val mockContext = Mockito.mock(Context::class.java)
+    private val mockConfigModel = Mockito.mock(OneginiClientConfigModel::class.java)
     private val plugin = OneginiPlugin()
 
     @Before
     fun attach() {
-        val customProviders = mutableListOf<OneginiCustomIdentityProvider>()
+        Mockito.`when`(mockConfigModel.appIdentifier).thenReturn("ExampleApp")
+        Mockito.`when`(mockConfigModel.appPlatform).thenReturn("android")
+        Mockito.`when`(mockConfigModel.appVersion).thenReturn("6.0.0")
+        Mockito.`when`(mockConfigModel.baseUrl).thenReturn("https://token-mobile.test.onegini.com")
+        Mockito.`when`(mockConfigModel.resourceBaseUrl).thenReturn("https://token-mobile.test.onegini.com/resources/")
+        Mockito.`when`(mockConfigModel.keyStoreHash).thenReturn("ebbcab87e2d16b9441559767a7c85fbaea9a3feef94451990423019a31e5bf1f")
+        Mockito.`when`(mockConfigModel.redirectUri).thenReturn("oneginiexample://loginsuccess")
+        Mockito.`when`(mockConfigModel.certificatePinningKeyStore).thenReturn(0)
+
         OneginiSDK.init(mockContext,
-                OneginiConfigModel(),
-                SecurityController::class.java,
-                oneginiCustomIdentityProviders = customProviders)
+                mockConfigModel,
+                SecurityController::class.java,)
         plugin.setContext(mockContext)
     }
 
