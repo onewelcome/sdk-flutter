@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:onegini/model/application_details.dart';
-import 'package:onegini/model/client_resource.dart';
 import 'package:onegini/onegini.dart';
+import 'package:onegini_example/models/application_details.dart';
+import 'package:onegini_example/models/client_resource.dart';
 import 'package:onegini_example/screens/qr_scan_screen.dart';
 
 import 'login_screen.dart';
