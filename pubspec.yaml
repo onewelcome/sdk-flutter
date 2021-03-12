@@ -29,7 +29,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: com.onegini.plugin.onegini
+        package: com.onegini.mobile.sdk.flutter
         pluginClass: OneginiPlugin
       ios:
         pluginClass: OneginiPlugin

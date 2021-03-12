@@ -43,7 +43,11 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     
     case Constants.Routes.pinAuthentication:
         OneginiModuleSwift.sharedInstance.authenticateUser(nil, callback: result)
-        
+    case Constants.Routes.getRegisteredAuthenticators:
+        OneginiModuleSwift.sharedInstance.fetchRegisteredAuthenticators(callback: result)
+    case Constants.Routes.registerFingerprintAuthenticator:
+        OneginiModuleSwift.sharedInstance.registerFingerprintAuthenticator(callback: result)
+    
     default:
         result(FlutterMethodNotImplemented)
     }

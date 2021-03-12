@@ -13,6 +13,7 @@ class BridgeConnector: BridgeConnectorProtocol {
     var toLogoutUserInteractor = LogoutInteractor()
     var toDeregisterUserInteractor = DisconnectInteractor()
     var toResourcesHandler: FetchResourcesProtocol = ResourcesHandler()
+    let toAuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol = AuthenticatorsHandler()
     
     weak var bridge: ConnectorToFlutterBridgeProtocol?
     public static var shared:BridgeConnector?

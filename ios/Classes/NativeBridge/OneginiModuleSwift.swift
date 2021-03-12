@@ -182,6 +182,55 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
         _eventSink(data)
      }
     
+    func fetchRegisteredAuthenticators(callback: @escaping FlutterResult) {
+        guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
+            callback(SdkError.convertToFlutter(SdkError.init(errorDescription: "User profile is null")))
+            return
+        }
+        
+        let registeredAuthenticators = bridgeConnector.toAuthenticatorsHandler.getAuthenticatorsListForUserProfile(profile)
+        
+        let jsonData = registeredAuthenticators.compactMap { (registeredAuthenticator) -> [String: Any]? in
+            var data = [String: Any]()
+            data["id"] = registeredAuthenticator.identifier
+            data["name"] = registeredAuthenticator.name
+            return data
+        }
+        
+        let data = String.stringify(json: jsonData)
+        callback(data)
+    }
+    
+    func registerFingerprintAuthenticator(callback: @escaping FlutterResult) -> Void {
+        guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
+            callback(SdkError.convertToFlutter(SdkError.init(errorDescription: "User profile is null")))
+            return
+        }
+        
+        let notRegisteredAuthenticators = ONGUserClient.sharedInstance().nonRegisteredAuthenticators(forUser: profile)
+        
+        if notRegisteredAuthenticators.count == 0 {
+            callback(SdkError.convertToFlutter(SdkError.init(errorDescription: "Not registered authenticators is null")))
+        }
+        
+        let isAuthenticatorRegistered = bridgeConnector.toAuthenticatorsHandler.isAuthenticatorRegistered(ONGAuthenticatorType.biometric, profile)
+        
+        guard isAuthenticatorRegistered else {
+            callback(SdkError.convertToFlutter(SdkError.init(errorDescription: "Fingerprint authenticator is null")))
+            return
+        }
+
+        bridgeConnector.toAuthenticatorsHandler.registerAuthenticator(profile, ONGAuthenticatorType.biometric) {
+            (_ , error) -> Void in
+
+            if let _error = error {
+                callback(SdkError.convertToFlutter(_error))
+            } else {
+                callback(true)
+            }
+        }
+    }
+    
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
         if let _value = eventSinkParameter, let _arg = arguments as! String?, _value == _arg {
             self.eventSinkNativePart = events
@@ -196,7 +245,5 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
         eventSinkNativePart = nil
         return nil
     }
-
-    
 }
 
