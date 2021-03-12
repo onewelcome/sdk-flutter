@@ -290,36 +290,21 @@ class Info extends StatefulWidget {
 }
 
 class _InfoState extends State<Info> {
-  final MethodChannel _channel = const MethodChannel('example');
 
   Future<ApplicationDetails> getApplicationDetails() async {
-    try {
-      var resource = await _channel.invokeMethod("getApplicationDetails");
-      return ApplicationDetails.fromJson(jsonDecode(resource));
-    } on PlatformException catch (error) {
-      throw error;
-    }
+    var response = await Onegini.getResourceWithAnonymousResourceOkHttpClient("application-details","application-details");
+    return applicationDetailsFromJson(response);
   }
 
   Future<ClientResource> getClientResource() async {
-    try {
-      var resource = await _channel.invokeMethod("getClientResource");
-      return clientResourceFromJson(resource);
-    } on PlatformException catch (error) {
-      print(error.details.toString());
-      throw error;
-    } on Exception catch (error) {
-      throw error;
-    }
+    var response = await Onegini.getResourceWithResourceOkHttpClient("devices");
+    return clientResourceFromJson(response);
   }
 
   Future<String> getImplicitUserDetails() async {
-    try {
-      var resource = await _channel.invokeMethod("getImplicitUserDetails");
-      return resource;
-    } on PlatformException catch (error) {
-      throw error;
-    }
+   var response = await Onegini.getResourceWithImplicitResourceOkHttpClient("user-id-decorated","read");
+   Map<String, dynamic> responseAsJson = json.decode(response);
+   return responseAsJson["decorated_user_id"];
   }
 
   @override
