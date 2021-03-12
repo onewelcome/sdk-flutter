@@ -56,7 +56,7 @@ class CreatePinRequestHandler(private var context: Context) : OneginiCreatePinRe
         }
 
         private fun firstPinProvided(pin: CharArray?) {
-            OneginiSDK.getOneginiClient(context)?.userClient?.validatePinWithPolicy(pin, object : OneginiPinValidationHandler {
+            OneginiSDK.getOneginiClient(context).userClient?.validatePinWithPolicy(pin, object : OneginiPinValidationHandler {
                 override fun onSuccess() {
                     _pin = pin
                     OneginiEventsSender.events?.success(EVENT_OPEN_PIN_CONFIRMATION)
