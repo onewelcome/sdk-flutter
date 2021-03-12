@@ -56,7 +56,7 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
             }
             
             if !result {
-                callback(SdkError(errorDescription: "Something went wrong.").flutterError())
+                callback(SdkError(customType: .somethingWentWrong).flutterError())
                 return
             }
             

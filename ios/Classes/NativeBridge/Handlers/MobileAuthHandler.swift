@@ -42,7 +42,7 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
                 completion(false, mappedError)
               } else {
                 if(enrolled == false){
-                    completion(false, SdkError(errorDescription: "Enrollment failed. Please try again or contact maintainer."))
+                    completion(false, SdkError(customType: .enrollmentFailed))
                     return;
                 }
                 
@@ -107,7 +107,7 @@ extension MobileAuthHandler: ONGMobileAuthRequestDelegate {
 
     func userClient(_: ONGUserClient, didFailToHandle _: ONGMobileAuthRequest, error: Error) {
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            mobileAuthCompletion!(false, SdkError(errorDescription: "Authentication cancelled."))
+            mobileAuthCompletion!(false, SdkError(customType: .authenticationCancelled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
             mobileAuthCompletion!(false, mappedError)
