@@ -15,12 +15,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     switch call.method {
     case Constants.Routes.startApp:
         OneginiModuleSwift.sharedInstance.startOneginiModule(callback: result)
-    case Constants.Routes.getClientResource:
-        OneginiModuleSwift.sharedInstance.fetchDevicesList(callback: result)
-    case Constants.Routes.getApplicationDetails:
-        OneginiModuleSwift.sharedInstance.getApplicationDetails(callback: result)
-    case Constants.Routes.getImplicitUserDetails:
-        OneginiModuleSwift.sharedInstance.fetchImplicitResources(callback: result)
     case Constants.Routes.getIdentityProviders:
         OneginiModuleSwift.sharedInstance.identityProviders(callback: result)
     case Constants.Routes.logOut:
@@ -43,11 +37,18 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     
     case Constants.Routes.pinAuthentication:
         OneginiModuleSwift.sharedInstance.authenticateUser(nil, callback: result)
+    case Constants.Routes.singleSignOn: do {
+        guard let _arg = call.arguments as! [String: Any]?, let _path = _arg["url"] as! String? else { break; }
+        OneginiModuleSwift.sharedInstance.runSingleSignOn(_path, callback: result)
+    }
+    case Constants.Routes.changePin:
+        OneginiModuleSwift.sharedInstance.changePin(callback: result)
+    case Constants.Routes.isUserNotRegisteredFingerprint:
+        OneginiModuleSwift.sharedInstance.fetchNotRegisteredAuthenticator(callback: result)
     case Constants.Routes.getRegisteredAuthenticators:
         OneginiModuleSwift.sharedInstance.fetchRegisteredAuthenticators(callback: result)
     case Constants.Routes.registerFingerprintAuthenticator:
         OneginiModuleSwift.sharedInstance.registerFingerprintAuthenticator(callback: result)
-    
     default:
         result(FlutterMethodNotImplemented)
     }

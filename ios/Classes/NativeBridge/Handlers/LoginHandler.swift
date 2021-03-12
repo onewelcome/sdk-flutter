@@ -62,7 +62,7 @@ extension LoginHandler: ONGAuthenticationDelegate {
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            loginCompletion!(nil, SdkError(errorDescription: "Login cancelled."))
+            loginCompletion!(nil, SdkError.init(customType: .loginCanceled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
             loginCompletion!(nil, mappedError)
