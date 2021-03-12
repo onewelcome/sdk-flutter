@@ -5,6 +5,7 @@ enum OneginiErrorCustomType: Int {
     case userProfileIsNull = 8002
     case fingerprintAuthenticatorIsNull
     case registeredAuthenticatorsIsNull
+    case notRegisteredAuthenticatorsIsNull
     case identityProvidersIsNull
     case providedUrlIncorrect
     case loginCanceled
@@ -20,13 +21,15 @@ enum OneginiErrorCustomType: Int {
         
         switch self {
         case .userProfileIsNull:
-            message = ""
+            message = "User profile is null"
         case .fingerprintAuthenticatorIsNull:
-            message = "Fingerprint authenticator is null."
+            message = "Fingerprint authenticator is empty."
         case .registeredAuthenticatorsIsNull:
-            message = "Registered authenticators is null."
+            message = "Registered authenticators is empty."
+        case .notRegisteredAuthenticatorsIsNull:
+            message = "Not Registered authenticators is empty."
         case .identityProvidersIsNull:
-            message = "Identity providers is null."
+            message = "Identity providers is empty."
         case .providedUrlIncorrect:
             message = "Provided url is incorrect."
         case .enrollmentFailed:
