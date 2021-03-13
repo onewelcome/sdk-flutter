@@ -4,8 +4,8 @@ import android.content.Context
 import com.onegini.mobile.sdk.android.handlers.OneginiChangePinHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiChangePinError
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.handlers.CreatePinRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
+import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import io.flutter.plugin.common.MethodChannel
 
 object PinHelper {
@@ -13,7 +13,7 @@ object PinHelper {
         if (auth != null && auth) {
             PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin?.toCharArray())
         } else {
-            CreatePinRequestHandler.CALLBACK?.onPinProvided(pin?.toCharArray())
+            PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin?.toCharArray())
         }
     }
 

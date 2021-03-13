@@ -52,7 +52,7 @@ class OneginiSDK {
         val registrationRequestHandler = RegistrationRequestHandler(applicationContext)
         val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
         val pinAuthenticationRequestHandler = PinAuthenticationRequestHandler()
-        val createPinRequestHandler = CreatePinRequestHandler(applicationContext)
+        val createPinRequestHandler = PinRequestHandler()
         val mobileAuthWithOtpRequestHandler = MobileAuthOtpRequestHandler()
         val clientBuilder = OneginiClientBuilder(applicationContext, createPinRequestHandler, pinAuthenticationRequestHandler) // handlers for optional functionalities
                 .setBrowserRegistrationRequestHandler(registrationRequestHandler)
