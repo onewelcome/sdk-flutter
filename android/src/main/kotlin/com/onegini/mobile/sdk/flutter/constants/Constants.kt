@@ -24,9 +24,9 @@ interface Constants {
          * MethodsName
          */
         const val METHOD_START_APP ="startApp"
-        const val METHOD_GET_APPLICATION_DETAILS ="getApplicationDetails"
-        const val METHOD_GET_CLIENT_RESOURCE ="getClientResource"
-        const val METHOD_GET_IMPLICIT_USER_DETAILS ="getImplicitUserDetails"
+        const val METHOD_GET_RESOURCE_ANONYMOUS ="getResourceAnonymous"
+        const val METHOD_GET_RESOURCE ="getResource"
+        const val METHOD_GET_IMPLICIT_RESOURCE ="getImplicitResource"
         const val METHOD_REGISTRATION ="registration"
         const val METHOD_CANCEL_REGISTRATION = "cancelRegistration"
         const val METHOD_SEND_PIN ="sendPin"

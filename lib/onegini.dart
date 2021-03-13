@@ -259,4 +259,53 @@ class Onegini {
       throw error;
     }
   }
+
+  static Future<String> getResourceWithAnonymousResourceOkHttpClient(String path,String scope,{Map<String,String> headers,String method,String encoding,String body, }) async {
+    try {
+     var response = await _channel.invokeMethod(Constants.getResourceAnonymous, <String, dynamic>{
+       'path': path,
+       'scope':scope,
+       'headers' : headers,
+       'method' : method,
+       'encoding':encoding,
+       'body':body
+     });
+     return response;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  static Future<String> getResourceWithResourceOkHttpClient(String path,{Map<String,String> headers,String method,String encoding,String body, }) async {
+    try {
+      var response =  await _channel.invokeMethod(Constants.getResource,<String, dynamic>{
+        'path': path,
+        'headers' : headers,
+        'method' : method,
+        'encoding':encoding,
+        'body':body
+      });
+      return response;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  static Future<String> getResourceWithImplicitResourceOkHttpClient(String path,String scope,{Map<String,String> headers,String method,String encoding,String body, }) async {
+
+    try {
+      var response = await _channel.invokeMethod(Constants.getImplicitResource,<String, dynamic>{
+        'path': path,
+        'scope':scope,
+        'headers' : headers,
+        'method' : method,
+        'encoding':encoding,
+        'body':body
+      });
+      return response;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
 }

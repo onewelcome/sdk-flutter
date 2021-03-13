@@ -47,6 +47,10 @@ class OnMethodCallMapper(var context: Context) {
             Constants.METHOD_DENY_OTP_AUTH -> MobileAuthOtpRequestHandler.CALLBACK?.denyAuthenticationRequest()
             Constants.METHOD_SINGLE_SIGN_ON -> startSingleSignOn(call.argument<String>("url"),result)
             Constants.METHOD_LOG_OUT -> logOut(result)
+            Constants.METHOD_GET_RESOURCE_ANONYMOUS -> ResourceHelper(context,call, result).getAnonymous()
+            Constants.METHOD_GET_RESOURCE -> ResourceHelper(context,call, result).getUserClient()
+            Constants.METHOD_GET_IMPLICIT_RESOURCE -> ResourceHelper(context,call, result).getImplicit()
+
 
             else -> result.error(ErrorHelper().methodToCallNotFound.code, ErrorHelper().methodToCallNotFound.message, null)
         }
