@@ -47,7 +47,7 @@ class _PinScreenState extends State<PinScreen> {
       pin+=element;
     });
 
-   Onegini.sendPin(pin,widget.isAuth).catchError((error){
+    Onegini.instance.sendPin(pin,widget.isAuth).catchError((error){
      if(error is PlatformException) {
        Fluttertoast.showToast(
            msg: error.message,
