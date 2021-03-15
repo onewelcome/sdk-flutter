@@ -84,36 +84,33 @@ void main() {
     channel.setMockMethodCallHandler(null);
   });
 
-  test('getPlatformVersion', () async {
-    expect(await Onegini.platformVersion, "0.2.1");
-  });
 
   test('Registration method', () async {
-    expect(await Onegini.registration(_mockContext, "read"), userId);
+    expect(await Onegini.instance.registrationMethods.registration(_mockContext, "read"), userId);
   });
 
   test("LogOut Method",() async {
-    expect(await Onegini.logOut(),true);
+    expect(await Onegini.instance.authenticationMethods.logOut(),true);
   });
   test("Send Pin Method",() async {
-    expect(await Onegini.sendPin("42155", true),userId);
+    expect(await Onegini.instance.sendPin("42155", true),userId);
   });
   test("Deregister User Method",() async {
-    expect(await Onegini.deregisterUser(),true);
+    expect(await Onegini.instance.registrationMethods.deregisterUser(),true);
   });
   test("Registration With IdentityProvider Method",() async {
-    expect(await Onegini.registrationWithIdentityProvider("testId", "read"),userId);
+    expect(await Onegini.instance.registrationMethods.registrationWithIdentityProvider("testId", "read"),userId);
   });
   test("Authenticate With Registered Authentication Method",() async {
-    expect(await Onegini.authenticationWithRegisteredAuthenticators("testId"),userId);
+    expect(await Onegini.instance.authenticationMethods.authenticationWithRegisteredAuthenticators("testId"),userId);
   });
   test("Pin Authentication Method",() async {
-    expect(await Onegini.pinAuthentication(_mockContext),userId);
+    expect(await Onegini.instance.authenticationMethods.pinAuthentication(_mockContext),userId);
   });
   test("Register Fingerprint Authenticator Method",() async {
-    expect(await Onegini.registerFingerprint(_mockContext),fingerprintData);
+    expect(await Onegini.instance.authenticationMethods.registerFingerprint(_mockContext),fingerprintData);
   });
   test("Is User Not Registered Fingerprint Method",() async {
-    expect(await Onegini.isUserNotRegisteredFingerprint(),true);
+    expect(await Onegini.instance.authenticationMethods.isUserNotRegisteredFingerprint(),true);
   });
 }
