@@ -107,10 +107,4 @@ void main() {
   test("Pin Authentication Method",() async {
     expect(await Onegini.instance.authenticationMethods.pinAuthentication(_mockContext),userId);
   });
-  test("Register Fingerprint Authenticator Method",() async {
-    expect(await Onegini.instance.authenticationMethods.registerFingerprint(_mockContext),fingerprintData);
-  });
-  test("Is User Not Registered Fingerprint Method",() async {
-    expect(await Onegini.instance.authenticationMethods.isUserNotRegisteredFingerprint(),true);
-  });
 }

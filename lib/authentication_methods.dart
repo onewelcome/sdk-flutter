@@ -65,26 +65,6 @@ class AuthenticationMethods {
     }
   }
 
-  Future<bool> isUserNotRegisteredFingerprint() async {
-    try {
-      var isUserNotRegisteredFingerprint = await Onegini.instance.channel
-          .invokeMethod(Constants.isUserNotRegisteredFingerprint);
-      return isUserNotRegisteredFingerprint;
-    } on PlatformException catch (error) {
-      throw error;
-    }
-  }
-
-  Future<String> registerFingerprint(BuildContext context) async {
-    Onegini.instance.setEventContext(context);
-    try {
-      String data = await Onegini.instance.channel
-          .invokeMethod(Constants.registerFingerprintAuthenticator);
-      return data;
-    } on PlatformException catch (error) {
-      throw error;
-    }
-  }
 
   Future<String> pinAuthentication(BuildContext context) async {
     Onegini.instance.setEventContext(context);
