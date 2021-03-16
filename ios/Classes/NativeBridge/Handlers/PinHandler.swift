@@ -42,7 +42,8 @@ class PinHandler: NSObject {
                 pinReceiver?.handlePin(pin: pincode)
               break
           case .none:
-              notifyOnError(SdkError(title: "Pin validation error", errorDescription: "Unexpected PIN mode.", recoverySuggestion: "Open and close modal."))
+            pinReceiver?.handlePin(pin: pincode)
+//              notifyOnError(SdkError(title: "Pin validation error", errorDescription: "Unexpected PIN mode.", recoverySuggestion: "Open and close modal."))
               break
         }
     }

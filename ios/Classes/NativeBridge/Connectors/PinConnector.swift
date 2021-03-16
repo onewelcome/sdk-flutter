@@ -52,8 +52,8 @@ class PinConnector : BridgeToPinConnectorProtocol {
 }
 
 enum PinNotification : String {
-    case open = "eventOpenPin",
-         confirm = "eventOpenPinConfirmation",
+    case open = "eventOpenPinAuth",//"eventOpenPin",
+         confirm = "eventOpenPinConfirmation",//"eventOpenPinConfirmation",
          close = "eventClosePin",
          showError = "show_error"
 }

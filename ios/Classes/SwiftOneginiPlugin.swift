@@ -12,6 +12,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    print("call.method: ", call.method)
     switch call.method {
     case Constants.Routes.startApp:
         OneginiModuleSwift.sharedInstance.startOneginiModule(callback: result)
@@ -34,7 +35,10 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         guard let _arg = call.arguments as! [String: Any]?, let _pin = _arg["pin"] as! String? else { break; }
         OneginiModuleSwift.sharedInstance.submitPinAction(PinAction.provide.rawValue, isCreatePinFlow: true, pin: _pin)
     }
-    
+    case Constants.Routes.authenticateWithRegisteredAuthentication: do {
+        guard let _arg = call.arguments as! [String: Any]?, let _id = _arg["registeredAuthenticatorsId"] as! String? else { break; }
+        OneginiModuleSwift.sharedInstance.authenticateWithRegisteredAuthentication(_id, callback: result)
+    }
     case Constants.Routes.pinAuthentication:
         OneginiModuleSwift.sharedInstance.authenticateUser(nil, callback: result)
     case Constants.Routes.singleSignOn: do {

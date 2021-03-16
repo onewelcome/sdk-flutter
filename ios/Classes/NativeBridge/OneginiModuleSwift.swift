@@ -153,11 +153,11 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
         
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
-            callback(SdkError.convertToFlutter(SdkError.init(errorDescription: "User profile is null")))
+            callback(SdkError.convertToFlutter(SdkError.init(customType: .userProfileIsNull)))
             return
         }
 
-        bridgeConnector.toLoginHandler.authenticateUser(profile) {
+        bridgeConnector.toLoginHandler.authenticateUser(profile, authenticator: nil, completion: {
             (userProfile, error) -> Void in
 
             if let _userProfile = userProfile {
@@ -165,18 +165,18 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
             } else {
                 callback(SdkError.convertToFlutter(error))
             }
-        }
+        })
     }
     
-     func handleRegistrationCallback(_ url: String) -> Void {
+    func handleRegistrationCallback(_ url: String) -> Void {
         guard let _url = URL(string: url) else { return }
         
         bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: _url)
-     }
+    }
   
-     func submitPinAction(_ action: String, isCreatePinFlow: Bool, pin: String) -> Void {
+    func submitPinAction(_ action: String, isCreatePinFlow: Bool, pin: String) -> Void {
         bridgeConnector.toPinHandlerConnector.handlePinAction(action, isCreatePinFlow ? PinAction.provide.rawValue : PinAction.cancel.rawValue, pin)
-     }
+    }
     
     func runSingleSignOn(_ path: String?, callback: @escaping FlutterResult) -> Void {
         
@@ -190,6 +190,44 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
         })
     }
     
+    func authenticateWithRegisteredAuthentication(_ identifierId: String?, callback: @escaping FlutterResult) {
+        guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
+        {
+            callback(SdkError.convertToFlutter(SdkError.init(customType: .userProfileIsNull)))
+            return
+        }
+        
+        let registeredAuthenticator = Array(ONGUserClient.sharedInstance().registeredAuthenticators(forUser: profile)).first(where: { $0.identifier == identifierId })
+        
+        
+        bridgeConnector.toLoginHandler.authenticateUser(profile, authenticator: registeredAuthenticator, completion: {
+            (userProfile, error) -> Void in
+            if let _userProfile = userProfile {
+                callback(_userProfile.profileId)
+            } else {
+                callback(SdkError.convertToFlutter(error))
+            }
+        })
+    }
+
+    /*
+    if (call.method == Constants.METHOD_AUTHENTICATE_WITH_REGISTERED_AUTHENTICATION) {
+            val registeredAuthenticatorsId = call.argument<String>("registeredAuthenticatorsId")
+            val userProfile = OneginiSDK.getOneginiClient(context)?.userClient?.userProfiles?.first()
+            val registeredAuthenticators = userProfile?.let { OneginiSDK.getOneginiClient(context)?.userClient?.getRegisteredAuthenticators(it) }
+            if (registeredAuthenticators == null) {
+                result.error(ErrorHelper().registeredAuthenticatorsIsNull.code, ErrorHelper().registeredAuthenticatorsIsNull.message, null)
+                return
+            }
+            for (registeredAuthenticator in registeredAuthenticators) {
+                if (registeredAuthenticator.id == registeredAuthenticatorsId) {
+                    authenticateUser(userProfile, registeredAuthenticator, result)
+                    break
+                }
+            }
+        }
+    */
+    
     func changePin(callback: @escaping FlutterResult) -> Void {
         bridgeConnector.toPinHandlerConnector.pinHandler.onChangePinCalled() {
             (_, error) -> Void in
@@ -199,12 +237,12 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
     }
     
     func fetchRegisteredAuthenticators(callback: @escaping FlutterResult) {
-        guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
+        guard let profile = ONGUserClient.sharedInstance().userProfiles().first else {
             callback(SdkError.convertToFlutter(SdkError(customType: .userProfileIsNull)))
             return
         }
         
-        let registeredAuthenticators = bridgeConnector.toAuthenticatorsHandler.getAuthenticatorsListForUserProfile(profile)
+        let registeredAuthenticators = ONGUserClient.sharedInstance().registeredAuthenticators(forUser: profile)
         
         let jsonData = registeredAuthenticators.compactMap { (registeredAuthenticator) -> [String: Any]? in
             var data = [String: Any]()
@@ -231,7 +269,7 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
         
         let isAuthenticatorRegistered = bridgeConnector.toAuthenticatorsHandler.isAuthenticatorRegistered(ONGAuthenticatorType.biometric, profile)
         
-        guard isAuthenticatorRegistered else {
+        guard !isAuthenticatorRegistered else {
             callback(SdkError.convertToFlutter(SdkError(customType: .fingerprintAuthenticatorIsNull)))
             return
         }
