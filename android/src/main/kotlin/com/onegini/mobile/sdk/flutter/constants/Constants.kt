@@ -8,6 +8,7 @@ interface Constants {
         const val EVENT_OPEN_PIN = "eventOpenPin"
         const val EVENT_CLOSE_PIN = "eventClosePin"
         const val EVENT_OPEN_PIN_AUTH = "eventOpenPinAuth"
+        const val EVENT_CLOSE_PIN_AUTH = "eventClosePinAuth"
         const val EVENT_NEXT_AUTHENTICATION_ATTEMPT = "eventNextAuthenticationAttempt"
 
         const val EVENT_OPEN_FINGERPRINT_AUTH = "eventOpenFingerprintAuth"

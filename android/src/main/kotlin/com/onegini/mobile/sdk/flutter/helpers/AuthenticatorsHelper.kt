@@ -56,9 +56,8 @@ object AuthenticatorsHelper {
                 result.success(customInfo?.data)
             }
 
-            override fun onError(oneginiAuthenticatorRegistrationError: OneginiAuthenticatorRegistrationError?) {
-                result.error(oneginiAuthenticatorRegistrationError?.errorType.toString(), oneginiAuthenticatorRegistrationError?.message
-                        ?: "", null)
+            override fun onError(oneginiAuthenticatorRegistrationError: OneginiAuthenticatorRegistrationError) {
+                result.error(oneginiAuthenticatorRegistrationError.errorType.toString(), oneginiAuthenticatorRegistrationError.message, null)
             }
         })
     }

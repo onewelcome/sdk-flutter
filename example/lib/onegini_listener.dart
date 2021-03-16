@@ -6,31 +6,22 @@ import 'package:onegini/model/onegini_event.dart';
 import 'package:onegini/onegini_event_listener.dart';
 import 'package:onegini_example/screens/auth_otp_screen.dart';
 import 'package:onegini_example/screens/fingerprint_screen.dart';
+import 'package:onegini_example/screens/pin_request_screen.dart';
 import 'package:onegini_example/screens/pin_screen.dart';
 
 class OneginiListener extends OneginiEventListener {
   @override
   void closePin(BuildContext buildContext) {
-    Navigator.of(buildContext).pop();
+    if(Navigator.of(buildContext).canPop()){
+      Navigator.of(buildContext).pop();
+    }
   }
 
   @override
-  void openPinConfirmation(BuildContext buildContext) {
-    Navigator.of(buildContext)
-      ..pop()
-      ..push(
-        MaterialPageRoute(
-            builder: (context) => PinScreen(
-                  confirmation: true,
-                )),
-      );
-  }
-
-  @override
-  void openPinScreen(BuildContext buildContext) {
+  void openPinRequestScreen(BuildContext buildContext) {
     Navigator.push(
       buildContext,
-      MaterialPageRoute(builder: (context) => PinScreen()),
+      MaterialPageRoute(builder: (context) => PinRequestScreen()),
     );
   }
 
@@ -58,7 +49,6 @@ class OneginiListener extends OneginiEventListener {
       buildContext,
       MaterialPageRoute(
           builder: (context) => PinScreen(
-                isAuth: true,
               )),
     );
   }
@@ -126,5 +116,12 @@ class OneginiListener extends OneginiEventListener {
   @override
   void closeAuthOtp(BuildContext buildContext) {
     Navigator.of(buildContext).pop();
+  }
+
+  @override
+  void closePinAuth(BuildContext buildContext) {
+    if(Navigator.of(buildContext).canPop()){
+      Navigator.of(buildContext).pop();
+    }
   }
 }
