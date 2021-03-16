@@ -15,13 +15,13 @@ class PinRequestHandler : OneginiCreatePinRequestHandler {
 
 
 
-    override fun startPinCreation(userProfile: UserProfile?, oneginiPinCallback: OneginiPinCallback?, p2: Int) {
+    override fun startPinCreation(userProfile: UserProfile?, oneginiPinCallback: OneginiPinCallback, p2: Int) {
         CALLBACK = oneginiPinCallback
         OneginiEventsSender.events?.success(Constants.EVENT_OPEN_PIN)
     }
 
-    override fun onNextPinCreationAttempt(oneginiPinValidationError: OneginiPinValidationError?) {
-        OneginiEventsSender.events?.error(oneginiPinValidationError?.errorType.toString(), oneginiPinValidationError?.message, oneginiPinValidationError?.errorDetails)
+    override fun onNextPinCreationAttempt(oneginiPinValidationError: OneginiPinValidationError) {
+        OneginiEventsSender.events?.error(oneginiPinValidationError.errorType.toString(), oneginiPinValidationError.message, null)
     }
 
     override fun finishPinCreation() {

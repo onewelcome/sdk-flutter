@@ -2,6 +2,7 @@ package com.onegini.mobile.sdk.flutter
 
 import android.content.Context
 import android.net.Uri
+import android.util.Patterns
 import androidx.annotation.NonNull
 import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
@@ -71,14 +72,22 @@ class OnMethodCallMapper(var context: Context) {
                 result.success(Gson().toJson(removedUserProfiles))
             }
 
-            override fun onError(error: OneginiInitializationError?) {
-                result.error(error?.errorType.toString(), error?.message, error?.errorDetails)
+            override fun onError(error: OneginiInitializationError) {
+                result.error(error.errorType.toString(), error.message, null)
             }
         })
     }
 
     //"https://login-mobile.test.onegini.com/personal/dashboard"
     private fun startSingleSignOn(url: String?, result: MethodChannel.Result) {
+        if(url == null){
+            result.error(ErrorHelper().urlCantBeNull.code, ErrorHelper().urlCantBeNull.message, null)
+            return
+        }
+        if(!Patterns.WEB_URL.matcher(url).matches()){
+            result.error(ErrorHelper().urlIsNotWebPath.code, ErrorHelper().urlIsNotWebPath.message, null)
+            return
+        }
         val targetUri: Uri = Uri.parse(url)
         OneginiSDK.getOneginiClient(context).userClient.getAppToWebSingleSignOn(targetUri, object : OneginiAppToWebSingleSignOnHandler {
             override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {
@@ -86,7 +95,7 @@ class OnMethodCallMapper(var context: Context) {
             }
 
             override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
-                result.error(oneginiSingleSignOnError.errorType.toString(), oneginiSingleSignOnError.message, Gson().toJson(oneginiSingleSignOnError.errorDetails))
+                result.error(oneginiSingleSignOnError.errorType.toString(), oneginiSingleSignOnError.message, null)
             }
 
         })
@@ -98,8 +107,8 @@ class OnMethodCallMapper(var context: Context) {
                 result.success(true)
             }
 
-            override fun onError(error: OneginiLogoutError?) {
-                result.error(error?.errorType.toString(), error?.message, error?.errorDetails)
+            override fun onError(error: OneginiLogoutError) {
+                result.error(error.errorType.toString(), error.message, null)
             }
         })
     }

@@ -22,19 +22,17 @@ object RegistrationHelper {
     fun registerUser(packageContext: Context, @Nullable identityProvider: OneginiIdentityProvider?, scopes: Array<String>, result: MethodChannel.Result) {
         val oneginiClient: OneginiClient = OneginiSDK.getOneginiClient(packageContext)
         oneginiClient.userClient.registerUser(identityProvider, scopes, object : OneginiRegistrationHandler {
-            override fun onSuccess(userProfile: UserProfile?, customInfo: CustomInfo?) {
-                if (userProfile != null)
+            override fun onSuccess(userProfile: UserProfile, customInfo: CustomInfo?) {
                     result.success(userProfile.profileId)
             }
 
             override fun onError(oneginiRegistrationError: OneginiRegistrationError) {
-                result.error(oneginiRegistrationError.errorType.toString(), oneginiRegistrationError.message
-                        ?: "", null)
+                result.error(oneginiRegistrationError.errorType.toString(), oneginiRegistrationError.message, null)
             }
         })
     }
 
-    fun handleRegistrationCallback(uri: Uri?) {
+    fun handleRegistrationCallback(uri: Uri) {
         RegistrationRequestHandler.handleRegistrationCallback(uri)
     }
 
@@ -84,7 +82,7 @@ object RegistrationHelper {
             }
 
             override fun onError(oneginiDeregistrationError: OneginiDeregistrationError) {
-                result.error(oneginiDeregistrationError.errorType.toString(), oneginiDeregistrationError.message, oneginiDeregistrationError.errorDetails)
+                result.error(oneginiDeregistrationError.errorType.toString(), oneginiDeregistrationError.message, null)
             }
 
         }

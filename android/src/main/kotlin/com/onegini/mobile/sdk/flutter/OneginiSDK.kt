@@ -43,7 +43,7 @@ class OneginiSDK {
     var oneginiClientConfigModel: OneginiClientConfigModel? = null
     var oneginiSecurityController: Class<*>? = null
     var httpConnectionTimeout: Long = 5
-    var httpReadTimeout: Long = 20
+    var httpReadTimeout: Long = 25
     var oneginiCustomIdentityProviders = mutableListOf<OneginiCustomIdentityProvider>()
 
     private fun buildSDK(context: Context): OneginiClient {

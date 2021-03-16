@@ -15,13 +15,13 @@ class PinAuthenticationRequestHandler : OneginiPinAuthenticationRequestHandler {
 
     }
 
-    override fun startAuthentication(userProfile: UserProfile?, oneginiPinCallback: OneginiPinCallback?, attemptCounter: AuthenticationAttemptCounter?) {
+    override fun startAuthentication(userProfile: UserProfile, oneginiPinCallback: OneginiPinCallback, attemptCounter: AuthenticationAttemptCounter?) {
         CALLBACK = oneginiPinCallback
         OneginiEventsSender.events?.success(Constants.EVENT_OPEN_PIN_AUTH)
 
     }
 
-    override fun onNextAuthenticationAttempt(attemptCounter: AuthenticationAttemptCounter?) {
+    override fun onNextAuthenticationAttempt(attemptCounter: AuthenticationAttemptCounter) {
        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_NEXT_AUTHENTICATION_ATTEMPT,Gson().toJson(attemptCounter).toString())))
     }
 
