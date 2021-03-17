@@ -23,8 +23,8 @@ object PinHelper {
                 result.success("Pin change successfully")
             }
 
-            override fun onError(error: OneginiChangePinError?) {
-                result.error(error?.errorType.toString(), error?.message, "")
+            override fun onError(error: OneginiChangePinError) {
+                result.error(error.errorType.toString(), error.message, "")
             }
 
         })

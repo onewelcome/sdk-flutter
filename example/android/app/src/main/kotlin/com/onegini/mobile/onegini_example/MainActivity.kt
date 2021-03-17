@@ -61,8 +61,11 @@ class MainActivity : FlutterActivity(), MethodChannel.MethodCallHandler {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        if (intent.data != null)
-            RegistrationHelper.handleRegistrationCallback(intent.data)
+        if (intent.data != null){
+            RegistrationHelper.handleRegistrationCallback(intent.data!!)
+        }
+       
+           
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {

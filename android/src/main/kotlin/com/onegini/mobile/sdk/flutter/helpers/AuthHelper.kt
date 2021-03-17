@@ -1,7 +1,6 @@
 package com.onegini.mobile.sdk.flutter.helpers
 
 import android.content.Context
-import android.util.Log
 import com.google.gson.GsonBuilder
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticationError
@@ -47,11 +46,7 @@ object AuthHelper {
         }
     }
 
-    fun authenticateUser(context:Context,userProfile: UserProfile?, authenticator: OneginiAuthenticator?, result: MethodChannel.Result){
-        if (userProfile == null) {
-            result.error(ErrorHelper().userProfileIsNull.code, ErrorHelper().userProfileIsNull.message, null)
-            return
-        }
+    fun authenticateUser(context:Context,userProfile: UserProfile, authenticator: OneginiAuthenticator?, result: MethodChannel.Result){
         if (authenticator == null) {
             OneginiSDK.getOneginiClient(context).userClient.authenticateUser(userProfile, getOneginiAuthenticationHandler(result))
 
@@ -62,13 +57,12 @@ object AuthHelper {
 
     private fun getOneginiAuthenticationHandler(result: MethodChannel.Result):OneginiAuthenticationHandler{
         return object : OneginiAuthenticationHandler{
-            override fun onSuccess(userProfile: UserProfile?, p1: CustomInfo?) {
-                if (userProfile != null)
-                    result.success(userProfile.profileId)
+            override fun onSuccess(userProfile: UserProfile, p1: CustomInfo?) {
+                result.success(userProfile.profileId)
             }
 
             override fun onError(error: OneginiAuthenticationError) {
-                result.error(error.errorType.toString(), error.message ?: "", null)
+                result.error(error.errorType.toString(), error.message, null)
             }
         }
     }

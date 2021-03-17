@@ -4,10 +4,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/onegini.dart';
 
 class PinScreen extends StatefulWidget {
-  final bool confirmation;
-  final bool isAuth;
 
-  const PinScreen({Key key, this.confirmation = false,this.isAuth = false}) : super(key: key);
+  const PinScreen({Key key}) : super(key: key);
 
   @override
   _PinScreenState createState() => _PinScreenState();
@@ -46,8 +44,7 @@ class _PinScreenState extends State<PinScreen> {
     pinCode.forEach((element) {
       pin+=element;
     });
-
-    Onegini.instance.sendPin(pin,widget.isAuth).catchError((error){
+    Onegini.instance.sendPin(pin,true).catchError((error){
      if(error is PlatformException) {
        Fluttertoast.showToast(
            msg: error.message,
@@ -71,7 +68,7 @@ class _PinScreenState extends State<PinScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             SizedBox(height: 50,),
-            Text(widget.confirmation ? "Confirm PIN code" : "Enter PIN code",style: TextStyle(fontSize: 30),textAlign: TextAlign.center,),
+            Text("Enter PIN code",style: TextStyle(fontSize: 30),textAlign: TextAlign.center,),
             Spacer(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

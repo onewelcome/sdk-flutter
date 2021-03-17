@@ -22,7 +22,7 @@ class ResourceHelper (var context: Context,var call: MethodCall,var result: Meth
 
     init {
         val oneginiClient: OneginiClient = OneginiSDK.getOneginiClient(context)
-        url = oneginiClient.configModel?.resourceBaseUrl ?: ""
+        url = oneginiClient.configModel.resourceBaseUrl 
     }
 
     fun getAnonymous(){
@@ -51,12 +51,12 @@ class ResourceHelper (var context: Context,var call: MethodCall,var result: Meth
 
     private fun getAnonymousClient(scope:String,request: Request){
         val okHttpClient: OkHttpClient = OneginiSDK.getOneginiClient(context).deviceClient.anonymousResourceOkHttpClient
-        OneginiSDK.getOneginiClient(context).deviceClient?.authenticateDevice(arrayOf(scope), object : OneginiDeviceAuthenticationHandler {
+        OneginiSDK.getOneginiClient(context).deviceClient.authenticateDevice(arrayOf(scope), object : OneginiDeviceAuthenticationHandler {
             override fun onSuccess() {
                makeRequest(okHttpClient,request, result)
             }
             override fun onError(error: OneginiDeviceAuthenticationError) {
-                result.error(error.errorType.toString(), error.message, error.errorDetails)
+                result.error(error.errorType.toString(), error.message, null)
             }
         }
         )
@@ -74,8 +74,7 @@ class ResourceHelper (var context: Context,var call: MethodCall,var result: Meth
             result.error(ErrorHelper().authenticatedUserProfileIsNull.code, ErrorHelper().authenticatedUserProfileIsNull.message, null)
             return
         }
-        OneginiSDK.getOneginiClient(context).userClient
-                ?.authenticateUserImplicitly(userProfile, arrayOf(scope), object : OneginiImplicitAuthenticationHandler {
+        OneginiSDK.getOneginiClient(context).userClient.authenticateUserImplicitly(userProfile, arrayOf(scope), object : OneginiImplicitAuthenticationHandler {
                     override fun onSuccess(profile: UserProfile) {
                         makeRequest(okHttpClient, request, result)
                     }
