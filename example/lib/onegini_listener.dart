@@ -11,7 +11,7 @@ import 'package:onegini_example/screens/pin_screen.dart';
 class OneginiListener extends OneginiEventListener {
   @override
   void closePin(BuildContext buildContext) {
-    Navigator.of(buildContext).pop();
+    Navigator.of(buildContext).canPop();
   }
 
   @override
