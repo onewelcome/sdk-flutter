@@ -39,7 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
   openWeb() async {
     /// Start registration
     setState(() => isRegistrationFlow = true);
-    var userId = await Onegini.registration(context, Constants.DEFAULT_SCOPES)
+    var userId = await Onegini.instance.registrationMethods.registration(context, Constants.DEFAULT_SCOPES)
         .catchError((error) => setState(() => isRegistrationFlow = false));
     if (userId != null)
       Navigator.pushAndRemoveUntil(
@@ -53,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   registrationWithIdentityProvider(String identityProviderId) async {
     setState(() => isRegistrationFlow = true);
-    var userId = await Onegini.registrationWithIdentityProvider(
+    var userId = await Onegini.instance.registrationMethods.registrationWithIdentityProvider(
             identityProviderId, Constants.DEFAULT_SCOPES)
         .catchError((error) {
           setState(() => isRegistrationFlow = false);
@@ -82,7 +82,7 @@ class _LoginScreenState extends State<LoginScreen> {
   pinAuthentication() async {
     setState(()=> isPin = true);
     setState(() => isAuthFlow = true);
-    var userId = await Onegini.pinAuthentication(context)
+    var userId = await Onegini.instance.authenticationMethods.pinAuthentication(context)
         .catchError((error) {
       setState(() => isAuthFlow = false);
       if(error is PlatformException) {
@@ -115,7 +115,7 @@ class _LoginScreenState extends State<LoginScreen> {
       default: setState(()=> isPin = true);
     }
     setState(() => isAuthFlow = true);
-    var userId = await Onegini.authenticationWithRegisteredAuthenticators(
+    var userId = await Onegini.instance.authenticationMethods.authenticationWithRegisteredAuthenticators(
         authenticatorId)
         .catchError((error) {
           setState(() => isAuthFlow = false);
@@ -142,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   cancelRegistration() async {
-    Onegini.cancelRegistration().catchError((error)
+    Onegini.instance.registrationMethods.cancelRegistration().catchError((error)
     {setState(() => isRegistrationFlow = false);
     if(error is PlatformException) {
       Fluttertoast.showToast(
@@ -159,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   cancelAuth(bool isPin) async {
     setState(() => isAuthFlow = false);
-    Onegini.cancelAuth(isPin).catchError((error) {
+    Onegini.instance.authenticationMethods.cancelAuth(isPin).catchError((error) {
       setState(() => isAuthFlow = false);
     if(error is PlatformException) {
       Fluttertoast.showToast(
@@ -222,7 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 20,
                   ),
                   FutureBuilder<List<OneginiIdentityProvider>>(
-                    future: Onegini.getRegisteredAuthenticators(context),
+                    future: Onegini.instance.authenticationMethods.getRegisteredAuthenticators(context),
                     builder: (BuildContext context, snapshot) {
                       return snapshot.hasData
                           ? PopupMenuButton<String>(
@@ -264,7 +264,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 20,
                   ),
                   FutureBuilder<List<OneginiIdentityProvider>>(
-                    future: Onegini.getIdentityProviders(context),
+                    future: Onegini.instance.registrationMethods.getIdentityProviders(context),
                     builder: (BuildContext context, snapshot) {
                       return snapshot.hasData
                           ? PopupMenuButton<String>(

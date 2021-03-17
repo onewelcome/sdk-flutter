@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:onegini/model/application_details.dart';
-import 'package:onegini/model/client_resource.dart';
 import 'package:onegini/onegini.dart';
+import 'package:onegini_example/models/application_details.dart';
+import 'package:onegini_example/models/client_resource.dart';
 import 'package:onegini_example/screens/qr_scan_screen.dart';
 
 import 'login_screen.dart';
@@ -43,7 +43,7 @@ class _UserScreenState extends State<UserScreen> {
 
   logOut(BuildContext context) async {
     Navigator.pop(context);
-    var isLogOut = await Onegini.logOut().catchError((error) {
+    var isLogOut = await Onegini.instance.authenticationMethods.logOut().catchError((error) {
       if (error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,
@@ -65,7 +65,7 @@ class _UserScreenState extends State<UserScreen> {
 
   deregister(BuildContext context) async {
     Navigator.pop(context);
-    var isLogOut = await Onegini.deregisterUser().catchError((error) => {
+    var isLogOut = await Onegini.instance.registrationMethods.deregisterUser().catchError((error) => {
           if (error is PlatformException)
             {
               Fluttertoast.showToast(
@@ -88,7 +88,7 @@ class _UserScreenState extends State<UserScreen> {
 
   registerFingerprint(BuildContext context) async {
     var data =
-        await Onegini.registerFingerprint(context).catchError((error) => {
+        await Onegini.instance.authenticationMethods.registerFingerprint(context).catchError((error) => {
               if (error is PlatformException)
                 {
                   Fluttertoast.showToast(
@@ -106,7 +106,7 @@ class _UserScreenState extends State<UserScreen> {
   }
 
   changePin(BuildContext context) {
-    Onegini.changePin(context).catchError((error) {
+    Onegini.instance.changePin(context).catchError((error) {
       if (error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,
@@ -143,7 +143,7 @@ class _UserScreenState extends State<UserScreen> {
               child: Container(),
             ),
             FutureBuilder<bool>(
-              future: Onegini.isUserNotRegisteredFingerprint(),
+              future: Onegini.instance.authenticationMethods.isUserNotRegisteredFingerprint(),
               builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
                 if (snapshot.hasData) {
                   isNotEnableFingerprint = snapshot.data;
@@ -191,13 +191,13 @@ class _UserScreenState extends State<UserScreen> {
 
 class Home extends StatelessWidget {
   authWithOpt(BuildContext context) async {
-    Onegini.setEventContext(context);
+    Onegini.instance.setEventContext(context);
     var data = await Navigator.push(
       context,
       MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
     );
     if (data != null) {
-      var isSuccess = await Onegini.sendQrCodeData(data).catchError((error) {
+      var isSuccess = await Onegini.instance.sendQrCodeData(data).catchError((error) {
         if (error is PlatformException) {
           Fluttertoast.showToast(
               msg: error.message,
@@ -222,7 +222,7 @@ class Home extends StatelessWidget {
   }
 
   singleSignOn(BuildContext context) async {
-    var oneginiAppToWebSingleSignOn = await Onegini.singleSingOn(
+    var oneginiAppToWebSingleSignOn = await Onegini.instance.singleSingOn(
             "https://login-mobile.test.onegini.com/personal/dashboard")
         .catchError((error) {
       if (error is PlatformException) {
@@ -290,36 +290,21 @@ class Info extends StatefulWidget {
 }
 
 class _InfoState extends State<Info> {
-  final MethodChannel _channel = const MethodChannel('example');
 
   Future<ApplicationDetails> getApplicationDetails() async {
-    try {
-      var resource = await _channel.invokeMethod("getApplicationDetails");
-      return ApplicationDetails.fromJson(jsonDecode(resource));
-    } on PlatformException catch (error) {
-      throw error;
-    }
+    var response = await Onegini.instance.resourcesMethods.getResourceWithAnonymousResourceOkHttpClient("application-details","application-details");
+    return applicationDetailsFromJson(response);
   }
 
   Future<ClientResource> getClientResource() async {
-    try {
-      var resource = await _channel.invokeMethod("getClientResource");
-      return clientResourceFromJson(resource);
-    } on PlatformException catch (error) {
-      print(error.details.toString());
-      throw error;
-    } on Exception catch (error) {
-      throw error;
-    }
+    var response = await Onegini.instance.resourcesMethods.getResourceWithResourceOkHttpClient("devices");
+    return clientResourceFromJson(response);
   }
 
   Future<String> getImplicitUserDetails() async {
-    try {
-      var resource = await _channel.invokeMethod("getImplicitUserDetails");
-      return resource;
-    } on PlatformException catch (error) {
-      throw error;
-    }
+   var response = await Onegini.instance.resourcesMethods.getResourceWithImplicitResourceOkHttpClient("user-id-decorated","read");
+   Map<String, dynamic> responseAsJson = json.decode(response);
+   return responseAsJson["decorated_user_id"];
   }
 
   @override

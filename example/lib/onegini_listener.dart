@@ -11,12 +11,11 @@ import 'package:onegini_example/screens/pin_screen.dart';
 class OneginiListener extends OneginiEventListener {
   @override
   void closePin(BuildContext buildContext) {
-    Navigator.of(buildContext).canPop();
+    Navigator.of(buildContext).pop();
   }
 
   @override
   void openPinConfirmation(BuildContext buildContext) {
-    print("open confirm screen");
     Navigator.of(buildContext)
       ..pop()
       ..push(
