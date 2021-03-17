@@ -14,6 +14,7 @@ enum OneginiErrorCustomType: Int {
     case changingCancelled
     case registrationCancelled
     case cantHandleOTP
+    case incrorrectResourcesAccess
     // Default case
     case somethingWentWrong = 400
     
@@ -45,6 +46,8 @@ enum OneginiErrorCustomType: Int {
             message = "Registration  cancelled."
         case .cantHandleOTP:
             message = "Can't handle otp authentication request."
+        case .incrorrectResourcesAccess:
+            message = "Incorrect access to resources."
         default:
             message = "Something went wrong."
         }

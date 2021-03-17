@@ -221,24 +221,6 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
             }
         })
     }
-
-    /*
-    if (call.method == Constants.METHOD_AUTHENTICATE_WITH_REGISTERED_AUTHENTICATION) {
-            val registeredAuthenticatorsId = call.argument<String>("registeredAuthenticatorsId")
-            val userProfile = OneginiSDK.getOneginiClient(context)?.userClient?.userProfiles?.first()
-            val registeredAuthenticators = userProfile?.let { OneginiSDK.getOneginiClient(context)?.userClient?.getRegisteredAuthenticators(it) }
-            if (registeredAuthenticators == null) {
-                result.error(ErrorHelper().registeredAuthenticatorsIsNull.code, ErrorHelper().registeredAuthenticatorsIsNull.message, null)
-                return
-            }
-            for (registeredAuthenticator in registeredAuthenticators) {
-                if (registeredAuthenticator.id == registeredAuthenticatorsId) {
-                    authenticateUser(userProfile, registeredAuthenticator, result)
-                    break
-                }
-            }
-        }
-    */
     
     func changePin(callback: @escaping FlutterResult) -> Void {
         bridgeConnector.toPinHandlerConnector.pinHandler.onChangePinCalled() {
@@ -312,6 +294,19 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
         let result = notRegisteredAuthenticators.filter({ !$0.isRegistered && $0.type == .biometric }).count == 0 ? false : true
         
         callback(result)
+    }
+    
+    public func fetchResources(_ path: String, type: String, parameters: [String: Any?], callback: @escaping FlutterResult) {
+        switch type {
+        case Constants.Routes.getImplicitResource:
+            bridgeConnector.toResourceFetchHandler.fetchResourceWithImplicitResource(path, parameters: parameters, completion: callback)
+        case Constants.Routes.getResource:
+            bridgeConnector.toResourceFetchHandler.fetchAnonymousResource(path, parameters: parameters, completion: callback)
+        case Constants.Routes.getResourceAnonymous:
+            bridgeConnector.toResourceFetchHandler.fetchSimpleResources(path, parameters: parameters, completion: callback)
+        default:
+            callback(SdkError.convertToFlutter(SdkError(customType: .incrorrectResourcesAccess)))
+        }
     }
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {

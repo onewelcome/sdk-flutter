@@ -57,6 +57,16 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         guard let _arg = call.arguments as! [String: Any]?, let _value = _arg["isPin"] as! Bool? else { break; }
         OneginiModuleSwift.sharedInstance.cancelPinAuth(_value)
     }
+    
+    case Constants.Routes.getResource, Constants.Routes.getImplicitResource, Constants.Routes.getResourceAnonymous: do {
+        guard let _arg = call.arguments as! [String: Any]?, let _path = _arg["path"] as! String? else {
+            result(SdkError.init(customType: .incrorrectResourcesAccess).flutterError())
+            return
+        }
+        
+        OneginiModuleSwift.sharedInstance.fetchResources(_path, type: call.method, parameters: _arg, callback: result)
+    }
+    
     default:
         result(FlutterMethodNotImplemented)
     }
