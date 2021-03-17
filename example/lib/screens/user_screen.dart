@@ -209,7 +209,7 @@ class Home extends StatelessWidget {
               fontSize: 16.0);
         }
       });
-      if (isSuccess.isNotEmpty)
+      if (isSuccess != null && isSuccess.isNotEmpty)
         Fluttertoast.showToast(
             msg: isSuccess,
             toastLength: Toast.LENGTH_SHORT,

@@ -148,6 +148,18 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
         bridgeConnector.toRegistrationConnector.registrationHandler.cancelRegistration()
     }
     
+    public func cancelCustomRegistration() -> Void {
+        bridgeConnector.toRegistrationConnector.registrationHandler.cancelCustomRegistration()
+    }
+    
+    func cancelPinAuth(_ isPin: Bool?) {
+        guard let _isPin = isPin, _isPin else {
+            return
+        }
+        
+        bridgeConnector.toPinHandlerConnector.pinHandler.onCancel()
+    }
+    
     func authenticateUser(_ profileId: String?,
                           callback: @escaping FlutterResult) -> Void {
         
@@ -318,7 +330,7 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
     }
     
     func sendBridgeEvent(eventName: OneginiBridgeEvents, data: Any!) -> Void {
-       debugPrint(sendBridgeEvent)
+       debugPrint(eventName)
        if eventName == OneginiBridgeEvents.otpOpen {
            eventSinkNativePart?(data)
            return;

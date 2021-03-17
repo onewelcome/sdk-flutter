@@ -53,6 +53,10 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         OneginiModuleSwift.sharedInstance.fetchRegisteredAuthenticators(callback: result)
     case Constants.Routes.registerFingerprintAuthenticator:
         OneginiModuleSwift.sharedInstance.registerFingerprintAuthenticator(callback: result)
+    case Constants.Routes.cancelPinAuth: do {
+        guard let _arg = call.arguments as! [String: Any]?, let _value = _arg["isPin"] as! Bool? else { break; }
+        OneginiModuleSwift.sharedInstance.cancelPinAuth(_value)
+    }
     default:
         result(FlutterMethodNotImplemented)
     }

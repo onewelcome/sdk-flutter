@@ -35,7 +35,7 @@ import OneginiCrypto
                 OneginiModuleSwift.sharedInstance.otpResourceCodeConfirmation(code: value, callback: result)
                 break
             case "otpCancel":
-                OneginiModuleSwift.sharedInstance.cancelRegistration()
+                OneginiModuleSwift.sharedInstance.cancelCustomRegistration()
                 break
             case "getApplicationDetails": do {
             }
