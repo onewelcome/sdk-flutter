@@ -319,8 +319,8 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
     }
 
     public func onCancel(withArguments arguments: Any?) -> FlutterError? {
-        eventSink = nil
-        eventSinkNativePart = nil
+//        eventSink = nil
+//        eventSinkNativePart = nil
         return nil
     }
     
