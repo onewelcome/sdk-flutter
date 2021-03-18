@@ -4,20 +4,20 @@
 
 import 'dart:convert';
 
-List<OneginiIdentityProvider> providerFromJson(String str) => List<OneginiIdentityProvider>.from(json.decode(str).map((x) => OneginiIdentityProvider.fromJson(x)));
+List<OneginiListResponse> responseFromJson(String str) => List<OneginiListResponse>.from(json.decode(str).map((x) => OneginiListResponse.fromJson(x)));
 
-String providerToJson(List<OneginiIdentityProvider> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+String responseToJson(List<OneginiListResponse> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
-class OneginiIdentityProvider {
-  OneginiIdentityProvider({
+class OneginiListResponse {
+  OneginiListResponse({
     this.id,
     this.name,
   });
 
-  String id;
-  String name;
+  String? id;
+  String? name;
 
-  factory OneginiIdentityProvider.fromJson(Map<String, dynamic> json) => OneginiIdentityProvider(
+  factory OneginiListResponse.fromJson(Map<String, dynamic> json) => OneginiListResponse(
     id: json["id"],
     name: json["name"],
   );

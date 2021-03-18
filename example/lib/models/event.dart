@@ -8,8 +8,8 @@ String eventToJson(Event data) => json.encode(data.toJson());
 
 class Event {
   Event({
-    this.eventName,
-    this.eventValue,
+    required this.eventName,
+    required this.eventValue,
   });
 
   String eventName;

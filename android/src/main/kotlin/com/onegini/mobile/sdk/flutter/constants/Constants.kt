@@ -24,27 +24,49 @@ interface Constants {
          * MethodsName
          */
         const val METHOD_START_APP ="startApp"
+        
+        
+        const val METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON ="getAppToWebSingleSignOn"
+        const val METHOD_CHANGE_PIN = "changePin"
+        
+
+        //Resources
         const val METHOD_GET_RESOURCE_ANONYMOUS ="getResourceAnonymous"
         const val METHOD_GET_RESOURCE ="getResource"
         const val METHOD_GET_IMPLICIT_RESOURCE ="getImplicitResource"
-        const val METHOD_REGISTRATION ="registration"
+
+
+        //Registration
+        const val METHOD_REGISTER_USER ="registerUser"
         const val METHOD_CANCEL_REGISTRATION = "cancelRegistration"
-        const val METHOD_SEND_PIN ="sendPin"
-        const val METHOD_SINGLE_SIGN_ON ="singleSignOn"
-        const val METHOD_LOG_OUT ="logOut"
-        const val METHOD_DEREGISTER_USER ="deregisterUser"
+        const val METHOD_DENY_PIN_REGISTRATION_REQUEST  = "denyPinRegistrationRequest"
+        const val METHOD_ACCEPT_PIN_REGISTRATION_REQUEST = "acceptPinRegistrationRequest"
         const val METHOD_GET_IDENTITY_PROVIDERS ="getIdentityProviders"
+        const val METHOD_DEREGISTER_USER ="deregisterUser"
+        
+        
+
+        //Authentication 
+        const val METHOD_ACCEPT_PIN_AUTHENTICATION_REQUEST = "acceptPinAuthenticationRequest"
+        const val METHOD_DENY_PIN_AUTHENTICATION_REQUEST = "denyPinAuthenticationRequest"
         const val METHOD_GET_REGISTERED_AUTHENTICATORS = "getRegisteredAuthenticators"
-        const val METHOD_AUTHENTICATE_WITH_REGISTERED_AUTHENTICATION ="authenticateWithRegisteredAuthentication"
-        const val METHOD_REGISTRATION_WITH_IDENTITY_PROVIDER ="registrationWithIdentityProvider"
-        const val METHOD_PIN_AUTHENTICATION = "pinAuthentication"
-        const val METHOD_CANCEL_PIN_AUTH = "cancelPinAuth"
-        const val METHOD_FINGERPRINT_ACTIVATION_SENSOR = "fingerprintActivationSensor"
-        const val METHOD_CHANGE_PIN = "changePin"
-        const val METHOD_OTP_QR_CODE_RESPONSE = "otpQrCodeResponse"
-        const val METHOD_ACCEPT_OTP_AUTH = "acceptOTPAuth"
-        const val METHOD_DENY_OTP_AUTH = "denyOTPAuth"
         const val METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS = "getAllNotRegisteredAuthenticators"
         const val METHOD_REGISTER_AUTHENTICATOR = "registerAuthenticator"
+        const val METHOD_AUTHENTICATE_WITH_REGISTERED_AUTHENTICATION ="authenticateWithRegisteredAuthentication"
+        const val METHOD_AUTHENTICATE_USER = "authenticateUser"
+        const val METHOD_LOGOUT ="logout"
+
+
+        //Fingerprint
+        const val METHOD_ACCEPT_FINGERPRINT_AUTHENTICATION_REQUEST = "acceptFingerprintAuthenticationRequest"
+        const val METHOD_DENY_FINGERPRINT_AUTHENTICATION_REQUEST = "denyFingerprintAuthenticationRequest"
+        const val METHOD_FINGERPRINT_FALL_BACK_TO_PIN = "fingerprintFallbackToPin"
+
+
+        //Otp
+        const val METHOD_HANDLE_MOBILE_AUTH_WITH_OTP = "handleMobileAuthWithOtp"
+        const val METHOD_ACCEPT_OTP_AUTHENTICATION_REQUEST = "acceptOtpAuthenticationRequest"
+        const val METHOD_DENY_OTP_AUTHENTICATION_REQUEST = "denyOtpAuthenticationRequest"
+        
     }
 }

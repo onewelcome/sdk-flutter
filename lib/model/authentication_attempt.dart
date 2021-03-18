@@ -14,8 +14,8 @@ class AuthenticationAttempt {
     this.maxAttempts,
   });
 
-  int failedAttempts;
-  int maxAttempts;
+  int? failedAttempts;
+  int? maxAttempts;
 
   factory AuthenticationAttempt.fromJson(Map<String, dynamic> json) => AuthenticationAttempt(
     failedAttempts: json["failedAttempts"],
