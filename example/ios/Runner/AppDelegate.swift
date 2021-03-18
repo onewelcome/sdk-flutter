@@ -35,43 +35,7 @@ import OneginiCrypto
                 OneginiModuleSwift.sharedInstance.otpResourceCodeConfirmation(code: value, callback: result)
                 break
             case "otpCancel":
-                OneginiModuleSwift.sharedInstance.cancelRegistration()
-                break
-            case "getApplicationDetails": do {
-            }
-                break
-          case "getClientResource": do {
-            
-          }
-//                OneginiModuleSwift.sharedInstance.fetchDevicesList(callback: result)
-                break
-            case "getImplicitUserDetails": do {
-                guard let _profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
-                    result(FlutterError.init(code: "400", message: "User profile is null", details: nil))
-                    return
-                }
-                
-                var parameters = [String: Any]()
-                parameters["path"] = "user-id-decorated"
-                parameters["encoding"] = "application/x-www-form-urlencoded";
-                parameters["method"] = "GET"
-                
-                OneginiModuleSwift.sharedInstance.authenticateUserImplicitly(_profile.profileId) { (value, error) in
-                    if (error == nil) {
-                        OneginiModuleSwift.sharedInstance.resourceRequest(value, parameters: parameters) { (_data, error) in
-                            if let _errorResource = error {
-                                result(_errorResource)
-                                return
-                            } else {
-                                let userIdDecorated = (_data as! [String: String])["decorated_user_id"]
-                                result(userIdDecorated)
-                            }
-                        }
-                    } else {
-                        result(error)
-                    }
-                }
-            }
+                OneginiModuleSwift.sharedInstance.cancelCustomRegistration()
                 break
             default:
                 result(FlutterMethodNotImplemented)

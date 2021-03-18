@@ -47,7 +47,7 @@ class RegistrationConnector : BridgeToRegistrationConnectorProtocol {
     
     func sendCustomOtpNotification(_ event: OneginiBridgeEvents,_ data: Dictionary<String, Any?>?) {
         var _data = data
-        _data?["key"] = OneginiBridgeEvents.otpOpen.rawValue
+        _data?["eventName"] = OneginiBridgeEvents.otpOpen.rawValue
         
         let value = String.stringify(json: _data ?? "")
         bridgeConnector?.sendBridgeEvent(eventName: OneginiBridgeEvents.otpOpen, data: value)

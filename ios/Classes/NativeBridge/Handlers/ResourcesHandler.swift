@@ -8,6 +8,9 @@ protocol FetchResourcesHandlerProtocol: AnyObject {
     func authenticateDevice(_ path: String, completion: @escaping (Bool, SdkError?) -> Void)
     func authenticateImplicitly(_ profile: ONGUserProfile, completion: @escaping (Bool, SdkError?) -> Void)
     func resourceRequest(isImplicit: Bool, parameters: [String: Any], completion: @escaping FlutterDataCallback)
+    func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
+    func fetchAnonymousResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
+    func fetchResourceWithImplicitResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
 }
 
 class ResourcesHandler: FetchResourcesHandlerProtocol {
@@ -115,6 +118,84 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             return ONGParametersEncoding.formURL
         default:
             return ONGParametersEncoding.JSON
+        }
+    }
+    
+    //MARK:- Bridge
+    func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
+        var parameters = [String: Any]()
+        parameters["path"] = path
+        parameters["encoding"] = "application/x-www-form-urlencoded";
+        parameters["method"] = "GET"
+
+        OneginiModuleSwift.sharedInstance.authenticateDeviceForResource(path) { (data) in
+            guard let value = data, let _value = value as? Bool, _value else {
+                completion(data)
+                return
+            }
+
+            OneginiModuleSwift.sharedInstance.resourceRequest(false, parameters: parameters) { (_data, error) in
+                if let _errorResource = error {
+                    completion(_errorResource)
+                    return
+                } else {
+                    if let data = _data, let convertedStringDatat = try? JSONSerialization.data(withJSONObject: data, options: .prettyPrinted) {
+                        let convertedString = String(data: convertedStringDatat, encoding: .utf8)
+                        completion(convertedString)
+                    } else {
+                        completion(data)
+                    }
+                }
+            }
+        }
+    }
+    
+    func fetchAnonymousResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
+        var parameters = [String: Any]()
+        parameters["path"] = path
+        parameters["encoding"] = "application/x-www-form-urlencoded";
+        parameters["method"] = "GET"
+
+        OneginiModuleSwift.sharedInstance.resourceRequest(false, parameters: parameters) { (_data, error) in
+            if let _errorResource = error {
+                completion(_errorResource)
+                return
+            } else {
+                if let data = _data, let convertedStringDatat = try? JSONSerialization.data(withJSONObject: data, options: .prettyPrinted) {
+                    let convertedString = String(data: convertedStringDatat, encoding: .utf8)
+                    completion(convertedString)
+                } else {
+                    completion(_data)
+                }
+            }
+        }
+    }
+    
+    func fetchResourceWithImplicitResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
+        
+        guard let _profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
+            completion(SdkError.init(customType: .userProfileIsNull))
+            return
+        }
+        
+        var parameters = [String: Any]()
+        parameters["path"] = path
+        parameters["encoding"] = "application/x-www-form-urlencoded";
+        parameters["method"] = "GET"
+        
+        OneginiModuleSwift.sharedInstance.authenticateUserImplicitly(_profile.profileId) { (value, error) in
+            if (error == nil) {
+                OneginiModuleSwift.sharedInstance.resourceRequest(value, parameters: parameters) { (_data, error) in
+                    if let data = _data, let convertedStringDatat = try? JSONSerialization.data(withJSONObject: data, options: .prettyPrinted) {
+                        let convertedString = String(data: convertedStringDatat, encoding: .utf8)
+                        completion(convertedString)
+                    } else {
+                        completion(_data)
+                    }
+                }
+            } else {
+                completion(error)
+            }
         }
     }
 }
