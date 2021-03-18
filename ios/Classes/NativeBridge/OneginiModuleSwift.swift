@@ -174,8 +174,8 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
         bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: _url)
      }
   
-     func submitPinAction(_ action: String, isCreatePinFlow: Bool, pin: String) -> Void {
-        bridgeConnector.toPinHandlerConnector.handlePinAction(action, isCreatePinFlow ? PinAction.provide.rawValue : PinAction.cancel.rawValue, pin)
+    func submitPinAction(_ flow: String, action: String, pin: String) -> Void {
+        bridgeConnector.toPinHandlerConnector.handlePinAction(flow, action, pin)
      }
     
     func runSingleSignOn(_ path: String?, callback: @escaping FlutterResult) -> Void {

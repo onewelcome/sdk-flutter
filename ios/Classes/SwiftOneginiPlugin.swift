@@ -31,8 +31,14 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         OneginiModuleSwift.sharedInstance.registerUser(_identifier, callback: result)
     }
     case Constants.Routes.sendPin: do {
-        guard let _arg = call.arguments as! [String: Any]?, let _pin = _arg["pin"] as! String? else { break; }
-        OneginiModuleSwift.sharedInstance.submitPinAction(PinAction.provide.rawValue, isCreatePinFlow: true, pin: _pin)
+        guard let _arg = call.arguments as! [String: Any]?, let _pin = _arg["pin"] as! String?, let _isAuth = _arg["isAuth"] as! Bool? else { break; }
+        if (_isAuth) {
+            // login
+            OneginiModuleSwift.sharedInstance.submitPinAction(PinFlow.authentication.rawValue, action: PinAction.provide.rawValue, pin: _pin)
+        } else {
+            // register
+            OneginiModuleSwift.sharedInstance.submitPinAction(PinFlow.create.rawValue, action: PinAction.provide.rawValue, pin: _pin)
+        }
     }
     
     case Constants.Routes.pinAuthentication:

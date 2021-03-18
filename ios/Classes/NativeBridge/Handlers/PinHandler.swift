@@ -17,7 +17,6 @@ protocol PinHandlerToReceiverProtocol: class {
 enum PINEntryMode {
     case login
     case registration
-    case registrationConfirm
 }
 
 class PinHandler: NSObject {
@@ -32,14 +31,8 @@ class PinHandler: NSObject {
     func processPin(pinEntry: Array<String>) {
         let pincode = pinEntry.joined()
         switch mode {
-          case .registration:
-              handleRegistrationPin(pinEntry)
-              break
-          case .registrationConfirm:
-              handleConfirmRegistrationPin(pinEntry, pincode)
-              break
-          case .login:
-                pinReceiver?.handlePin(pin: pincode)
+          case .login, .registration:
+              pinReceiver?.handlePin(pin: pincode)
               break
           case .none:
               notifyOnError(SdkError(title: "Pin validation error", errorDescription: "Unexpected PIN mode.", recoverySuggestion: "Open and close modal."))
@@ -52,28 +45,8 @@ class PinHandler: NSObject {
         pinReceiver?.handlePin(pin: nil)
     }
 
-    private func handleRegistrationPin(_ pinEntry: Array<String>) {
-        pinEntryToVerify = pinEntry
-        mode = .registrationConfirm
-        sendConnectorNotification(PinNotification.confirm, flow, nil)
-    }
-
-    private func handleConfirmRegistrationPin(_ pinEntry: Array<String>, _ pincode: String) {
-        let pincodeConfirm = pinEntryToVerify.joined()
-        if pincode == pincodeConfirm {
-            pinReceiver?.handlePin(pin: pincode)
-        } else {
-            mode = .registration
-            notifyOnError(SdkError(title: "Pin validation error", errorDescription: "The confirmation PIN does not match.", recoverySuggestion: "Try a different one."))
-        }
-    }
-
     func notifyOnError(_ error: SdkError) {
         sendConnectorNotification(PinNotification.showError, flow, error)
-
-        if(mode == PINEntryMode.registrationConfirm) {
-            mode = .registration
-        }
     }
 
     private func sendConnectorNotification(_ event: PinNotification, _ flow: PinFlow?, _ error: SdkError?) {
@@ -90,33 +63,42 @@ extension PinHandler : PinConnectorToPinHandler {
             pinReceiver = receiver
         }
 
-
         if(error != nil){
             notifyOnError(error!)
         } else {
             if(mode == nil) {
+                var notification = PinNotification.open;
+                
                 switch flow {
                     case PinFlow.authentication:
                         mode = .login
+                        notification = PinNotification.openAuth;
                         break
                     case PinFlow.create:
                         mode = .registration
+                        notification = PinNotification.open;
                         break
                     default:
                         mode = .registration
+                        notification = PinNotification.open;
                         break
                 }
 
-                sendConnectorNotification(PinNotification.open, flow, nil)
+                sendConnectorNotification(notification, flow, nil)
             }
         }
     }
 
     func closeFlow() {
         if(flow != nil){
+            var closeNotification = PinNotification.close
+            if (mode == PINEntryMode.login) {
+                closeNotification = PinNotification.closeAuth
+            }
+            
             mode = nil
             flow = nil
-            sendConnectorNotification(PinNotification.close, flow, nil)
+            sendConnectorNotification(closeNotification, flow, nil)
         }
     }
 
