@@ -12,6 +12,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    print("call.method: ", call.method)
     switch call.method {
     case Constants.Routes.startApp:
         OneginiModuleSwift.sharedInstance.startOneginiModule(callback: result)
@@ -40,7 +41,10 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
             OneginiModuleSwift.sharedInstance.submitPinAction(PinFlow.create.rawValue, action: PinAction.provide.rawValue, pin: _pin)
         }
     }
-    
+    case Constants.Routes.authenticateWithRegisteredAuthentication: do {
+        guard let _arg = call.arguments as! [String: Any]?, let _id = _arg["registeredAuthenticatorsId"] as! String? else { break; }
+        OneginiModuleSwift.sharedInstance.authenticateWithRegisteredAuthentication(_id, callback: result)
+    }
     case Constants.Routes.pinAuthentication:
         OneginiModuleSwift.sharedInstance.authenticateUser(nil, callback: result)
     case Constants.Routes.singleSignOn: do {
@@ -55,6 +59,20 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         OneginiModuleSwift.sharedInstance.fetchRegisteredAuthenticators(callback: result)
     case Constants.Routes.registerFingerprintAuthenticator:
         OneginiModuleSwift.sharedInstance.registerFingerprintAuthenticator(callback: result)
+    case Constants.Routes.cancelPinAuth: do {
+        guard let _arg = call.arguments as! [String: Any]?, let _value = _arg["isPin"] as! Bool? else { break; }
+        OneginiModuleSwift.sharedInstance.cancelPinAuth(_value)
+    }
+    
+    case Constants.Routes.getResource, Constants.Routes.getImplicitResource, Constants.Routes.getResourceAnonymous: do {
+        guard let _arg = call.arguments as! [String: Any]?, let _path = _arg["path"] as! String? else {
+            result(SdkError.init(customType: .incrorrectResourcesAccess).flutterError())
+            return
+        }
+        
+        OneginiModuleSwift.sharedInstance.fetchResources(_path, type: call.method, parameters: _arg, callback: result)
+    }
+    
     default:
         result(FlutterMethodNotImplemented)
     }
