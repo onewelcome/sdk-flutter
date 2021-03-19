@@ -1,7 +1,8 @@
+// @dart = 2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:onegini/onegini.dart';
+import 'package:onegini/callbacks/onegini_pin_authentication_callback.dart';
 
 class PinScreen extends StatefulWidget {
 
@@ -44,7 +45,7 @@ class _PinScreenState extends State<PinScreen> {
     pinCode.forEach((element) {
       pin+=element;
     });
-    Onegini.instance.sendPin(pin,true).catchError((error){
+    OneginiPinAuthenticationCallback().acceptAuthenticationRequest(context,pin: pin).catchError((error){
      if(error is PlatformException) {
        Fluttertoast.showToast(
            msg: error.message,

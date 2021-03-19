@@ -1,3 +1,4 @@
+// @dart = 2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -70,7 +71,7 @@ class OneginiListener extends OneginiEventListener {
   @override
   void closeFingerprintScreen(BuildContext buildContext) {
     print("close fingerprint");
-    overlayEntry.remove();
+    overlayEntry?.remove();
     Navigator.of(buildContext).canPop();
   }
 
@@ -85,7 +86,7 @@ class OneginiListener extends OneginiEventListener {
 
   @override
   void receivedFingerprint(BuildContext buildContext) {
-    overlayEntry.remove();
+    overlayEntry?.remove();
   }
 
   @override
@@ -97,7 +98,7 @@ class OneginiListener extends OneginiEventListener {
         child: CircularProgressIndicator(),
       ));
     });
-    Overlay.of(buildContext).insert(overlayEntry);
+    Overlay.of(buildContext)?.insert(overlayEntry);
   }
 
   OverlayEntry overlayEntry;

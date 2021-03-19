@@ -6,9 +6,9 @@ String applicationDetailsToJson(ApplicationDetails data) => json.encode(data.toJ
 
 class ApplicationDetails {
   ApplicationDetails({
-    this.applicationIdentifier,
-    this.applicationPlatform,
-    this.applicationVersion,
+    required this.applicationIdentifier,
+    required this.applicationPlatform,
+    required this.applicationVersion,
   });
 
   String applicationIdentifier;

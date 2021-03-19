@@ -10,7 +10,7 @@ abstract class OneginiEventListener {
   static const chanel_name = 'onegini_events';
   static const EventChannel _eventChannel = const EventChannel(chanel_name);
 
-  BuildContext _context;
+  BuildContext? _context;
 
   set context(BuildContext context) {
     _context = context;
@@ -18,54 +18,52 @@ abstract class OneginiEventListener {
 
   void listen() {
     _eventChannel.receiveBroadcastStream(chanel_name).listen((event) {
+      if(_context  == null) return;
       print("event -> $event");
       switch (event) {
         case Constants.eventOpenPin:
-          openPinRequestScreen(_context);
+          openPinRequestScreen(_context!);
           break;
         case Constants.eventOpenPinAuth:
-          openPinScreenAuth(_context);
+          openPinScreenAuth(_context!);
           break;
         case Constants.eventClosePin:
-          closePin(_context);
+          closePin(_context!);
           break;
         case Constants.eventClosePinAuth:
-          closePinAuth(_context);
+          closePinAuth(_context!);
           break;
         case Constants.eventOpenFingerprintAuth:
-          openFingerprintScreen(_context);
+          openFingerprintScreen(_context!);
           break;
         case Constants.eventShowScanningFingerprintAuth:
-          showScanningFingerprint(_context);
+          showScanningFingerprint(_context!);
           break;
         case Constants.eventReceivedFingerprintAuth:
-          receivedFingerprint(_context);
+          receivedFingerprint(_context!);
           break;
         case Constants.eventCloseFingerprintAuth:
-          closeFingerprintScreen(_context);
+          closeFingerprintScreen(_context!);
           break;
         case Constants.eventCloseAuthOTP:
-          closeAuthOtp(_context);
-          break;
-        case Constants.eventCancelAuthOTP:
-
+          closeAuthOtp(_context!);
           break;
         default:
           if (event != null) {
             Event _event = eventFromJson(event);
             if (_event.eventName == Constants.eventNextAuthenticationAttempt) {
               nextAuthenticationAttempt(
-                  _context, authenticationAttemptFromJson(_event.eventValue));
+                  _context!, authenticationAttemptFromJson(_event.eventValue!));
             }if(_event.eventName == Constants.eventOpenAuthOTP){
-              openAuthOtp(_context, _event.eventValue);
+              openAuthOtp(_context!, _event.eventValue!);
             }
             else {
-              eventOther(_context, _event);
+              eventOther(_context!, _event);
             }
           }
       }
     }).onError((error) {
-      eventError(_context, error);
+      eventError(_context!, error);
     });
   }
 

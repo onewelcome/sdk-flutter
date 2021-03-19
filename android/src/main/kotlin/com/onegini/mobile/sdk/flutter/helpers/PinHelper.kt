@@ -9,6 +9,7 @@ import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import io.flutter.plugin.common.MethodChannel
 
 object PinHelper {
+
     fun sendPin(pin: String?,auth: Boolean?){
         if (auth != null && auth) {
             PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin?.toCharArray())
