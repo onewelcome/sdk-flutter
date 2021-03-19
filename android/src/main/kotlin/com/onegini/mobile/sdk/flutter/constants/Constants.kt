@@ -5,6 +5,8 @@ interface Constants {
         /**
          *  events
          */
+        const val EVENT_ERROR = "eventError"
+        
         const val EVENT_OPEN_PIN = "eventOpenPin"
         const val EVENT_CLOSE_PIN = "eventClosePin"
         const val EVENT_OPEN_PIN_AUTH = "eventOpenPinAuth"
@@ -18,12 +20,19 @@ interface Constants {
 
         const val EVENT_OPEN_AUTH_OTP = "eventOpenAuthOtp"
         const val EVENT_CLOSE_AUTH_OTP = "eventCloseAuthOtp"
+        
+        const val EVENT_OPEN_CUSTOM_TWO_STEP_REGISTRATION_SCREEN = "openCustomTwoStepRegistrationScreen"
+
+        
+        
 
 
         /**
          * MethodsName
          */
         const val METHOD_START_APP ="startApp"
+        const val METHOD_CUSTOM_TWO_STEP_REGISTRATION_RETURN_SUCCESS =  "customTwoStepRegistrationReturnSuccess"
+        const val METHOD_CUSTOM_TWO_STEP_REGISTRATION_RETURN_ERROR =  "customTwoStepRegistrationReturnError"
         
         
         const val METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON ="getAppToWebSingleSignOn"

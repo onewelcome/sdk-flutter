@@ -40,6 +40,9 @@ class Constants{
   static const String getAppToWebSingleSignOn = "getAppToWebSingleSignOn";
   static const String changePin = "changePin";
 
+  //CustomRegistration
+  static const String customTwoStepRegistrationReturnSuccess = "customTwoStepRegistrationReturnSuccess";
+  static const String customTwoStepRegistrationReturnError = "customTwoStepRegistrationReturnError";
 
   /// Onegini events
   static const String eventOpenPin = "eventOpenPin";
@@ -56,4 +59,9 @@ class Constants{
   static const String eventOpenAuthOTP = "eventOpenAuthOtp";
   static const String eventCancelAuthOTP = "eventCancelAuthOtp";
   static const String eventCloseAuthOTP = "eventCloseAuthOtp";
+
+  static const String openCustomTwoStepRegistrationScreen = "openCustomTwoStepRegistrationScreen";
+  static const String eventError = "eventError";
+
+
 }

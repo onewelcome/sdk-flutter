@@ -1,24 +1,26 @@
-package com.onegini.mobile.onegini_example.providers
+package com.onegini.mobile.sdk.flutter.providers
 
 import android.content.Context
 import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomRegistrationAction
-
 import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomTwoStepRegistrationAction
+
 
 import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 
 
-class TwoWayOtpIdentityProvider(var context: Context) : OneginiCustomIdentityProvider {
+class CustomTwoStepIdentityProvider(private val providerId: String) : OneginiCustomIdentityProvider {
+
+
     private val registrationAction: OneginiCustomTwoStepRegistrationAction
     override fun getRegistrationAction(): OneginiCustomRegistrationAction {
         return registrationAction
     }
 
     override fun getId(): String {
-        return "2-way-otp-api"
+        return providerId
     }
 
     init {
-        registrationAction = TwoWayOtpRegistrationAction(context)
+        registrationAction = CustomTwoStepRegistrationAction(providerId)
     }
 }

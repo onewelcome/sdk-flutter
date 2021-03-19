@@ -1,6 +1,7 @@
 // @dart = 2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:onegini/callbacks/onegini_custom_two_step_registration_callback.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import 'login_screen.dart';
@@ -15,30 +16,38 @@ class OtpScreen extends StatefulWidget {
 }
 
 class _OtpScreenState extends State<OtpScreen> {
-  final MethodChannel _channel = const MethodChannel('example');
   final myController = TextEditingController();
 
   ok() async {
-  _channel.invokeMethod("otpOk", <String, String>{
-      'password': myController.text,
-    }).catchError((error) => {
-  if(error is PlatformException) {
+    if(myController.text.isNotEmpty){
+      OneginiCustomTwoStepRegistrationCallback().returnSuccess(myController.text ?? " ").catchError((error) => {
+        if(error is PlatformException) {
+          Fluttertoast.showToast(
+              msg: error.message,
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Colors.black38,
+              textColor: Colors.white,
+              fontSize: 16.0
+          )
+        }
+      });
+    }else{
       Fluttertoast.showToast(
-      msg: error.message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.black38,
-      textColor: Colors.white,
-      fontSize: 16.0
-  )
-  }
-    });
-
+          msg: "Enter code",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black38,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
+    }
   }
 
   cancel() async {
-    _channel.invokeMethod("otpCancel").catchError((error){
+    OneginiCustomTwoStepRegistrationCallback().returnError("Registration canceled").catchError((error){
       if(error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,
