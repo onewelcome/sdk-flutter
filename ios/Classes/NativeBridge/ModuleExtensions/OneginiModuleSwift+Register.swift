@@ -37,6 +37,39 @@ extension OneginiModuleSwift {
         bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: _url)
     }
     
+    func registerAuthenticator(_ authenticatorId: String, callback: @escaping FlutterResult) {
+        guard let profile = ONGUserClient.sharedInstance().userProfiles().first else {
+            callback(SdkError.convertToFlutter(SdkError(customType: .userProfileIsNull)))
+            return
+        }
+        
+        var authenticator: ONGAuthenticator? = nil
+        let notRegisteredAuthenticators = ONGUserClient.sharedInstance().nonRegisteredAuthenticators(forUser: profile)
+        
+        // convert list to list of objects with id and name
+        for auth in notRegisteredAuthenticators {
+            if (auth.identifier == authenticatorId) {
+                authenticator = auth
+                break
+            }
+        }
+        
+        guard (authenticator != nil) else {
+            callback(SdkError.convertToFlutter(SdkError(errorDescription: "Couldn't found matching authenticator.")))
+            return
+        }
+        
+        bridgeConnector.toAuthenticatorsHandler.registerAuthenticator(profile, authenticator!) {
+            (_ , error) -> Void in
+            
+            if let _error = error {
+                callback(SdkError.convertToFlutter(_error))
+            } else {
+                callback(true)
+            }
+        }
+    }
+    
     func fetchRegisteredAuthenticators(callback: @escaping FlutterResult) {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first else {
             callback(SdkError.convertToFlutter(SdkError(customType: .userProfileIsNull)))
@@ -56,51 +89,27 @@ extension OneginiModuleSwift {
         callback(data)
     }
     
-    func registerFingerprintAuthenticator(callback: @escaping FlutterResult) -> Void {
-        guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
-            callback(SdkError.convertToFlutter(SdkError(customType: .userProfileIsNull)))
-            return
-        }
-        
-        let notRegisteredAuthenticators = ONGUserClient.sharedInstance().nonRegisteredAuthenticators(forUser: profile)
-        
-        if notRegisteredAuthenticators.count == 0 {
-            callback(SdkError.convertToFlutter(SdkError(customType: .notRegisteredAuthenticatorsIsNull)))
-        }
-        
-        let isAuthenticatorRegistered = bridgeConnector.toAuthenticatorsHandler.isAuthenticatorRegistered(ONGAuthenticatorType.biometric, profile)
-        
-        guard !isAuthenticatorRegistered else {
-            callback(SdkError.convertToFlutter(SdkError(customType: .fingerprintAuthenticatorIsNull)))
-            return
-        }
-
-        bridgeConnector.toAuthenticatorsHandler.registerAuthenticator(profile, ONGAuthenticatorType.biometric) {
-            (_ , error) -> Void in
-
-            if let _error = error {
-                callback(SdkError.convertToFlutter(_error))
-            } else {
-                callback(true)
-            }
-        }
-    }
-    
     func fetchNotRegisteredAuthenticator(callback: @escaping FlutterResult) -> Void {
         guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
             callback(SdkError.convertToFlutter(SdkError(customType: .userProfileIsNull)))
             return
         }
         
+        // get not registered authenticators
         let notRegisteredAuthenticators = ONGUserClient.sharedInstance().nonRegisteredAuthenticators(forUser: profile)
+        var authenticators = [[String: String]]()
         
-        if notRegisteredAuthenticators.count == 0 {
-            callback(false)
+        // convert list to list of objects with id and name
+        for auth in notRegisteredAuthenticators {
+            authenticators.append(["id" : auth.identifier, "name": auth.name])
         }
         
-        let result = notRegisteredAuthenticators.filter({ !$0.isRegistered && $0.type == .biometric }).count == 0 ? false : true
+        // convert data to json
+        let encoder = JSONEncoder()
+        let jsonData = try! encoder.encode(authenticators)
+        let json = String(data: jsonData, encoding: String.Encoding.utf8)
         
-        callback(result)
+        callback(json)
     }
 }
 

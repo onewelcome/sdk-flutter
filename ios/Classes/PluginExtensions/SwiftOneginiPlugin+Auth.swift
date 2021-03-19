@@ -20,7 +20,8 @@ protocol OneginiPluginAuthProtocol {
 
 extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
     func registerAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        print("[NOT IMPLEMENTED] registerAuthenticator")
+        guard let _arg = call.arguments as! [String: Any]?, let _authenticator = _arg["authenticatorId"] as! String? else { return; }
+        OneginiModuleSwift.sharedInstance.registerAuthenticator(_authenticator, callback: result)
     }
     
     func authenticateUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
