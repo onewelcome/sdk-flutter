@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/callbacks/onegini_pin_authentication_callback.dart';
+import 'package:onegini/callbacks/onegini_pin_registration_callback.dart';
 import 'package:onegini/callbacks/onegini_registration_callback.dart';
 import 'package:onegini/model/onegini_identity_provider.dart';
 import 'package:onegini/onegini.dart';
