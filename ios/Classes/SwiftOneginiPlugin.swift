@@ -17,6 +17,11 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     if ((_arg) != nil) {
         for key in _arg!.keys {
             print("key: " + key)
+                //+ " value: " + (_arg![key] as! String))
+            let val = _arg?[key]
+            print("value: " + String(describing: val))
+            if (!(val is NSNull)) {
+            }
         }
     }
     
@@ -26,40 +31,46 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     case Constants.Routes.startApp: startApp(call, result)
     
     // register
-    case Constants.Routes.registerUser: registration(call, result)
-    case Constants.Routes.getIdentityProviders: registration(call, result)
-    case Constants.Routes.cancelRegistration: registration(call, result)
-    case Constants.Routes.acceptPinRegistrationRequest: registration(call, result)
-    case Constants.Routes.denyPinRegistrationRequest: registration(call, result)
-    case Constants.Routes.deregisterUser: registration(call, result)
+    case Constants.Routes.registerUser: registerUser(call, result)
+    
+    case Constants.Routes.getIdentityProviders: getIdentityProviders(call, result)
+    case Constants.Routes.cancelRegistration: cancelRegistration(call, result)
+    
+    case Constants.Routes.acceptPinRegistrationRequest: acceptPinRegistrationRequest(call, result)
+    case Constants.Routes.denyPinRegistrationRequest: denyPinRegistrationRequest(call, result)
+    
+    case Constants.Routes.deregisterUser: deregisterUser(call, result)
         
     // auth
-    case Constants.Routes.authenticateUser: logOut(call, result)
-    case Constants.Routes.getRegisteredAuthenticators: logOut(call, result)
-    case Constants.Routes.getAllNotRegisteredAuthenticators: logOut(call, result)
-    case Constants.Routes.registerAuthenticator: logOut(call, result)
-    case Constants.Routes.logout: logOut(call, result)
-    case Constants.Routes.acceptPinAuthenticationRequest: logOut(call, result)
-    case Constants.Routes.denyPinAuthenticationRequest: logOut(call, result)
-        
+    case Constants.Routes.registerAuthenticator: registerAuthenticator(call, result)
+    case Constants.Routes.authenticateUser: authenticateUser(call, result)
+    
+    case Constants.Routes.getRegisteredAuthenticators: getRegisteredAuthenticators(call, result)
+    case Constants.Routes.getAllNotRegisteredAuthenticators: getAllNotRegisteredAuthenticators(call, result)
+    
+    case Constants.Routes.acceptPinAuthenticationRequest: acceptPinAuthenticationRequest(call, result)
+    case Constants.Routes.denyPinAuthenticationRequest: denyPinAuthenticationRequest(call, result)
+    
+    case Constants.Routes.logout: logout(call, result)
+    
     // fingerprint
-    case Constants.Routes.acceptFingerprintAuthenticationRequest: logOut(call, result)
-    case Constants.Routes.denyFingerprintAuthenticationRequest: logOut(call, result)
-    case Constants.Routes.fingerprintFallbackToPin: logOut(call, result)
+    case Constants.Routes.acceptFingerprintAuthenticationRequest: acceptFingerprintAuthenticationRequest(call, result)
+    case Constants.Routes.denyFingerprintAuthenticationRequest: denyFingerprintAuthenticationRequest(call, result)
+    case Constants.Routes.fingerprintFallbackToPin: fingerprintFallbackToPin(call, result)
         
     // otp
-    case Constants.Routes.handleMobileAuthWithOtp: logOut(call, result)
-    case Constants.Routes.acceptOtpAuthenticationRequest: logOut(call, result)
-    case Constants.Routes.denyOtpAuthenticationRequest: logOut(call, result)
+    case Constants.Routes.handleMobileAuthWithOtp: handleMobileAuthWithOtp(call, result)
+    case Constants.Routes.acceptOtpAuthenticationRequest: acceptOtpAuthenticationRequest(call, result)
+    case Constants.Routes.denyOtpAuthenticationRequest: denyOtpAuthenticationRequest(call, result)
         
     // resources
-    case Constants.Routes.getResourceAnonymous: logOut(call, result)
-    case Constants.Routes.getResource: logOut(call, result)
-    case Constants.Routes.getImplicitResource: logOut(call, result)
+    case Constants.Routes.getResourceAnonymous: getResourceAnonymous(call, result)
+    case Constants.Routes.getResource: getResource(call, result)
+    case Constants.Routes.getImplicitResource: getImplicitResource(call, result)
         
     // other
-    case Constants.Routes.changePin: logOut(call, result)
-    case Constants.Routes.getAppToWebSingleSignOn: logOut(call, result)
+    case Constants.Routes.changePin: changePin(call, result)
+    case Constants.Routes.getAppToWebSingleSignOn: getAppToWebSingleSignOn(call, result)
     
     default: do {
         print("Method wasn't handled: " + call.method)

@@ -5,11 +5,7 @@ import Flutter
 
 extension OneginiModuleSwift {
     
-    func cancelPinAuth(_ isPin: Bool?) {
-        guard let _isPin = isPin, _isPin else {
-            return
-        }
-        
+    func cancelPinAuth() {
         bridgeConnector.toPinHandlerConnector.pinHandler.onCancel()
     }
   

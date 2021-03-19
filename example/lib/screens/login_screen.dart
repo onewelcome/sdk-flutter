@@ -158,7 +158,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
   cancelRegistration() async {
     setState(() => isLoading = false);
-    OneginiRegistrationCallback()
+
+    await OneginiPinRegistrationCallback()
+        .denyAuthenticationRequest()
+        .catchError((error) {
+      if (error is PlatformException) {
+        Fluttertoast.showToast(
+            msg: error.message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black38,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    });
+
+    await OneginiRegistrationCallback()
         .cancelRegistration()
         .catchError((error) {
       if (error is PlatformException) {
