@@ -16,7 +16,7 @@ class RegistrationRequestHandler(var context: Context) : OneginiBrowserRegistrat
         /**
          * Finish registration action with result from web browser
          */
-        fun handleRegistrationCallback(uri: Uri?) {
+        fun handleRegistrationCallback(uri: Uri) {
             if (CALLBACK != null) {
                 CALLBACK?.handleRegistrationCallback(uri)
                 CALLBACK = null
@@ -35,7 +35,7 @@ class RegistrationRequestHandler(var context: Context) : OneginiBrowserRegistrat
 
     }
 
-    override fun startRegistration(uri: Uri?, oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback?) {
+    override fun startRegistration(uri: Uri, oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback) {
         CALLBACK = oneginiBrowserRegistrationCallback
 
         val intent = Intent(Intent.ACTION_VIEW, uri)

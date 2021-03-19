@@ -7,6 +7,7 @@ protocol MobileAuthConnectorToHandlerProtocol: AnyObject {
     func isUserEnrolledForMobileAuth() -> Bool
     func handleMobileAuthConfirmation(cancelled: Bool)
     func handleOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Bool, SdkError?) -> Void)
+    func handleQrOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Bool, SdkError?) -> Void)
 }
 
 enum MobileAuthAuthenticatorType: String {
@@ -42,7 +43,7 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
                 completion(false, mappedError)
               } else {
                 if(enrolled == false){
-                    completion(false, SdkError(errorDescription: "Enrollment failed. Please try again or contact maintainer."))
+                    completion(false, SdkError(customType: .enrollmentFailed))
                     return;
                 }
                 
@@ -71,9 +72,6 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
     
     func handleOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Bool, SdkError?) -> Void) {
         mobileAuthCompletion = completion
-       
-        //FIXME: Produce error
-        //ONGUserClient.sharedInstance().handleOTPMobileAuthRequest(otp.base64Encoded() ?? "", delegate: self)
         
         guard let challenge = customRegistrationChallenge else {
             ONGUserClient.sharedInstance().handleOTPMobileAuthRequest(otp.base64Encoded() ?? "", delegate: self)
@@ -81,6 +79,15 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
         }
         
         challenge.sender.respond(withData: otp, challenge: challenge)
+    }
+    
+    func handleQrOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Bool, SdkError?) -> Void) {
+        mobileAuthCompletion = completion
+        guard ONGUserClient.sharedInstance().canHandleOTPMobileAuthRequest(otp) else {
+            completion(false, SdkError(customType: .cantHandleOTP))
+            return
+        }
+        ONGUserClient.sharedInstance().handleOTPMobileAuthRequest(otp, delegate: self)
     }
 }
 
@@ -107,7 +114,7 @@ extension MobileAuthHandler: ONGMobileAuthRequestDelegate {
 
     func userClient(_: ONGUserClient, didFailToHandle _: ONGMobileAuthRequest, error: Error) {
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            mobileAuthCompletion!(false, SdkError(errorDescription: "Authentication cancelled."))
+            mobileAuthCompletion!(false, SdkError(customType: .authenticationCancelled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
             mobileAuthCompletion!(false, mappedError)

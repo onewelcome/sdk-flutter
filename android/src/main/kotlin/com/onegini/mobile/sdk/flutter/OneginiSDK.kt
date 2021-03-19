@@ -43,7 +43,7 @@ class OneginiSDK {
     var oneginiClientConfigModel: OneginiClientConfigModel? = null
     var oneginiSecurityController: Class<*>? = null
     var httpConnectionTimeout: Long = 5
-    var httpReadTimeout: Long = 20
+    var httpReadTimeout: Long = 25
     var oneginiCustomIdentityProviders = mutableListOf<OneginiCustomIdentityProvider>()
 
     private fun buildSDK(context: Context): OneginiClient {
@@ -52,7 +52,7 @@ class OneginiSDK {
         val registrationRequestHandler = RegistrationRequestHandler(applicationContext)
         val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
         val pinAuthenticationRequestHandler = PinAuthenticationRequestHandler()
-        val createPinRequestHandler = CreatePinRequestHandler(applicationContext)
+        val createPinRequestHandler = PinRequestHandler()
         val mobileAuthWithOtpRequestHandler = MobileAuthOtpRequestHandler()
         val clientBuilder = OneginiClientBuilder(applicationContext, createPinRequestHandler, pinAuthenticationRequestHandler) // handlers for optional functionalities
                 .setBrowserRegistrationRequestHandler(registrationRequestHandler)

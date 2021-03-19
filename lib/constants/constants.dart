@@ -1,6 +1,4 @@
 
-import 'package:flutter/cupertino.dart';
-
 class Constants{
 
   /// Onegini methods
@@ -32,6 +30,9 @@ class Constants{
   static const String isUserNotRegisteredFingerprint = "isUserNotRegisteredFingerprint";
   static const String getAllNotRegisteredAuthenticators = "getAllNotRegisteredAuthenticators";
   static const String registerAuthenticator = "registerAuthenticator";
+  static const String getResourceAnonymous = "getResourceAnonymous";
+  static const String getResource ="getResource";
+  static const String getImplicitResource ="getImplicitResource";
 
 
 
@@ -39,8 +40,8 @@ class Constants{
   /// Onegini events
   static const String eventOpenPin = "eventOpenPin";
   static const String eventOpenPinAuth = "eventOpenPinAuth";
-  static const String eventOpenPinConfirmation = "eventOpenPinConfirmation";
   static const String eventClosePin = "eventClosePin";
+  static const String eventClosePinAuth = "eventClosePinAuth";
   static const String eventNextAuthenticationAttempt = "eventNextAuthenticationAttempt";
 
   static const String eventOpenFingerprintAuth = "eventOpenFingerprintAuth";

@@ -14,6 +14,13 @@ class SdkError {
         self.code = code
     }
     
+    init(customType: OneginiErrorCustomType, title: String = "Error", recoverySuggestion: String = "Please try again.") {
+        self.title = title
+        self.errorDescription = customType.message()
+        self.recoverySuggestion = recoverySuggestion
+        self.code = customType.rawValue
+    }
+    
     func toJSON() -> Dictionary<String, Any?> {
         return ["title": title, "errorDescription": errorDescription, "recoverySuggestion": recoverySuggestion, "code": code]
     }
@@ -25,7 +32,7 @@ class SdkError {
     }
     
     static func convertToFlutter(_ error: SdkError?) -> FlutterError {
-        let _error = error ?? SdkError(errorDescription: "Something went wrong.")
+        let _error = error ?? SdkError(customType: .somethingWentWrong)
         return _error.flutterError()
     }
 }

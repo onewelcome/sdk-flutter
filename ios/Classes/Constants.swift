@@ -10,9 +10,6 @@ struct Constants {
         static let registration = "registration"
         static let deregisterUser = "deregisterUser"
         static let getIdentityProviders = "getIdentityProviders"
-        static let getImplicitUserDetails = "getImplicitUserDetails"
-        static let getApplicationDetails = "getApplicationDetails"
-        static let getClientResource = "getClientResource"
         static let logOut = "logOut"
         static let getRegisteredAuthenticators = "getRegisteredAuthenticators"
         static let authenticateWithRegisteredAuthentication = "authenticateWithRegisteredAuthentication"
@@ -22,5 +19,8 @@ struct Constants {
         static let registerFingerprintAuthenticator = "registerFingerprintAuthenticator"
         static let fingerprintActivationSensor = "fingerprintActivationSensor"
         static let isUserNotRegisteredFingerprint = "isUserNotRegisteredFingerprint"
+        static let getResourceAnonymous = "getResourceAnonymous"
+        static let getImplicitResource = "getImplicitResource"
+        static let getResource = "getResource"
     }
 }

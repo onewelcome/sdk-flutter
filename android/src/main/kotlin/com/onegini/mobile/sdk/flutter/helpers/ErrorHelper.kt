@@ -8,7 +8,8 @@ class ErrorHelper {
    val authenticatorIsNull = Error("8003","authenticator is null")
    val registeredAuthenticatorsIsNull = Error("8004","registered authenticators is null")
    val identityProvidersIsNull = Error("8005","identity providers is null")
-   val clientIsNull = Error("8006","Onegini client is null")
-   val pinNotEquals = Error("8007","Password mismatch")
-   val methodToCallNotFound = Error("8008","method to call not found")
+   val qrCodeNotHaveData = Error("8006","qr code not have data")
+   val methodToCallNotFound = Error("8007","method to call not found")
+   val urlCantBeNull = Error("8008","url can`t be null")
+   val urlIsNotWebPath = Error("8009","incorrect url format")
 }

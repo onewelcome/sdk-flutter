@@ -16,7 +16,7 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
   }
 
   activateFingerprint() async {
-    await Onegini.activateFingerprintSensor(context).catchError((error) {
+    await Onegini.instance.authenticationMethods.activateFingerprintSensor(context).catchError((error) {
       if (error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,

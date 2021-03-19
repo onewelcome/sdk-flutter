@@ -20,8 +20,8 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     var customRegistrationChallenge: ONGCustomRegistrationChallenge?
     var browserConntroller: BrowserHandlerProtocol?
     
-    var logoutUserInteractor = LogoutInteractor()
-    var deregisterUserInteractor = DisconnectInteractor()
+    var logoutUserHandler = LogoutHandler()
+    var deregisterUserHandler = DisconnectHandler()
     var signUpCompletion: ((Bool, ONGUserProfile?, SdkError?) -> Void)?
     
     //MARK:-
@@ -99,7 +99,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     }
 }
 
-//MARK:- 
+//MARK:-
 extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
     func signUp(_ providerId: String?, completion: @escaping (Bool, ONGUserProfile?, SdkError?) -> Void) {
         signUpCompletion = completion
@@ -115,11 +115,11 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
     }
     
     func logout(completion: @escaping (SdkError?) -> Void) {
-        logoutUserInteractor.logout(completion: completion)
+        logoutUserHandler.logout(completion: completion)
     }
     
     func deregister(completion: @escaping (SdkError?) -> Void) {
-        deregisterUserInteractor.disconnect(completion: completion)
+        deregisterUserHandler.disconnect(completion: completion)
     }
 
     func processRedirectURL(url: URL) {
@@ -200,7 +200,7 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            signUpCompletion!(false, nil, SdkError(errorDescription: "Registration  cancelled."))
+            signUpCompletion!(false, nil, SdkError(customType: .registrationCancelled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
             signUpCompletion!(false, nil, mappedError)
