@@ -53,8 +53,7 @@ class _BodyWidgetState extends State<BodyWidget> {
 
   void _startApplication() async {
     /// init Onegini sdk on native side
-    _appStarted =
-        await Onegini.startApplication(OneginiListener()).catchError((error) {
+    var removedUserProfiles = await Onegini.instance.startApplication(OneginiListener()).catchError((error) {
       if (error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,
@@ -66,6 +65,7 @@ class _BodyWidgetState extends State<BodyWidget> {
             fontSize: 16.0);
       }
     });
+    _appStarted = removedUserProfiles!=null;
     if (_appStarted) {
       Navigator.pushReplacement(
         context,

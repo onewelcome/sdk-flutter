@@ -16,7 +16,7 @@ class AuthOtpScreen extends StatefulWidget {
 class _AuthOtpScreenState extends State<AuthOtpScreen> {
 
   accept(BuildContext context) async {
-    Onegini.acceptOTPAuth(context).catchError((error){
+    Onegini.instance.authenticationMethods.acceptOTPAuth(context).catchError((error){
       if(error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,
@@ -32,7 +32,7 @@ class _AuthOtpScreenState extends State<AuthOtpScreen> {
   }
 
   deny(BuildContext context) async {
-    Onegini.denyOTPAuth(context).catchError((error){
+    Onegini.instance.authenticationMethods.denyOTPAuth(context).catchError((error){
       if(error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,

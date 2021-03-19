@@ -16,6 +16,7 @@ class PinConnector : BridgeToPinConnectorProtocol {
     }
 
     func handlePinAction(_ flow: String, _ action: String, _ pin: String) {
+        
         switch action {
             case PinAction.provide.rawValue:
                 pinHandler.onPinProvided(pin: pin)
@@ -34,11 +35,14 @@ class PinConnector : BridgeToPinConnectorProtocol {
             case .open:
                 sendEvent(data: PinNotification.open.rawValue)
                 break
-            case .confirm:
-                sendEvent(data: PinNotification.confirm.rawValue)
-                break;
             case .close:
                 sendEvent(data: PinNotification.close.rawValue)
+                break;
+            case .openAuth:
+                sendEvent(data: PinNotification.openAuth.rawValue)
+                break;
+            case .closeAuth:
+                sendEvent(data: PinNotification.closeAuth.rawValue)
                 break;
             case .showError:
                 sendEvent(data: String.stringify(json: ["key": PinNotification.showError.rawValue, "value": error?.errorDescription]))
@@ -53,8 +57,9 @@ class PinConnector : BridgeToPinConnectorProtocol {
 
 enum PinNotification : String {
     case open = "eventOpenPin",
-         confirm = "eventOpenPinConfirmation",
          close = "eventClosePin",
+         openAuth = "eventOpenPinAuth",
+         closeAuth = "eventClosePinAuth",
          showError = "show_error"
 }
 

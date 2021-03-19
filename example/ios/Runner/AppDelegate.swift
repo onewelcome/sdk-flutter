@@ -1,6 +1,8 @@
 import UIKit
 import Flutter
 import onegini
+import OneginiSDKiOS
+import OneginiCrypto
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
@@ -33,16 +35,7 @@ import onegini
                 OneginiModuleSwift.sharedInstance.otpResourceCodeConfirmation(code: value, callback: result)
                 break
             case "otpCancel":
-                OneginiModuleSwift.sharedInstance.cancelRegistration()
-                break
-            case "getApplicationDetails":
-                OneginiModuleSwift.sharedInstance.getApplicationDetails(callback: result)
-                break
-            case "getClientResource":
-                OneginiModuleSwift.sharedInstance.fetchDevicesList(callback: result)
-                break
-            case "getImplicitUserDetails":
-                OneginiModuleSwift.sharedInstance.fetchImplicitResources(callback: result)
+                OneginiModuleSwift.sharedInstance.cancelCustomRegistration()
                 break
             default:
                 result(FlutterMethodNotImplemented)

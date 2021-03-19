@@ -21,16 +21,16 @@ abstract class OneginiEventListener {
       print("event -> $event");
       switch (event) {
         case Constants.eventOpenPin:
-          openPinScreen(_context);
+          openPinRequestScreen(_context);
           break;
         case Constants.eventOpenPinAuth:
           openPinScreenAuth(_context);
           break;
-        case Constants.eventOpenPinConfirmation:
-          openPinConfirmation(_context);
-          break;
         case Constants.eventClosePin:
           closePin(_context);
+          break;
+        case Constants.eventClosePinAuth:
+          closePinAuth(_context);
           break;
         case Constants.eventOpenFingerprintAuth:
           openFingerprintScreen(_context);
@@ -74,16 +74,16 @@ abstract class OneginiEventListener {
 
   void closeAuthOtp(BuildContext buildContext);
 
-  void openPinScreen(BuildContext buildContext);
+  void openPinRequestScreen(BuildContext buildContext);
 
   void openPinScreenAuth(BuildContext buildContext);
-
-  void openPinConfirmation(BuildContext buildContext);
 
   void nextAuthenticationAttempt(
       BuildContext buildContext, AuthenticationAttempt authenticationAttempt);
 
   void closePin(BuildContext buildContext);
+
+  void closePinAuth(BuildContext buildContext);
 
   void openFingerprintScreen(BuildContext buildContext);
 
