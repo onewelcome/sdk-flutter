@@ -11,15 +11,18 @@ protocol OneginiPluginOtpProtocol {
 
 extension SwiftOneginiPlugin: OneginiPluginOtpProtocol {
     func handleMobileAuthWithOtp(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        print("[NOT IMPLEMENTED] handleMobileAuthWithOtp")
+        guard let _arg = call.arguments as! [String: Any]?, let _data = _arg["data"] as! String? else { return }
+        
+        OneginiModuleSwift.sharedInstance.otpQRResourceCodeConfirmation(code: _data, callback: result)
     }
     
     func acceptOtpAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        print("[NOT IMPLEMENTED] acceptOtpAuthenticationRequest")
+        OneginiModuleSwift.sharedInstance.acceptMobileAuthConfirmation(callback: result)
     }
     
     func denyOtpAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        print("[NOT IMPLEMENTED] denyOtpAuthenticationRequest")
+        //print("[NOT IMPLEMENTED] denyOtpAuthenticationRequest")
+        OneginiModuleSwift.sharedInstance.denyMobileAuthConfirmation(callback: result)
     }
 }
 

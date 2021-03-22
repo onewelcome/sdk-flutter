@@ -4,15 +4,6 @@ import OneginiCrypto
 import Flutter
 
 extension OneginiModuleSwift {
-    
-    public func otpResourceCodeConfirmation(code: String?, callback: @escaping FlutterResult) {
-        
-        bridgeConnector.toMobileAuthConnector.mobileAuthHandler.handleOTPMobileAuth(code ?? "", customRegistrationChallenge: bridgeConnector.toRegistrationConnector.registrationHandler.currentChallenge()) {
-            (_ , error) -> Void in
-
-            error != nil ? callback(error?.flutterError()) : callback(nil)
-        }
-    }
 
     public func authenticateDeviceForResource(_ path: String, callback: @escaping FlutterResult) -> Void {
         bridgeConnector.toResourceFetchHandler.authenticateDevice(path) {
