@@ -54,7 +54,12 @@ class _BodyWidgetState extends State<BodyWidget> {
 
   void _startApplication() async {
     /// init Onegini sdk on native side
-    var removedUserProfiles = await Onegini.instance.startApplication(OneginiListener()).catchError((error) {
+    var removedUserProfiles = await Onegini.instance
+        .startApplication(OneginiListener(),
+            twoStepCustomIdentityProviderIds: ["2-way-otp-api"],
+            connectionTimeout: 5,
+            readTimeout: 25)
+        .catchError((error) {
       if (error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,
@@ -66,7 +71,7 @@ class _BodyWidgetState extends State<BodyWidget> {
             fontSize: 16.0);
       }
     });
-    _appStarted = removedUserProfiles!=null;
+    _appStarted = removedUserProfiles != null;
     if (_appStarted) {
       Navigator.pushReplacement(
         context,

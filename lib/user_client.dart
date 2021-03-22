@@ -6,6 +6,7 @@ import 'model/onegini_identity_provider.dart';
 import 'onegini.dart';
 
 class UserClient {
+
   Future<String> registerUser(
     BuildContext context,
     String? identityProviderId,

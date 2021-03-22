@@ -19,7 +19,6 @@ abstract class OneginiEventListener {
   void listen() {
     _eventChannel.receiveBroadcastStream(chanel_name).listen((event) {
       if(_context  == null) return;
-      print("event -> $event");
       switch (event) {
         case Constants.eventOpenPin:
           openPinRequestScreen(_context!);
@@ -56,6 +55,10 @@ abstract class OneginiEventListener {
                   _context!, authenticationAttemptFromJson(_event.eventValue!));
             }if(_event.eventName == Constants.eventOpenAuthOTP){
               openAuthOtp(_context!, _event.eventValue!);
+            }if(_event.eventName == Constants.openCustomTwoStepRegistrationScreen){
+              openCustomTwoStepRegistrationScreen(_context!,_event.eventValue!);
+            }if(_event.eventName == Constants.eventError){
+              eventError(_context!, PlatformException(code: _event.eventValue!,message: "error"));
             }
             else {
               eventOther(_context!, _event);
@@ -90,6 +93,8 @@ abstract class OneginiEventListener {
   void receivedFingerprint(BuildContext buildContext);
 
   void closeFingerprintScreen(BuildContext buildContext);
+
+  void openCustomTwoStepRegistrationScreen(BuildContext buildContext,String data);
 
   void eventError(BuildContext buildContext, PlatformException error);
 
