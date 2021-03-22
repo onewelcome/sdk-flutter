@@ -13,6 +13,7 @@ import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
 import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
 import io.flutter.plugin.common.MethodChannel
 
@@ -72,7 +73,7 @@ object RegistrationHelper {
     fun deregisterUser(context: Context, result: MethodChannel.Result) {
         val userProfile = OneginiSDK.getOneginiClient(context).userClient.authenticatedUserProfile
         if (userProfile == null) {
-            result.error(ErrorHelper().userProfileIsNull.code, ErrorHelper().userProfileIsNull.message, null)
+            result.error(OneginiWrapperErrors().userProfileIsNull.code, OneginiWrapperErrors().userProfileIsNull.message, null)
             return
         }
         OneginiSDK.getOneginiClient(context).userClient.deregisterUser(userProfile, object : OneginiDeregisterUserProfileHandler {
