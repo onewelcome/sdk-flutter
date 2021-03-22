@@ -12,7 +12,7 @@ import io.flutter.plugin.common.MethodChannel
 
 object AuthHelper {
 
-    fun getRegisteredAuthenticators(context:Context,result: MethodChannel.Result){
+    fun getRegisteredAuthenticators(context: Context, result: MethodChannel.Result) {
         val gson = GsonBuilder().serializeNulls().create()
         val userProfile = OneginiSDK.getOneginiClient(context).userClient.userProfiles.first()
         val registeredAuthenticators = userProfile.let { OneginiSDK.getOneginiClient(context).userClient.getRegisteredAuthenticators(it) }
@@ -27,7 +27,8 @@ object AuthHelper {
         result.success(gson.toJson(authenticators))
     }
 
-    fun authenticateWithRegisteredAuthenticators(context: Context,registeredAuthenticatorsId : String?,result: MethodChannel.Result){
+    fun authenticateUser(context: Context, registeredAuthenticatorsId: String?, result: MethodChannel.Result) {
+        var authenticator: OneginiAuthenticator? = null
         val userProfile = OneginiSDK.getOneginiClient(context).userClient.userProfiles.first()
         if (userProfile == null) {
             result.error(ErrorHelper().userProfileIsNull.code, ErrorHelper().userProfileIsNull.message, null)
@@ -40,13 +41,14 @@ object AuthHelper {
         }
         for (registeredAuthenticator in registeredAuthenticators) {
             if (registeredAuthenticator.id == registeredAuthenticatorsId) {
-                authenticateUser(context,userProfile, registeredAuthenticator, result)
+                authenticator = registeredAuthenticator
                 break
             }
         }
+        authenticate(context, userProfile, authenticator, result)
     }
 
-    fun authenticateUser(context:Context,userProfile: UserProfile, authenticator: OneginiAuthenticator?, result: MethodChannel.Result){
+    private fun authenticate(context: Context, userProfile: UserProfile, authenticator: OneginiAuthenticator?, result: MethodChannel.Result) {
         if (authenticator == null) {
             OneginiSDK.getOneginiClient(context).userClient.authenticateUser(userProfile, getOneginiAuthenticationHandler(result))
 
@@ -55,8 +57,8 @@ object AuthHelper {
         }
     }
 
-    private fun getOneginiAuthenticationHandler(result: MethodChannel.Result):OneginiAuthenticationHandler{
-        return object : OneginiAuthenticationHandler{
+    private fun getOneginiAuthenticationHandler(result: MethodChannel.Result): OneginiAuthenticationHandler {
+        return object : OneginiAuthenticationHandler {
             override fun onSuccess(userProfile: UserProfile, p1: CustomInfo?) {
                 result.success(userProfile.profileId)
             }

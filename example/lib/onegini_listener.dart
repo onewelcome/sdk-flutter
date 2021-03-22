@@ -1,3 +1,6 @@
+// @dart = 2.10
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -8,6 +11,8 @@ import 'package:onegini_example/screens/auth_otp_screen.dart';
 import 'package:onegini_example/screens/fingerprint_screen.dart';
 import 'package:onegini_example/screens/pin_request_screen.dart';
 import 'package:onegini_example/screens/pin_screen.dart';
+
+import 'screens/otp_screen.dart';
 
 class OneginiListener extends OneginiEventListener {
   @override
@@ -33,7 +38,7 @@ class OneginiListener extends OneginiEventListener {
   @override
   void eventError(BuildContext buildContext, PlatformException error) {
       Fluttertoast.showToast(
-          msg: error.message,
+          msg: "${error.message}  Code: ${error.code}",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
           timeInSecForIosWeb: 1,
@@ -70,7 +75,7 @@ class OneginiListener extends OneginiEventListener {
   @override
   void closeFingerprintScreen(BuildContext buildContext) {
     print("close fingerprint");
-    overlayEntry.remove();
+    overlayEntry?.remove();
     Navigator.of(buildContext).canPop();
   }
 
@@ -85,7 +90,7 @@ class OneginiListener extends OneginiEventListener {
 
   @override
   void receivedFingerprint(BuildContext buildContext) {
-    overlayEntry.remove();
+    overlayEntry?.remove();
   }
 
   @override
@@ -97,7 +102,7 @@ class OneginiListener extends OneginiEventListener {
         child: CircularProgressIndicator(),
       ));
     });
-    Overlay.of(buildContext).insert(overlayEntry);
+    Overlay.of(buildContext)?.insert(overlayEntry);
   }
 
   OverlayEntry overlayEntry;
@@ -123,5 +128,18 @@ class OneginiListener extends OneginiEventListener {
     if(Navigator.of(buildContext).canPop()){
       Navigator.of(buildContext).pop();
     }
+  }
+
+  @override
+  void openCustomTwoStepRegistrationScreen(BuildContext buildContext, String data) {
+    var response = jsonDecode(data);
+    if(response["providerId"] == "2-way-otp-api")
+    Navigator.pushReplacement(
+      buildContext,
+      MaterialPageRoute(
+          builder: (context) => OtpScreen(
+            password: response["data"],
+          )),
+    );
   }
 }

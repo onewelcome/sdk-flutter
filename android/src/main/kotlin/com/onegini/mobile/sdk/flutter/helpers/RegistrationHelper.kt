@@ -19,7 +19,7 @@ import io.flutter.plugin.common.MethodChannel
 
 object RegistrationHelper {
 
-    fun registerUser(packageContext: Context, @Nullable identityProvider: OneginiIdentityProvider?, scopes: Array<String>, result: MethodChannel.Result) {
+   private fun register(packageContext: Context, @Nullable identityProvider: OneginiIdentityProvider?, scopes: Array<String>, result: MethodChannel.Result) {
         val oneginiClient: OneginiClient = OneginiSDK.getOneginiClient(packageContext)
         oneginiClient.userClient.registerUser(identityProvider, scopes, object : OneginiRegistrationHandler {
             override fun onSuccess(userProfile: UserProfile, customInfo: CustomInfo?) {
@@ -42,18 +42,17 @@ object RegistrationHelper {
 
 
 
-    fun registrationWithIdentityProvider(context: Context,identityProviderId:String?,scopes:String?,result: MethodChannel.Result){
-        val identityProviders = OneginiSDK.getOneginiClient(context).userClient.identityProviders
-        if (identityProviders == null) {
-            result.error(ErrorHelper().identityProvidersIsNull.code, ErrorHelper().identityProvidersIsNull.message, null)
-            return
-        }
-        for (identityProvider in identityProviders) {
-            if (identityProvider.id == identityProviderId) {
-                registerUser(context,identityProvider, arrayOf(scopes ?: ""),result)
-                break
+    fun registerUser(context: Context,identityProviderId:String?,scopes:String?,result: MethodChannel.Result){
+        if(identityProviderId != null){
+            val identityProviders = OneginiSDK.getOneginiClient(context).userClient.identityProviders
+            for (identityProvider in identityProviders) {
+                if (identityProvider.id == identityProviderId) {
+                    register(context,identityProvider, arrayOf(scopes ?: ""),result)
+                    break
+                }
             }
-        }
+        } else register(context,null, arrayOf(scopes ?: ""),result)
+
     }
 
     fun getIdentityProviders(context: Context, result: MethodChannel.Result) {

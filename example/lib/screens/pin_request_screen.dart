@@ -1,7 +1,8 @@
+// @dart = 2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:onegini/onegini.dart';
+import 'package:onegini/callbacks/onegini_pin_registration_callback.dart';
 
 class PinRequestScreen extends StatefulWidget {
   final bool confirmation;
@@ -47,7 +48,9 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
     });
     if (widget.confirmation) {
       if (pin == widget.previousCode) {
-        Onegini.instance.sendPin(pin, false).catchError((error) {
+        OneginiPinRegistrationCallback()
+            .acceptAuthenticationRequest(context, pin: pin)
+            .catchError((error) {
           if (error is PlatformException) {
             Fluttertoast.showToast(
                 msg: error.message,
