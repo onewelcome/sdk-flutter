@@ -9,8 +9,12 @@ extension OneginiModuleSwift {
         bridgeConnector.toPinHandlerConnector.pinHandler.onCancel()
     }
   
-    func submitPinAction(_ flow: String, action: String, pin: String) -> Void {
+    func submitPinAction(_ flow: String, action: String, pin: String, isCustomAuth: Bool = false) -> Void {
+        if (!isCustomAuth) {
         bridgeConnector.toPinHandlerConnector.handlePinAction(flow, action, pin)
+        } else {
+            //bridgeConnector.toAuthenticatorsHandler.ha
+        }
      }
     
     func changePin(callback: @escaping FlutterResult) -> Void {

@@ -21,11 +21,14 @@ abstract class OneginiEventListener {
       if(_context  == null) return;
       print("event -> $event");
       switch (event) {
-        case Constants.eventOpenPin:
+        case Constants.eventOpenPin://2
           openPinRequestScreen(_context!);
           break;
-        case Constants.eventOpenPinAuth:
+        case Constants.eventOpenPinAuth://1
           openPinScreenAuth(_context!);
+          break;
+        case Constants.eventOpenPinAuthenticator:
+          openPinAuthenticator(_context!);
           break;
         case Constants.eventClosePin:
           closePin(_context!);
@@ -75,6 +78,8 @@ abstract class OneginiEventListener {
   void openPinRequestScreen(BuildContext buildContext);
 
   void openPinScreenAuth(BuildContext buildContext);
+
+  void openPinAuthenticator(BuildContext buildContext);
 
   void nextAuthenticationAttempt(
       BuildContext buildContext, AuthenticationAttempt authenticationAttempt);

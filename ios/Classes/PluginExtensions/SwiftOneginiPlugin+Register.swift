@@ -33,6 +33,11 @@ extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
     
     func acceptPinRegistrationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         guard let _arg = call.arguments as! [String: Any]?, let _pin = _arg["pin"] as! String? else { return; }
+        guard let isCustomAuth = _arg["isCustomAuth"] else {
+            OneginiModuleSwift.sharedInstance.submitPinAction(PinFlow.create.rawValue, action: PinAction.provide.rawValue, pin: _pin)
+            return
+        }
+        
         OneginiModuleSwift.sharedInstance.submitPinAction(PinFlow.create.rawValue, action: PinAction.provide.rawValue, pin: _pin)
     }
     

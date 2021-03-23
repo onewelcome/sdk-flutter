@@ -44,6 +44,10 @@ extension LoginHandler: ONGAuthenticationDelegate {
         pinChallenge = challenge
         let pinError = mapErrorFromPinChallenge(challenge)
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.handleFlowUpdate(PinFlow.authentication, pinError, receiver: self)
+        
+        guard let _ = pinError else { return }
+        BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
+        loginCompletion!(nil, pinError)
     }
 
     func userClient(_: ONGUserClient, didReceive challenge: ONGCustomAuthFinishAuthenticationChallenge) {
