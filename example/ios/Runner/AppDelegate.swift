@@ -21,7 +21,6 @@ import OneginiCrypto
                                               binaryMessenger: controller.binaryMessenger)
     eventChannel.setStreamHandler(OneginiModuleSwift.sharedInstance)
 
-    OneginiModuleSwift.sharedInstance.configureCustomRegIdentifier("2-way-otp-api")
     OneginiModuleSwift.sharedInstance.eventSinkParameter = "exemple_events"
 
     methodChannel.setMethodCallHandler({

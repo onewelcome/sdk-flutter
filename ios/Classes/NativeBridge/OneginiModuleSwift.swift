@@ -44,7 +44,8 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
         return [OneginiBridgeEvents.pinNotification.rawValue]
     }
     
-    func startOneginiModule(callback: @escaping FlutterResult) {
+    func startOneginiModule(httpConnectionTimeout: TimeInterval = TimeInterval(5), callback: @escaping FlutterResult) {
+        ONGClientBuilder().setHttpRequestTimeout(httpConnectionTimeout)
         ONGClientBuilder().build()
         ONGClient.sharedInstance().start {
           result, error in

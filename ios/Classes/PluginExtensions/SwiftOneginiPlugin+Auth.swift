@@ -58,27 +58,5 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
     func logout(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         OneginiModuleSwift.sharedInstance.logOut(callback:result)
     }
-    
-//    func getIdentityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-//        OneginiModuleSwift.sharedInstance.identityProviders(callback: result)
-//    }
-//
-//    func getRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-//        OneginiModuleSwift.sharedInstance.fetchRegisteredAuthenticators(callback: result)
-//    }
-//
-//    func authenticateWithRegisteredAuthentication(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-//        guard let _arg = call.arguments as! [String: Any]?, let _id = _arg["registeredAuthenticatorsId"] as! String? else { return; }
-//        OneginiModuleSwift.sharedInstance.authenticateWithRegisteredAuthentication(_id, callback: result)
-//    }
-//
-//    func singleSignOn(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-//        guard let _arg = call.arguments as! [String: Any]?, let _path = _arg["url"] as! String? else { return; }
-//        OneginiModuleSwift.sharedInstance.runSingleSignOn(_path, callback: result)
-//    }
-//
-//    func logout(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-//        OneginiModuleSwift.sharedInstance.logOut(callback:result)
-//    }
 }
 

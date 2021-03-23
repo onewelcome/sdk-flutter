@@ -39,6 +39,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     case Constants.Routes.acceptPinRegistrationRequest: acceptPinRegistrationRequest(call, result)
     case Constants.Routes.denyPinRegistrationRequest: denyPinRegistrationRequest(call, result)
     
+    case Constants.Routes.customTwoStepRegistrationReturnSuccess: customTwoStepRegistrationReturnSuccess(call, result)
+    case Constants.Routes.customTwoStepRegistrationReturnError: customTwoStepRegistrationReturnError(call, result)
+        
     case Constants.Routes.deregisterUser: deregisterUser(call, result)
         
     // auth

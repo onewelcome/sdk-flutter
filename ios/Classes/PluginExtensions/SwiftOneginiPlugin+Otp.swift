@@ -21,7 +21,6 @@ extension SwiftOneginiPlugin: OneginiPluginOtpProtocol {
     }
     
     func denyOtpAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        //print("[NOT IMPLEMENTED] denyOtpAuthenticationRequest")
         OneginiModuleSwift.sharedInstance.denyMobileAuthConfirmation(callback: result)
     }
 }

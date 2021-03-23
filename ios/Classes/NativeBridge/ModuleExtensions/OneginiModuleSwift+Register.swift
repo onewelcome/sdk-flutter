@@ -23,6 +23,14 @@ extension OneginiModuleSwift {
         }
     }
     
+    func handleTwoStepRegistration(_ data: String) {
+        bridgeConnector.toRegistrationConnector.registrationHandler.processTwoStepRegistration(data)
+    }
+    
+    func cancelTwoStepRegistration(_ error: String) {
+        bridgeConnector.toRegistrationConnector.registrationHandler.cancelTwoStepRegistration(error)
+    }
+    
     public func cancelRegistration() -> Void {
         bridgeConnector.toRegistrationConnector.registrationHandler.cancelRegistration()
     }

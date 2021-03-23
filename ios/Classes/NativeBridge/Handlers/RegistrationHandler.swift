@@ -10,10 +10,14 @@ protocol RegistrationConnectorToHandlerProtocol: AnyObject {
     func identityProviders() -> Array<ONGIdentityProvider>
     func processOTPCode(code: String?)
     func cancelCustomRegistration()
+    func processTwoStepRegistration(_ data: String)
+    func cancelTwoStepRegistration(_ error: String)
     func currentChallenge() -> ONGCustomRegistrationChallenge?
 }
 
 class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, PinHandlerToReceiverProtocol {
+    
+    var middleTwoStep: Bool? = nil
     
     var createPinChallenge: ONGCreatePinChallenge?
     var browserRegistrationChallenge: ONGBrowserRegistrationChallenge?
@@ -133,6 +137,17 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
     func cancelCustomRegistration() {
         handleOTPCode(nil, true)
     }
+    
+    func processTwoStepRegistration(_ data: String) {
+        guard let customRegistrationChallenge = self.customRegistrationChallenge else { return }
+        customRegistrationChallenge.sender.respond(withData: data, challenge: customRegistrationChallenge)
+    }
+    
+    func cancelTwoStepRegistration(_ error: String) {
+        guard let customRegistrationChallenge = self.customRegistrationChallenge else { return }
+        customRegistrationChallenge.sender.cancel(customRegistrationChallenge)
+    }
+    
 
     func cancelRegistration() {
         handleRedirectURL(url: nil)
@@ -163,9 +178,11 @@ extension RegistrationHandler: ONGRegistrationDelegate {
 
         var result = Dictionary<String, Any?>()
         result["eventValue"] = challenge.identityProvider.identifier
-
-        sendCustomRegistrationNotification(CustomRegistrationNotification.initRegistration, result)
         
+        middleTwoStep = true
+        
+        sendCustomRegistrationNotification(CustomRegistrationNotification.initRegistration, result)
+
         challenge.sender.respond(withData: nil, challenge: challenge)
     }
 
@@ -175,23 +192,42 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         var result = Dictionary<String, Any?>()
         result["eventValue"] = challenge.identityProvider.identifier
 
+        var successfulRequest = true
         if let info = challenge.info {
-            var customInfo = Dictionary<String, Any?>()
+            if (info.status < 2001) {
+                var customInfo = Dictionary<String, Any?>()
 
-            customInfo["data"] = info.data
-            customInfo["status"] = info.status
-            result["customInfo"] = customInfo
-            
-            result["eventValue"] = info.data
-            result["value"] = info.data
-            if let _errorMessage = mapErrorMessageFromStatus(info.status) {
-                customInfo["errorMsg"] = _errorMessage
+                customInfo["data"] = info.data
+                customInfo["providerId"] = challenge.identityProvider.identifier
+
+                result["eventValue"] = String.stringify(json: customInfo)
+            }
+            else
+            {
+                successfulRequest = false
+                result["eventValue"] = mapErrorMessageFromStatus(info.status)
             }
         }
-
-        sendCustomRegistrationNotification(CustomRegistrationNotification.finishRegistration, result)
         
-        BridgeConnector.shared?.toRegistrationConnector.sendCustomOtpNotification(OneginiBridgeEvents.otpOpen, result)
+
+        if (successfulRequest) {
+            if let _middle = middleTwoStep {
+                if (_middle) {
+                    sendCustomRegistrationNotification(CustomRegistrationNotification.openCustomTwoStepRegistrationScreen, result)
+                    BridgeConnector.shared?.toRegistrationConnector.sendCustomOtpNotification(OneginiBridgeEvents.otpOpen, result)
+                    
+                    middleTwoStep = false
+                    return
+                }
+            }
+            
+            sendCustomRegistrationNotification(CustomRegistrationNotification.finishRegistration, result)
+            middleTwoStep = nil
+        }
+        else {
+            sendCustomRegistrationNotification(CustomRegistrationNotification.eventError, result)
+            BridgeConnector.shared?.toRegistrationConnector.sendCustomOtpNotification(OneginiBridgeEvents.errorNotification, result)
+        }
     }
 
     func userClient(_: ONGUserClient, didFailToRegisterWithError error: Error) {

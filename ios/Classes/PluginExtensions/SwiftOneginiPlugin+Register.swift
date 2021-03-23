@@ -13,6 +13,9 @@ protocol OneginiPluginRegisterProtocol {
     func acceptPinRegistrationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func denyPinRegistrationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     
+    func customTwoStepRegistrationReturnSuccess(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
+    func customTwoStepRegistrationReturnError(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
+    
     func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 }
 
@@ -40,34 +43,18 @@ extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
         OneginiModuleSwift.sharedInstance.cancelPinAuth()
     }
     
+    func customTwoStepRegistrationReturnSuccess(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        guard let _arg = call.arguments as! [String: Any]?, let _data = _arg["data"] as! String? else { return; }
+        OneginiModuleSwift.sharedInstance.handleTwoStepRegistration(_data)
+    }
+    
+    func customTwoStepRegistrationReturnError(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        guard let _arg = call.arguments as! [String: Any]?, let _error = _arg["error"] as! String? else { return; }
+        OneginiModuleSwift.sharedInstance.cancelTwoStepRegistration(_error)
+    }
+    
     func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         OneginiModuleSwift.sharedInstance.deregisterUser(callback:result)
     }
-    
-//    func registration(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-//        OneginiModuleSwift.sharedInstance.registerUser(nil, callback: result)
-//    }
-//
-//    func registrationWithIdentityProvider(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-//        guard let _arg = call.arguments as! [String: String]?, let _identifier = _arg["identityProviderId"] else { return; }
-//
-//        OneginiModuleSwift.sharedInstance.registerUser(_identifier, callback: result)
-//    }
-//
-//    func cancelRegistration(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-//        OneginiModuleSwift.sharedInstance.cancelRegistration()
-//    }
-//
-//    func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-//        OneginiModuleSwift.sharedInstance.deregisterUser(callback:result)
-//    }
-//
-//    func registerFingerprintAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-//        OneginiModuleSwift.sharedInstance.registerFingerprintAuthenticator(callback: result)
-//    }
-//
-//    func isUserNotRegisteredFingerprint(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-//        OneginiModuleSwift.sharedInstance.fetchNotRegisteredAuthenticator(callback: result)
-//    }
 }
 
