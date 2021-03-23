@@ -18,7 +18,7 @@ A new flutter plugin project.
   s.platform = :ios, '12.0'
 
   # ***************************
-  # s.dependency 'OneginiSDKiOS', '~> 9.6'
+  s.dependency 'SwiftLint'
   # s.requires_arc  = true
   s.vendored_frameworks = 'OneginiCrypto.xcframework', 'OneginiSDKiOS.xcframework'
   # ***************************
