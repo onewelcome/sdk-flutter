@@ -57,4 +57,6 @@ class Constants{
   static const String eventOpenAuthOTP = "eventOpenAuthOtp";
   static const String eventCancelAuthOTP = "eventCancelAuthOtp";
   static const String eventCloseAuthOTP = "eventCloseAuthOtp";
+
+  static const String eventError = "eventError";
 }

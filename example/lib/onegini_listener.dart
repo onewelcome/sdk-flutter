@@ -34,13 +34,27 @@ class OneginiListener extends OneginiEventListener {
   @override
   void eventError(BuildContext buildContext, PlatformException error) {
     Fluttertoast.showToast(
-        msg: error.message,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.black38,
-        textColor: Colors.white,
-        fontSize: 16.0);
+      msg: error.message,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black38,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+
+  @override
+  void showError(BuildContext buildContext, String errorMessage) {
+    Fluttertoast.showToast(
+      msg: errorMessage ?? "Something went wrong",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black38,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
   }
 
   @override
@@ -55,7 +69,10 @@ class OneginiListener extends OneginiEventListener {
   void openPinAuthenticator(BuildContext buildContext) {
     Navigator.push(
       buildContext,
-      MaterialPageRoute(builder: (context) => PinRequestScreen(customAuthenticator: true,)),
+      MaterialPageRoute(
+          builder: (context) => PinRequestScreen(
+                customAuthenticator: true,
+              )),
     );
   }
 

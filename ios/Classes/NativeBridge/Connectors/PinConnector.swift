@@ -60,7 +60,7 @@ enum PinNotification : String {
          close = "eventClosePin",
          openAuth = "eventOpenPinAuth",
          closeAuth = "eventClosePinAuth",
-         showError = "show_error"
+         showError = "eventError"
 }
 
 enum PinAction : String {
