@@ -27,10 +27,11 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
     func authenticateUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         guard let _arg = call.arguments as! [String: Any]? else { return; }
         let _id = _arg["registeredAuthenticatorId"] as? String
-        if ((_id) != nil) {
+        if (_id != nil) {
             // auth with provider
             print("use provider for auth")
-            OneginiModuleSwift.sharedInstance.authenticateUser(_id, callback: result)
+//            OneginiModuleSwift.sharedInstance.authenticateUser(_id, callback: result)
+            OneginiModuleSwift.sharedInstance.authenticateWithRegisteredAuthentication(_id, callback: result)
         } else {
             // auth with pin
             print("use pin for auth")
