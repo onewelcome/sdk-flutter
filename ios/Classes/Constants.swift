@@ -45,26 +45,5 @@ struct Constants {
         static let getAppToWebSingleSignOn: String = "getAppToWebSingleSignOn";
         static let changePin: String = "changePin";
         
-        
-        // old ones
-//        static let cancelRegistration: String = "cancelRegistration"
-//        static let sendPin: String = "sendPin"
-//        static let pinAuthentication = "pinAuthentication"
-//        static let registrationWithIdentityProvider = "registrationWithIdentityProvider"
-//        static let registration = "registration"
-//        static let deregisterUser = "deregisterUser"
-//        static let getIdentityProviders = "getIdentityProviders"
-//        static let logOut = "logOut"
-//        static let getRegisteredAuthenticators = "getRegisteredAuthenticators"
-//        static let authenticateWithRegisteredAuthentication = "authenticateWithRegisteredAuthentication"
-//        static let changePin = "changePin"
-//        static let singleSignOn = "singleSignOn"
-//        static let cancelPinAuth = "cancelPinAuth"
-//        static let registerFingerprintAuthenticator = "registerFingerprintAuthenticator"
-//        static let fingerprintActivationSensor = "fingerprintActivationSensor"
-//        static let isUserNotRegisteredFingerprint = "isUserNotRegisteredFingerprint"
-//        static let getResourceAnonymous = "getResourceAnonymous"
-//        static let getImplicitResource = "getImplicitResource"
-//        static let getResource = "getResource"
     }
 }

@@ -17,7 +17,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     if ((_arg) != nil) {
         for key in _arg!.keys {
             print("key: " + key)
-                //+ " value: " + (_arg![key] as! String))
             let val = _arg?[key]
             print("value: " + String(describing: val))
             if (!(val is NSNull)) {

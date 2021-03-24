@@ -6,22 +6,23 @@ import OneginiCrypto
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
-
-  override func application(
+    let exampleCustomEventIdentifier: String = "exemple_events"
+    
+    override func application(
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
-  ) -> Bool {
+    ) -> Bool {
 
     let controller : FlutterViewController = window?.rootViewController as! FlutterViewController
 
     let methodChannel = FlutterMethodChannel(name: "example",
                                                  binaryMessenger: controller.binaryMessenger)
 
-    let eventChannel = FlutterEventChannel(name: "exemple_events",
+    let eventChannel = FlutterEventChannel(name: exampleCustomEventIdentifier,
                                               binaryMessenger: controller.binaryMessenger)
     eventChannel.setStreamHandler(OneginiModuleSwift.sharedInstance)
 
-    OneginiModuleSwift.sharedInstance.eventSinkParameter = "exemple_events"
+    OneginiModuleSwift.sharedInstance.eventSinkCustomIdentifier = exampleCustomEventIdentifier
 
     methodChannel.setMethodCallHandler({
         (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
@@ -42,6 +43,6 @@ import OneginiCrypto
       })
 
     GeneratedPluginRegistrant.register(with: self)
-    return super.application(application, didFinishLaunchingWithOptions: launchOptions)
-  }
+        return super.application(application, didFinishLaunchingWithOptions: launchOptions)
+    }
 }
