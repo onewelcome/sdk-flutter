@@ -7,9 +7,10 @@ import 'package:onegini/callbacks/onegini_pin_registration_callback.dart';
 class PinRequestScreen extends StatefulWidget {
   final bool confirmation;
   final String previousCode;
+  final bool customAuthenticator;
 
   const PinRequestScreen(
-      {Key key, this.confirmation = false, this.previousCode})
+      {Key key, this.confirmation = false, this.previousCode, this.customAuthenticator = false})
       : super(key: key);
 
   @override
@@ -80,6 +81,7 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
               builder: (context) => PinRequestScreen(
                     confirmation: true,
                     previousCode: pin,
+                    customAuthenticator: this.widget.customAuthenticator,
                   )),
         );
     }

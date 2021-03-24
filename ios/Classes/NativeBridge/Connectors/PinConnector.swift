@@ -25,7 +25,7 @@ class PinConnector : BridgeToPinConnectorProtocol {
                 pinHandler.onCancel()
                 break
             default:
-                sendEvent(data: ["flow": flow, "action": PinNotification.showError.rawValue, "errorMsg": "Unsupported pin action. Contact SDK maintainer."])
+                sendEvent(data: ["eventName": PinNotification.showError.rawValue, "eventValue": "Unsupported pin action. Contact SDK maintainer."])
                 break
         }
     }
@@ -45,7 +45,7 @@ class PinConnector : BridgeToPinConnectorProtocol {
                 sendEvent(data: PinNotification.closeAuth.rawValue)
                 break;
             case .showError:
-                sendEvent(data: String.stringify(json: ["key": PinNotification.showError.rawValue, "value": error?.errorDescription]))
+                sendEvent(data: String.stringify(json: ["eventName": PinNotification.showError.rawValue, "eventValue": error?.errorDescription]))
                 break
         }
     }
@@ -60,7 +60,7 @@ enum PinNotification : String {
          close = "eventClosePin",
          openAuth = "eventOpenPinAuth",
          closeAuth = "eventClosePinAuth",
-         showError = "show_error"
+         showError = "eventError"
 }
 
 enum PinAction : String {

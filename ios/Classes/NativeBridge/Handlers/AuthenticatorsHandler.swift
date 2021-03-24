@@ -12,17 +12,29 @@ protocol BridgeToAuthenticatorsHandlerProtocol: AnyObject {
 
 class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
     var pinChallenge: ONGPinChallenge?
+    var customAuthChallenge: ONGCustomAuthFinishRegistrationChallenge?
     var registrationCompletion: ((Bool, SdkError?) -> Void)?
     var deregistrationCompletion: ((Bool, SdkError?) -> Void)?
     
     func handlePin(pin: String?) {
-        guard let pinChallenge = self.pinChallenge else { return }
+        guard let customAuthChallenge = self.customAuthChallenge else {
+            guard let pinChallenge = self.pinChallenge else { return }
+
+            if(pin != nil) {
+                pinChallenge.sender.respond(withPin: pin!, challenge: pinChallenge)
+
+            } else {
+                pinChallenge.sender.cancel(pinChallenge)
+            }
+
+            return
+        }
 
         if(pin != nil) {
-            pinChallenge.sender.respond(withPin: pin!, challenge: pinChallenge)
+            customAuthChallenge.sender.respond(withData: pin!, challenge: customAuthChallenge)
 
         } else {
-            pinChallenge.sender.cancel(pinChallenge)
+            customAuthChallenge.sender.cancel(customAuthChallenge, underlyingError: nil)
         }
     }
 
@@ -42,6 +54,10 @@ class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
                 return $0.type.rawValue < $1.type.rawValue
             }
         }
+    }
+    
+    private func sendConnectorNotification(_ event: MobileAuthNotification, _ requestMessage: String?, _ error: SdkError?) {
+        BridgeConnector.shared?.toMobileAuthConnector.sendNotification(event: event, requestMessage: requestMessage, error: error)
     }
 }
 
@@ -115,7 +131,9 @@ extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
         // Will need this in the future
         registrationCompletion!(true, nil)
         
-        // TODO: finish it
+        customAuthChallenge = challenge
+
+        BridgeConnector.shared?.toPinHandlerConnector.pinHandler.handleFlowUpdate(PinFlow.create, nil, receiver: self)
     }
 
     func userClient(_: ONGUserClient, didFailToRegister authenticator: ONGAuthenticator, forUser _: ONGUserProfile, error: Error) {

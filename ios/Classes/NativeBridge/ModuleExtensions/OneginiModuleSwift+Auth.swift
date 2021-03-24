@@ -40,7 +40,7 @@ extension OneginiModuleSwift {
     func authenticateUser(_ profileId: String?,
                           callback: @escaping FlutterResult) -> Void {
         
-        guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
+        guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.authenticatedUserProfile() else
         {
             callback(SdkError.convertToFlutter(SdkError.init(customType: .userProfileIsNull)))
             return
@@ -70,6 +70,10 @@ extension OneginiModuleSwift {
     }
     
     func authenticateWithRegisteredAuthentication(_ identifierId: String?, callback: @escaping FlutterResult) {
+        guard let _identifierId = identifierId else {
+            callback(SdkError.convertToFlutter(SdkError.init(customType: .identityProvidersIsNull)))
+            return
+        }
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
             callback(SdkError.convertToFlutter(SdkError.init(customType: .userProfileIsNull)))
@@ -78,15 +82,22 @@ extension OneginiModuleSwift {
         
         let registeredAuthenticator = Array(ONGUserClient.sharedInstance().registeredAuthenticators(forUser: profile)).first(where: { $0.identifier == identifierId })
         
-        
-        bridgeConnector.toLoginHandler.authenticateUser(profile, authenticator: registeredAuthenticator, completion: {
-            (userProfile, error) -> Void in
-            if let _userProfile = userProfile {
-                callback(_userProfile.profileId)
-            } else {
-                callback(SdkError.convertToFlutter(error))
+        print("Type: ", registeredAuthenticator?.type)
+        bridgeConnector.toAuthenticatorsHandler.setPreferredAuthenticator(profile, _identifierId) { [weak self] (value, error) in
+            
+            guard error == nil else { callback(SdkError.convertToFlutter(error))
+                return
             }
-        })
+            
+            self?.bridgeConnector.toLoginHandler.authenticateUser(profile, authenticator: registeredAuthenticator, completion: {
+                (userProfile, error) -> Void in
+                if let _userProfile = userProfile {
+                    callback(_userProfile.profileId)
+                } else {
+                    callback(SdkError.convertToFlutter(error))
+                }
+            })
+        }
     }
 }
 

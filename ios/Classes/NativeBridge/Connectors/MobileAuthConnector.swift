@@ -16,7 +16,7 @@ class MobileAuthConnector : BridgeToMobileAuthConnectorProtocol {
     func sendNotification(event: MobileAuthNotification, requestMessage: String?, error: SdkError?) {
         switch (event){
             case .startAuthentication:
-                sendEvent(data: String.stringify(json: ["key": PinNotification.showError.rawValue, "value": error?.errorDescription]))
+                sendEvent(data: String.stringify(json: ["eventName": PinNotification.showError.rawValue, "eventValue": error?.errorDescription]))
                 break
             case .finishAuthentication:
                 sendEvent(data: MobileAuthNotification.finishAuthentication.rawValue)

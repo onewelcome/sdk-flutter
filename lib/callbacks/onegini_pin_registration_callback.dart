@@ -17,12 +17,12 @@ class OneginiPinRegistrationCallback{
     }
   }
 
-  Future<void> acceptAuthenticationRequest(BuildContext context,{String? pin}) async {
+  Future<void> acceptAuthenticationRequest(BuildContext context,{String? pin, bool isCustomAuthenticator = false}) async {
     Onegini.instance.setEventContext(context);
     try {
       await Onegini.instance.channel
           .invokeMethod(Constants.acceptPinRegistrationRequest, <String, String?>{
-        'pin': pin,
+        'pin': pin, 'isCustomAuth': isCustomAuthenticator ? "true" : null,
       });
     } on PlatformException catch (error) {
       throw error;
