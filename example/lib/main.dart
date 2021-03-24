@@ -8,6 +8,8 @@ import 'package:onegini_example/screens/login_screen.dart';
 
 import 'onegini_listener.dart';
 
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
+
 void main() {
   runApp(MyApp());
 }
@@ -17,6 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Onegini test app',
+      navigatorObservers: [routeObserver],
       home: Scaffold(
         appBar: AppBar(
           title: Padding(
