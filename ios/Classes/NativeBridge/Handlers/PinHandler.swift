@@ -2,6 +2,7 @@ import OneginiSDKiOS
 import OneginiCrypto
 import Flutter
 
+//MARK: -
 protocol PinConnectorToPinHandler: AnyObject {
     func onPinProvided(pin: String)
     func onChangePinCalled(completion: @escaping (Bool, SdkError?) -> Void)
@@ -19,6 +20,7 @@ enum PINEntryMode {
     case registration
 }
 
+//MARK: -
 class PinHandler: NSObject {
     var pinChallenge: ONGPinChallenge?
     var createPinChallenge: ONGCreatePinChallenge?
@@ -36,7 +38,6 @@ class PinHandler: NSObject {
               break
           case .none:
             pinReceiver?.handlePin(pin: pincode)
-//              notifyOnError(SdkError(title: "Pin validation error", errorDescription: "Unexpected PIN mode.", recoverySuggestion: "Open and close modal."))
               break
         }
     }
@@ -55,17 +56,16 @@ class PinHandler: NSObject {
     }
 }
 
+//MARK: -
 extension PinHandler : PinConnectorToPinHandler {
-    
-    // @todo Support different pinLength
     func handleFlowUpdate(_ flow: PinFlow, _ error: SdkError?, receiver: PinHandlerToReceiverProtocol) {
         if(self.flow == nil){
             self.flow = flow
             pinReceiver = receiver
         }
 
-        if(error != nil){
-            notifyOnError(error!)
+        if let _error = error {
+            notifyOnError(_error)
         } else {
             if(mode == nil) {
                 var notification = PinNotification.open;
@@ -120,13 +120,14 @@ extension PinHandler : PinConnectorToPinHandler {
     }
  }
 
+//MARK: -
 extension PinHandler : PinHandlerToReceiverProtocol {
     func handlePin(pin: String?) {
         guard let createPinChallenge = self.createPinChallenge else {
             guard let pinChallenge = self.pinChallenge else { return }
 
-            if(pin != nil) {
-                pinChallenge.sender.respond(withPin: pin!, challenge: pinChallenge)
+            if let _pin = pin {
+                pinChallenge.sender.respond(withPin: _pin, challenge: pinChallenge)
 
             } else {
                 pinChallenge.sender.cancel(pinChallenge)
@@ -135,8 +136,8 @@ extension PinHandler : PinHandlerToReceiverProtocol {
             return
         }
 
-        if(pin != nil) {
-            createPinChallenge.sender.respond(withCreatedPin: pin!, challenge: createPinChallenge)
+        if let _pin = pin {
+            createPinChallenge.sender.respond(withCreatedPin: _pin, challenge: createPinChallenge)
 
         } else {
             createPinChallenge.sender.cancel(createPinChallenge)
@@ -160,6 +161,7 @@ extension PinHandler : PinHandlerToReceiverProtocol {
     }
 }
 
+//MARK: - ONGChangePinDelegate
 extension PinHandler: ONGChangePinDelegate {
     func userClient(_ userClient: ONGUserClient, didReceive challenge: ONGPinChallenge) {
         pinChallenge = challenge
@@ -183,17 +185,17 @@ extension PinHandler: ONGChangePinDelegate {
         let mappedError = ErrorMapper().mapError(error)
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            changePinCompletion!(false, SdkError(customType: .changingCancelled))
+            changePinCompletion?(false, SdkError(customType: .changingCancelled))
         } else if error.code == ONGGenericError.userDeregistered.rawValue {
-            changePinCompletion!(false, mappedError)
+            changePinCompletion?(false, mappedError)
         } else {
-            changePinCompletion!(false, mappedError)
+            changePinCompletion?(false, mappedError)
         }
     }
 
     func userClient(_: ONGUserClient, didChangePinForUser _: ONGUserProfile) {
         createPinChallenge = nil
         closeFlow()
-        changePinCompletion!(true, nil)
+        changePinCompletion?(true, nil)
     }
 }

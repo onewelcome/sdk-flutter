@@ -18,6 +18,7 @@ protocol OneginiPluginAuthProtocol {
     
 }
 
+//MARK: - OneginiPluginAuthProtocol
 extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
     func registerAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         guard let _arg = call.arguments as! [String: Any]?, let _authenticator = _arg["authenticatorId"] as! String? else { return; }

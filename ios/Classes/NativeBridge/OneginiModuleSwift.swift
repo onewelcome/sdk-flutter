@@ -15,19 +15,15 @@ enum OneginiBridgeEvents : String {
     case errorNotification = "ONEGINI_ERROR_NOTIFICATION"
 }
 
+//MARK: -
 public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, FlutterStreamHandler {
  
     var bridgeConnector: BridgeConnector
     private var eventSink: FlutterEventSink?
     public var eventSinkNativePart: FlutterEventSink?
-    public var eventSinkParameter: String?
+    public var eventSinkCustomIdentifier: String?
+    public var customRegIdentifiers = [String]()
     
-    var customIdentifier: String? {
-        didSet {
-            print(customIdentifier ?? "")
-        }
-    }
-
     static public let sharedInstance = OneginiModuleSwift()
     
     override init() {
@@ -36,12 +32,8 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
         self.bridgeConnector.bridge = self
     }
     
-    public func configureCustomRegIdentifier(_ identifier: String) {
-        self.customIdentifier = identifier
-    }
-    
-    func supportedEvents() -> [String]! {
-        return [OneginiBridgeEvents.pinNotification.rawValue]
+    func configureCustomRegIdentifiers(_ list: [String]) {
+        self.customRegIdentifiers = list
     }
     
     func startOneginiModule(httpConnectionTimeout: TimeInterval = TimeInterval(5), callback: @escaping FlutterResult) {
@@ -70,7 +62,7 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
     }
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-        if let _value = eventSinkParameter, let _arg = arguments as! String?, _value == _arg {
+        if let _value = eventSinkCustomIdentifier, let _arg = arguments as! String?, _value == _arg {
             self.eventSinkNativePart = events
         } else if let _arg = arguments as! String?, _arg == "onegini_events" {
             eventSink = events
@@ -79,8 +71,6 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
     }
 
     public func onCancel(withArguments arguments: Any?) -> FlutterError? {
-//        eventSink = nil
-//        eventSinkNativePart = nil
         return nil
     }
     

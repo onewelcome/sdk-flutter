@@ -40,7 +40,7 @@ extension OneginiModuleSwift {
     func authenticateUser(_ profileId: String?,
                           callback: @escaping FlutterResult) -> Void {
         
-        guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.authenticatedUserProfile() else
+        guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
             callback(SdkError.convertToFlutter(SdkError.init(customType: .userProfileIsNull)))
             return
@@ -82,7 +82,7 @@ extension OneginiModuleSwift {
         
         let registeredAuthenticator = Array(ONGUserClient.sharedInstance().registeredAuthenticators(forUser: profile)).first(where: { $0.identifier == identifierId })
         
-        print("Type: ", registeredAuthenticator?.type)
+        // Preferred Authenticator
         bridgeConnector.toAuthenticatorsHandler.setPreferredAuthenticator(profile, _identifierId) { [weak self] (value, error) in
             
             guard error == nil else { callback(SdkError.convertToFlutter(error))

@@ -2,6 +2,7 @@ import Foundation
 import OneginiSDKiOS
 import OneginiCrypto
 
+//MARK: -
 protocol BridgeToAuthenticatorsHandlerProtocol: AnyObject {
     func registerAuthenticator(_ userProfile: ONGUserProfile,_ authenticator: ONGAuthenticator, _ completion: @escaping (Bool, SdkError?) -> Void)
     func deregisterAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Bool, SdkError?) -> Void)
@@ -10,6 +11,7 @@ protocol BridgeToAuthenticatorsHandlerProtocol: AnyObject {
     func isAuthenticatorRegistered(_ authenticatorType: ONGAuthenticatorType, _ userProfile: ONGUserProfile) -> Bool
 }
 
+//MARK: -
 class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
     var pinChallenge: ONGPinChallenge?
     var customAuthChallenge: ONGCustomAuthFinishRegistrationChallenge?
@@ -20,8 +22,8 @@ class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
         guard let customAuthChallenge = self.customAuthChallenge else {
             guard let pinChallenge = self.pinChallenge else { return }
 
-            if(pin != nil) {
-                pinChallenge.sender.respond(withPin: pin!, challenge: pinChallenge)
+            if let _pin = pin {
+                pinChallenge.sender.respond(withPin: _pin, challenge: pinChallenge)
 
             } else {
                 pinChallenge.sender.cancel(pinChallenge)
@@ -30,8 +32,8 @@ class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
             return
         }
 
-        if(pin != nil) {
-            customAuthChallenge.sender.respond(withData: pin!, challenge: customAuthChallenge)
+        if let _pin = pin {
+            customAuthChallenge.sender.respond(withData: _pin, challenge: customAuthChallenge)
 
         } else {
             customAuthChallenge.sender.cancel(customAuthChallenge, underlyingError: nil)
@@ -61,15 +63,16 @@ class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
     }
 }
 
+//MARK: - BridgeToAuthenticatorsHandlerProtocol
 extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     func registerAuthenticator(_ userProfile: ONGUserProfile, _ authenticator: ONGAuthenticator,_ completion: @escaping (Bool, SdkError?) -> Void) {
         guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticator.identifier}) else {
-            completion(false, SdkError(errorDescription: "This authenticator is not available."))
+            completion(false, SdkError.init(customType: .authenticatorNotAvailable))
             return;
         }
         
         if(authenticator.isRegistered == true) {
-            completion(false, SdkError(errorDescription: "This authenticator is already registered."))
+            completion(false, SdkError.init(customType: .authenticatorNotAvailable))
             return;
         }
         
@@ -79,12 +82,12 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
 
     func deregisterAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String,_ completion: @escaping (Bool, SdkError?) -> Void) {
         guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticatorId}) else {
-            completion(false, SdkError(errorDescription: "This authenticator is not available."))
+            completion(false, SdkError.init(customType: .authenticatorNotAvailable))
             return;
         }
         
         if(authenticator.isRegistered != true) {
-            completion(false, SdkError(errorDescription: "This authenticator is not registered."))
+            completion(false, SdkError.init(customType: .authenticatorNotRegistered))
             return;
         }
         
@@ -94,12 +97,12 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
 
     func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String,_ completion: @escaping (Bool, SdkError?) -> Void) {
         guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticatorId}) else {
-            completion(false, SdkError(errorDescription: "This authenticator is not available."))
+            completion(false, SdkError.init(customType: .authenticatorNotAvailable))
             return;
         }
         
-        if(authenticator.isRegistered != true) {
-            completion(false, SdkError(errorDescription: "This authenticator is not registered."))
+        if(!authenticator.isRegistered) {
+            completion(false, SdkError.init(customType: .authenticatorNotRegistered))
             return;
         }
         
@@ -117,6 +120,7 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     }
 }
 
+//MARK: - ONGAuthenticatorRegistrationDelegate
 extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
     func userClient(_: ONGUserClient, didReceive challenge: ONGPinChallenge) {
         print("[AUTH] userClient didReceive ONGPinChallenge")
@@ -149,11 +153,12 @@ extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
 
     func userClient(_: ONGUserClient, didRegister authenticator: ONGAuthenticator, forUser _: ONGUserProfile, info _: ONGCustomInfo?) {
         print("[AUTH] userClient didRegister ONGAuthenticator")
-        registrationCompletion!(true, nil)
+        registrationCompletion?(true, nil)
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
     }
 }
 
+//MARK: - ONGAuthenticatorDeregistrationDelegate
 extension AuthenticatorsHandler: ONGAuthenticatorDeregistrationDelegate {
     func userClient(_: ONGUserClient, didDeregister _: ONGAuthenticator, forUser _: ONGUserProfile) {
         print("[AUTH] userClient didDeregister ONGAuthenticator")
@@ -166,17 +171,16 @@ extension AuthenticatorsHandler: ONGAuthenticatorDeregistrationDelegate {
         // will need this in the future
         
         deregistrationCompletion!(true, nil)
-        // TODO: finish it
     }
 
     func userClient(_: ONGUserClient, didFailToDeregister authenticator: ONGAuthenticator, forUser _: ONGUserProfile, error: Error) {
         print("[AUTH] userClient didFailToDeregister ONGAuthenticator")
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            deregistrationCompletion!(false, SdkError(errorDescription: "Authenticator deregistration cancelled."))
+            deregistrationCompletion?(false, SdkError.init(customType: .authenticatorDeregistrationCancelled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            deregistrationCompletion!(false, mappedError)
+            deregistrationCompletion?(false, mappedError)
         }
     }
 }

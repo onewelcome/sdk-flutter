@@ -1,3 +1,4 @@
+//MARK: - 
 protocol BridgeToRegistrationConnectorProtocol: AnyObject {
     var bridgeConnector: BridgeConnectorProtocol? { get set }
     var registrationHandler: RegistrationConnectorToHandlerProtocol { get }
@@ -7,6 +8,7 @@ protocol BridgeToRegistrationConnectorProtocol: AnyObject {
     func sendCustomOtpNotification(_ event: OneginiBridgeEvents, _ data: Dictionary<String, Any?>?) -> Void
 }
 
+//MARK: -
 class RegistrationConnector : BridgeToRegistrationConnectorProtocol {
     var registrationHandler: RegistrationConnectorToHandlerProtocol
     weak var bridgeConnector: BridgeConnectorProtocol?
@@ -55,7 +57,7 @@ class RegistrationConnector : BridgeToRegistrationConnectorProtocol {
     }
 }
 
-
+//MARK: -
 // Custom registration notification actions
 enum CustomRegistrationNotification : String {
     case initRegistration = "initRegistration",
