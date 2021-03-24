@@ -2,6 +2,7 @@ import OneginiSDKiOS
 import OneginiCrypto
 import Flutter
 
+//MARK: -
 protocol PinConnectorToPinHandler: AnyObject {
     func onPinProvided(pin: String)
     func onChangePinCalled(completion: @escaping (Bool, SdkError?) -> Void)
@@ -19,6 +20,7 @@ enum PINEntryMode {
     case registration
 }
 
+//MARK: -
 class PinHandler: NSObject {
     var pinChallenge: ONGPinChallenge?
     var createPinChallenge: ONGCreatePinChallenge?
@@ -36,7 +38,6 @@ class PinHandler: NSObject {
               break
           case .none:
             pinReceiver?.handlePin(pin: pincode)
-//              notifyOnError(SdkError(title: "Pin validation error", errorDescription: "Unexpected PIN mode.", recoverySuggestion: "Open and close modal."))
               break
         }
     }
@@ -55,9 +56,8 @@ class PinHandler: NSObject {
     }
 }
 
+//MARK: -
 extension PinHandler : PinConnectorToPinHandler {
-    
-    // @todo Support different pinLength
     func handleFlowUpdate(_ flow: PinFlow, _ error: SdkError?, receiver: PinHandlerToReceiverProtocol) {
         if(self.flow == nil){
             self.flow = flow
@@ -120,6 +120,7 @@ extension PinHandler : PinConnectorToPinHandler {
     }
  }
 
+//MARK: -
 extension PinHandler : PinHandlerToReceiverProtocol {
     func handlePin(pin: String?) {
         guard let createPinChallenge = self.createPinChallenge else {
@@ -160,6 +161,7 @@ extension PinHandler : PinHandlerToReceiverProtocol {
     }
 }
 
+//MARK: - ONGChangePinDelegate
 extension PinHandler: ONGChangePinDelegate {
     func userClient(_ userClient: ONGUserClient, didReceive challenge: ONGPinChallenge) {
         pinChallenge = challenge
