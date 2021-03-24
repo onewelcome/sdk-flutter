@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/callbacks/onegini_pin_authentication_callback.dart';
+import 'package:onegini/callbacks/onegini_pin_registration_callback.dart';
 import 'package:onegini/callbacks/onegini_registration_callback.dart';
 import 'package:onegini/model/onegini_identity_provider.dart';
 import 'package:onegini/onegini.dart';
@@ -142,7 +143,23 @@ class _LoginScreenState extends State<LoginScreen> {
 
   cancelRegistration() async {
     setState(() => isLoading = false);
-    OneginiRegistrationCallback()
+
+    await OneginiPinRegistrationCallback()
+        .denyAuthenticationRequest()
+        .catchError((error) {
+      if (error is PlatformException) {
+        Fluttertoast.showToast(
+            msg: error.message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black38,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    });
+
+    await OneginiRegistrationCallback()
         .cancelRegistration()
         .catchError((error) {
       if (error is PlatformException) {

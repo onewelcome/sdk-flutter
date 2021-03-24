@@ -20,9 +20,9 @@ class _QrScanScreenState extends State<QrScanScreen> {
   void reassemble() {
     super.reassemble();
     if (Platform.isAndroid) {
-      controller?.pauseCamera();
+      controller.pauseCamera();
     }
-    controller?.resumeCamera();
+    controller.resumeCamera();
   }
 
   void onQRViewCreated(QRViewController controllerr) {

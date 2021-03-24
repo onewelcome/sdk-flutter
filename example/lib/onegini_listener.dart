@@ -17,7 +17,7 @@ import 'screens/otp_screen.dart';
 class OneginiListener extends OneginiEventListener {
   @override
   void closePin(BuildContext buildContext) {
-    if(Navigator.of(buildContext).canPop()){
+    if (Navigator.of(buildContext).canPop()) {
       Navigator.of(buildContext).pop();
     }
   }
@@ -37,7 +37,7 @@ class OneginiListener extends OneginiEventListener {
 
   @override
   void eventError(BuildContext buildContext, PlatformException error) {
-      Fluttertoast.showToast(
+    Fluttertoast.showToast(
           msg: "${error.message}  Code: ${error.code}",
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.BOTTOM,
@@ -49,11 +49,33 @@ class OneginiListener extends OneginiEventListener {
   }
 
   @override
+  void showError(BuildContext buildContext, String errorMessage) {
+    Fluttertoast.showToast(
+      msg: errorMessage ?? "Something went wrong",
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black38,
+      textColor: Colors.white,
+      fontSize: 16.0,
+    );
+  }
+
+  @override
   void openPinScreenAuth(BuildContext buildContext) {
     Navigator.push(
       buildContext,
+      MaterialPageRoute(builder: (context) => PinScreen()),
+    );
+  }
+
+  @override
+  void openPinAuthenticator(BuildContext buildContext) {
+    Navigator.push(
+      buildContext,
       MaterialPageRoute(
-          builder: (context) => PinScreen(
+          builder: (context) => PinRequestScreen(
+                customAuthenticator: true,
               )),
     );
   }
@@ -62,14 +84,14 @@ class OneginiListener extends OneginiEventListener {
   void nextAuthenticationAttempt(
       BuildContext buildContext, AuthenticationAttempt authenticationAttempt) {
     Fluttertoast.showToast(
-        msg: "failed attempts ${authenticationAttempt.failedAttempts} from ${authenticationAttempt.maxAttempts}",
+        msg:
+            "failed attempts ${authenticationAttempt.failedAttempts} from ${authenticationAttempt.maxAttempts}",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
         backgroundColor: Colors.black38,
         textColor: Colors.white,
-        fontSize: 16.0
-    );
+        fontSize: 16.0);
   }
 
   @override
@@ -97,10 +119,10 @@ class OneginiListener extends OneginiEventListener {
   void showScanningFingerprint(BuildContext buildContext) {
     overlayEntry = OverlayEntry(builder: (context) {
       return Container(
-        color: Colors.black12.withOpacity(0.5),
+          color: Colors.black12.withOpacity(0.5),
           child: Center(
-        child: CircularProgressIndicator(),
-      ));
+            child: CircularProgressIndicator(),
+          ));
     });
     Overlay.of(buildContext)?.insert(overlayEntry);
   }
@@ -113,8 +135,8 @@ class OneginiListener extends OneginiEventListener {
       buildContext,
       MaterialPageRoute(
           builder: (context) => AuthOtpScreen(
-            message: message,
-          )),
+                message: message,
+              )),
     );
   }
 
@@ -125,7 +147,7 @@ class OneginiListener extends OneginiEventListener {
 
   @override
   void closePinAuth(BuildContext buildContext) {
-    if(Navigator.of(buildContext).canPop()){
+    if (Navigator.of(buildContext).canPop()) {
       Navigator.of(buildContext).pop();
     }
   }

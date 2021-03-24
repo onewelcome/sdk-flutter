@@ -66,15 +66,18 @@ class _UserScreenState extends State<UserScreen> {
     }
   }
 
+  List<OneginiListResponse> cachedAuthenticators;
   Future<List<OneginiListResponse>> getNotRegisteredAuthenticators() async {
-    List<OneginiListResponse> authenticators = await Onegini.instance.userClient
-        .getNotRegisteredAuthenticators(context);
-    if (authenticators.isEmpty) {
-      setState(() => isContainNotRegisteredAuthenticators = false);
-    } else {
-      setState(() => isContainNotRegisteredAuthenticators = true);
+    if (cachedAuthenticators == null) {
+      cachedAuthenticators = await Onegini.instance.userClient
+          .getNotRegisteredAuthenticators(context);
+      if (cachedAuthenticators.isEmpty) {
+        setState(() => isContainNotRegisteredAuthenticators = false);
+      } else {
+        setState(() => isContainNotRegisteredAuthenticators = true);
+      }
     }
-    return authenticators;
+    return cachedAuthenticators;
   }
 
   registerAuthenticator(String authenticatorId) async {

@@ -2,11 +2,12 @@ import OneginiSDKiOS
 import OneginiCrypto
 import Flutter
 
+//MARK: -
 protocol BridgeToLoginHandlerProtocol: AnyObject {
     func authenticateUser(_ profile: ONGUserProfile, authenticator: ONGAuthenticator?, completion: @escaping (ONGUserProfile?, SdkError?) -> Void)
 }
 
-
+//MARK: -
 class LoginHandler: NSObject, PinHandlerToReceiverProtocol {
     var pinChallenge: ONGPinChallenge?
     var loginCompletion: ((ONGUserProfile?, SdkError?) -> Void)?
@@ -14,8 +15,8 @@ class LoginHandler: NSObject, PinHandlerToReceiverProtocol {
     func handlePin(pin: String?) {
         guard let pinChallenge = self.pinChallenge else { return }
 
-        if(pin != nil) {
-            pinChallenge.sender.respond(withPin: pin!, challenge: pinChallenge)
+        if let _pin = pin {
+            pinChallenge.sender.respond(withPin: _pin, challenge: pinChallenge)
 
         } else {
             pinChallenge.sender.cancel(pinChallenge)
@@ -31,19 +32,27 @@ class LoginHandler: NSObject, PinHandlerToReceiverProtocol {
     }
 }
 
+//MARK: -
 extension LoginHandler : BridgeToLoginHandlerProtocol {
-    
     func authenticateUser(_ profile: ONGUserProfile, authenticator: ONGAuthenticator?, completion: @escaping (ONGUserProfile?, SdkError?) -> Void) {
         loginCompletion = completion
         ONGUserClient.sharedInstance().authenticateUser(profile, authenticator: authenticator, delegate: self)
     }
 }
 
+//MARK: -
 extension LoginHandler: ONGAuthenticationDelegate {
     func userClient(_: ONGUserClient, didReceive challenge: ONGPinChallenge) {
         pinChallenge = challenge
         let pinError = mapErrorFromPinChallenge(challenge)
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.handleFlowUpdate(PinFlow.authentication, pinError, receiver: self)
+        
+        guard let _ = pinError else { return }
+        BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
+        
+        OneginiModuleSwift.sharedInstance.cancelPinAuth()
+        
+        loginCompletion?(nil, pinError)
     }
 
     func userClient(_: ONGUserClient, didReceive challenge: ONGCustomAuthFinishAuthenticationChallenge) {
@@ -52,7 +61,7 @@ extension LoginHandler: ONGAuthenticationDelegate {
 
     func userClient(_: ONGUserClient, didAuthenticateUser userProfile: ONGUserProfile, info _: ONGCustomInfo?) {
         pinChallenge = nil
-        loginCompletion!(userProfile, nil)
+        loginCompletion?(userProfile, nil)
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
     }
 
@@ -61,10 +70,10 @@ extension LoginHandler: ONGAuthenticationDelegate {
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            loginCompletion!(nil, SdkError.init(customType: .loginCanceled))
+            loginCompletion?(nil, SdkError.init(customType: .loginCanceled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            loginCompletion!(nil, mappedError)
+            loginCompletion?(nil, mappedError)
         }
     }
 }
