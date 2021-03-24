@@ -73,7 +73,7 @@ extension OneginiModuleSwift {
             if let _error = error {
                 callback(SdkError.convertToFlutter(_error))
             } else {
-                callback(true)
+                callback(nil)
             }
         }
     }

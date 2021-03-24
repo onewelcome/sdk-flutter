@@ -18,13 +18,17 @@ abstract class OneginiEventListener {
 
   void listen() {
     _eventChannel.receiveBroadcastStream(chanel_name).listen((event) {
-      if(_context  == null) return;
+      if (_context == null) return;
+      print("event -> $event");
       switch (event) {
-        case Constants.eventOpenPin:
+        case Constants.eventOpenPin: //2
           openPinRequestScreen(_context!);
           break;
-        case Constants.eventOpenPinAuth:
+        case Constants.eventOpenPinAuth: //1
           openPinScreenAuth(_context!);
+          break;
+        case Constants.eventOpenPinAuthenticator:
+          openPinAuthenticator(_context!);
           break;
         case Constants.eventClosePin:
           closePin(_context!);
@@ -53,14 +57,17 @@ abstract class OneginiEventListener {
             if (_event.eventName == Constants.eventNextAuthenticationAttempt) {
               nextAuthenticationAttempt(
                   _context!, authenticationAttemptFromJson(_event.eventValue!));
-            }if(_event.eventName == Constants.eventOpenAuthOTP){
+            }
+            if (_event.eventName == Constants.eventOpenAuthOTP) {
               openAuthOtp(_context!, _event.eventValue!);
             }if(_event.eventName == Constants.openCustomTwoStepRegistrationScreen){
               openCustomTwoStepRegistrationScreen(_context!,_event.eventValue!);
             }if(_event.eventName == Constants.eventError){
               eventError(_context!, PlatformException(code: _event.eventValue!,message: "error"));
             }
-            else {
+            if (_event.eventName == Constants.eventError) {
+              showError(_context!, _event.eventValue);
+            } else {
               eventOther(_context!, _event);
             }
           }
@@ -70,14 +77,15 @@ abstract class OneginiEventListener {
     });
   }
 
-
-  void openAuthOtp(BuildContext buildContext,String message);
+  void openAuthOtp(BuildContext buildContext, String message);
 
   void closeAuthOtp(BuildContext buildContext);
 
   void openPinRequestScreen(BuildContext buildContext);
 
   void openPinScreenAuth(BuildContext buildContext);
+
+  void openPinAuthenticator(BuildContext buildContext);
 
   void nextAuthenticationAttempt(
       BuildContext buildContext, AuthenticationAttempt authenticationAttempt);
@@ -97,6 +105,8 @@ abstract class OneginiEventListener {
   void openCustomTwoStepRegistrationScreen(BuildContext buildContext,String data);
 
   void eventError(BuildContext buildContext, PlatformException error);
+
+  void showError(BuildContext buildContext, String? errorMessage);
 
   void eventOther(BuildContext buildContext, Event event);
 }
