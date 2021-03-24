@@ -22,8 +22,8 @@ class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
         guard let customAuthChallenge = self.customAuthChallenge else {
             guard let pinChallenge = self.pinChallenge else { return }
 
-            if(pin != nil) {
-                pinChallenge.sender.respond(withPin: pin!, challenge: pinChallenge)
+            if let _pin = pin {
+                pinChallenge.sender.respond(withPin: _pin, challenge: pinChallenge)
 
             } else {
                 pinChallenge.sender.cancel(pinChallenge)
@@ -32,8 +32,8 @@ class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
             return
         }
 
-        if(pin != nil) {
-            customAuthChallenge.sender.respond(withData: pin!, challenge: customAuthChallenge)
+        if let _pin = pin {
+            customAuthChallenge.sender.respond(withData: _pin, challenge: customAuthChallenge)
 
         } else {
             customAuthChallenge.sender.cancel(customAuthChallenge, underlyingError: nil)
@@ -153,7 +153,7 @@ extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
 
     func userClient(_: ONGUserClient, didRegister authenticator: ONGAuthenticator, forUser _: ONGUserProfile, info _: ONGCustomInfo?) {
         print("[AUTH] userClient didRegister ONGAuthenticator")
-        registrationCompletion!(true, nil)
+        registrationCompletion?(true, nil)
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
     }
 }
@@ -177,10 +177,10 @@ extension AuthenticatorsHandler: ONGAuthenticatorDeregistrationDelegate {
         print("[AUTH] userClient didFailToDeregister ONGAuthenticator")
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            deregistrationCompletion!(false, SdkError(errorDescription: "Authenticator deregistration cancelled."))
+            deregistrationCompletion?(false, SdkError(errorDescription: "Authenticator deregistration cancelled."))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            deregistrationCompletion!(false, mappedError)
+            deregistrationCompletion?(false, mappedError)
         }
     }
 }

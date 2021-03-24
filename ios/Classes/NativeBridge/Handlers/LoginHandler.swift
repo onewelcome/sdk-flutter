@@ -15,8 +15,8 @@ class LoginHandler: NSObject, PinHandlerToReceiverProtocol {
     func handlePin(pin: String?) {
         guard let pinChallenge = self.pinChallenge else { return }
 
-        if(pin != nil) {
-            pinChallenge.sender.respond(withPin: pin!, challenge: pinChallenge)
+        if let _pin = pin {
+            pinChallenge.sender.respond(withPin: _pin, challenge: pinChallenge)
 
         } else {
             pinChallenge.sender.cancel(pinChallenge)
@@ -61,7 +61,7 @@ extension LoginHandler: ONGAuthenticationDelegate {
 
     func userClient(_: ONGUserClient, didAuthenticateUser userProfile: ONGUserProfile, info _: ONGCustomInfo?) {
         pinChallenge = nil
-        loginCompletion!(userProfile, nil)
+        loginCompletion?(userProfile, nil)
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
     }
 
@@ -70,10 +70,10 @@ extension LoginHandler: ONGAuthenticationDelegate {
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            loginCompletion!(nil, SdkError.init(customType: .loginCanceled))
+            loginCompletion?(nil, SdkError.init(customType: .loginCanceled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            loginCompletion!(nil, mappedError)
+            loginCompletion?(nil, mappedError)
         }
     }
 }

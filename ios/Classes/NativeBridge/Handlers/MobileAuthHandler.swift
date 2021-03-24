@@ -119,14 +119,14 @@ extension MobileAuthHandler: ONGMobileAuthRequestDelegate {
 
     func userClient(_: ONGUserClient, didFailToHandle _: ONGMobileAuthRequest, error: Error) {
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            mobileAuthCompletion!(false, SdkError(customType: .authenticationCancelled))
+            mobileAuthCompletion?(false, SdkError(customType: .authenticationCancelled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            mobileAuthCompletion!(false, mappedError)
+            mobileAuthCompletion?(false, mappedError)
         }
     }
 
     func userClient(_: ONGUserClient, didHandle _: ONGMobileAuthRequest, info _: ONGCustomInfo?) {
-        mobileAuthCompletion!(message, nil)
+        mobileAuthCompletion?(message, nil)
     }
 }

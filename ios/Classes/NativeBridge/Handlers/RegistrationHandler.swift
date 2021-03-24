@@ -45,8 +45,8 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     }
     
     func presentBrowserUserRegistrationView(registrationUserURL: URL) {
-        if(browserConntroller != nil) {
-            browserConntroller?.handleUrl(url: registrationUserURL)
+        if let _browserConntroller = browserConntroller {
+            _browserConntroller.handleUrl(url: registrationUserURL)
         } else {
             if #available(iOS 12.0, *) {
                 browserConntroller = BrowserViewController(registerHandlerProtocol: self)
@@ -59,8 +59,8 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
 
     func handleRedirectURL(url: URL?) {
         guard let browserRegistrationChallenge = self.browserRegistrationChallenge else { return }
-        if(url != nil) {
-            browserRegistrationChallenge.sender.respond(with: url!, challenge: browserRegistrationChallenge)
+        if let _url = url {
+            browserRegistrationChallenge.sender.respond(with: _url, challenge: browserRegistrationChallenge)
         } else {
             browserRegistrationChallenge.sender.cancel(browserRegistrationChallenge)
         }
@@ -69,8 +69,8 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     func handlePin(pin: String?) {
         guard let createPinChallenge = self.createPinChallenge else { return }
 
-        if(pin != nil) {
-            createPinChallenge.sender.respond(withCreatedPin: pin!, challenge: createPinChallenge)
+        if let _pin = pin {
+            createPinChallenge.sender.respond(withCreatedPin: _pin, challenge: createPinChallenge)
 
         } else {
             createPinChallenge.sender.cancel(createPinChallenge)
@@ -154,7 +154,7 @@ extension RegistrationHandler: ONGRegistrationDelegate {
     func userClient(_: ONGUserClient, didRegisterUser userProfile: ONGUserProfile, info _: ONGCustomInfo?) {
         createPinChallenge = nil
         customRegistrationChallenge = nil
-        signUpCompletion!(true, userProfile, nil)
+        signUpCompletion?(true, userProfile, nil)
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
     }
 
@@ -200,10 +200,10 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            signUpCompletion!(false, nil, SdkError(customType: .registrationCancelled))
+            signUpCompletion?(false, nil, SdkError(customType: .registrationCancelled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            signUpCompletion!(false, nil, mappedError)
+            signUpCompletion?(false, nil, mappedError)
         }
     }
     

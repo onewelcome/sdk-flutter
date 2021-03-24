@@ -64,8 +64,8 @@ extension PinHandler : PinConnectorToPinHandler {
             pinReceiver = receiver
         }
 
-        if(error != nil){
-            notifyOnError(error!)
+        if let _error = error {
+            notifyOnError(_error)
         } else {
             if(mode == nil) {
                 var notification = PinNotification.open;
@@ -125,8 +125,8 @@ extension PinHandler : PinHandlerToReceiverProtocol {
         guard let createPinChallenge = self.createPinChallenge else {
             guard let pinChallenge = self.pinChallenge else { return }
 
-            if(pin != nil) {
-                pinChallenge.sender.respond(withPin: pin!, challenge: pinChallenge)
+            if let _pin = pin {
+                pinChallenge.sender.respond(withPin: _pin, challenge: pinChallenge)
 
             } else {
                 pinChallenge.sender.cancel(pinChallenge)
@@ -135,8 +135,8 @@ extension PinHandler : PinHandlerToReceiverProtocol {
             return
         }
 
-        if(pin != nil) {
-            createPinChallenge.sender.respond(withCreatedPin: pin!, challenge: createPinChallenge)
+        if let _pin = pin {
+            createPinChallenge.sender.respond(withCreatedPin: _pin, challenge: createPinChallenge)
 
         } else {
             createPinChallenge.sender.cancel(createPinChallenge)
@@ -183,17 +183,17 @@ extension PinHandler: ONGChangePinDelegate {
         let mappedError = ErrorMapper().mapError(error)
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            changePinCompletion!(false, SdkError(customType: .changingCancelled))
+            changePinCompletion?(false, SdkError(customType: .changingCancelled))
         } else if error.code == ONGGenericError.userDeregistered.rawValue {
-            changePinCompletion!(false, mappedError)
+            changePinCompletion?(false, mappedError)
         } else {
-            changePinCompletion!(false, mappedError)
+            changePinCompletion?(false, mappedError)
         }
     }
 
     func userClient(_: ONGUserClient, didChangePinForUser _: ONGUserProfile) {
         createPinChallenge = nil
         closeFlow()
-        changePinCompletion!(true, nil)
+        changePinCompletion?(true, nil)
     }
 }
