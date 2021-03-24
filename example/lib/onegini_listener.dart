@@ -1,4 +1,6 @@
 // @dart = 2.10
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -9,6 +11,8 @@ import 'package:onegini_example/screens/auth_otp_screen.dart';
 import 'package:onegini_example/screens/fingerprint_screen.dart';
 import 'package:onegini_example/screens/pin_request_screen.dart';
 import 'package:onegini_example/screens/pin_screen.dart';
+
+import 'screens/otp_screen.dart';
 
 class OneginiListener extends OneginiEventListener {
   @override
@@ -34,14 +38,14 @@ class OneginiListener extends OneginiEventListener {
   @override
   void eventError(BuildContext buildContext, PlatformException error) {
     Fluttertoast.showToast(
-      msg: error.message,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.black38,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
+          msg: "${error.message}  Code: ${error.code}",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black38,
+          textColor: Colors.white,
+          fontSize: 16.0
+      );
   }
 
   @override
@@ -146,5 +150,18 @@ class OneginiListener extends OneginiEventListener {
     if (Navigator.of(buildContext).canPop()) {
       Navigator.of(buildContext).pop();
     }
+  }
+
+  @override
+  void openCustomTwoStepRegistrationScreen(BuildContext buildContext, String data) {
+    var response = jsonDecode(data);
+    if(response["providerId"] == "2-way-otp-api")
+    Navigator.pushReplacement(
+      buildContext,
+      MaterialPageRoute(
+          builder: (context) => OtpScreen(
+            password: response["data"],
+          )),
+    );
   }
 }

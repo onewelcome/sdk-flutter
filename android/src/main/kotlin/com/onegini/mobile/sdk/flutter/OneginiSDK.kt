@@ -10,26 +10,13 @@ import com.onegini.mobile.sdk.flutter.handlers.*
 import java.util.concurrent.TimeUnit
 
 
-class OneginiSDK {
+class OneginiSDK( var httpConnectionTimeout: Long? = 5,
+                  var httpReadTimeout: Long? = 25,
+                  var oneginiCustomIdentityProviders : List<OneginiCustomIdentityProvider> = mutableListOf(),) {
 
     companion object {
-
-        fun init(context: Context,
-                 oneginiConfigModel: OneginiClientConfigModel,
-                 securityController: Class<*>? = null,
-                 connectionTimeout: Long = 5,
-                 readTimeout: Long = 25,
-                 oneginiCustomIdentityProviders: MutableList<OneginiCustomIdentityProvider>
-                 = mutableListOf()) {
-            val oneginiSDK = OneginiSDK()
-            oneginiSDK.httpConnectionTimeout = connectionTimeout
-            oneginiSDK.httpReadTimeout = readTimeout
-            oneginiSDK.oneginiClientConfigModel = oneginiConfigModel
-            oneginiSDK.oneginiSecurityController = securityController
-            oneginiSDK.oneginiCustomIdentityProviders = oneginiCustomIdentityProviders
-            oneginiSDK.buildSDK(context)
-        }
-
+        var oneginiClientConfigModel: OneginiClientConfigModel? = null
+        var oneginiSecurityController: Class<*>? = null
         fun getOneginiClient(context: Context): OneginiClient {
             var oneginiClient = OneginiClient.getInstance()
             if (oneginiClient == null) {
@@ -40,13 +27,7 @@ class OneginiSDK {
 
     }
 
-    var oneginiClientConfigModel: OneginiClientConfigModel? = null
-    var oneginiSecurityController: Class<*>? = null
-    var httpConnectionTimeout: Long = 5
-    var httpReadTimeout: Long = 25
-    var oneginiCustomIdentityProviders = mutableListOf<OneginiCustomIdentityProvider>()
-
-    private fun buildSDK(context: Context): OneginiClient {
+    fun buildSDK(context: Context): OneginiClient {
         if (oneginiClientConfigModel == null) throw Exception("OneginiClientConfigModel must be not null!")
         val applicationContext = context.applicationContext ?: throw  Exception ("Context can`t be null!")
         val registrationRequestHandler = RegistrationRequestHandler(applicationContext)
@@ -57,8 +38,8 @@ class OneginiSDK {
         val clientBuilder = OneginiClientBuilder(applicationContext, createPinRequestHandler, pinAuthenticationRequestHandler) // handlers for optional functionalities
                 .setBrowserRegistrationRequestHandler(registrationRequestHandler)
                 .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler)
-                .setHttpConnectTimeout(TimeUnit.SECONDS.toMillis(httpConnectionTimeout).toInt())
-                .setHttpReadTimeout(TimeUnit.SECONDS.toMillis(httpReadTimeout).toInt())
+                .setHttpConnectTimeout(TimeUnit.SECONDS.toMillis(httpConnectionTimeout ?: 5).toInt())
+                .setHttpReadTimeout(TimeUnit.SECONDS.toMillis(httpReadTimeout ?: 25).toInt())
                 .setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
                 .setSecurityController(oneginiSecurityController)
                 .setConfigModel(oneginiClientConfigModel)

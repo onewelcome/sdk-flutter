@@ -7,9 +7,6 @@ import 'package:onegini/callbacks/onegini_pin_registration_callback.dart';
 import 'package:onegini/callbacks/onegini_registration_callback.dart';
 import 'package:onegini/model/onegini_identity_provider.dart';
 import 'package:onegini/onegini.dart';
-import 'package:onegini_example/constants.dart';
-import 'package:onegini_example/models/event.dart';
-import 'package:onegini_example/screens/otp_screen.dart';
 import 'package:onegini_example/screens/user_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,24 +15,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  EventChannel _eventChannel = const EventChannel("exemple_events");
   bool isLoading = false;
   bool isRegistrationFlow = false;
 
   @override
   initState() {
-    _eventChannel.receiveBroadcastStream("exemple_events").listen((str) {
-      Event event = eventFromJson(str);
-      if (event.eventName == "OPEN_OTP") {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => OtpScreen(
-                    password: event.eventValue,
-                  )),
-        );
-      }
-    });
     super.initState();
   }
 
@@ -46,7 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
         .registerUser(
             context,
             null,
-            Constants.DEFAULT_SCOPES,)
+            "read",)
         .catchError((error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
@@ -76,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
         .registerUser(
             context,
             identityProviderId,
-            Constants.DEFAULT_SCOPES,
+            "read",
             )
         .catchError((error) {
       setState(() => isLoading = false);

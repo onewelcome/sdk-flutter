@@ -60,6 +60,10 @@ abstract class OneginiEventListener {
             }
             if (_event.eventName == Constants.eventOpenAuthOTP) {
               openAuthOtp(_context!, _event.eventValue!);
+            }if(_event.eventName == Constants.openCustomTwoStepRegistrationScreen){
+              openCustomTwoStepRegistrationScreen(_context!,_event.eventValue!);
+            }if(_event.eventName == Constants.eventError){
+              eventError(_context!, PlatformException(code: _event.eventValue!,message: "error"));
             }
             if (_event.eventName == Constants.eventError) {
               showError(_context!, _event.eventValue);
@@ -97,6 +101,8 @@ abstract class OneginiEventListener {
   void receivedFingerprint(BuildContext buildContext);
 
   void closeFingerprintScreen(BuildContext buildContext);
+
+  void openCustomTwoStepRegistrationScreen(BuildContext buildContext,String data);
 
   void eventError(BuildContext buildContext, PlatformException error);
 
