@@ -21,10 +21,11 @@ class UserScreen extends StatefulWidget {
   _UserScreenState createState() => _UserScreenState();
 }
 
-class _UserScreenState extends State<UserScreen> {
+class _UserScreenState extends State<UserScreen> with RouteAware {
   int _currentIndex = 0;
   List<Widget> _children;
   bool isContainNotRegisteredAuthenticators = true;
+  List<OneginiListResponse> cachedAuthenticators = [];
 
   void onTabTapped(int index) {
     setState(() {
@@ -66,18 +67,39 @@ class _UserScreenState extends State<UserScreen> {
     }
   }
 
-  List<OneginiListResponse> cachedAuthenticators;
-  Future<List<OneginiListResponse>> getNotRegisteredAuthenticators() async {
-    if (cachedAuthenticators == null) {
-      cachedAuthenticators = await Onegini.instance.userClient
-          .getNotRegisteredAuthenticators(context);
-      if (cachedAuthenticators.isEmpty) {
-        setState(() => isContainNotRegisteredAuthenticators = false);
-      } else {
-        setState(() => isContainNotRegisteredAuthenticators = true);
-      }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // print('didChangeDependencies');
+    updateNotRegisteredAuthenticators();
+  }
+
+  updateNotRegisteredAuthenticators() {
+    // print('updateNotRegisteredAuthenticators');
+    processNotRegisteredAuthenticators();
+  }
+
+  Future<List<OneginiListResponse>> processNotRegisteredAuthenticators() async {
+    var notRegistered = await getNotRegisteredAuthenticators();
+    if (notRegistered.isEmpty) {
+      setState(() {
+        isContainNotRegisteredAuthenticators = false;
+        cachedAuthenticators.clear();
+      });
+    } else {
+      setState(() {
+        isContainNotRegisteredAuthenticators = true;
+        cachedAuthenticators = notRegistered;
+      });
     }
-    return cachedAuthenticators;
+    return notRegistered;
+  }
+
+  Future<List<OneginiListResponse>> getNotRegisteredAuthenticators() async {
+    // print("[FLUTTER] getNotRegisteredAuthenticators");
+    var notRegistered = await Onegini.instance.userClient
+        .getNotRegisteredAuthenticators(context);
+    return notRegistered;
   }
 
   registerAuthenticator(String authenticatorId) async {
@@ -158,29 +180,29 @@ class _UserScreenState extends State<UserScreen> {
             DrawerHeader(
               child: Container(),
             ),
-            FutureBuilder<List<OneginiListResponse>>(
-              future: getNotRegisteredAuthenticators(),
-              builder: (BuildContext context, snapshot) {
-                return snapshot.hasData && isContainNotRegisteredAuthenticators
-                    ? PopupMenuButton<String>(
-                        child: ListTile(
-                          title: Text("register authenticator"),
-                          leading: Icon(Icons.fingerprint),
-                        ),
-                        onSelected: (value) {
-                          registerAuthenticator(value);
-                        },
-                        itemBuilder: (context) {
-                          return snapshot.data
-                              .map((e) => PopupMenuItem<String>(
-                                    child: Text(e.name ?? ""),
-                                    value: e.id,
-                                  ))
-                              .toList();
-                        })
-                    : SizedBox.shrink();
-              },
-            ),
+            FutureBuilder(
+                future: processNotRegisteredAuthenticators(),
+                builder: (BuildContext context, snapshot) {
+                  return snapshot.hasData &&
+                          isContainNotRegisteredAuthenticators
+                      ? PopupMenuButton<String>(
+                          child: ListTile(
+                            title: Text("register authenticator"),
+                            leading: Icon(Icons.fingerprint),
+                          ),
+                          onSelected: (value) {
+                            registerAuthenticator(value);
+                          },
+                          itemBuilder: (context) {
+                            return snapshot.data
+                                .map((e) => PopupMenuItem<String>(
+                                      child: Text(e.name ?? ""),
+                                      value: e.id,
+                                    ))
+                                .toList();
+                          })
+                      : SizedBox.shrink();
+                }),
             ListTile(
               title: Text("Change pin"),
               onTap: () => changePin(context),
