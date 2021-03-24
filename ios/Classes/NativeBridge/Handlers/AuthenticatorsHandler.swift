@@ -2,6 +2,7 @@ import Foundation
 import OneginiSDKiOS
 import OneginiCrypto
 
+//MARK: -
 protocol BridgeToAuthenticatorsHandlerProtocol: AnyObject {
     func registerAuthenticator(_ userProfile: ONGUserProfile,_ authenticator: ONGAuthenticator, _ completion: @escaping (Bool, SdkError?) -> Void)
     func deregisterAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Bool, SdkError?) -> Void)
@@ -10,6 +11,7 @@ protocol BridgeToAuthenticatorsHandlerProtocol: AnyObject {
     func isAuthenticatorRegistered(_ authenticatorType: ONGAuthenticatorType, _ userProfile: ONGUserProfile) -> Bool
 }
 
+//MARK: -
 class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
     var pinChallenge: ONGPinChallenge?
     var customAuthChallenge: ONGCustomAuthFinishRegistrationChallenge?
@@ -61,6 +63,7 @@ class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
     }
 }
 
+//MARK: - BridgeToAuthenticatorsHandlerProtocol
 extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     func registerAuthenticator(_ userProfile: ONGUserProfile, _ authenticator: ONGAuthenticator,_ completion: @escaping (Bool, SdkError?) -> Void) {
         guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticator.identifier}) else {
@@ -117,6 +120,7 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     }
 }
 
+//MARK: - ONGAuthenticatorRegistrationDelegate
 extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
     func userClient(_: ONGUserClient, didReceive challenge: ONGPinChallenge) {
         print("[AUTH] userClient didReceive ONGPinChallenge")
@@ -154,6 +158,7 @@ extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
     }
 }
 
+//MARK: - ONGAuthenticatorDeregistrationDelegate
 extension AuthenticatorsHandler: ONGAuthenticatorDeregistrationDelegate {
     func userClient(_: ONGUserClient, didDeregister _: ONGAuthenticator, forUser _: ONGUserProfile) {
         print("[AUTH] userClient didDeregister ONGAuthenticator")
@@ -166,7 +171,6 @@ extension AuthenticatorsHandler: ONGAuthenticatorDeregistrationDelegate {
         // will need this in the future
         
         deregistrationCompletion!(true, nil)
-        // TODO: finish it
     }
 
     func userClient(_: ONGUserClient, didFailToDeregister authenticator: ONGAuthenticator, forUser _: ONGUserProfile, error: Error) {

@@ -13,6 +13,7 @@ protocol FetchResourcesHandlerProtocol: AnyObject {
     func fetchResourceWithImplicitResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
 }
 
+//MARK: -
 class ResourcesHandler: FetchResourcesHandlerProtocol {
     func authenticateDevice(_ path: String, completion: @escaping (Bool, SdkError?) -> Void) {
         ONGDeviceClient.sharedInstance().authenticateDevice([path as String]) { success, error in
@@ -121,7 +122,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         }
     }
     
-    //MARK:- Bridge
+    //MARK: - Bridge
     func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
         var parameters = [String: Any]()
         parameters["path"] = path

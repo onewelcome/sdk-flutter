@@ -2,11 +2,12 @@ import OneginiSDKiOS
 import OneginiCrypto
 import Flutter
 
+//MARK: -
 protocol BridgeToLoginHandlerProtocol: AnyObject {
     func authenticateUser(_ profile: ONGUserProfile, authenticator: ONGAuthenticator?, completion: @escaping (ONGUserProfile?, SdkError?) -> Void)
 }
 
-
+//MARK: -
 class LoginHandler: NSObject, PinHandlerToReceiverProtocol {
     var pinChallenge: ONGPinChallenge?
     var loginCompletion: ((ONGUserProfile?, SdkError?) -> Void)?
@@ -31,14 +32,15 @@ class LoginHandler: NSObject, PinHandlerToReceiverProtocol {
     }
 }
 
+//MARK: -
 extension LoginHandler : BridgeToLoginHandlerProtocol {
-    
     func authenticateUser(_ profile: ONGUserProfile, authenticator: ONGAuthenticator?, completion: @escaping (ONGUserProfile?, SdkError?) -> Void) {
         loginCompletion = completion
         ONGUserClient.sharedInstance().authenticateUser(profile, authenticator: authenticator, delegate: self)
     }
 }
 
+//MARK: -
 extension LoginHandler: ONGAuthenticationDelegate {
     func userClient(_: ONGUserClient, didReceive challenge: ONGPinChallenge) {
         pinChallenge = challenge

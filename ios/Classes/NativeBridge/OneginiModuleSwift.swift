@@ -12,15 +12,15 @@ enum OneginiBridgeEvents : String {
     case customRegistrationNotification = "ONEGINI_CUSTOM_REGISTRATION_NOTIFICATION"
     case authWithOtpNotification = "ONEGINI_MOBILE_AUTH_OTP_NOTIFICATION"
     case otpOpen = "OPEN_OTP"
-    case errorNotification = "ONEGINI_ERROR_NOTIFICATION"
 }
 
+//MARK: -
 public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, FlutterStreamHandler {
  
     var bridgeConnector: BridgeConnector
     private var eventSink: FlutterEventSink?
     public var eventSinkNativePart: FlutterEventSink?
-    public var eventSinkParameter: String?
+    public var eventSinkCustomIdentifier: String?
     
     var customIdentifier: String? {
         didSet {
@@ -34,14 +34,6 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
         self.bridgeConnector = BridgeConnector()
         super.init()
         self.bridgeConnector.bridge = self
-    }
-    
-    public func configureCustomRegIdentifier(_ identifier: String) {
-        self.customIdentifier = identifier
-    }
-    
-    func supportedEvents() -> [String]! {
-        return [OneginiBridgeEvents.pinNotification.rawValue]
     }
     
     func startOneginiModule(callback: @escaping FlutterResult) {
@@ -69,7 +61,7 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
     }
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-        if let _value = eventSinkParameter, let _arg = arguments as! String?, _value == _arg {
+        if let _value = eventSinkCustomIdentifier, let _arg = arguments as! String?, _value == _arg {
             self.eventSinkNativePart = events
         } else if let _arg = arguments as! String?, _arg == "onegini_events" {
             eventSink = events
@@ -78,8 +70,6 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
     }
 
     public func onCancel(withArguments arguments: Any?) -> FlutterError? {
-//        eventSink = nil
-//        eventSinkNativePart = nil
         return nil
     }
     

@@ -1,3 +1,4 @@
+//MARK: - BridgeToPinConnectorProtocol
 protocol BridgeToPinConnectorProtocol: AnyObject {
     var bridgeConnector: BridgeConnectorProtocol? { get set }
     var pinHandler: PinConnectorToPinHandler { get }
@@ -6,7 +7,7 @@ protocol BridgeToPinConnectorProtocol: AnyObject {
     func sendNotification(event: PinNotification, flow: PinFlow?, error: SdkError?) -> Void
 }
 
-//@todo handle change and auth flows
+//MARK: - PinConnector
 class PinConnector : BridgeToPinConnectorProtocol {
     var pinHandler: PinConnectorToPinHandler
     unowned var bridgeConnector: BridgeConnectorProtocol?
@@ -55,6 +56,7 @@ class PinConnector : BridgeToPinConnectorProtocol {
   }
 }
 
+//MARK: -
 enum PinNotification : String {
     case open = "eventOpenPin",
          close = "eventClosePin",

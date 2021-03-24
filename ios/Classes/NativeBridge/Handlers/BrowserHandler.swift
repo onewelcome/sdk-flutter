@@ -10,6 +10,7 @@ protocol BrowserHandlerToRegisterHandlerProtocol: AnyObject {
     func handleRedirectURL(url: URL?)
 }
 
+//MARK: - BrowserHandlerProtocol
 @available(iOS 12.0, *)
 class BrowserViewController: NSObject, BrowserHandlerProtocol {
     var webAuthSession: ASWebAuthenticationSession?
@@ -52,6 +53,7 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
 
 }
 
+//MARK: - ASWebAuthenticationPresentationContextProviding
 @available(iOS 12.0, *)
 extension BrowserViewController: ASWebAuthenticationPresentationContextProviding {
     func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {

@@ -18,6 +18,7 @@ protocol OneginiPluginAuthProtocol {
     
 }
 
+//MARK: - OneginiPluginAuthProtocol
 extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
     func registerAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         guard let _arg = call.arguments as! [String: Any]?, let _authenticator = _arg["authenticatorId"] as! String? else { return; }
@@ -30,7 +31,6 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
         if (_id != nil) {
             // auth with provider
             print("use provider for auth")
-//            OneginiModuleSwift.sharedInstance.authenticateUser(_id, callback: result)
             OneginiModuleSwift.sharedInstance.authenticateWithRegisteredAuthentication(_id, callback: result)
         } else {
             // auth with pin
@@ -59,27 +59,5 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
     func logout(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         OneginiModuleSwift.sharedInstance.logOut(callback:result)
     }
-    
-//    func getIdentityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-//        OneginiModuleSwift.sharedInstance.identityProviders(callback: result)
-//    }
-//
-//    func getRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-//        OneginiModuleSwift.sharedInstance.fetchRegisteredAuthenticators(callback: result)
-//    }
-//
-//    func authenticateWithRegisteredAuthentication(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-//        guard let _arg = call.arguments as! [String: Any]?, let _id = _arg["registeredAuthenticatorsId"] as! String? else { return; }
-//        OneginiModuleSwift.sharedInstance.authenticateWithRegisteredAuthentication(_id, callback: result)
-//    }
-//
-//    func singleSignOn(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-//        guard let _arg = call.arguments as! [String: Any]?, let _path = _arg["url"] as! String? else { return; }
-//        OneginiModuleSwift.sharedInstance.runSingleSignOn(_path, callback: result)
-//    }
-//
-//    func logout(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-//        OneginiModuleSwift.sharedInstance.logOut(callback:result)
-//    }
 }
 

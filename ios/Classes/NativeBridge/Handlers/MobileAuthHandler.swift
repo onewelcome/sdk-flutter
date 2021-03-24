@@ -2,6 +2,7 @@ import Foundation
 import OneginiSDKiOS
 import OneginiCrypto
 
+//MARK: -
 protocol MobileAuthConnectorToHandlerProtocol: AnyObject {
     func enrollForMobileAuth(_ completion: @escaping (Bool?, SdkError?) -> Void)
     func isUserEnrolledForMobileAuth() -> Bool
@@ -16,6 +17,7 @@ enum MobileAuthAuthenticatorType: String {
     case confirmation = ""
 }
 
+//MARK: -
 class MobileAuthHandler: NSObject {
     var userProfile: ONGUserProfile?
     var message: String?
@@ -35,6 +37,7 @@ class MobileAuthHandler: NSObject {
     }
 }
 
+//MARK: - MobileAuthConnectorToHandlerProtocol
 extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
     func enrollForMobileAuth(_ completion: @escaping (Bool?, SdkError?) -> Void) {
         ONGClient.sharedInstance().userClient.enroll { enrolled, error in
@@ -91,6 +94,7 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
     }
 }
 
+//MARK: - ONGMobileAuthRequestDelegate
 extension MobileAuthHandler: ONGMobileAuthRequestDelegate {
     func userClient(_: ONGUserClient, didReceiveConfirmationChallenge confirmation: @escaping (Bool) -> Void, for request: ONGMobileAuthRequest) {
         message = request.message
