@@ -6,8 +6,8 @@ protocol MobileAuthConnectorToHandlerProtocol: AnyObject {
     func enrollForMobileAuth(_ completion: @escaping (Bool?, SdkError?) -> Void)
     func isUserEnrolledForMobileAuth() -> Bool
     func handleMobileAuthConfirmation(cancelled: Bool)
-    func handleOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Bool, SdkError?) -> Void)
-    func handleQrOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Bool, SdkError?) -> Void)
+    func handleOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Any?, SdkError?) -> Void)
+    func handleQrOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Any?, SdkError?) -> Void)
 }
 
 enum MobileAuthAuthenticatorType: String {
@@ -21,7 +21,7 @@ class MobileAuthHandler: NSObject {
     var message: String?
     var authenticatorType: MobileAuthAuthenticatorType?
     var confirmation: ((Bool) -> Void)?
-    var mobileAuthCompletion: ((Bool, SdkError?) -> Void)?
+    var mobileAuthCompletion: ((Any?, SdkError?) -> Void)?
     
     fileprivate func handleConfirmationMobileAuth(_ cancelled: Bool) {
         guard let confirmation = confirmation else { fatalError() }
@@ -70,7 +70,7 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
         }
     }
     
-    func handleOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Bool, SdkError?) -> Void) {
+    func handleOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Any?, SdkError?) -> Void) {
         mobileAuthCompletion = completion
         
         guard let challenge = customRegistrationChallenge else {
@@ -81,7 +81,7 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
         challenge.sender.respond(withData: otp, challenge: challenge)
     }
     
-    func handleQrOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Bool, SdkError?) -> Void) {
+    func handleQrOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Any?, SdkError?) -> Void) {
         mobileAuthCompletion = completion
         guard ONGUserClient.sharedInstance().canHandleOTPMobileAuthRequest(otp) else {
             completion(false, SdkError(customType: .cantHandleOTP))
@@ -97,6 +97,7 @@ extension MobileAuthHandler: ONGMobileAuthRequestDelegate {
         userProfile = request.userProfile
         authenticatorType = .confirmation
         self.confirmation = confirmation
+        mobileAuthCompletion?(request.message, nil)
         sendConnectorNotification(MobileAuthNotification.startAuthentication, request.message, nil)
     }
 
@@ -122,6 +123,6 @@ extension MobileAuthHandler: ONGMobileAuthRequestDelegate {
     }
 
     func userClient(_: ONGUserClient, didHandle _: ONGMobileAuthRequest, info _: ONGCustomInfo?) {
-        mobileAuthCompletion!(true, nil)
+        mobileAuthCompletion!(message, nil)
     }
 }

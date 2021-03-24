@@ -20,23 +20,27 @@ class _QrScanScreenState extends State<QrScanScreen> {
   void reassemble() {
     super.reassemble();
     if (Platform.isAndroid) {
-      controller?.pauseCamera();
+      controller.pauseCamera();
     }
-    controller?.resumeCamera();
+    controller.resumeCamera();
   }
 
   void onQRViewCreated(QRViewController controllerr) {
     setState(() => controller = controllerr);
-    controller?.scannedDataStream.listen((scanData) {
+    controller.scannedDataStream.listen((scanData) {
+      if(counter >= 1) {
+        return;
+      }
       sendDataBack(scanData.code);
     });
   }
 
   sendDataBack(String data) async {
     counter++;
-    if(counter == 1) {
-      await controller?.stopCamera();
-      Navigator.of(context).pop(data);
+    await controller.pauseCamera();
+    if(counter >= 1) {
+      controller.stopCamera();
+      Navigator.of(context)..pop(data);
     }
   }
 
@@ -62,6 +66,9 @@ class _QrScanScreenState extends State<QrScanScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (Platform.isAndroid) {
+
+    }
     return Scaffold(
       appBar: AppBar(
         title: Text("QR Code"),

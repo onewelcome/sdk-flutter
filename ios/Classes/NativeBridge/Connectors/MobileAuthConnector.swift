@@ -16,11 +16,13 @@ class MobileAuthConnector : BridgeToMobileAuthConnectorProtocol {
     func sendNotification(event: MobileAuthNotification, requestMessage: String?, error: SdkError?) {
         switch (event){
             case .startAuthentication:
-                sendEvent(data: String.stringify(json: ["eventName": PinNotification.showError.rawValue, "eventValue": error?.errorDescription]))
+                sendEvent(data:MobileAuthNotification.startAuthentication.rawValue)
                 break
             case .finishAuthentication:
                 sendEvent(data: MobileAuthNotification.finishAuthentication.rawValue)
                 break;
+        default:
+            print("MobileAuthNotification: ", event.rawValue)
         }
     }
 
@@ -30,6 +32,7 @@ class MobileAuthConnector : BridgeToMobileAuthConnectorProtocol {
 }
 
 enum MobileAuthNotification : String {
-    case startAuthentication = "eventOpenAuthOtp",
+    case eventOpenAuthOtp = "eventOpenAuthOtp",
+         startAuthentication = "eventOpenPin",
          finishAuthentication = "eventClosePin"
 }
