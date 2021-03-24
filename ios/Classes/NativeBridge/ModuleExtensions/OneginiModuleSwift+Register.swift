@@ -43,19 +43,12 @@ extension OneginiModuleSwift {
             return
         }
         
-        var authenticator: ONGAuthenticator? = nil
         let notRegisteredAuthenticators = ONGUserClient.sharedInstance().nonRegisteredAuthenticators(forUser: profile)
+              
+        let authenticator: ONGAuthenticator? = notRegisteredAuthenticators.first(where: { $0.identifier == authenticatorId })
         
-        // convert list to list of objects with id and name
-        for auth in notRegisteredAuthenticators {
-            if (auth.identifier == authenticatorId) {
-                authenticator = auth
-                break
-            }
-        }
-        
-        guard (authenticator != nil) else {
-            callback(SdkError.convertToFlutter(SdkError(errorDescription: "Couldn't found matching authenticator.")))
+        guard let _ = authenticator else {
+            callback(SdkError.convertToFlutter(SdkError.init(customType: .authenticatorNotAvailable)))
             return
         }
         
@@ -78,14 +71,9 @@ extension OneginiModuleSwift {
         
         let registeredAuthenticators = ONGUserClient.sharedInstance().registeredAuthenticators(forUser: profile)
         
-        let jsonData = registeredAuthenticators.compactMap { (registeredAuthenticator) -> [String: Any]? in
-            var data = [String: Any]()
-            data["id"] = registeredAuthenticator.identifier
-            data["name"] = registeredAuthenticator.name
-            return data
-        }
+        let authenticators: [[String: String]] = registeredAuthenticators.compactMap({ ["id" : $0.identifier, "name": $0.name] })
         
-        let data = String.stringify(json: jsonData)
+        let data = String.stringify(json: authenticators)
         callback(data)
     }
     
@@ -97,19 +85,11 @@ extension OneginiModuleSwift {
         
         // get not registered authenticators
         let notRegisteredAuthenticators = ONGUserClient.sharedInstance().nonRegisteredAuthenticators(forUser: profile)
-        var authenticators = [[String: String]]()
         
         // convert list to list of objects with id and name
-        for auth in notRegisteredAuthenticators {
-            authenticators.append(["id" : auth.identifier, "name": auth.name])
-        }
+        let authenticators: [[String: String]] = notRegisteredAuthenticators.compactMap({ ["id" : $0.identifier, "name": $0.name] })
         
-        // convert data to json
-        let encoder = JSONEncoder()
-        let jsonData = try! encoder.encode(authenticators)
-        let json = String(data: jsonData, encoding: String.Encoding.utf8)
-        
-        callback(json)
+        callback(String.stringify(json: authenticators))
     }
 }
 

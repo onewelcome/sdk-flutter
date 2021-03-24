@@ -80,10 +80,10 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                     if let responseData = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                         completion(responseData, nil)
                     } else {
-                        completion(nil, SdkError(errorDescription: "Failed to parse data."))
+                        completion(nil, SdkError.init(customType: .failedParseData))
                     }
                 } else {
-                    completion(nil, SdkError(errorDescription: "Response doesn't contain data."))
+                    completion(nil, SdkError.init(customType: .responseIsNull))
                 }
             }
         }

@@ -67,12 +67,12 @@ class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
 extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     func registerAuthenticator(_ userProfile: ONGUserProfile, _ authenticator: ONGAuthenticator,_ completion: @escaping (Bool, SdkError?) -> Void) {
         guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticator.identifier}) else {
-            completion(false, SdkError(errorDescription: "This authenticator is not available."))
+            completion(false, SdkError.init(customType: .authenticatorNotAvailable))
             return;
         }
         
         if(authenticator.isRegistered == true) {
-            completion(false, SdkError(errorDescription: "This authenticator is already registered."))
+            completion(false, SdkError.init(customType: .authenticatorNotAvailable))
             return;
         }
         
@@ -82,12 +82,12 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
 
     func deregisterAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String,_ completion: @escaping (Bool, SdkError?) -> Void) {
         guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticatorId}) else {
-            completion(false, SdkError(errorDescription: "This authenticator is not available."))
+            completion(false, SdkError.init(customType: .authenticatorNotAvailable))
             return;
         }
         
         if(authenticator.isRegistered != true) {
-            completion(false, SdkError(errorDescription: "This authenticator is not registered."))
+            completion(false, SdkError.init(customType: .authenticatorNotRegistered))
             return;
         }
         
@@ -97,12 +97,12 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
 
     func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String,_ completion: @escaping (Bool, SdkError?) -> Void) {
         guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticatorId}) else {
-            completion(false, SdkError(errorDescription: "This authenticator is not available."))
+            completion(false, SdkError.init(customType: .authenticatorNotAvailable))
             return;
         }
         
-        if(authenticator.isRegistered != true) {
-            completion(false, SdkError(errorDescription: "This authenticator is not registered."))
+        if(!authenticator.isRegistered) {
+            completion(false, SdkError.init(customType: .authenticatorNotRegistered))
             return;
         }
         
@@ -177,7 +177,7 @@ extension AuthenticatorsHandler: ONGAuthenticatorDeregistrationDelegate {
         print("[AUTH] userClient didFailToDeregister ONGAuthenticator")
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            deregistrationCompletion?(false, SdkError(errorDescription: "Authenticator deregistration cancelled."))
+            deregistrationCompletion?(false, SdkError.init(customType: .authenticatorDeregistrationCancelled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
             deregistrationCompletion?(false, mappedError)

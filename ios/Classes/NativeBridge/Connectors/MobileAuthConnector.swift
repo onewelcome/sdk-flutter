@@ -1,3 +1,4 @@
+//MARK: -
 protocol BridgeToMobileAuthConnectorProtocol: AnyObject {
     var bridgeConnector: BridgeConnectorProtocol? { get set }
     var mobileAuthHandler: MobileAuthConnectorToHandlerProtocol { get }
@@ -5,6 +6,7 @@ protocol BridgeToMobileAuthConnectorProtocol: AnyObject {
     func sendNotification(event: MobileAuthNotification, requestMessage: String?, error: SdkError?) -> Void
 }
 
+//MARK: -
 class MobileAuthConnector : BridgeToMobileAuthConnectorProtocol {
     var mobileAuthHandler: MobileAuthConnectorToHandlerProtocol
     unowned var bridgeConnector: BridgeConnectorProtocol?
@@ -31,6 +33,7 @@ class MobileAuthConnector : BridgeToMobileAuthConnectorProtocol {
   }
 }
 
+//MARK: -
 enum MobileAuthNotification : String {
     case eventOpenAuthOtp = "eventOpenAuthOtp",
          startAuthentication = "eventOpenPin",
