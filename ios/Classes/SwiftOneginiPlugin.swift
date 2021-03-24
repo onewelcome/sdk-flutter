@@ -13,68 +13,71 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     print("call.method: ", call.method)
+    let _arg = call.arguments as! [String: Any]?
+    if ((_arg) != nil) {
+        for key in _arg!.keys {
+            print("key: " + key)
+            let val = _arg?[key]
+            print("value: " + String(describing: val))
+            if (!(val is NSNull)) {
+            }
+        }
+    }
+    
     switch call.method {
-    case Constants.Routes.startApp:
-        OneginiModuleSwift.sharedInstance.startOneginiModule(callback: result)
-    case Constants.Routes.getIdentityProviders:
-        OneginiModuleSwift.sharedInstance.identityProviders(callback: result)
-    case Constants.Routes.logOut:
-        OneginiModuleSwift.sharedInstance.logOut(callback:result)
-    case Constants.Routes.deregisterUser:
-        OneginiModuleSwift.sharedInstance.deregisterUser(callback:result)
-    case Constants.Routes.cancelRegistration:
-        OneginiModuleSwift.sharedInstance.cancelRegistration()
-    case Constants.Routes.registration:
-        OneginiModuleSwift.sharedInstance.registerUser(nil, callback: result)
-    case Constants.Routes.registrationWithIdentityProvider: do {
-        guard let _arg = call.arguments as! [String: String]?, let _identifier = _arg["identityProviderId"] else { break; }
-        
-        OneginiModuleSwift.sharedInstance.registerUser(_identifier, callback: result)
-    }
-    case Constants.Routes.sendPin: do {
-        guard let _arg = call.arguments as! [String: Any]?, let _pin = _arg["pin"] as! String?, let _isAuth = _arg["isAuth"] as! Bool? else { break; }
-        if (_isAuth) {
-            // login
-            OneginiModuleSwift.sharedInstance.submitPinAction(PinFlow.authentication.rawValue, action: PinAction.provide.rawValue, pin: _pin)
-        } else {
-            // register
-            OneginiModuleSwift.sharedInstance.submitPinAction(PinFlow.create.rawValue, action: PinAction.provide.rawValue, pin: _pin)
-        }
-    }
-    case Constants.Routes.authenticateWithRegisteredAuthentication: do {
-        guard let _arg = call.arguments as! [String: Any]?, let _id = _arg["registeredAuthenticatorsId"] as! String? else { break; }
-        OneginiModuleSwift.sharedInstance.authenticateWithRegisteredAuthentication(_id, callback: result)
-    }
-    case Constants.Routes.pinAuthentication:
-        OneginiModuleSwift.sharedInstance.authenticateUser(nil, callback: result)
-    case Constants.Routes.singleSignOn: do {
-        guard let _arg = call.arguments as! [String: Any]?, let _path = _arg["url"] as! String? else { break; }
-        OneginiModuleSwift.sharedInstance.runSingleSignOn(_path, callback: result)
-    }
-    case Constants.Routes.changePin:
-        OneginiModuleSwift.sharedInstance.changePin(callback: result)
-    case Constants.Routes.isUserNotRegisteredFingerprint:
-        OneginiModuleSwift.sharedInstance.fetchNotRegisteredAuthenticator(callback: result)
-    case Constants.Routes.getRegisteredAuthenticators:
-        OneginiModuleSwift.sharedInstance.fetchRegisteredAuthenticators(callback: result)
-    case Constants.Routes.registerFingerprintAuthenticator:
-        OneginiModuleSwift.sharedInstance.registerFingerprintAuthenticator(callback: result)
-    case Constants.Routes.cancelPinAuth: do {
-        guard let _arg = call.arguments as! [String: Any]?, let _value = _arg["isPin"] as! Bool? else { break; }
-        OneginiModuleSwift.sharedInstance.cancelPinAuth(_value)
-    }
     
-    case Constants.Routes.getResource, Constants.Routes.getImplicitResource, Constants.Routes.getResourceAnonymous: do {
-        guard let _arg = call.arguments as! [String: Any]?, let _path = _arg["path"] as! String? else {
-            result(SdkError.init(customType: .incrorrectResourcesAccess).flutterError())
-            return
-        }
-        
-        OneginiModuleSwift.sharedInstance.fetchResources(_path, type: call.method, parameters: _arg, callback: result)
-    }
+    // base
+    case Constants.Routes.startApp: startApp(call, result)
     
-    default:
+    // register
+    case Constants.Routes.registerUser: registerUser(call, result)
+    
+    case Constants.Routes.getIdentityProviders: getIdentityProviders(call, result)
+    case Constants.Routes.cancelRegistration: cancelRegistration(call, result)
+    
+    case Constants.Routes.acceptPinRegistrationRequest: acceptPinRegistrationRequest(call, result)
+    case Constants.Routes.denyPinRegistrationRequest: denyPinRegistrationRequest(call, result)
+    
+    case Constants.Routes.customTwoStepRegistrationReturnSuccess: customTwoStepRegistrationReturnSuccess(call, result)
+    case Constants.Routes.customTwoStepRegistrationReturnError: customTwoStepRegistrationReturnError(call, result)
+        
+    case Constants.Routes.deregisterUser: deregisterUser(call, result)
+        
+    // auth
+    case Constants.Routes.registerAuthenticator: registerAuthenticator(call, result)
+    case Constants.Routes.authenticateUser: authenticateUser(call, result)
+    
+    case Constants.Routes.getRegisteredAuthenticators: getRegisteredAuthenticators(call, result)
+    case Constants.Routes.getAllNotRegisteredAuthenticators: getAllNotRegisteredAuthenticators(call, result)
+    
+    case Constants.Routes.acceptPinAuthenticationRequest: acceptPinAuthenticationRequest(call, result)
+    case Constants.Routes.denyPinAuthenticationRequest: denyPinAuthenticationRequest(call, result)
+    
+    case Constants.Routes.logout: logout(call, result)
+    
+    // fingerprint
+    case Constants.Routes.acceptFingerprintAuthenticationRequest: acceptFingerprintAuthenticationRequest(call, result)
+    case Constants.Routes.denyFingerprintAuthenticationRequest: denyFingerprintAuthenticationRequest(call, result)
+    case Constants.Routes.fingerprintFallbackToPin: fingerprintFallbackToPin(call, result)
+        
+    // otp
+    case Constants.Routes.handleMobileAuthWithOtp: handleMobileAuthWithOtp(call, result)
+    case Constants.Routes.acceptOtpAuthenticationRequest: acceptOtpAuthenticationRequest(call, result)
+    case Constants.Routes.denyOtpAuthenticationRequest: denyOtpAuthenticationRequest(call, result)
+        
+    // resources
+    case Constants.Routes.getResourceAnonymous: getResourceAnonymous(call, result)
+    case Constants.Routes.getResource: getResource(call, result)
+    case Constants.Routes.getImplicitResource: getImplicitResource(call, result)
+        
+    // other
+    case Constants.Routes.changePin: changePin(call, result)
+    case Constants.Routes.getAppToWebSingleSignOn: getAppToWebSingleSignOn(call, result)
+    
+    default: do {
+        print("Method wasn't handled: " + call.method)
         result(FlutterMethodNotImplemented)
+    }
     }
   }
 }

@@ -13,13 +13,14 @@ import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
 import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
 import io.flutter.plugin.common.MethodChannel
 
 
 object RegistrationHelper {
 
-    fun registerUser(packageContext: Context, @Nullable identityProvider: OneginiIdentityProvider?, scopes: Array<String>, result: MethodChannel.Result) {
+   private fun register(packageContext: Context, @Nullable identityProvider: OneginiIdentityProvider?, scopes: Array<String>, result: MethodChannel.Result) {
         val oneginiClient: OneginiClient = OneginiSDK.getOneginiClient(packageContext)
         oneginiClient.userClient.registerUser(identityProvider, scopes, object : OneginiRegistrationHandler {
             override fun onSuccess(userProfile: UserProfile, customInfo: CustomInfo?) {
@@ -42,18 +43,17 @@ object RegistrationHelper {
 
 
 
-    fun registrationWithIdentityProvider(context: Context,identityProviderId:String?,scopes:String?,result: MethodChannel.Result){
-        val identityProviders = OneginiSDK.getOneginiClient(context).userClient.identityProviders
-        if (identityProviders == null) {
-            result.error(ErrorHelper().identityProvidersIsNull.code, ErrorHelper().identityProvidersIsNull.message, null)
-            return
-        }
-        for (identityProvider in identityProviders) {
-            if (identityProvider.id == identityProviderId) {
-                registerUser(context,identityProvider, arrayOf(scopes ?: ""),result)
-                break
+    fun registerUser(context: Context,identityProviderId:String?,scopes:String?,result: MethodChannel.Result){
+        if(identityProviderId != null){
+            val identityProviders = OneginiSDK.getOneginiClient(context).userClient.identityProviders
+            for (identityProvider in identityProviders) {
+                if (identityProvider.id == identityProviderId) {
+                    register(context,identityProvider, arrayOf(scopes ?: ""),result)
+                    break
+                }
             }
-        }
+        } else register(context,null, arrayOf(scopes ?: ""),result)
+
     }
 
     fun getIdentityProviders(context: Context, result: MethodChannel.Result) {
@@ -73,7 +73,7 @@ object RegistrationHelper {
     fun deregisterUser(context: Context, result: MethodChannel.Result) {
         val userProfile = OneginiSDK.getOneginiClient(context).userClient.authenticatedUserProfile
         if (userProfile == null) {
-            result.error(ErrorHelper().userProfileIsNull.code, ErrorHelper().userProfileIsNull.message, null)
+            result.error(OneginiWrapperErrors().userProfileIsNull.code, OneginiWrapperErrors().userProfileIsNull.message, null)
             return
         }
         OneginiSDK.getOneginiClient(context).userClient.deregisterUser(userProfile, object : OneginiDeregisterUserProfileHandler {

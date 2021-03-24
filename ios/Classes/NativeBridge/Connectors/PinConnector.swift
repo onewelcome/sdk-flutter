@@ -1,3 +1,4 @@
+//MARK: - BridgeToPinConnectorProtocol
 protocol BridgeToPinConnectorProtocol: AnyObject {
     var bridgeConnector: BridgeConnectorProtocol? { get set }
     var pinHandler: PinConnectorToPinHandler { get }
@@ -6,7 +7,7 @@ protocol BridgeToPinConnectorProtocol: AnyObject {
     func sendNotification(event: PinNotification, flow: PinFlow?, error: SdkError?) -> Void
 }
 
-//@todo handle change and auth flows
+//MARK: - PinConnector
 class PinConnector : BridgeToPinConnectorProtocol {
     var pinHandler: PinConnectorToPinHandler
     unowned var bridgeConnector: BridgeConnectorProtocol?
@@ -25,7 +26,7 @@ class PinConnector : BridgeToPinConnectorProtocol {
                 pinHandler.onCancel()
                 break
             default:
-                sendEvent(data: ["flow": flow, "action": PinNotification.showError.rawValue, "errorMsg": "Unsupported pin action. Contact SDK maintainer."])
+                sendEvent(data: ["eventName": PinNotification.showError.rawValue, "eventValue": "Unsupported pin action. Contact SDK maintainer."])
                 break
         }
     }
@@ -45,7 +46,7 @@ class PinConnector : BridgeToPinConnectorProtocol {
                 sendEvent(data: PinNotification.closeAuth.rawValue)
                 break;
             case .showError:
-                sendEvent(data: String.stringify(json: ["key": PinNotification.showError.rawValue, "value": error?.errorDescription]))
+                sendEvent(data: String.stringify(json: ["eventName": PinNotification.showError.rawValue, "eventValue": error?.errorDescription]))
                 break
         }
     }
@@ -55,12 +56,13 @@ class PinConnector : BridgeToPinConnectorProtocol {
   }
 }
 
+//MARK: -
 enum PinNotification : String {
     case open = "eventOpenPin",
          close = "eventClosePin",
          openAuth = "eventOpenPinAuth",
          closeAuth = "eventClosePinAuth",
-         showError = "show_error"
+         showError = "eventError"
 }
 
 enum PinAction : String {

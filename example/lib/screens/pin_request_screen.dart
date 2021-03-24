@@ -1,14 +1,20 @@
+// @dart = 2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:onegini/onegini.dart';
+import 'package:onegini/callbacks/onegini_pin_authentication_callback.dart';
+import 'package:onegini/callbacks/onegini_pin_registration_callback.dart';
 
 class PinRequestScreen extends StatefulWidget {
   final bool confirmation;
   final String previousCode;
+  final bool customAuthenticator;
 
   const PinRequestScreen(
-      {Key key, this.confirmation = false, this.previousCode})
+      {Key key,
+      this.confirmation = false,
+      this.previousCode,
+      this.customAuthenticator = false})
       : super(key: key);
 
   @override
@@ -47,7 +53,9 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
     });
     if (widget.confirmation) {
       if (pin == widget.previousCode) {
-        Onegini.instance.sendPin(pin, false).catchError((error) {
+        OneginiPinRegistrationCallback()
+            .acceptAuthenticationRequest(context, pin: pin)
+            .catchError((error) {
           if (error is PlatformException) {
             Fluttertoast.showToast(
                 msg: error.message,
@@ -77,6 +85,7 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
               builder: (context) => PinRequestScreen(
                     confirmation: true,
                     previousCode: pin,
+                    customAuthenticator: this.widget.customAuthenticator,
                   )),
         );
     }
@@ -84,37 +93,41 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("PIN"),
-      ),
-      body: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            SizedBox(
-              height: 50,
-            ),
-            Text(
-              widget.confirmation ? "Confirm PIN code" : "Enter PIN code",
-              style: TextStyle(fontSize: 30),
-              textAlign: TextAlign.center,
-            ),
-            Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: pinCode.map((e) => pinItem(e)).toList(),
-            ),
-            Spacer(),
-            NumPad(
-              enterNum: enterNum,
-              removeLast: removeLast,
-              done: pinCode.contains(null) ? null : done,
-            ),
-            SizedBox(
-              height: 10,
-            )
-          ],
+    return WillPopScope(
+      onWillPop: () =>
+          OneginiPinAuthenticationCallback().denyAuthenticationRequest(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text("PIN"),
+        ),
+        body: Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              SizedBox(
+                height: 50,
+              ),
+              Text(
+                widget.confirmation ? "Confirm PIN code" : "Enter PIN code",
+                style: TextStyle(fontSize: 30),
+                textAlign: TextAlign.center,
+              ),
+              Spacer(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: pinCode.map((e) => pinItem(e)).toList(),
+              ),
+              Spacer(),
+              NumPad(
+                enterNum: enterNum,
+                removeLast: removeLast,
+                done: pinCode.contains(null) ? null : done,
+              ),
+              SizedBox(
+                height: 10,
+              )
+            ],
+          ),
         ),
       ),
     );
