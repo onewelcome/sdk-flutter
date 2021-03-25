@@ -16,11 +16,8 @@ class ResourcesMethods {
       var response = await Onegini.instance.channel
           .invokeMethod(Constants.getResource, <String, dynamic>{
         'path': path,
-        'scope': scope,
-        'headers': headers,
         'method': method,
         'encoding': encoding,
-        'body': body
       });
       return response;
     } on PlatformException catch (error) {
@@ -39,10 +36,8 @@ class ResourcesMethods {
       var response = await Onegini.instance.channel
           .invokeMethod(Constants.getResource, <String, dynamic>{
         'path': path,
-        'headers': headers,
         'method': method,
         'encoding': encoding,
-        'body': body
       });
       return response;
     } on PlatformException catch (error) {
@@ -62,11 +57,8 @@ class ResourcesMethods {
       var response = await Onegini.instance.channel
           .invokeMethod(Constants.getResource, <String, dynamic>{
         'path': path,
-        'scope': scope,
-        'headers': headers,
         'method': method,
         'encoding': encoding,
-        'body': body
       });
       return response;
     } on PlatformException catch (error) {
