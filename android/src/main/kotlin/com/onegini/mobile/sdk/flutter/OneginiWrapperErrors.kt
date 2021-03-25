@@ -1,8 +1,8 @@
-package com.onegini.mobile.sdk.flutter.helpers
+package com.onegini.mobile.sdk.flutter
 
 import com.onegini.mobile.sdk.flutter.models.Error
 
-class ErrorHelper {
+class OneginiWrapperErrors {
    val userProfileIsNull  = Error("8001","user profile is null")
    val authenticatedUserProfileIsNull = Error("8002","authenticated user profile is null")
    val authenticatorIsNull = Error("8003","authenticator is null")
