@@ -4,10 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/callbacks/onegini_pin_authentication_callback.dart';
 import 'package:onegini/callbacks/onegini_pin_registration_callback.dart';
-
 class PinRequestScreen extends StatefulWidget {
   final bool confirmation;
   final String previousCode;
+
   final bool customAuthenticator;
 
   const PinRequestScreen(
@@ -94,8 +94,10 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () =>
-          OneginiPinAuthenticationCallback().denyAuthenticationRequest(),
+      onWillPop: () async {
+          await OneginiPinAuthenticationCallback().denyAuthenticationRequest();
+          return true;
+      },
       child: Scaffold(
         appBar: AppBar(
           title: Text("PIN"),
