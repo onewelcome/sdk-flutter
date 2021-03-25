@@ -10,6 +10,7 @@ import 'package:onegini_example/models/application_details.dart';
 import 'package:onegini_example/models/client_resource.dart';
 import 'package:onegini_example/screens/qr_scan_screen.dart';
 
+import '../main.dart';
 import 'login_screen.dart';
 
 class UserScreen extends StatefulWidget {
@@ -42,6 +43,24 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
       ),
     ];
     super.initState();
+    getNotRegisteredAuthenticators();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    routeObserver.subscribe(this, ModalRoute.of(context));
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    getNotRegisteredAuthenticators();
   }
 
   logOut(BuildContext context) async {
@@ -67,21 +86,14 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     }
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    // print('didChangeDependencies');
-    updateNotRegisteredAuthenticators();
-  }
-
   updateNotRegisteredAuthenticators() {
-    // print('updateNotRegisteredAuthenticators');
-    processNotRegisteredAuthenticators();
+    getNotRegisteredAuthenticators();
   }
 
-  Future<List<OneginiListResponse>> processNotRegisteredAuthenticators() async {
-    var notRegistered = await getNotRegisteredAuthenticators();
-    if (notRegistered.isEmpty) {
+  Future<List<OneginiListResponse>> getNotRegisteredAuthenticators() async {
+    var authenticators = await Onegini.instance.userClient
+        .getNotRegisteredAuthenticators(context);
+    if (authenticators.isEmpty) {
       setState(() {
         isContainNotRegisteredAuthenticators = false;
         cachedAuthenticators.clear();
@@ -89,17 +101,10 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     } else {
       setState(() {
         isContainNotRegisteredAuthenticators = true;
-        cachedAuthenticators = notRegistered;
+        cachedAuthenticators = authenticators;
       });
     }
-    return notRegistered;
-  }
-
-  Future<List<OneginiListResponse>> getNotRegisteredAuthenticators() async {
-    // print("[FLUTTER] getNotRegisteredAuthenticators");
-    var notRegistered = await Onegini.instance.userClient
-        .getNotRegisteredAuthenticators(context);
-    return notRegistered;
+    return authenticators;
   }
 
   registerAuthenticator(String authenticatorId) async {
@@ -180,29 +185,29 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
             DrawerHeader(
               child: Container(),
             ),
-            FutureBuilder(
-                future: processNotRegisteredAuthenticators(),
-                builder: (BuildContext context, snapshot) {
-                  return snapshot.hasData &&
-                          isContainNotRegisteredAuthenticators
-                      ? PopupMenuButton<String>(
-                          child: ListTile(
-                            title: Text("register authenticator"),
-                            leading: Icon(Icons.fingerprint),
-                          ),
-                          onSelected: (value) {
-                            registerAuthenticator(value);
-                          },
-                          itemBuilder: (context) {
-                            return snapshot.data
-                                .map((e) => PopupMenuItem<String>(
-                                      child: Text(e.name ?? ""),
-                                      value: e.id,
-                                    ))
-                                .toList();
-                          })
-                      : SizedBox.shrink();
-                }),
+            Builder(
+              builder: (BuildContext context) {
+                return cachedAuthenticators.isNotEmpty &&
+                        isContainNotRegisteredAuthenticators
+                    ? PopupMenuButton<String>(
+                        child: ListTile(
+                          title: Text("register authenticator"),
+                          leading: Icon(Icons.fingerprint),
+                        ),
+                        onSelected: (value) {
+                          registerAuthenticator(value);
+                        },
+                        itemBuilder: (context) {
+                          return cachedAuthenticators
+                              .map((e) => PopupMenuItem<String>(
+                                    child: Text(e.name ?? ""),
+                                    value: e.id,
+                                  ))
+                              .toList();
+                        })
+                    : SizedBox.shrink();
+              },
+            ),
             ListTile(
               title: Text("Change pin"),
               onTap: () => changePin(context),

@@ -60,8 +60,10 @@ class _PinScreenState extends State<PinScreen> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () =>
-          OneginiPinAuthenticationCallback().denyAuthenticationRequest(),
+      onWillPop: () async {
+          await OneginiPinAuthenticationCallback().denyAuthenticationRequest();
+          return true;
+      },
       child: Scaffold(
         appBar: AppBar(
           title: Text("PIN"),
