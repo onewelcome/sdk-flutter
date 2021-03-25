@@ -4,21 +4,11 @@ import OneginiCrypto
 import Flutter
 
 protocol OneginiPluginResouceProtocol {
-    func getResourceAnonymous(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func getResource(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
-    func getImplicitResource(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 }
 
 extension SwiftOneginiPlugin: OneginiPluginResouceProtocol {
-    func getResourceAnonymous(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        handleGetResource(call, result)
-    }
-    
     func getResource(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        handleGetResource(call, result)
-    }
-    
-    func getImplicitResource(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         handleGetResource(call, result)
     }
     
