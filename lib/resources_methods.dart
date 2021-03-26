@@ -14,7 +14,7 @@ class ResourcesMethods {
   }) async {
     try {
       var response = await Onegini.instance.channel
-          .invokeMethod(Constants.getResourceAnonymous, <String, dynamic>{
+          .invokeMethod(Constants.getResource, <String, dynamic>{
         'path': path,
         'scope': scope,
         'headers': headers,
@@ -60,7 +60,7 @@ class ResourcesMethods {
   }) async {
     try {
       var response = await Onegini.instance.channel
-          .invokeMethod(Constants.getImplicitResource, <String, dynamic>{
+          .invokeMethod(Constants.getResource, <String, dynamic>{
         'path': path,
         'scope': scope,
         'headers': headers,
