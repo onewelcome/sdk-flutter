@@ -19,8 +19,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
             print("key: " + key)
             let val = _arg?[key]
             print("value: " + String(describing: val))
-            if (!(val is NSNull)) {
-            }
         }
     }
     

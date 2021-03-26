@@ -9,15 +9,27 @@
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
+		5F07F1A5260DFB910073BA5E /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F07F1A4260DFB910073BA5E /* Pods_Runner.framework */; };
+		5F07F1B8260DFCFC0073BA5E /* OneginiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F07F1B7260DFCFC0073BA5E /* OneginiTests.swift */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		C8226B7E02CA9172B343FC86 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 675115B939E47035FEDCBCAE /* Pods_Runner.framework */; };
+		CB4EE3DF3BC5C7D43E67A6B7 /* Pods_OneginiTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2135D612F95790FA77C8405 /* Pods_OneginiTests.framework */; };
 		F0D3E8D12576F7FD009D2C24 /* CloudFlareIncECCCA3.cer in Resources */ = {isa = PBXBuildFile; fileRef = F0D3E8CE2576F7FD009D2C24 /* CloudFlareIncECCCA3.cer */; };
 		F0D3E8D22576F7FD009D2C24 /* OneginiConfigModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3E8CF2576F7FD009D2C24 /* OneginiConfigModel.m */; };
 		F0D3E8D32576F7FD009D2C24 /* SecurityController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3E8D02576F7FD009D2C24 /* SecurityController.m */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		5F07F1BA260DFCFC0073BA5E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 97C146ED1CF9000F007C117D;
+			remoteInfo = Runner;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		9705A1C41CF9048500538489 /* Embed Frameworks */ = {
@@ -35,7 +47,26 @@
 /* Begin PBXFileReference section */
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
+		296D560E6DBF20366A24FC19 /* Pods-OneginiTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneginiTests.profile.xcconfig"; path = "Target Support Files/Pods-OneginiTests/Pods-OneginiTests.profile.xcconfig"; sourceTree = "<group>"; };
+		34B2E28612E67C30D1F9DCDE /* Pods-OneginiTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneginiTests.release.xcconfig"; path = "Target Support Files/Pods-OneginiTests/Pods-OneginiTests.release.xcconfig"; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
+		473B2C38247A4DD5B7EF0E33 /* Pods-OneginiTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneginiTests.debug.xcconfig"; path = "Target Support Files/Pods-OneginiTests/Pods-OneginiTests.debug.xcconfig"; sourceTree = "<group>"; };
+		5F07F133260DEC5B0073BA5E /* onegini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = onegini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F07F136260DEC890073BA5E /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F07F13D260DEE2E0073BA5E /* OneginiCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OneginiCrypto.xcframework; path = ../../ios/OneginiCrypto.xcframework; sourceTree = "<group>"; };
+		5F07F13F260DEE340073BA5E /* OneginiSDKiOS.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OneginiSDKiOS.xcframework; path = ../../ios/OneginiSDKiOS.xcframework; sourceTree = "<group>"; };
+		5F07F143260DEE650073BA5E /* onegini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = onegini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F07F148260DEED00073BA5E /* onegini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = onegini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F07F17A260DF35B0073BA5E /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F07F17F260DF47F0073BA5E /* onegini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = onegini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F07F18A260DF8A90073BA5E /* onegini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = onegini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F07F18C260DF9260073BA5E /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F07F19A260DFAE40073BA5E /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F07F1A1260DFB1E0073BA5E /* onegini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = onegini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F07F1A4260DFB910073BA5E /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F07F1B5260DFCFC0073BA5E /* OneginiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OneginiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F07F1B7260DFCFC0073BA5E /* OneginiTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneginiTests.swift; sourceTree = "<group>"; };
+		5F07F1B9260DFCFC0073BA5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		675115B939E47035FEDCBCAE /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		708C6431247BEF0C99056E22 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -49,6 +80,7 @@
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		BC8033DBD016BC3D7B7E8112 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
+		E2135D612F95790FA77C8405 /* Pods_OneginiTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OneginiTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EFE71CA628242FAFEEC9E2D2 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 		F0D3E8CC2576F7FD009D2C24 /* SecurityController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityController.h; sourceTree = "<group>"; };
 		F0D3E8CD2576F7FD009D2C24 /* OneginiConfigModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OneginiConfigModel.h; sourceTree = "<group>"; };
@@ -58,23 +90,43 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		5F07F1B2260DFCFC0073BA5E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CB4EE3DF3BC5C7D43E67A6B7 /* Pods_OneginiTests.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		97C146EB1CF9000F007C117D /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C8226B7E02CA9172B343FC86 /* Pods_Runner.framework in Frameworks */,
+				5F07F1A5260DFB910073BA5E /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5F07F1B6260DFCFC0073BA5E /* OneginiTests */ = {
+			isa = PBXGroup;
+			children = (
+				5F07F1B7260DFCFC0073BA5E /* OneginiTests.swift */,
+				5F07F1B9260DFCFC0073BA5E /* Info.plist */,
+			);
+			path = OneginiTests;
+			sourceTree = "<group>";
+		};
 		5F837D4545C2413D32620243 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
 				708C6431247BEF0C99056E22 /* Pods-Runner.debug.xcconfig */,
 				EFE71CA628242FAFEEC9E2D2 /* Pods-Runner.release.xcconfig */,
 				BC8033DBD016BC3D7B7E8112 /* Pods-Runner.profile.xcconfig */,
+				473B2C38247A4DD5B7EF0E33 /* Pods-OneginiTests.debug.xcconfig */,
+				34B2E28612E67C30D1F9DCDE /* Pods-OneginiTests.release.xcconfig */,
+				296D560E6DBF20366A24FC19 /* Pods-OneginiTests.profile.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -95,6 +147,7 @@
 			children = (
 				9740EEB11CF90186004384FC /* Flutter */,
 				97C146F01CF9000F007C117D /* Runner */,
+				5F07F1B6260DFCFC0073BA5E /* OneginiTests */,
 				97C146EF1CF9000F007C117D /* Products */,
 				5F837D4545C2413D32620243 /* Pods */,
 				A3B0D248D7723B5FC7E80294 /* Frameworks */,
@@ -105,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				97C146EE1CF9000F007C117D /* Runner.app */,
+				5F07F1B5260DFCFC0073BA5E /* OneginiTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -128,7 +182,21 @@
 		A3B0D248D7723B5FC7E80294 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5F07F1A4260DFB910073BA5E /* Pods_Runner.framework */,
+				5F07F1A1260DFB1E0073BA5E /* onegini.framework */,
+				5F07F19A260DFAE40073BA5E /* Pods_Runner.framework */,
+				5F07F18C260DF9260073BA5E /* Pods_Runner.framework */,
+				5F07F18A260DF8A90073BA5E /* onegini.framework */,
+				5F07F17F260DF47F0073BA5E /* onegini.framework */,
+				5F07F17A260DF35B0073BA5E /* Pods_Runner.framework */,
+				5F07F148260DEED00073BA5E /* onegini.framework */,
+				5F07F143260DEE650073BA5E /* onegini.framework */,
+				5F07F13F260DEE340073BA5E /* OneginiSDKiOS.xcframework */,
+				5F07F13D260DEE2E0073BA5E /* OneginiCrypto.xcframework */,
+				5F07F136260DEC890073BA5E /* Pods_Runner.framework */,
+				5F07F133260DEC5B0073BA5E /* onegini.framework */,
 				675115B939E47035FEDCBCAE /* Pods_Runner.framework */,
+				E2135D612F95790FA77C8405 /* Pods_OneginiTests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -148,6 +216,25 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		5F07F1B4260DFCFC0073BA5E /* OneginiTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 5F07F1BC260DFCFC0073BA5E /* Build configuration list for PBXNativeTarget "OneginiTests" */;
+			buildPhases = (
+				86A9C3FB4AB162904B7F026E /* [CP] Check Pods Manifest.lock */,
+				5F07F1B1260DFCFC0073BA5E /* Sources */,
+				5F07F1B2260DFCFC0073BA5E /* Frameworks */,
+				5F07F1B3260DFCFC0073BA5E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				5F07F1BB260DFCFC0073BA5E /* PBXTargetDependency */,
+			);
+			name = OneginiTests;
+			productName = OneginiTests;
+			productReference = 5F07F1B5260DFCFC0073BA5E /* OneginiTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 		97C146ED1CF9000F007C117D /* Runner */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */;
@@ -176,9 +263,14 @@
 		97C146E61CF9000F007C117D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1240;
 				LastUpgradeCheck = 1240;
 				ORGANIZATIONNAME = "";
 				TargetAttributes = {
+					5F07F1B4260DFCFC0073BA5E = {
+						CreatedOnToolsVersion = 12.4;
+						TestTargetID = 97C146ED1CF9000F007C117D;
+					};
 					97C146ED1CF9000F007C117D = {
 						CreatedOnToolsVersion = 7.3.1;
 						LastSwiftMigration = 1100;
@@ -199,11 +291,19 @@
 			projectRoot = "";
 			targets = (
 				97C146ED1CF9000F007C117D /* Runner */,
+				5F07F1B4260DFCFC0073BA5E /* OneginiTests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		5F07F1B3260DFCFC0073BA5E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		97C146EC1CF9000F007C117D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -272,6 +372,28 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		86A9C3FB4AB162904B7F026E /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-OneginiTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		9740EEB61CF901F6004384FC /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -284,11 +406,19 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build";
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		5F07F1B1260DFCFC0073BA5E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5F07F1B8260DFCFC0073BA5E /* OneginiTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		97C146EA1CF9000F007C117D /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -301,6 +431,14 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		5F07F1BB260DFCFC0073BA5E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 97C146ED1CF9000F007C117D /* Runner */;
+			targetProxy = 5F07F1BA260DFCFC0073BA5E /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		97C146FA1CF9000F007C117D /* Main.storyboard */ = {
@@ -380,7 +518,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = JA3D7NMK84;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -396,11 +534,107 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.onegini.plugin.oneginiExample123;
+				PRODUCT_BUNDLE_IDENTIFIER = com.onegini.plugin.oneginiExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Profile;
+		};
+		5F07F1BD260DFCFC0073BA5E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 473B2C38247A4DD5B7EF0E33 /* Pods-OneginiTests.debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				HEADER_SEARCH_PATHS = "$(inherited)/**";
+				INFOPLIST_FILE = OneginiTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)/**";
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.onegini.plugin.oneginiExample.OneginiTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
+			};
+			name = Debug;
+		};
+		5F07F1BE260DFCFC0073BA5E /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 34B2E28612E67C30D1F9DCDE /* Pods-OneginiTests.release.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)/**";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				HEADER_SEARCH_PATHS = "$(inherited)/**";
+				INFOPLIST_FILE = OneginiTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)/**";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.onegini.plugin.oneginiExample.OneginiTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
+			};
+			name = Release;
+		};
+		5F07F1BF260DFCFC0073BA5E /* Profile */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 296D560E6DBF20366A24FC19 /* Pods-OneginiTests.profile.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_STYLE = Automatic;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)/**";
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				HEADER_SEARCH_PATHS = "$(inherited)/**";
+				INFOPLIST_FILE = OneginiTests/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)/**";
+				MTL_FAST_MATH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = com.onegini.plugin.oneginiExample.OneginiTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Runner.app/Runner";
 			};
 			name = Profile;
 		};
@@ -520,7 +754,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = JA3D7NMK84;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -536,7 +770,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.onegini.plugin.oneginiExample123;
+				PRODUCT_BUNDLE_IDENTIFIER = com.onegini.plugin.oneginiExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -552,7 +786,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
-				DEVELOPMENT_TEAM = JA3D7NMK84;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -568,7 +802,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Flutter",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.onegini.plugin.oneginiExample123;
+				PRODUCT_BUNDLE_IDENTIFIER = com.onegini.plugin.oneginiExample;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Runner/Runner-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -579,6 +813,16 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		5F07F1BC260DFCFC0073BA5E /* Build configuration list for PBXNativeTarget "OneginiTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5F07F1BD260DFCFC0073BA5E /* Debug */,
+				5F07F1BE260DFCFC0073BA5E /* Release */,
+				5F07F1BF260DFCFC0073BA5E /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		97C146E91CF9000F007C117D /* Build configuration list for PBXProject "Runner" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
