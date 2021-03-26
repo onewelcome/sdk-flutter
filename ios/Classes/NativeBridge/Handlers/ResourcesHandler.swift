@@ -129,6 +129,18 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         newParameters["encoding"] = parameters["encoding"] ?? "application/x-www-form-urlencoded";
         newParameters["method"] = parameters["method"] ?? "GET"
 
+        if let headers = parameters["headers"] {
+            newParameters["headers"] = headers
+        }
+
+        if let body = parameters["body"] {
+            newParameters["body"] = body
+        }
+
+        if let scope = parameters["scope"] {
+            newParameters["scope"] = scope
+        }
+
         OneginiModuleSwift.sharedInstance.authenticateDeviceForResource(path) { (data) in
             guard let value = data, let _value = value as? Bool, _value else {
                 completion(data)
@@ -157,6 +169,18 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         newParameters["encoding"] = parameters["encoding"] ?? "application/x-www-form-urlencoded";
         newParameters["method"] = parameters["method"] ?? "GET"
 
+        if let headers = parameters["headers"] {
+            newParameters["headers"] = headers
+        }
+
+        if let body = parameters["body"] {
+            newParameters["body"] = body
+        }
+
+        if let scope = parameters["scope"] {
+            newParameters["scope"] = scope
+        }
+
         OneginiModuleSwift.sharedInstance.resourceRequest(false, parameters: newParameters) { (_data, error) in
             if let _errorResource = error {
                 completion(_errorResource)
@@ -183,6 +207,18 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         newParameters["path"] = path
         newParameters["encoding"] = parameters["encoding"] ?? "application/x-www-form-urlencoded";
         newParameters["method"] = parameters["method"] ?? "GET"
+
+        if let headers = parameters["headers"] {
+            newParameters["headers"] = headers
+        }
+
+        if let body = parameters["body"] {
+            newParameters["body"] = body
+        }
+
+        if let scope = parameters["scope"] {
+            newParameters["scope"] = scope
+        }
         
         OneginiModuleSwift.sharedInstance.authenticateUserImplicitly(_profile.profileId) { (value, error) in
             if (error == nil) {
