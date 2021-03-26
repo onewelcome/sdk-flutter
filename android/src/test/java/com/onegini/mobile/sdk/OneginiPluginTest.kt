@@ -3,9 +3,13 @@ package com.onegini.mobile.sdk
 import android.content.Context
 
 import android.util.Patterns
+import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
 import com.onegini.mobile.sdk.flutter.OneginiPlugin
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.constants.Constants
+import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
+import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
+import com.onegini.mobile.sdk.flutter.helpers.RegistrationHelper
 import com.onegini.mobile.sdk.utils.OneginiConfigModel
 import com.onegini.mobile.sdk.utils.SecurityController
 import io.flutter.plugin.common.MethodCall
@@ -22,9 +26,6 @@ import java.util.regex.Pattern
 
 class OneginiPluginTest {
 
-    @Mock
-    var oneginiSDK : OneginiSDK? = null
-
     private val mockResult = mock(MethodChannel.Result::class.java)
     private val mockAndroidContext = mock(Context::class.java)
     private val plugin = OneginiPlugin()
@@ -34,8 +35,10 @@ class OneginiPluginTest {
         MockitoAnnotations.initMocks(this)
         OneginiSDK.oneginiClientConfigModel = OneginiConfigModel()
         OneginiSDK.oneginiSecurityController = SecurityController::class.java
-        `when`(oneginiSDK?.buildSDK(mockAndroidContext)).thenReturn(null)
+        val oneginiSDK = mock(OneginiSDK::class.java)
         `when`(mockAndroidContext.applicationContext).thenReturn(mockAndroidContext)
+        `when`(oneginiSDK?.buildSDK(mockAndroidContext)).thenReturn(null)
+        `when`(OneginiSDK.getOneginiClient(mockAndroidContext)).thenReturn(null)
         plugin.setContext(mockAndroidContext)
     }
 
@@ -48,7 +51,7 @@ class OneginiPluginTest {
 //    fun testRegistration() {
 //        assertEquals(plugin.onMethodCall(MethodCall(Constants.METHOD_REGISTER_USER, mapOf("scopes" to "read")), mockResult), Unit)
 //        assertEquals(plugin.onMethodCall(MethodCall(Constants.METHOD_REGISTER_USER, mapOf("NotHaveScope" to "read")), mockResult), Unit)
-//        assertEquals(RegistrationHelper.registerUser(mockContext, null, "read", mockResult), Unit)
+//        assertEquals(RegistrationHelper.registerUser(mockAndroidContext, null, "read", mockResult), Unit)
 //    }
 //
 //    @Test
