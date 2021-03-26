@@ -132,11 +132,10 @@ extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
 
     func userClient(_: ONGUserClient, didReceive challenge: ONGCustomAuthFinishRegistrationChallenge) {
         print("[AUTH] userClient didReceive ONGCustomAuthFinishRegistrationChallenge")
-        // Will need this in the future
-        registrationCompletion!(true, nil)
+        // TODO: Will need to check it in the future
         
+        registrationCompletion!(true, nil)
         customAuthChallenge = challenge
-
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.handleFlowUpdate(PinFlow.create, nil, receiver: self)
     }
 
@@ -168,7 +167,7 @@ extension AuthenticatorsHandler: ONGAuthenticatorDeregistrationDelegate {
 
     func userClient(_: ONGUserClient, didReceive challenge: ONGCustomAuthDeregistrationChallenge) {
         print("[AUTH] userClient didReceive ONGCustomAuthDeregistrationChallenge")
-        // will need this in the future
+        // TODO: Will need to check it in the future
         
         deregistrationCompletion!(true, nil)
     }
