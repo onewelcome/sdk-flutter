@@ -6,21 +6,27 @@
 //
 
 import XCTest
-import Flutter
-import onegini
+@testable import Flutter
+@testable import onegini
 
 class OneginiTests: XCTestCase {
     var plugin: SwiftOneginiPlugin?
+    var module: OneginiModuleSwift?
     
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.
         print("[TESTS] set up with error")
+        try super.setUpWithError()
         plugin = SwiftOneginiPlugin()
+        module = OneginiModuleSwift.sharedInstance
     }
 
     override func tearDownWithError() throws {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
         print("[TESTS] tear down")
+        plugin = nil
+        module = nil
+        try super.tearDownWithError()
     }
 
     func testStartApp() throws {

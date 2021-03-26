@@ -22,7 +22,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		5F07F1BA260DFCFC0073BA5E /* PBXContainerItemProxy */ = {
+		5FAD73A2260E804900A311C1 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
 			proxyType = 1;
@@ -228,7 +228,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				5F07F1BB260DFCFC0073BA5E /* PBXTargetDependency */,
+				5FAD73A3260E804900A311C1 /* PBXTargetDependency */,
 			);
 			name = OneginiTests;
 			productName = OneginiTests;
@@ -433,10 +433,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		5F07F1BB260DFCFC0073BA5E /* PBXTargetDependency */ = {
+		5FAD73A3260E804900A311C1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 97C146ED1CF9000F007C117D /* Runner */;
-			targetProxy = 5F07F1BA260DFCFC0073BA5E /* PBXContainerItemProxy */;
+			targetProxy = 5FAD73A2260E804900A311C1 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
