@@ -124,10 +124,22 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     
     //MARK: - Bridge
     func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
-        var parameters = [String: Any]()
-        parameters["path"] = path
-        parameters["encoding"] = "application/x-www-form-urlencoded";
-        parameters["method"] = "GET"
+        var newParameters = [String: Any]()
+        newParameters["path"] = path
+        newParameters["encoding"] = parameters["encoding"] ?? "application/x-www-form-urlencoded";
+        newParameters["method"] = parameters["method"] ?? "GET"
+
+        if let headers = parameters["headers"] {
+            newParameters["headers"] = headers
+        }
+
+        if let body = parameters["body"] {
+            newParameters["body"] = body
+        }
+
+        if let scope = parameters["scope"] {
+            newParameters["scope"] = scope
+        }
 
         OneginiModuleSwift.sharedInstance.authenticateDeviceForResource(path) { (data) in
             guard let value = data, let _value = value as? Bool, _value else {
@@ -135,7 +147,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 return
             }
 
-            OneginiModuleSwift.sharedInstance.resourceRequest(false, parameters: parameters) { (_data, error) in
+            OneginiModuleSwift.sharedInstance.resourceRequest(false, parameters: newParameters) { (_data, error) in
                 if let _errorResource = error {
                     completion(_errorResource)
                     return
@@ -152,12 +164,24 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     }
     
     func fetchAnonymousResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
-        var parameters = [String: Any]()
-        parameters["path"] = path
-        parameters["encoding"] = "application/x-www-form-urlencoded";
-        parameters["method"] = "GET"
+        var newParameters = [String: Any]()
+        newParameters["path"] = path
+        newParameters["encoding"] = parameters["encoding"] ?? "application/x-www-form-urlencoded";
+        newParameters["method"] = parameters["method"] ?? "GET"
 
-        OneginiModuleSwift.sharedInstance.resourceRequest(false, parameters: parameters) { (_data, error) in
+        if let headers = parameters["headers"] {
+            newParameters["headers"] = headers
+        }
+
+        if let body = parameters["body"] {
+            newParameters["body"] = body
+        }
+
+        if let scope = parameters["scope"] {
+            newParameters["scope"] = scope
+        }
+
+        OneginiModuleSwift.sharedInstance.resourceRequest(false, parameters: newParameters) { (_data, error) in
             if let _errorResource = error {
                 completion(_errorResource)
                 return
@@ -179,14 +203,26 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             return
         }
         
-        var parameters = [String: Any]()
-        parameters["path"] = path
-        parameters["encoding"] = "application/x-www-form-urlencoded";
-        parameters["method"] = "GET"
+        var newParameters = [String: Any]()
+        newParameters["path"] = path
+        newParameters["encoding"] = parameters["encoding"] ?? "application/x-www-form-urlencoded";
+        newParameters["method"] = parameters["method"] ?? "GET"
+
+        if let headers = parameters["headers"] {
+            newParameters["headers"] = headers
+        }
+
+        if let body = parameters["body"] {
+            newParameters["body"] = body
+        }
+
+        if let scope = parameters["scope"] {
+            newParameters["scope"] = scope
+        }
         
         OneginiModuleSwift.sharedInstance.authenticateUserImplicitly(_profile.profileId) { (value, error) in
             if (error == nil) {
-                OneginiModuleSwift.sharedInstance.resourceRequest(value, parameters: parameters) { (_data, error) in
+                OneginiModuleSwift.sharedInstance.resourceRequest(value, parameters: newParameters) { (_data, error) in
                     if let data = _data, let convertedStringDatat = try? JSONSerialization.data(withJSONObject: data, options: .prettyPrinted) {
                         let convertedString = String(data: convertedStringDatat, encoding: .utf8)
                         completion(convertedString)
