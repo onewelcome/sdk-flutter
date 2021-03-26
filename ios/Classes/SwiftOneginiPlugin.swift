@@ -66,12 +66,8 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     case Constants.Routes.denyOtpAuthenticationRequest: denyOtpAuthenticationRequest(call, result)
         
     // resources
-<<<<<<< HEAD
     case Constants.Routes.getResourceAnonymous, Constants.Routes.getResource, Constants.Routes.getImplicitResource:
         getResource(call, result)
-=======
-    case Constants.Routes.getResource: getResource(call, result)
->>>>>>> origin/dev/ios/merge_onegini_rework
         
     // other
     case Constants.Routes.changePin: changePin(call, result)
