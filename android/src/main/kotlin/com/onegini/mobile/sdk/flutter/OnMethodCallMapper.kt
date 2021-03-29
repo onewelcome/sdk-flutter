@@ -83,10 +83,8 @@ class OnMethodCallMapper(var context: Context) {
         val oneginiCustomIdentityProviderList = mutableListOf<OneginiCustomIdentityProvider>()
         val identityProviderIds = twoStepCustomIdentityProviderIds?.split(",")?.map { it.trim() }
         identityProviderIds?.forEach { oneginiCustomIdentityProviderList.add(CustomTwoStepIdentityProvider(it)) }
-        val oneginiClient: OneginiClient = OneginiSDK(
-                httpConnectionTimeout = connectionTimeout?.toLong(),
-                httpReadTimeout = readTimeout?.toLong(),
-                oneginiCustomIdentityProviders = oneginiCustomIdentityProviderList).buildSDK(context)
+        OneginiSDK().initSDK(context,connectionTimeout?.toLong(),readTimeout?.toLong(),oneginiCustomIdentityProviderList)
+        val oneginiClient: OneginiClient = OneginiSDK().getOneginiClient(context)
         oneginiClient.start(object : OneginiInitializationHandler {
             override fun onSuccess(removedUserProfiles: Set<UserProfile?>?) {
                 val removedUserProfileArray: ArrayList<Map<String, Any>> = ArrayList()
