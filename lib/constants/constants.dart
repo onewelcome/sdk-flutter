@@ -40,6 +40,9 @@ class Constants {
 
   //resources
   static const String getResource = "getResource";
+  static const String getResourceAnonymous = "getResourceAnonymous";
+  static const String getImplicitResource ="getImplicitResource";
+
 
   //Other
   static const String getAppToWebSingleSignOn = "getAppToWebSingleSignOn";
