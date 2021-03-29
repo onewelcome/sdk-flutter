@@ -21,7 +21,7 @@ class ResourceHelper(private var context: Context, private var call: MethodCall,
     private var url: String? = null
 
     init {
-        val oneginiClient: OneginiClient = OneginiSDK.getOneginiClient(context)
+        val oneginiClient: OneginiClient = OneginiSDK().getOneginiClient(context)
         url = oneginiClient.configModel.resourceBaseUrl
     }
 
@@ -50,8 +50,8 @@ class ResourceHelper(private var context: Context, private var call: MethodCall,
 
 
     private fun getAnonymousClient(scope: String, request: Request) {
-        val okHttpClient: OkHttpClient = OneginiSDK.getOneginiClient(context).deviceClient.anonymousResourceOkHttpClient
-        OneginiSDK.getOneginiClient(context).deviceClient.authenticateDevice(arrayOf(scope), object : OneginiDeviceAuthenticationHandler {
+        val okHttpClient: OkHttpClient = OneginiSDK().getOneginiClient(context).deviceClient.anonymousResourceOkHttpClient
+        OneginiSDK().getOneginiClient(context).deviceClient.authenticateDevice(arrayOf(scope), object : OneginiDeviceAuthenticationHandler {
             override fun onSuccess() {
                 makeRequest(okHttpClient, request, result)
             }
@@ -64,18 +64,18 @@ class ResourceHelper(private var context: Context, private var call: MethodCall,
     }
 
     private fun getStandardUserClient(request: Request) {
-        val okHttpClient: OkHttpClient = OneginiSDK.getOneginiClient(context).userClient.resourceOkHttpClient
+        val okHttpClient: OkHttpClient = OneginiSDK().getOneginiClient(context).userClient.resourceOkHttpClient
         makeRequest(okHttpClient, request, result)
     }
 
     private fun getSecuredImplicitUserClient(scope: String, request: Request) {
-        val okHttpClient = OneginiSDK.getOneginiClient(context).userClient.implicitResourceOkHttpClient
-        val userProfile = OneginiSDK.getOneginiClient(context).userClient.authenticatedUserProfile
+        val okHttpClient = OneginiSDK().getOneginiClient(context).userClient.implicitResourceOkHttpClient
+        val userProfile = OneginiSDK().getOneginiClient(context).userClient.authenticatedUserProfile
         if (userProfile == null) {
             result.error(OneginiWrapperErrors().authenticatedUserProfileIsNull.code, OneginiWrapperErrors().authenticatedUserProfileIsNull.message, null)
             return
         }
-        OneginiSDK.getOneginiClient(context).userClient.authenticateUserImplicitly(userProfile, arrayOf(scope), object : OneginiImplicitAuthenticationHandler {
+        OneginiSDK().getOneginiClient(context).userClient.authenticateUserImplicitly(userProfile, arrayOf(scope), object : OneginiImplicitAuthenticationHandler {
             override fun onSuccess(profile: UserProfile) {
                 makeRequest(okHttpClient, request, result)
             }

@@ -21,7 +21,7 @@ import io.flutter.plugin.common.MethodChannel
 object RegistrationHelper {
 
    private fun register(packageContext: Context, @Nullable identityProvider: OneginiIdentityProvider?, scopes: Array<String>, result: MethodChannel.Result) {
-        val oneginiClient: OneginiClient = OneginiSDK.getOneginiClient(packageContext)
+        val oneginiClient: OneginiClient = OneginiSDK().getOneginiClient(packageContext)
         oneginiClient.userClient.registerUser(identityProvider, scopes, object : OneginiRegistrationHandler {
             override fun onSuccess(userProfile: UserProfile, customInfo: CustomInfo?) {
                     result.success(userProfile.profileId)
@@ -45,7 +45,7 @@ object RegistrationHelper {
 
     fun registerUser(context: Context,identityProviderId:String?,scopes:String?,result: MethodChannel.Result){
         if(identityProviderId != null){
-            val identityProviders = OneginiSDK.getOneginiClient(context).userClient.identityProviders
+            val identityProviders = OneginiSDK().getOneginiClient(context).userClient.identityProviders
             for (identityProvider in identityProviders) {
                 if (identityProvider.id == identityProviderId) {
                     register(context,identityProvider, arrayOf(scopes ?: ""),result)
@@ -58,7 +58,7 @@ object RegistrationHelper {
 
     fun getIdentityProviders(context: Context, result: MethodChannel.Result) {
         val gson = GsonBuilder().serializeNulls().create()
-        val identityProviders = OneginiSDK.getOneginiClient(context).userClient.identityProviders
+        val identityProviders = OneginiSDK().getOneginiClient(context).userClient.identityProviders
         val providers: ArrayList<Map<String, String>> = ArrayList()
         if (identityProviders != null)
             for (identityProvider in identityProviders) {
@@ -71,12 +71,12 @@ object RegistrationHelper {
     }
 
     fun deregisterUser(context: Context, result: MethodChannel.Result) {
-        val userProfile = OneginiSDK.getOneginiClient(context).userClient.authenticatedUserProfile
+        val userProfile = OneginiSDK().getOneginiClient(context).userClient.authenticatedUserProfile
         if (userProfile == null) {
             result.error(OneginiWrapperErrors().userProfileIsNull.code, OneginiWrapperErrors().userProfileIsNull.message, null)
             return
         }
-        OneginiSDK.getOneginiClient(context).userClient.deregisterUser(userProfile, object : OneginiDeregisterUserProfileHandler {
+        OneginiSDK().getOneginiClient(context).userClient.deregisterUser(userProfile, object : OneginiDeregisterUserProfileHandler {
             override fun onSuccess() {
                 result.success(true)
             }
