@@ -8,12 +8,14 @@ protocol BridgeToPinConnectorProtocol: AnyObject {
 }
 
 //MARK: - PinConnector
-class PinConnector : BridgeToPinConnectorProtocol {
+class PinConnector : BridgeToPinConnectorProtocol, PinHandlerNotificationReceiverProtocol {
     var pinHandler: PinConnectorToPinHandler
     unowned var bridgeConnector: BridgeConnectorProtocol?
 
     init() {
-        pinHandler = PinHandler()
+        let handler = PinHandler()
+        pinHandler = handler
+        handler.notificationReceiver = self
     }
 
     func handlePinAction(_ flow: String, _ action: String, _ pin: String) {

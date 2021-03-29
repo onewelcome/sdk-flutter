@@ -15,6 +15,10 @@ protocol PinHandlerToReceiverProtocol: class {
     func handlePin(pin: String?)
 }
 
+protocol PinHandlerNotificationReceiverProtocol: class {
+    func sendNotification(event: PinNotification, flow: PinFlow?, error: SdkError?)
+}
+
 enum PINEntryMode {
     case login
     case registration
@@ -29,6 +33,7 @@ class PinHandler: NSObject {
     var pinEntryToVerify = Array<String>()
     var changePinCompletion: ((Bool, SdkError?) -> Void)?
     unowned var pinReceiver: PinHandlerToReceiverProtocol?
+    unowned var notificationReceiver: PinHandlerNotificationReceiverProtocol?
 
     func processPin(pinEntry: Array<String>) {
         let pincode = pinEntry.joined()
@@ -52,7 +57,8 @@ class PinHandler: NSObject {
     }
 
     private func sendConnectorNotification(_ event: PinNotification, _ flow: PinFlow?, _ error: SdkError?) {
-        BridgeConnector.shared?.toPinHandlerConnector.sendNotification(event: event, flow: flow, error: error)
+        notificationReceiver?.sendNotification(event: event, flow: flow, error: error)
+//        BridgeConnector.shared?.toPinHandlerConnector.sendNotification(event: event, flow: flow, error: error)
     }
 }
 

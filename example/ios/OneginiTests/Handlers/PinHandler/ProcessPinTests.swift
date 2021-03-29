@@ -1,33 +1,28 @@
-//
-//  PinHandlerTests.swift
-//  OneginiTests
-//
-//  Created by Patryk Gałach on 29/03/2021.
-//
-
 import XCTest
 @testable import onegini
 
-class PinHandlerTests: XCTestCase, PinHandlerToReceiverProtocol {
+class ProcessPinTests: XCTestCase, PinHandlerToReceiverProtocol {
     var handler: PinHandler?
     var pinHanlderCallback: (_ pin: String?) -> () = { _ in }
     
     override func setUpWithError() throws {
-        print("[TESTS] set up with error")
         try super.setUpWithError()
         handler = PinHandler()
+        handler!.pinReceiver = self
     }
 
     override func tearDownWithError() throws {
-        print("[TESTS] tear down with error")
         handler = nil
         pinHanlderCallback = { _ in }
         try super.tearDownWithError()
     }
+    
+    func handlePin(pin: String?) {
+        pinHanlderCallback(pin)
+    }
 
-    func testProcessPinLoginMode() throws {
-        let expectation = self.expectation(description: "testProcessPinLoginMode")
-        handler!.pinReceiver = self
+    func testProcessPinWithLoginMode() throws {
+        let expectation = self.expectation(description: "testProcessPinWithLoginMode")
         handler!.mode = PINEntryMode.login
         
         let testPin = "12312"
@@ -41,9 +36,8 @@ class PinHandlerTests: XCTestCase, PinHandlerToReceiverProtocol {
         waitForExpectations(timeout: 5, handler: nil)
     }
     
-    func testProcessPinRegisterMode() throws {
-        let expectation = self.expectation(description: "testProcessPinRegisterMode")
-        handler!.pinReceiver = self
+    func testProcessPinWithRegisterMode() throws {
+        let expectation = self.expectation(description: "testProcessPinWithRegisterMode")
         handler!.mode = PINEntryMode.registration
         
         let testPin = "12312"
@@ -57,9 +51,8 @@ class PinHandlerTests: XCTestCase, PinHandlerToReceiverProtocol {
         waitForExpectations(timeout: 5, handler: nil)
     }
     
-    func testProcessPinNoneMode() throws {
-        let expectation = self.expectation(description: "testProcessPinNoneMode")
-        handler!.pinReceiver = self
+    func testProcessPinWithoutMode() throws {
+        let expectation = self.expectation(description: "testProcessPinWithoutMode")
         handler!.mode = nil
         
         let testPin = "12312"
@@ -73,8 +66,8 @@ class PinHandlerTests: XCTestCase, PinHandlerToReceiverProtocol {
         waitForExpectations(timeout: 5, handler: nil)
     }
     
-    func testProcessPinNoPin() throws {
-        let expectation = self.expectation(description: "testProcessPinNoPin")
+    func testProcessPinWithoutNoPin() throws {
+        let expectation = self.expectation(description: "testProcessPinWithoutNoPin")
         handler!.pinReceiver = self
         
         pinHanlderCallback =  {
@@ -85,9 +78,5 @@ class PinHandlerTests: XCTestCase, PinHandlerToReceiverProtocol {
         
         handler!.processPin(pinEntry: [])
         waitForExpectations(timeout: 5, handler: nil)
-    }
-    
-    func handlePin(pin: String?) {
-        pinHanlderCallback(pin)
     }
 }

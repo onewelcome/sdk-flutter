@@ -29,7 +29,7 @@ class OneginiTests: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func testStartApp() throws {
+    func testaStartApp() throws {
         let call = FlutterMethodCall(methodName: "startApp",
                                      arguments: ["readTimeout": 25,
                                                  "twoStepCustomIdentityProviderIds": "2-way-otp-api",
