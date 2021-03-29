@@ -83,8 +83,7 @@ class OnMethodCallMapper(var context: Context) {
         val oneginiCustomIdentityProviderList = mutableListOf<OneginiCustomIdentityProvider>()
         val identityProviderIds = twoStepCustomIdentityProviderIds?.split(",")?.map { it.trim() }
         identityProviderIds?.forEach { oneginiCustomIdentityProviderList.add(CustomTwoStepIdentityProvider(it)) }
-        OneginiSDK().initSDK(context,connectionTimeout?.toLong(),readTimeout?.toLong(),oneginiCustomIdentityProviderList)
-        val oneginiClient: OneginiClient = OneginiSDK().getOneginiClient(context)
+        val oneginiClient: OneginiClient = OneginiSDK().initSDK(context,connectionTimeout?.toLong(),readTimeout?.toLong(),oneginiCustomIdentityProviderList)
         oneginiClient.start(object : OneginiInitializationHandler {
             override fun onSuccess(removedUserProfiles: Set<UserProfile?>?) {
                 val removedUserProfileArray: ArrayList<Map<String, Any>> = ArrayList()
@@ -116,7 +115,7 @@ class OnMethodCallMapper(var context: Context) {
             return
         }
         val targetUri: Uri = Uri.parse(url)
-        OneginiSDK.getOneginiClient(context).userClient.getAppToWebSingleSignOn(targetUri, object : OneginiAppToWebSingleSignOnHandler {
+        OneginiSDK().getOneginiClient(context).userClient.getAppToWebSingleSignOn(targetUri, object : OneginiAppToWebSingleSignOnHandler {
             override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {
                 result.success(Gson().toJson(mapOf("token" to oneginiAppToWebSingleSignOn.token, "redirectUrl" to oneginiAppToWebSingleSignOn.redirectUrl)))
             }
@@ -129,7 +128,7 @@ class OnMethodCallMapper(var context: Context) {
     }
 
     private fun logout(result: MethodChannel.Result) {
-        OneginiSDK.getOneginiClient(context).userClient.logout(object : OneginiLogoutHandler {
+        OneginiSDK().getOneginiClient(context).userClient.logout(object : OneginiLogoutHandler {
             override fun onSuccess() {
                 result.success(true)
             }
@@ -140,8 +139,8 @@ class OnMethodCallMapper(var context: Context) {
         })
     }
 
-    fun startChangePinFlow(context:Context,result: MethodChannel.Result) {
-        OneginiSDK.getOneginiClient(context).userClient.changePin(object : OneginiChangePinHandler {
+    private fun startChangePinFlow(context:Context, result: MethodChannel.Result) {
+        OneginiSDK().getOneginiClient(context).userClient.changePin(object : OneginiChangePinHandler {
             override fun onSuccess() {
                 result.success("Pin change successfully")
             }
