@@ -1,7 +1,7 @@
 import XCTest
 @testable import onegini
 
-class ProcessPinTests: XCTestCase, PinHandlerToReceiverProtocol {
+class PinHandler_PinProvidedTests: XCTestCase, PinHandlerToReceiverProtocol {
     var handler: PinHandler?
     var pinHanlderCallback: (_ pin: String?) -> () = { _ in }
     
@@ -32,7 +32,7 @@ class ProcessPinTests: XCTestCase, PinHandlerToReceiverProtocol {
             expectation.fulfill()
         }
         
-        handler!.processPin(pinEntry: [testPin])
+        handler!.onPinProvided(pin: testPin)
         waitForExpectations(timeout: 5, handler: nil)
     }
     
@@ -47,7 +47,7 @@ class ProcessPinTests: XCTestCase, PinHandlerToReceiverProtocol {
             expectation.fulfill()
         }
         
-        handler!.processPin(pinEntry: [testPin])
+        handler!.onPinProvided(pin: testPin)
         waitForExpectations(timeout: 5, handler: nil)
     }
     
@@ -62,7 +62,7 @@ class ProcessPinTests: XCTestCase, PinHandlerToReceiverProtocol {
             expectation.fulfill()
         }
         
-        handler!.processPin(pinEntry: [testPin])
+        handler!.onPinProvided(pin: testPin)
         waitForExpectations(timeout: 5, handler: nil)
     }
     
@@ -76,7 +76,7 @@ class ProcessPinTests: XCTestCase, PinHandlerToReceiverProtocol {
             expectation.fulfill()
         }
         
-        handler!.processPin(pinEntry: [])
+        handler!.onPinProvided(pin: "")
         waitForExpectations(timeout: 5, handler: nil)
     }
 }

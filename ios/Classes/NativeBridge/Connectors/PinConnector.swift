@@ -1,14 +1,13 @@
 //MARK: - BridgeToPinConnectorProtocol
-protocol BridgeToPinConnectorProtocol: AnyObject {
+protocol BridgeToPinConnectorProtocol: NotificationReceiverProtocol {
     var bridgeConnector: BridgeConnectorProtocol? { get set }
     var pinHandler: PinConnectorToPinHandler { get }
 
     func handlePinAction(_ flow: String, _ action: String, _ pin: String) -> Void
-    func sendNotification(event: PinNotification, flow: PinFlow?, error: SdkError?) -> Void
 }
 
 //MARK: - PinConnector
-class PinConnector : BridgeToPinConnectorProtocol, PinHandlerNotificationReceiverProtocol {
+class PinConnector : BridgeToPinConnectorProtocol, NotificationReceiverProtocol {
     var pinHandler: PinConnectorToPinHandler
     unowned var bridgeConnector: BridgeConnectorProtocol?
 

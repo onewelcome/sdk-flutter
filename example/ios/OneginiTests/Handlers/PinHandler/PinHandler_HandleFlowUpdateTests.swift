@@ -1,7 +1,7 @@
 import XCTest
 @testable import onegini
 
-class HandleFlowUpdateTests: XCTestCase, PinHandlerToReceiverProtocol, PinHandlerNotificationReceiverProtocol {
+class PinHandler_HandleFlowUpdateTests: XCTestCase, PinHandlerToReceiverProtocol, NotificationReceiverProtocol {
 
     var handler: PinHandler?
     var pinHanlderCallback: (_ pin: String?) -> () = { _ in }
@@ -36,7 +36,7 @@ class HandleFlowUpdateTests: XCTestCase, PinHandlerToReceiverProtocol, PinHandle
             event, flow, error in
             XCTAssert(event == PinNotification.open)
             XCTAssert(flow == PinFlow.create)
-            XCTAssertNil(nil)
+            XCTAssertNil(error)
             expectation.fulfill()
         }
         
@@ -51,7 +51,7 @@ class HandleFlowUpdateTests: XCTestCase, PinHandlerToReceiverProtocol, PinHandle
             event, flow, error in
             XCTAssert(event == PinNotification.openAuth)
             XCTAssert(flow == PinFlow.authentication)
-            XCTAssertNil(nil)
+            XCTAssertNil(error)
             expectation.fulfill()
         }
         
@@ -66,7 +66,7 @@ class HandleFlowUpdateTests: XCTestCase, PinHandlerToReceiverProtocol, PinHandle
             event, flow, error in
             XCTAssert(event == PinNotification.open)
             XCTAssert(flow == PinFlow.change)
-            XCTAssertNil(nil)
+            XCTAssertNil(error)
             expectation.fulfill()
         }
         
