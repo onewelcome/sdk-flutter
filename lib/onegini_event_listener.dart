@@ -1,5 +1,4 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'constants/constants.dart';
@@ -10,6 +9,7 @@ abstract class OneginiEventListener {
   static const chanel_name = 'onegini_events';
   static const EventChannel _eventChannel = const EventChannel(chanel_name);
 
+
   BuildContext? _context;
 
   set context(BuildContext context) {
@@ -18,99 +18,95 @@ abstract class OneginiEventListener {
 
   void listen() {
     _eventChannel.receiveBroadcastStream(chanel_name).listen((event) {
-      if (_context == null) return;
-      print("event -> $event");
       switch (event) {
         case Constants.eventOpenPin: //2
-          openPinRequestScreen(_context!);
+          openPinRequestScreen(_context);
           break;
         case Constants.eventOpenPinAuth: //1
-          openPinScreenAuth(_context!);
+          openPinScreenAuth(_context);
           break;
         case Constants.eventOpenPinAuthenticator:
-          openPinAuthenticator(_context!);
+          openPinAuthenticator(_context);
           break;
         case Constants.eventClosePin:
-          closePin(_context!);
+          closePin(_context);
           break;
         case Constants.eventClosePinAuth:
-          closePinAuth(_context!);
+          closePinAuth(_context);
           break;
         case Constants.eventOpenFingerprintAuth:
-          openFingerprintScreen(_context!);
+          openFingerprintScreen(_context);
           break;
         case Constants.eventShowScanningFingerprintAuth:
-          showScanningFingerprint(_context!);
+          showScanningFingerprint(_context);
           break;
         case Constants.eventReceivedFingerprintAuth:
-          receivedFingerprint(_context!);
+          receivedFingerprint(_context);
           break;
         case Constants.eventCloseFingerprintAuth:
-          closeFingerprintScreen(_context!);
+          closeFingerprintScreen(_context);
           break;
         case Constants.eventCloseAuthOTP:
-          closeAuthOtp(_context!);
+          closeAuthOtp(_context);
           break;
         default:
           if (event != null) {
             Event _event = eventFromJson(event);
             if (_event.eventName == Constants.eventNextAuthenticationAttempt) {
               nextAuthenticationAttempt(
-                  _context!, authenticationAttemptFromJson(_event.eventValue!));
+                  _context, authenticationAttemptFromJson(_event.eventValue!));
             }
             if (_event.eventName == Constants.eventOpenAuthOTP) {
-              openAuthOtp(_context!, _event.eventValue!);
+              openAuthOtp(_context, _event.eventValue!);
             }
             if (_event.eventName ==
                 Constants.openCustomTwoStepRegistrationScreen) {
               openCustomTwoStepRegistrationScreen(
-                  _context!, _event.eventValue!);
-              // }if(_event.eventName == Constants.eventError){
-              //   eventError(_context!, PlatformException(code: _event.eventValue!,message: "error"));
+                  _context, _event.eventValue!);
             }
             if (_event.eventName == Constants.eventError) {
-              showError(_context!, _event.eventValue);
+              showError(_context, _event.eventValue);
             } else {
-              eventOther(_context!, _event);
+              eventOther(_context, _event);
             }
           }
       }
     }).onError((error) {
-      eventError(_context!, error);
+      eventError(_context, error);
     });
   }
 
-  void openAuthOtp(BuildContext buildContext, String message);
+  void openAuthOtp(BuildContext? buildContext, String message);
 
-  void closeAuthOtp(BuildContext buildContext);
+  void closeAuthOtp(BuildContext? buildContext);
 
-  void openPinRequestScreen(BuildContext buildContext);
+  void openPinRequestScreen(BuildContext? buildContext);
 
-  void openPinScreenAuth(BuildContext buildContext);
+  void openPinScreenAuth(BuildContext? buildContext);
 
-  void openPinAuthenticator(BuildContext buildContext);
+  void openPinAuthenticator(BuildContext? buildContext);
 
   void nextAuthenticationAttempt(
-      BuildContext buildContext, AuthenticationAttempt authenticationAttempt);
+      BuildContext? buildContext, AuthenticationAttempt authenticationAttempt);
 
-  void closePin(BuildContext buildContext);
+  void closePin(BuildContext? buildContext);
 
-  void closePinAuth(BuildContext buildContext);
+  void closePinAuth(BuildContext? buildContext);
 
-  void openFingerprintScreen(BuildContext buildContext);
+  void openFingerprintScreen(BuildContext? buildContext);
 
-  void showScanningFingerprint(BuildContext buildContext);
+  void showScanningFingerprint(BuildContext? buildContext);
 
-  void receivedFingerprint(BuildContext buildContext);
+  void receivedFingerprint(BuildContext? buildContext);
 
-  void closeFingerprintScreen(BuildContext buildContext);
+  void closeFingerprintScreen(BuildContext? buildContext);
 
   void openCustomTwoStepRegistrationScreen(
-      BuildContext buildContext, String data);
+      BuildContext? buildContext, String data);
 
-  void eventError(BuildContext buildContext, PlatformException error);
+  void eventError(BuildContext? buildContext, PlatformException error);
 
-  void showError(BuildContext buildContext, String? errorMessage);
+  void showError(BuildContext? buildContext, String? errorMessage);
 
-  void eventOther(BuildContext buildContext, Event event);
+  void eventOther(BuildContext? buildContext, Event event);
 }

@@ -419,7 +419,7 @@ class _InfoState extends State<Info> {
                                   style: TextStyle(fontSize: 18),
                                 ),
                                 Text(
-                                  snapshot.data.applicationIdentifier,
+                                  snapshot.data.applicationIdentifier ?? "",
                                   style: TextStyle(fontSize: 18),
                                 )
                               ],
@@ -434,7 +434,7 @@ class _InfoState extends State<Info> {
                                   style: TextStyle(fontSize: 18),
                                 ),
                                 Text(
-                                  snapshot.data.applicationPlatform,
+                                  snapshot.data.applicationPlatform ?? "",
                                   style: TextStyle(fontSize: 18),
                                 )
                               ],
@@ -449,7 +449,7 @@ class _InfoState extends State<Info> {
                                   style: TextStyle(fontSize: 18),
                                 ),
                                 Text(
-                                  snapshot.data.applicationVersion,
+                                  snapshot.data.applicationVersion ?? "",
                                   style: TextStyle(fontSize: 18),
                                 )
                               ],
