@@ -2,7 +2,6 @@ package com.onegini.mobile.sdk.flutter
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import android.util.Patterns
 import androidx.annotation.NonNull
 import com.google.gson.Gson
@@ -83,16 +82,23 @@ class OnMethodCallMapper(var context: Context) {
 
         val oneginiCustomIdentityProviderList = mutableListOf<OneginiCustomIdentityProvider>()
         val identityProviderIds = twoStepCustomIdentityProviderIds?.split(",")?.map { it.trim() }
-        Log.v("PROVIDER", identityProviderIds?.size.toString())
         identityProviderIds?.forEach { oneginiCustomIdentityProviderList.add(CustomTwoStepIdentityProvider(it)) }
-        OneginiSDK(
+        val oneginiClient: OneginiClient = OneginiSDK(
                 httpConnectionTimeout = connectionTimeout?.toLong(),
                 httpReadTimeout = readTimeout?.toLong(),
                 oneginiCustomIdentityProviders = oneginiCustomIdentityProviderList).buildSDK(context)
-        val oneginiClient: OneginiClient = OneginiSDK.getOneginiClient(context)
         oneginiClient.start(object : OneginiInitializationHandler {
             override fun onSuccess(removedUserProfiles: Set<UserProfile?>?) {
-                result.success(Gson().toJson(removedUserProfiles))
+                val removedUserProfileArray: ArrayList<Map<String, Any>> = ArrayList()
+                if(removedUserProfiles!=null){
+                    for (userProfile in removedUserProfiles) {
+                        val map = mutableMapOf<String, Any>()
+                        map["isDefault"] = userProfile?.isDefault ?: false
+                        map["profileId"] = userProfile?.profileId ?: ""
+                        removedUserProfileArray.add(map)
+                    }
+                }
+                result.success(Gson().toJson(removedUserProfileArray))
             }
 
             override fun onError(error: OneginiInitializationError) {

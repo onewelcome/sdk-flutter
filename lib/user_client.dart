@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'constants/constants.dart';
-import 'model/onegini_identity_provider.dart';
+import 'model/onegini_list_response.dart';
 import 'onegini.dart';
 
 class UserClient {

@@ -1,6 +1,5 @@
 package com.onegini.mobile.sdk.flutter.providers
 
-import android.util.Log
 import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomTwoStepRegistrationAction
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiCustomRegistrationCallback

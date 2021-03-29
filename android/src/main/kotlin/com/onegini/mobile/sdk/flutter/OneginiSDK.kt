@@ -10,9 +10,9 @@ import com.onegini.mobile.sdk.flutter.handlers.*
 import java.util.concurrent.TimeUnit
 
 
-class OneginiSDK( var httpConnectionTimeout: Long? = 5,
-                  var httpReadTimeout: Long? = 25,
-                  var oneginiCustomIdentityProviders : List<OneginiCustomIdentityProvider> = mutableListOf(),) {
+class OneginiSDK(var httpConnectionTimeout: Long? = 5,
+                 var httpReadTimeout: Long? = 25,
+                 var oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider> = mutableListOf()) {
 
     companion object {
         var oneginiClientConfigModel: OneginiClientConfigModel? = null
@@ -29,7 +29,8 @@ class OneginiSDK( var httpConnectionTimeout: Long? = 5,
 
     fun buildSDK(context: Context): OneginiClient {
         if (oneginiClientConfigModel == null) throw Exception("OneginiClientConfigModel must be not null!")
-        val applicationContext = context.applicationContext ?: throw  Exception ("Context can`t be null!")
+        val applicationContext = context.applicationContext
+                ?: throw  Exception("Context can`t be null!")
         val registrationRequestHandler = RegistrationRequestHandler(applicationContext)
         val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
         val pinAuthenticationRequestHandler = PinAuthenticationRequestHandler()
@@ -38,7 +39,8 @@ class OneginiSDK( var httpConnectionTimeout: Long? = 5,
         val clientBuilder = OneginiClientBuilder(applicationContext, createPinRequestHandler, pinAuthenticationRequestHandler) // handlers for optional functionalities
                 .setBrowserRegistrationRequestHandler(registrationRequestHandler)
                 .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler)
-                .setHttpConnectTimeout(TimeUnit.SECONDS.toMillis(httpConnectionTimeout ?: 5).toInt())
+                .setHttpConnectTimeout(TimeUnit.SECONDS.toMillis(httpConnectionTimeout
+                        ?: 5).toInt())
                 .setHttpReadTimeout(TimeUnit.SECONDS.toMillis(httpReadTimeout ?: 25).toInt())
                 .setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
                 .setSecurityController(oneginiSecurityController)
