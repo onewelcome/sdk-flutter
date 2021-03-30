@@ -2,11 +2,11 @@ import XCTest
 import OneginiSDKiOS
 @testable import onegini
 
-class PinHandler_ChangePinCallTests: XCTestCase, PinHandlerToReceiverProtocol, NotificationReceiverProtocol {
+class PinHandler_ChangePinCallTests: XCTestCase, PinHandlerToReceiverProtocol, PinNotificationReceiverProtocol {
 
     var handler: PinHandler?
-    var pinHanlderCallback: (_ pin: String?) -> () = { _ in }
-    var notificationCallback: (_ event: PinNotification, _ flow: PinFlow?, _ error: SdkError?) -> () = {_,_,_ in }
+    var pinHanlderCallback: ((_ pin: String?) -> ())?
+    var notificationCallback: ((_ event: PinNotification, _ flow: PinFlow?, _ error: SdkError?) -> ())?
     
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -17,17 +17,17 @@ class PinHandler_ChangePinCallTests: XCTestCase, PinHandlerToReceiverProtocol, N
 
     override func tearDownWithError() throws {
         handler = nil
-        pinHanlderCallback = { _ in }
-        notificationCallback = {_,_,_ in }
+        pinHanlderCallback = nil
+        notificationCallback = nil
         try super.tearDownWithError()
     }
     
     func handlePin(pin: String?) {
-        pinHanlderCallback(pin)
+        pinHanlderCallback?(pin)
     }
     
     func sendNotification(event: PinNotification, flow: PinFlow?, error: SdkError?) {
-        notificationCallback(event, flow, error)
+        notificationCallback?(event, flow, error)
     }
     
     func testOnChangePinCalled() throws {

@@ -3,7 +3,7 @@ import XCTest
 
 class PinHandler_CancelTests: XCTestCase, PinHandlerToReceiverProtocol {
     var handler: PinHandler?
-    var pinHanlderCallback: (_ pin: String?) -> () = { _ in }
+    var pinHanlderCallback: ((_ pin: String?) -> ())?
     
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -13,12 +13,12 @@ class PinHandler_CancelTests: XCTestCase, PinHandlerToReceiverProtocol {
 
     override func tearDownWithError() throws {
         handler = nil
-        pinHanlderCallback = { _ in }
+        pinHanlderCallback = nil
         try super.tearDownWithError()
     }
     
     func handlePin(pin: String?) {
-        pinHanlderCallback(pin)
+        pinHanlderCallback?(pin)
     }
 
     func testOnCancel() throws {

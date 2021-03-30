@@ -1,5 +1,5 @@
 //MARK: - BridgeToPinConnectorProtocol
-protocol BridgeToPinConnectorProtocol: NotificationReceiverProtocol {
+protocol BridgeToPinConnectorProtocol: PinNotificationReceiverProtocol {
     var bridgeConnector: BridgeConnectorProtocol? { get set }
     var pinHandler: PinConnectorToPinHandler { get }
 
@@ -7,7 +7,7 @@ protocol BridgeToPinConnectorProtocol: NotificationReceiverProtocol {
 }
 
 //MARK: - PinConnector
-class PinConnector : BridgeToPinConnectorProtocol, NotificationReceiverProtocol {
+class PinConnector : BridgeToPinConnectorProtocol, PinNotificationReceiverProtocol {
     var pinHandler: PinConnectorToPinHandler
     unowned var bridgeConnector: BridgeConnectorProtocol?
 
