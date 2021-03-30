@@ -3,8 +3,12 @@ import OneginiCrypto
 import Flutter
 
 //MARK: -
-protocol BridgeToLoginHandlerProtocol: AnyObject {
+protocol BridgeToLoginHandlerProtocol: LoginHandlerToPinHanlderProtocol {
     func authenticateUser(_ profile: ONGUserProfile, authenticator: ONGAuthenticator?, completion: @escaping (ONGUserProfile?, SdkError?) -> Void)
+}
+
+protocol LoginHandlerToPinHanlderProtocol: class {
+    var pinHandler: PinConnectorToPinHandler? { get set }
 }
 
 //MARK: -
@@ -12,6 +16,8 @@ class LoginHandler: NSObject, PinHandlerToReceiverProtocol {
     var pinChallenge: ONGPinChallenge?
     var loginCompletion: ((ONGUserProfile?, SdkError?) -> Void)?
 
+    unowned var pinHandler: PinConnectorToPinHandler?
+    
     func handlePin(pin: String?) {
         guard let pinChallenge = self.pinChallenge else { return }
 
@@ -45,12 +51,12 @@ extension LoginHandler: ONGAuthenticationDelegate {
     func userClient(_: ONGUserClient, didReceive challenge: ONGPinChallenge) {
         pinChallenge = challenge
         let pinError = mapErrorFromPinChallenge(challenge)
-        BridgeConnector.shared?.toPinHandlerConnector.pinHandler.handleFlowUpdate(PinFlow.authentication, pinError, receiver: self)
+        
+        pinHandler?.handleFlowUpdate(PinFlow.authentication, pinError, receiver: self)
         
         guard let _ = pinError else { return }
-        BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
-        
-        OneginiModuleSwift.sharedInstance.cancelPinAuth()
+        pinHandler?.closeFlow()
+        pinHandler?.onCancel()
         
         loginCompletion?(nil, pinError)
     }
@@ -62,12 +68,12 @@ extension LoginHandler: ONGAuthenticationDelegate {
     func userClient(_: ONGUserClient, didAuthenticateUser userProfile: ONGUserProfile, info _: ONGCustomInfo?) {
         pinChallenge = nil
         loginCompletion?(userProfile, nil)
-        BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
+        pinHandler?.closeFlow()
     }
 
     func userClient(_: ONGUserClient, didFailToAuthenticateUser profile: ONGUserProfile, error: Error) {
         pinChallenge = nil
-        BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
+        pinHandler?.closeFlow()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
             loginCompletion?(nil, SdkError.init(customType: .loginCanceled))

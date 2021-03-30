@@ -86,6 +86,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     }
 
     func handleRedirectURL(url: URL?) {
+        print("[\(type(of: self))] handleRedirectURL url: \(url)")
         guard let browserRegistrationChallenge = self.browserRegistrationChallenge else { return }
         if let _url = url {
             browserRegistrationChallenge.sender.respond(with: _url, challenge: browserRegistrationChallenge)

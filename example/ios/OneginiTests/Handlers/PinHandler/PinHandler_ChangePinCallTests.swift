@@ -5,7 +5,7 @@ import OneginiSDKiOS
 class PinHandler_ChangePinCallTests: XCTestCase, PinHandlerToReceiverProtocol, PinNotificationReceiverProtocol {
 
     var handler: PinHandler?
-    var pinHanlderCallback: ((_ pin: String?) -> ())?
+    var pinHandlerCallback: ((_ pin: String?) -> ())?
     var notificationCallback: ((_ event: PinNotification, _ flow: PinFlow?, _ error: SdkError?) -> ())?
     
     override func setUpWithError() throws {
@@ -17,13 +17,13 @@ class PinHandler_ChangePinCallTests: XCTestCase, PinHandlerToReceiverProtocol, P
 
     override func tearDownWithError() throws {
         handler = nil
-        pinHanlderCallback = nil
+        pinHandlerCallback = nil
         notificationCallback = nil
         try super.tearDownWithError()
     }
     
     func handlePin(pin: String?) {
-        pinHanlderCallback?(pin)
+        pinHandlerCallback?(pin)
     }
     
     func sendNotification(event: PinNotification, flow: PinFlow?, error: SdkError?) {
@@ -31,12 +31,17 @@ class PinHandler_ChangePinCallTests: XCTestCase, PinHandlerToReceiverProtocol, P
     }
     
     func testOnChangePinCalled() throws {
+        var expectation = self.expectation(description: "startOneginiModule")
+        OneginiModuleSwift.sharedInstance.startOneginiModule { (callback) in
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 10, handler: nil)
         
-        // TODO: implement it - user first need to be logged in
-        XCTAssertTrue(false, "Method not implemented")
-        return
+//        // TODO: implement it - user first need to be logged in
+//        XCTAssertTrue(false, "Method not implemented")
+//        return
         
-        let expectation = self.expectation(description: "testOnChangePinCalled")
+        expectation = self.expectation(description: "testOnChangePinCalled")
         
         notificationCallback = {
             event, flow, error in
@@ -47,7 +52,7 @@ class PinHandler_ChangePinCallTests: XCTestCase, PinHandlerToReceiverProtocol, P
             expectation.fulfill()
         }
         
-        pinHanlderCallback = {
+        pinHandlerCallback = {
             pin in
             print("[TEST] Pin: pin: \(String(describing: pin))")
             XCTAssertNotNil(pin)
@@ -55,8 +60,8 @@ class PinHandler_ChangePinCallTests: XCTestCase, PinHandlerToReceiverProtocol, P
         }
         
         print("[TEST] Before change pin called")
-        handler!.onChangePinCalled { (_, error) in
-            print("[TEST] Change pin completed")
+        handler!.onChangePinCalled { (success, error) in
+            print("[TEST] Change pin completed: \(success) ; e:\(error?.errorDescription)")
             expectation.fulfill()
         }
         

@@ -3,7 +3,7 @@ import XCTest
 
 class PinHandler_PinProvidedTests: XCTestCase, PinHandlerToReceiverProtocol {
     var handler: PinHandler?
-    var pinHanlderCallback: ((_ pin: String?) -> ())?
+    var pinHandlerCallback: ((_ pin: String?) -> ())?
     
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -13,12 +13,12 @@ class PinHandler_PinProvidedTests: XCTestCase, PinHandlerToReceiverProtocol {
 
     override func tearDownWithError() throws {
         handler = nil
-        pinHanlderCallback = nil
+        pinHandlerCallback = nil
         try super.tearDownWithError()
     }
     
     func handlePin(pin: String?) {
-        pinHanlderCallback?(pin)
+        pinHandlerCallback?(pin)
     }
 
     func testProcessPinWithLoginMode() throws {
@@ -26,7 +26,7 @@ class PinHandler_PinProvidedTests: XCTestCase, PinHandlerToReceiverProtocol {
         handler!.mode = PINEntryMode.login
         
         let testPin = "12312"
-        pinHanlderCallback =  {
+        pinHandlerCallback = {
             pin in
             XCTAssert(testPin == pin)
             expectation.fulfill()
@@ -41,7 +41,7 @@ class PinHandler_PinProvidedTests: XCTestCase, PinHandlerToReceiverProtocol {
         handler!.mode = PINEntryMode.registration
         
         let testPin = "12312"
-        pinHanlderCallback =  {
+        pinHandlerCallback = {
             pin in
             XCTAssert(testPin == pin)
             expectation.fulfill()
@@ -56,7 +56,7 @@ class PinHandler_PinProvidedTests: XCTestCase, PinHandlerToReceiverProtocol {
         handler!.mode = nil
         
         let testPin = "12312"
-        pinHanlderCallback =  {
+        pinHandlerCallback = {
             pin in
             XCTAssert(testPin == pin)
             expectation.fulfill()
@@ -70,7 +70,7 @@ class PinHandler_PinProvidedTests: XCTestCase, PinHandlerToReceiverProtocol {
         let expectation = self.expectation(description: "testProcessPinWithoutNoPin")
         handler!.pinReceiver = self
         
-        pinHanlderCallback =  {
+        pinHandlerCallback = {
             pin in
             XCTAssert(pin == "")
             expectation.fulfill()

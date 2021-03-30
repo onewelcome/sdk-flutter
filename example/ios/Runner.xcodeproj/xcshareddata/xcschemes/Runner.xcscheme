@@ -46,6 +46,11 @@
                BlueprintName = "OneginiTests"
                ReferencedContainer = "container:Runner.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "OneginiTests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>

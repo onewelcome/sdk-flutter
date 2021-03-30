@@ -22,7 +22,9 @@ class BridgeConnector: BridgeConnectorProtocol {
         self.toPinHandlerConnector.bridgeConnector = self
         BridgeConnector.shared = self
         
-        self.toRegistrationConnector.registrationHandler.pinHandler = self.toPinHandlerConnector.pinHandler
+        let pinHandler = self.toPinHandlerConnector.pinHandler
+        self.toRegistrationConnector.registrationHandler.pinHandler = pinHandler
+        self.toLoginHandler.pinHandler = pinHandler
     }
   
     func sendBridgeEvent(eventName: OneginiBridgeEvents, data: Any!) {

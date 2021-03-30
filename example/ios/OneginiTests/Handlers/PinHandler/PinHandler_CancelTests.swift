@@ -3,7 +3,7 @@ import XCTest
 
 class PinHandler_CancelTests: XCTestCase, PinHandlerToReceiverProtocol {
     var handler: PinHandler?
-    var pinHanlderCallback: ((_ pin: String?) -> ())?
+    var pinHandlerCallback: ((_ pin: String?) -> ())?
     
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -13,19 +13,19 @@ class PinHandler_CancelTests: XCTestCase, PinHandlerToReceiverProtocol {
 
     override func tearDownWithError() throws {
         handler = nil
-        pinHanlderCallback = nil
+        pinHandlerCallback = nil
         try super.tearDownWithError()
     }
     
     func handlePin(pin: String?) {
-        pinHanlderCallback?(pin)
+        pinHandlerCallback?(pin)
     }
 
     func testOnCancel() throws {
         let expectation = self.expectation(description: "testOnCancel")
         handler!.mode = PINEntryMode.login
         
-        pinHanlderCallback = {
+        pinHandlerCallback = {
             pin in
             print("[Test] OnCancel callback")
             XCTAssertNil(self.handler!.mode)

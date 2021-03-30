@@ -4,7 +4,7 @@ import XCTest
 class PinHandler_HandleFlowUpdateTests: XCTestCase, PinHandlerToReceiverProtocol, PinNotificationReceiverProtocol {
 
     var handler: PinHandler?
-    var pinHanlderCallback: ((_ pin: String?) -> ())?
+    var pinHandlerCallback: ((_ pin: String?) -> ())?
     var notificationCallback: ((_ event: PinNotification, _ flow: PinFlow?, _ error: SdkError?) -> ())?
     
     override func setUpWithError() throws {
@@ -16,13 +16,13 @@ class PinHandler_HandleFlowUpdateTests: XCTestCase, PinHandlerToReceiverProtocol
 
     override func tearDownWithError() throws {
         handler = nil
-        pinHanlderCallback = nil
+        pinHandlerCallback = nil
         notificationCallback = nil
         try super.tearDownWithError()
     }
     
     func handlePin(pin: String?) {
-        pinHanlderCallback?(pin)
+        pinHandlerCallback?(pin)
     }
     
     func sendNotification(event: PinNotification, flow: PinFlow?, error: SdkError?) {
