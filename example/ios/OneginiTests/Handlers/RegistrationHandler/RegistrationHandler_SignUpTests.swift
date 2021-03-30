@@ -33,7 +33,7 @@ class RegistrationHandler_SignUpTests: XCTestCase {
             expectation.fulfill()
         })
         
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 40, handler: nil)
     }
     
     func testSignUpWithInvalidId() throws {
@@ -42,6 +42,7 @@ class RegistrationHandler_SignUpTests: XCTestCase {
         OneginiModuleSwift.sharedInstance.startOneginiModule { (callback) in
             expectation.fulfill()
         }
+        
         waitForExpectations(timeout: 5, handler: nil)
         
         expectation = self.expectation(description: "testSignUpWithInvalidId")

@@ -1,10 +1,10 @@
 import XCTest
 @testable import onegini
 
-class PinHandler_CloseFlowTests: XCTestCase, NotificationReceiverProtocol {
+class PinHandler_CloseFlowTests: XCTestCase, PinNotificationReceiverProtocol {
 
     var handler: PinHandler?
-    var notificationCallback: (_ event: PinNotification, _ flow: PinFlow?, _ error: SdkError?) -> () = {_,_,_ in }
+    var notificationCallback: ((_ event: PinNotification, _ flow: PinFlow?, _ error: SdkError?) -> ())?
     
     override func setUpWithError() throws {
         try super.setUpWithError()
@@ -14,12 +14,12 @@ class PinHandler_CloseFlowTests: XCTestCase, NotificationReceiverProtocol {
 
     override func tearDownWithError() throws {
         handler = nil
-        notificationCallback = {_,_,_ in }
+        notificationCallback = nil
         try super.tearDownWithError()
     }
     
     func sendNotification(event: PinNotification, flow: PinFlow?, error: SdkError?) {
-        notificationCallback(event, flow, error)
+        notificationCallback?(event, flow, error)
     }
     
     func testCloseFlowForLogin() throws {
