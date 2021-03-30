@@ -8,6 +8,10 @@
 
 /* Begin PBXBuildFile section */
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
+		225FF1D02612FF1800261557 /* ResourcesHandler_AuthenticateDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 225FF1CF2612FF1800261557 /* ResourcesHandler_AuthenticateDeviceTests.swift */; };
+		229F405F26131933000EA9B8 /* ResourcesHandler_AuthenticateImplicitlyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F405E26131933000EA9B8 /* ResourcesHandler_AuthenticateImplicitlyTests.swift */; };
+		229F406D26134203000EA9B8 /* ResourcesHandler_ResourceRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F406C26134203000EA9B8 /* ResourcesHandler_ResourceRequestTests.swift */; };
+		229F407126134528000EA9B8 /* ResourcesHandler_FetchSimpleResourcesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F407026134528000EA9B8 /* ResourcesHandler_FetchSimpleResourcesTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		5F07F1A5260DFB910073BA5E /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F07F1A4260DFB910073BA5E /* Pods_Runner.framework */; };
 		5F07F1B8260DFCFC0073BA5E /* OneginiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F07F1B7260DFCFC0073BA5E /* OneginiTests.swift */; };
@@ -53,6 +57,10 @@
 /* Begin PBXFileReference section */
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
+		225FF1CF2612FF1800261557 /* ResourcesHandler_AuthenticateDeviceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourcesHandler_AuthenticateDeviceTests.swift; sourceTree = "<group>"; };
+		229F405E26131933000EA9B8 /* ResourcesHandler_AuthenticateImplicitlyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourcesHandler_AuthenticateImplicitlyTests.swift; sourceTree = "<group>"; };
+		229F406C26134203000EA9B8 /* ResourcesHandler_ResourceRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourcesHandler_ResourceRequestTests.swift; sourceTree = "<group>"; };
+		229F407026134528000EA9B8 /* ResourcesHandler_FetchSimpleResourcesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourcesHandler_FetchSimpleResourcesTests.swift; sourceTree = "<group>"; };
 		296D560E6DBF20366A24FC19 /* Pods-OneginiTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneginiTests.profile.xcconfig"; path = "Target Support Files/Pods-OneginiTests/Pods-OneginiTests.profile.xcconfig"; sourceTree = "<group>"; };
 		34B2E28612E67C30D1F9DCDE /* Pods-OneginiTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneginiTests.release.xcconfig"; path = "Target Support Files/Pods-OneginiTests/Pods-OneginiTests.release.xcconfig"; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
@@ -121,6 +129,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		225FF1CE2612FEBD00261557 /* ResourcesHandler */ = {
+			isa = PBXGroup;
+			children = (
+				225FF1CF2612FF1800261557 /* ResourcesHandler_AuthenticateDeviceTests.swift */,
+				229F405E26131933000EA9B8 /* ResourcesHandler_AuthenticateImplicitlyTests.swift */,
+				229F406C26134203000EA9B8 /* ResourcesHandler_ResourceRequestTests.swift */,
+				229F407026134528000EA9B8 /* ResourcesHandler_FetchSimpleResourcesTests.swift */,
+			);
+			path = ResourcesHandler;
+			sourceTree = "<group>";
+		};
 		5F07F1B6260DFCFC0073BA5E /* OneginiTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -147,6 +166,7 @@
 		5FFE1DC02611C4E5003EF280 /* Handlers */ = {
 			isa = PBXGroup;
 			children = (
+				225FF1CE2612FEBD00261557 /* ResourcesHandler */,
 				5FFE1DE226127466003EF280 /* RegistrationHandler */,
 				5FFE1DC52611DCC4003EF280 /* PinHandler */,
 			);
@@ -460,10 +480,14 @@
 				5FFE1DC22611C50F003EF280 /* PinHandler_PinProvidedTests.swift in Sources */,
 				5FFE1DDA2612601D003EF280 /* PinHandler_ChangePinCallTests.swift in Sources */,
 				5FFE1DD426125C15003EF280 /* PinHandler_CancelTests.swift in Sources */,
+				225FF1D02612FF1800261557 /* ResourcesHandler_AuthenticateDeviceTests.swift in Sources */,
+				229F406D26134203000EA9B8 /* ResourcesHandler_ResourceRequestTests.swift in Sources */,
 				5FFE1DD726125E32003EF280 /* PinHandler_CloseFlowTests.swift in Sources */,
 				5FFE1DCD2611EE8F003EF280 /* PinHandler_HandleFlowUpdateTests.swift in Sources */,
 				5FFE1DE4261274EC003EF280 /* RegistrationHandler_SignUpTests.swift in Sources */,
 				5F07F1B8260DFCFC0073BA5E /* OneginiTests.swift in Sources */,
+				229F407126134528000EA9B8 /* ResourcesHandler_FetchSimpleResourcesTests.swift in Sources */,
+				229F405F26131933000EA9B8 /* ResourcesHandler_AuthenticateImplicitlyTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
