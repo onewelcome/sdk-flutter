@@ -23,7 +23,7 @@ class ResourcesHandler_ResourceRequestTests: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func testResourceRequestWithImplicitly() throws {
+    func testResourceRequestWithImplicitlyError() throws {
         var expectation = self.expectation(description: "startOneginiModule")
 
         OneginiModuleSwift.sharedInstance.startOneginiModule { (callback) in
@@ -34,7 +34,7 @@ class ResourcesHandler_ResourceRequestTests: XCTestCase {
         expectation = self.expectation(description: "authenticateImplicitly")
 
         var parameters = [String: Any]()
-        parameters["path"] = "path"
+        parameters["path"] = "devices"
         parameters["encoding"] = "application/x-www-form-urlencoded";
         parameters["method"] = "GET"
 
@@ -45,8 +45,8 @@ class ResourcesHandler_ResourceRequestTests: XCTestCase {
         })
         waitForExpectations(timeout: 5, handler: nil)
     }
-
-    func testResourceRequestWithNoImplicitly() throws {
+    
+    func testResourceRequestWithNoImplicitlyError() throws {
         var expectation = self.expectation(description: "startOneginiModule")
 
         OneginiModuleSwift.sharedInstance.startOneginiModule { (callback) in
@@ -57,7 +57,7 @@ class ResourcesHandler_ResourceRequestTests: XCTestCase {
         expectation = self.expectation(description: "authenticateImplicitly")
 
         var parameters = [String: Any]()
-        parameters["path"] = "path"
+        parameters["path"] = "application-details"
         parameters["encoding"] = "application/x-www-form-urlencoded";
         parameters["method"] = "GET"
 

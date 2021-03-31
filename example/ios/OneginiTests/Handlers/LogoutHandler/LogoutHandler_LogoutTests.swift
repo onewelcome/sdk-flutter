@@ -1,19 +1,19 @@
 //
-//  ResourcesHandler_authenticateDevice.swift
+//  LogoutHandler_LogoutTests.swift
 //  OneginiTests
 //
-//  Created by Mateusz Mirkowski on 30/03/2021.
+//  Created by Mateusz Mirkowski on 31/03/2021.
 //
 
 import XCTest
 @testable import onegini
 
-class ResourcesHandler_AuthenticateDeviceTests: XCTestCase {
-    var handler: ResourcesHandler?
+class LogoutHandler_LogoutTests: XCTestCase {
+    var handler: LogoutHandler?
 
     override func setUpWithError() throws {
         try super.setUpWithError()
-        handler = ResourcesHandler()
+        handler = LogoutHandler()
     }
 
     override func tearDownWithError() throws {
@@ -21,7 +21,8 @@ class ResourcesHandler_AuthenticateDeviceTests: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func testAuthenticateDeviceWithApplicationDetails() throws {
+
+    func testLogout() throws {
         var expectation = self.expectation(description: "startOneginiModule")
 
         OneginiModuleSwift.sharedInstance.startOneginiModule { (callback) in
@@ -29,15 +30,15 @@ class ResourcesHandler_AuthenticateDeviceTests: XCTestCase {
         }
         waitForExpectations(timeout: 5, handler: nil)
 
-        let path = "application-details"
-        expectation = self.expectation(description: path)
+        expectation = self.expectation(description: "logout")
 
-        handler?.authenticateDevice(path, completion: { (success, error) in
-            XCTAssertTrue(success)
+        handler?.logout(completion: { (error) in
             XCTAssertNil(error)
-
             expectation.fulfill()
         })
-        waitForExpectations(timeout: 10, handler: nil)
+
+        waitForExpectations(timeout: 5, handler: nil)
     }
+
+
 }

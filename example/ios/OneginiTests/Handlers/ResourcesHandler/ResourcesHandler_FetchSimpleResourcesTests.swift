@@ -22,6 +22,7 @@ class ResourcesHandler_FetchSimpleResourcesTests: XCTestCase {
         try super.tearDownWithError()
     }
 
+    // WiP
     func testFetchSimpleResourceWithApplicationDetails() throws {
         var expectation = self.expectation(description: "startOneginiModule")
 

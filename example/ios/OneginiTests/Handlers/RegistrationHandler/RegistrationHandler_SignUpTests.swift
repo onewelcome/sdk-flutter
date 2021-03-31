@@ -15,7 +15,7 @@ class RegistrationHandler_SignUpTests: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func <() throws {
+    func testSignUpWithDummyId() throws {
         var expectation = self.expectation(description: "startOneginiModule")
         
         OneginiModuleSwift.sharedInstance.startOneginiModule { (callback) in
