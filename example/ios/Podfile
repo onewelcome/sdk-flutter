@@ -40,6 +40,9 @@ target 'Runner' do
   target 'OneginiTests' do
     inherit! :search_paths
   end
+  target 'OneginiUITests' do
+    inherit! :complete
+  end
 end
 
 post_install do |installer|
