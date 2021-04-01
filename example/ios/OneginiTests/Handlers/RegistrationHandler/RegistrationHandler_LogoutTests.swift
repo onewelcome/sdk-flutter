@@ -16,7 +16,6 @@ class RegistrationHandler_LogoutTests: XCTestCase {
     }
     
     func testLogout() throws {
-        
         let expectation = self.expectation(description: "testLogout")
         
         handler?.logout(completion: { (error) in

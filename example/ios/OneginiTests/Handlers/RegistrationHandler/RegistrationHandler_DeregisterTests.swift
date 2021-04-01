@@ -16,7 +16,6 @@ class RegistrationHandler_DeregisterTests: XCTestCase {
     }
     
     func testDeregister() throws {
-        
         let expectation = self.expectation(description: "testDeregister")
         
         handler?.deregister(completion: { (error) in

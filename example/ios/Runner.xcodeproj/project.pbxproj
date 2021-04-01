@@ -25,6 +25,11 @@
 		5F1ADDDF26146EE30055B23D /* OneginiUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F1ADDDE26146EE30055B23D /* OneginiUITests.swift */; };
 		5F1ADDEE2614701E0055B23D /* RegistrationHandler_SignUpUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F1ADDED2614701E0055B23D /* RegistrationHandler_SignUpUITests.swift */; };
 		5F7937E1261621FE001AEE71 /* DisconnectHandler_DisconnectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7937E0261621FE001AEE71 /* DisconnectHandler_DisconnectTests.swift */; };
+		5F7937E7261623EE001AEE71 /* RegistrationHandler_ProcessOTPCodeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7937E6261623EE001AEE71 /* RegistrationHandler_ProcessOTPCodeTests.swift */; };
+		5F7937EB26162405001AEE71 /* RegistrationHandler_ProcessTwoStepRegistrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7937EA26162405001AEE71 /* RegistrationHandler_ProcessTwoStepRegistrationTests.swift */; };
+		5F7937EF26162418001AEE71 /* RegistrationHandler_CancelTwoStepRegistrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7937EE26162418001AEE71 /* RegistrationHandler_CancelTwoStepRegistrationTests.swift */; };
+		5F7937F32616242F001AEE71 /* RegistrationHandler_CancelCustomRegistrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7937F22616242F001AEE71 /* RegistrationHandler_CancelCustomRegistrationTests.swift */; };
+		5F7937F726162443001AEE71 /* RegistrationHandler_CurrentChallengeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7937F626162443001AEE71 /* RegistrationHandler_CurrentChallengeTests.swift */; };
 		5FFE1DC22611C50F003EF280 /* PinHandler_PinProvidedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFE1DC12611C50F003EF280 /* PinHandler_PinProvidedTests.swift */; };
 		5FFE1DCD2611EE8F003EF280 /* PinHandler_HandleFlowUpdateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFE1DCC2611EE8F003EF280 /* PinHandler_HandleFlowUpdateTests.swift */; };
 		5FFE1DD426125C15003EF280 /* PinHandler_CancelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFE1DD326125C15003EF280 /* PinHandler_CancelTests.swift */; };
@@ -112,6 +117,11 @@
 		5F1ADDE026146EE30055B23D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5F1ADDED2614701E0055B23D /* RegistrationHandler_SignUpUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationHandler_SignUpUITests.swift; sourceTree = "<group>"; };
 		5F7937E0261621FE001AEE71 /* DisconnectHandler_DisconnectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisconnectHandler_DisconnectTests.swift; sourceTree = "<group>"; };
+		5F7937E6261623EE001AEE71 /* RegistrationHandler_ProcessOTPCodeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationHandler_ProcessOTPCodeTests.swift; sourceTree = "<group>"; };
+		5F7937EA26162405001AEE71 /* RegistrationHandler_ProcessTwoStepRegistrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationHandler_ProcessTwoStepRegistrationTests.swift; sourceTree = "<group>"; };
+		5F7937EE26162418001AEE71 /* RegistrationHandler_CancelTwoStepRegistrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationHandler_CancelTwoStepRegistrationTests.swift; sourceTree = "<group>"; };
+		5F7937F22616242F001AEE71 /* RegistrationHandler_CancelCustomRegistrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationHandler_CancelCustomRegistrationTests.swift; sourceTree = "<group>"; };
+		5F7937F626162443001AEE71 /* RegistrationHandler_CurrentChallengeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationHandler_CurrentChallengeTests.swift; sourceTree = "<group>"; };
 		5FFE1DC12611C50F003EF280 /* PinHandler_PinProvidedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinHandler_PinProvidedTests.swift; sourceTree = "<group>"; };
 		5FFE1DCC2611EE8F003EF280 /* PinHandler_HandleFlowUpdateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinHandler_HandleFlowUpdateTests.swift; sourceTree = "<group>"; };
 		5FFE1DD326125C15003EF280 /* PinHandler_CancelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinHandler_CancelTests.swift; sourceTree = "<group>"; };
@@ -292,11 +302,16 @@
 		5FFE1DE226127466003EF280 /* RegistrationHandler */ = {
 			isa = PBXGroup;
 			children = (
+				5F7937F22616242F001AEE71 /* RegistrationHandler_CancelCustomRegistrationTests.swift */,
 				5F176CBE2615C499003E4B74 /* RegistrationHandler_CancelRegistrationTests.swift */,
+				5F7937EE26162418001AEE71 /* RegistrationHandler_CancelTwoStepRegistrationTests.swift */,
+				5F7937F626162443001AEE71 /* RegistrationHandler_CurrentChallengeTests.swift */,
 				5F176CCB2615C4E8003E4B74 /* RegistrationHandler_DeregisterTests.swift */,
 				5F176CCF2615C4FF003E4B74 /* RegistrationHandler_IdentityProvidersTests.swift */,
 				5F176CC72615C4DA003E4B74 /* RegistrationHandler_LogoutTests.swift */,
+				5F7937E6261623EE001AEE71 /* RegistrationHandler_ProcessOTPCodeTests.swift */,
 				5F176CC22615C4BA003E4B74 /* RegistrationHandler_ProcessRedirectURLTests.swift */,
+				5F7937EA26162405001AEE71 /* RegistrationHandler_ProcessTwoStepRegistrationTests.swift */,
 				5FFE1DE3261274EC003EF280 /* RegistrationHandler_SignUpTests.swift */,
 			);
 			path = RegistrationHandler;
@@ -663,7 +678,9 @@
 				5FFE1DC22611C50F003EF280 /* PinHandler_PinProvidedTests.swift in Sources */,
 				229F409226145C23000EA9B8 /* LogoutHandler_LogoutTests.swift in Sources */,
 				5FFE1DDA2612601D003EF280 /* PinHandler_ChangePinCallTests.swift in Sources */,
+				5F7937F726162443001AEE71 /* RegistrationHandler_CurrentChallengeTests.swift in Sources */,
 				5F1ADDD02613A3F60055B23D /* LoginHandler_AuthenticateUserTests.swift in Sources */,
+				5F7937E7261623EE001AEE71 /* RegistrationHandler_ProcessOTPCodeTests.swift in Sources */,
 				5F176CD02615C4FF003E4B74 /* RegistrationHandler_IdentityProvidersTests.swift in Sources */,
 				5FFE1DD426125C15003EF280 /* PinHandler_CancelTests.swift in Sources */,
 				5F176CC82615C4DA003E4B74 /* RegistrationHandler_LogoutTests.swift in Sources */,
@@ -673,6 +690,9 @@
 				5FFE1DCD2611EE8F003EF280 /* PinHandler_HandleFlowUpdateTests.swift in Sources */,
 				5FFE1DE4261274EC003EF280 /* RegistrationHandler_SignUpTests.swift in Sources */,
 				5F176CBF2615C499003E4B74 /* RegistrationHandler_CancelRegistrationTests.swift in Sources */,
+				5F7937F32616242F001AEE71 /* RegistrationHandler_CancelCustomRegistrationTests.swift in Sources */,
+				5F7937EB26162405001AEE71 /* RegistrationHandler_ProcessTwoStepRegistrationTests.swift in Sources */,
+				5F7937EF26162418001AEE71 /* RegistrationHandler_CancelTwoStepRegistrationTests.swift in Sources */,
 				5F07F1B8260DFCFC0073BA5E /* OneginiTests.swift in Sources */,
 				5F176CCC2615C4E8003E4B74 /* RegistrationHandler_DeregisterTests.swift in Sources */,
 				5F176CC32615C4BA003E4B74 /* RegistrationHandler_ProcessRedirectURLTests.swift in Sources */,
