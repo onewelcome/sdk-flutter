@@ -63,6 +63,7 @@ class LoginHandler_AuthenticateUserTests: XCTestCase, PinConnectorToPinHandler {
         
         handleFlowUpdateCallback = {
             flow, error, receiver in
+            print("[\(type(of: self))] handleFlowUpdate callback")
             XCTAssert(flow == .authentication)
             XCTAssertNil(error)
             

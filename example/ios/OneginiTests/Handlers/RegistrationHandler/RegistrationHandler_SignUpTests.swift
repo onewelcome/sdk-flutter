@@ -12,12 +12,12 @@ class RegistrationHandler_SignUpTests: XCTestCase, BrowserHandlerProtocol {
     }
 
     override func tearDownWithError() throws {
-        handler?.cancelRegistration()
         handler = nil
         try super.tearDownWithError()
     }
     
     func handleUrl(url: URL) {
+        print("[\(type(of: self))] handleUrl : \(url)")
         urlHandlerCallback?(url)
     }
 
@@ -34,18 +34,17 @@ class RegistrationHandler_SignUpTests: XCTestCase, BrowserHandlerProtocol {
         urlHandlerCallback = {
             url in
             XCTAssertNotNil(url)
-            expectation.fulfill()
-        }
-        
-        addTeardownBlock {
             self.handler?.cancelRegistration()
         }
         
         // TODO: handle sign up without browser or find better way
         let dummyProviderId = "Dummy-IDP"
-        handler?.signUp(dummyProviderId, completion: { (_, _, _) in })
+        handler?.signUp(dummyProviderId, completion: { (success, userProfile, error) in
+            print("[\(type(of: self))] sign up completion - \(success) ; e: \(error?.errorDescription)")
+            expectation.fulfill()
+        })
         
-        waitForExpectations(timeout: 40, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testSignUpWithInvalidId() throws {
@@ -58,6 +57,12 @@ class RegistrationHandler_SignUpTests: XCTestCase, BrowserHandlerProtocol {
         waitForExpectations(timeout: 5, handler: nil)
         
         expectation = self.expectation(description: "testSignUpWithInvalidId")
+        
+        urlHandlerCallback = {
+            url in
+            XCTAssertNotNil(url)
+            self.handler?.cancelRegistration()
+        }
         
         let invalidProviderId = "some-invalid-provider-id"
         handler?.signUp(invalidProviderId, completion: { (success, userProfile, error) in
