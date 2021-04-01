@@ -48,7 +48,7 @@
             </BuildableReference>
             <SkippedTests>
                <Test
-                  Identifier = "OneginiTests">
+                  Identifier = "OneginiTests/testDeregisterUser()">
                </Test>
             </SkippedTests>
          </TestableReference>

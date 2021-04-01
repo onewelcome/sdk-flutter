@@ -10,26 +10,22 @@ import XCTest
 @testable import onegini
 
 class OneginiTests: XCTestCase {
-    var plugin: SwiftOneginiPlugin?
+    var plugin: SwiftOneginiPlugin? = SwiftOneginiPlugin()
     var module: OneginiModuleSwift?
     
     override func setUpWithError() throws {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
-        print("[TESTS] set up with error")
         try super.setUpWithError()
-        plugin = SwiftOneginiPlugin()
+//        plugin = SwiftOneginiPlugin()
         module = OneginiModuleSwift.sharedInstance
     }
 
     override func tearDownWithError() throws {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
-        print("[TESTS] tear down")
-        plugin = nil
+//        plugin = nil
         module = nil
         try super.tearDownWithError()
     }
 
-    func testaStartApp() throws {
+    func testaaaStartApp() throws {
         let call = FlutterMethodCall(methodName: "startApp",
                                      arguments: ["readTimeout": 25,
                                                  "twoStepCustomIdentityProviderIds": "2-way-otp-api",
@@ -37,13 +33,13 @@ class OneginiTests: XCTestCase {
         let expectation = self.expectation(description: "startApp")
         
         plugin!.handle( call, result: { (result) -> Void in
-            print ("[TEST - startApp] result type: \(type(of: result!))\n result description " + result.debugDescription)
+            print ("[\(type(of: self))](testaaaStartApp) result type: \(type(of: result!))\n result description " + result.debugDescription)
             
             XCTAssert(result is String)
             expectation.fulfill()
         })
         
-        waitForExpectations(timeout: 5, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
     }
     
     func testGetIdentityProviders() throws {
@@ -51,7 +47,7 @@ class OneginiTests: XCTestCase {
         let expectation = self.expectation(description: "getIdentityProviders")
         
         plugin!.handle( call, result: {(result)->Void in
-            print ("[TEST - getIdentityProviders] result type: \(type(of: result!))\n result description " + result.debugDescription)
+            print ("[\(type(of: self))](testGetIdentityProviders) result type: \(type(of: result!))\n result description " + result.debugDescription)
             
             XCTAssert(result is String)
             expectation.fulfill()
@@ -65,7 +61,7 @@ class OneginiTests: XCTestCase {
         let expectation = self.expectation(description: "getRegisteredAuthenticators")
         
         plugin!.handle( call, result: {(result)->Void in
-            print ("[TEST - getRegisteredAuthenticators] result type: \(type(of: result!))\n result description " + result.debugDescription)
+            print ("[\(type(of: self))](testGetRegisteredAuthenticators) result type: \(type(of: result!))\n result description " + result.debugDescription)
             
             XCTAssert(!(result is FlutterError))
             expectation.fulfill()
@@ -79,13 +75,70 @@ class OneginiTests: XCTestCase {
         let expectation = self.expectation(description: "getAllNotRegisteredAuthenticators")
         
         plugin!.handle( call, result: {(result)->Void in
-            print ("[TEST - getAllNotRegisteredAuthenticators] result type: \(type(of: result!))\n result description " + result.debugDescription)
+            print ("[\(type(of: self))](testGetAllNotRegisteredAuthenticators) result type: \(type(of: result!))\n result description " + result.debugDescription)
             
             XCTAssert(!(result is FlutterError))
             expectation.fulfill()
         })
         
         waitForExpectations(timeout: 5, handler: nil)
+    }
+    
+    func testaAuthenticateUserWithPinSuccessful() throws {
+        
+        let call = FlutterMethodCall( methodName: "authenticateUser",
+                                      arguments: ["registeredAuthenticatorId": nil] )
+        let expectation = self.expectation(description: "testAuthenticateUserWithPin")
+        
+        plugin!.handle( call, result: {(result)->Void in
+            print ("[\(type(of: self))](testaAuthenticateUserWithPin) result type: \(type(of: result!))\n result description: \(result.debugDescription) ")
+            
+            if let error = result as? FlutterError {
+                print("[\(type(of: self))] error: \(error)")
+            }
+            
+            XCTAssert(!(result is FlutterError))
+            expectation.fulfill()
+        })
+        
+        try acceptPinAuthenticationRequest()
+        
+        waitForExpectations(timeout: 15, handler: nil)
+    }
+    
+    func testaAuthenticateUserWithPinDenied() throws {
+        
+        let call = FlutterMethodCall( methodName: "authenticateUser",
+                                      arguments: ["registeredAuthenticatorId": nil] )
+        let expectation = self.expectation(description: "testAuthenticateUserWithPin")
+        
+        plugin!.handle( call, result: {(result)->Void in
+            print ("[\(type(of: self))](testaAuthenticateUserWithPin) result type: \(type(of: result!))\n result description: \(result.debugDescription) ")
+            
+            if let error = result as? FlutterError {
+                print("[\(type(of: self))] error: \(error)")
+            }
+            
+            XCTAssert(result is FlutterError)
+            expectation.fulfill()
+        })
+        
+        try denyPinAuthenticationRequest()
+        
+        waitForExpectations(timeout: 15, handler: nil)
+    }
+    
+    func acceptPinAuthenticationRequest() throws {
+        let call = FlutterMethodCall( methodName: "acceptPinAuthenticationRequest",
+                                      arguments: ["pin": "55663"] )
+        
+        plugin!.handle( call, result: {(result)->Void in })
+    }
+    
+    func denyPinAuthenticationRequest() throws {
+        let call = FlutterMethodCall( methodName: "denyPinAuthenticationRequest",
+                                      arguments: nil )
+        plugin!.handle( call, result: {(result)->Void in })
     }
     
     func testDeregisterUser() throws {
@@ -93,7 +146,7 @@ class OneginiTests: XCTestCase {
         let expectation = self.expectation(description: "deregisterUser")
         
         plugin!.handle( call, result: {(result)->Void in
-            print ("[TEST - deregisterUser] result type: \(type(of: result!))\n result description " + result.debugDescription)
+            print ("[\(type(of: self))](testDeregisterUser) result type: \(type(of: result!))\n result description " + result.debugDescription)
             
             XCTAssert(!(result is FlutterError))
             expectation.fulfill()
@@ -102,12 +155,12 @@ class OneginiTests: XCTestCase {
         waitForExpectations(timeout: 5, handler: nil)
     }
     
-    func testLogout() throws {
+    func testzLogout() throws {
         let call = FlutterMethodCall( methodName: "logout", arguments: nil )
         let expectation = self.expectation(description: "logout")
         
         plugin!.handle( call, result: {(result)->Void in
-            print ("[TEST - logout] result type: \(type(of: result!))\n result description " + result.debugDescription)
+            print ("[\(type(of: self))](testLogout) result type: \(type(of: result!))\n result description " + result.debugDescription)
             
             XCTAssert(!(result is FlutterError))
             expectation.fulfill()
@@ -121,7 +174,7 @@ class OneginiTests: XCTestCase {
         let expectation = self.expectation(description: "notImplementedMethodName")
         
         plugin!.handle( call, result: {(result)->Void in
-            print ("[TEST - notImplementedMethodName] result type: \(type(of: result!))\n result description " + result.debugDescription)
+            print ("[\(type(of: self))](testNotImplementedMethod) result type: \(type(of: result!))\n result description " + result.debugDescription)
             
             XCTAssert(!(result is String))
             expectation.fulfill()
@@ -129,17 +182,4 @@ class OneginiTests: XCTestCase {
         
         waitForExpectations(timeout: 1, handler: nil)
     }
-    
-    func testExample() throws {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
-    }
-
-    func testPerformanceExample() throws {
-        // This is an example of a performance test case.
-        measure {
-            // Put the code you want to measure the time of here.
-        }
-    }
-
 }

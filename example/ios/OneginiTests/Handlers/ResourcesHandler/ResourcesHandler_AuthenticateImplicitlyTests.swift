@@ -29,13 +29,15 @@ class ResourcesHandler_AuthenticateImplicitlyTests: XCTestCase {
         OneginiModuleSwift.sharedInstance.startOneginiModule { (callback) in
             expectation.fulfill()
         }
-        waitForExpectations(timeout: 5, handler: nil)
-
-        let profile = ONGUserProfile(id: "121212")
+        
+        waitForExpectations(timeout: 10, handler: nil)
 
         expectation = self.expectation(description: "authenticateImplicitly")
 
+        let profile = ONGUserProfile(id: "121212")
+        
         handler?.authenticateImplicitly(profile!) { success, error in
+            print("[\(type(of: self))] auth implicity: \(success) - \(error?.errorDescription)")
             expectation.fulfill()
         }
         waitForExpectations(timeout: 5, handler: nil)
