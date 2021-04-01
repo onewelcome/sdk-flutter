@@ -344,7 +344,7 @@ class _InfoState extends State<Info> {
   Future<ApplicationDetails> getApplicationDetails() async {
     var response = await Onegini.instance.resourcesMethods
         .getResourceWithAnonymousResourceOkHttpClient(
-            "application-details", "application-details");
+            "application-details", scope : "application-details");
     return applicationDetailsFromJson(response);
   }
 
@@ -357,7 +357,7 @@ class _InfoState extends State<Info> {
   Future<String> getImplicitUserDetails() async {
     var response = await Onegini.instance.resourcesMethods
         .getResourceWithImplicitResourceOkHttpClient(
-            "user-id-decorated", "read");
+            "user-id-decorated", scope: "read");
     Map<String, dynamic> responseAsJson = json.decode(response);
     return responseAsJson["decorated_user_id"];
   }

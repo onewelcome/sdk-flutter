@@ -29,7 +29,7 @@ class ResourceHelper(private var context: Context, private var call: MethodCall,
         // "application-details"
         //"application/json"
         val request = getRequest()
-        val scope = call.argument<String>("scope") ?: "application-details"
+        val scope = call.argument<String>("scope")
         getAnonymousClient(scope, request)
     }
 
@@ -37,7 +37,7 @@ class ResourceHelper(private var context: Context, private var call: MethodCall,
         // "read"
         // user-id-decorated
         val request = getRequest()
-        val scope = call.argument<String>("scope") ?: "read"
+        val scope = call.argument<String>("scope")
         getSecuredImplicitUserClient(scope, request)
     }
 
@@ -49,7 +49,7 @@ class ResourceHelper(private var context: Context, private var call: MethodCall,
     }
 
 
-    private fun getAnonymousClient(scope: String, request: Request) {
+    private fun getAnonymousClient(scope: String?, request: Request) {
         val okHttpClient: OkHttpClient = OneginiSDK().getOneginiClient(context).deviceClient.anonymousResourceOkHttpClient
         OneginiSDK().getOneginiClient(context).deviceClient.authenticateDevice(arrayOf(scope), object : OneginiDeviceAuthenticationHandler {
             override fun onSuccess() {
@@ -68,7 +68,7 @@ class ResourceHelper(private var context: Context, private var call: MethodCall,
         makeRequest(okHttpClient, request, result)
     }
 
-    private fun getSecuredImplicitUserClient(scope: String, request: Request) {
+    private fun getSecuredImplicitUserClient(scope: String?, request: Request) {
         val okHttpClient = OneginiSDK().getOneginiClient(context).userClient.implicitResourceOkHttpClient
         val userProfile = OneginiSDK().getOneginiClient(context).userClient.authenticatedUserProfile
         if (userProfile == null) {

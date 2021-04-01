@@ -8,7 +8,8 @@ import 'onegini.dart';
 class ResourcesMethods {
   Future<String> getResourceWithAnonymousResourceOkHttpClient(
     String path,
-    String scope, {
+    {
+      String? scope,
     Map<String, String>? headers,
     String? method,
     String? encoding,
@@ -68,7 +69,8 @@ class ResourcesMethods {
 
   Future<String> getResourceWithImplicitResourceOkHttpClient(
     String path,
-    String scope, {
+     {
+        String? scope,
     Map<String, String>? headers,
     String? method,
     String? encoding,
