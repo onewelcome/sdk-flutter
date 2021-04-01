@@ -124,22 +124,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     
     //MARK: - Bridge
     func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
-        var newParameters = [String: Any]()
-        newParameters["path"] = path
-        newParameters["encoding"] = parameters["encoding"] ?? "application/x-www-form-urlencoded";
-        newParameters["method"] = parameters["method"] ?? "GET"
-
-        if let headers = parameters["headers"] {
-            newParameters["headers"] = headers
-        }
-
-        if let body = parameters["body"] {
-            newParameters["body"] = body
-        }
-
-        if let scope = parameters["scope"] {
-            newParameters["scope"] = scope
-        }
+        let newParameters = generateParameters(from: parameters, path: path)
 
         OneginiModuleSwift.sharedInstance.authenticateDeviceForResource(path) { (data) in
             guard let value = data, let _value = value as? Bool, _value else {
@@ -164,22 +149,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     }
     
     func fetchAnonymousResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
-        var newParameters = [String: Any]()
-        newParameters["path"] = path
-        newParameters["encoding"] = parameters["encoding"] ?? "application/x-www-form-urlencoded";
-        newParameters["method"] = parameters["method"] ?? "GET"
-
-        if let headers = parameters["headers"] {
-            newParameters["headers"] = headers
-        }
-
-        if let body = parameters["body"] {
-            newParameters["body"] = body
-        }
-
-        if let scope = parameters["scope"] {
-            newParameters["scope"] = scope
-        }
+        let newParameters = generateParameters(from: parameters, path: path)
 
         OneginiModuleSwift.sharedInstance.resourceRequest(false, parameters: newParameters) { (_data, error) in
             if let _errorResource = error {
@@ -203,22 +173,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             return
         }
         
-        var newParameters = [String: Any]()
-        newParameters["path"] = path
-        newParameters["encoding"] = parameters["encoding"] ?? "application/x-www-form-urlencoded";
-        newParameters["method"] = parameters["method"] ?? "GET"
-
-        if let headers = parameters["headers"] {
-            newParameters["headers"] = headers
-        }
-
-        if let body = parameters["body"] {
-            newParameters["body"] = body
-        }
-
-        if let scope = parameters["scope"] {
-            newParameters["scope"] = scope
-        }
+        let newParameters = generateParameters(from: parameters, path: path)
         
         OneginiModuleSwift.sharedInstance.authenticateUserImplicitly(_profile.profileId) { (value, error) in
             if (error == nil) {
@@ -234,5 +189,28 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 completion(error)
             }
         }
+    }
+    
+    func generateParameters(from parameters: [String: Any?], path: String) -> [String: Any] {
+        let buffer = parameters.filter { !($0.1 is NSNull) }
+        
+        var newParameters = [String: Any]()
+        newParameters["path"] = path
+        newParameters["encoding"] = buffer["encoding"] ?? "application/x-www-form-urlencoded"
+        newParameters["method"] = buffer["method"] ?? "GET"
+
+        if let headers = buffer["headers"] {
+            newParameters["headers"] = headers
+        }
+
+        if let body = buffer["body"] {
+            newParameters["body"] = body
+        }
+
+        if let scope = buffer["scope"] {
+            newParameters["scope"] = scope
+        }
+        
+        return newParameters
     }
 }
