@@ -62,6 +62,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             if !success {
                 let mappedError = ErrorMapper().mapError(error)
                 completion(success, mappedError)
+                return
             }
             completion(success, nil)
         }
