@@ -1,96 +1,273 @@
 package com.onegini.mobile.sdk
 
 import android.content.Context
-import com.google.gson.Gson
+import android.net.Uri
+import com.onegini.mobile.sdk.android.client.DeviceClient
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
-import com.onegini.mobile.sdk.android.handlers.OneginiInitializationHandler
-import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
-import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
+import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiBrowserRegistrationCallback
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.IOneginiClient
-import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepIdentityProvider
+import com.onegini.mobile.sdk.flutter.OnMethodCallMapper
+import com.onegini.mobile.sdk.flutter.constants.Constants
+import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
+import com.onegini.mobile.sdk.flutter.helpers.AuthenticationObject
+import com.onegini.mobile.sdk.flutter.helpers.MobileAuthenticationObject
+import com.onegini.mobile.sdk.flutter.helpers.RegistrationHelper
+import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
+import com.onegini.mobile.sdk.utils.OnegeniProvider
+import com.onegini.mobile.sdk.utils.OneginiAuthenticator
 import com.onegini.mobile.sdk.utils.OneginiConfigModel
-import com.onegini.mobile.sdk.utils.SecurityController
+import com.onegini.mobile.sdk.utils.RxSchedulerRule
+import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import io.mockk.MockKAnnotations
-import io.mockk.every
-import io.mockk.impl.annotations.MockK
-import io.mockk.impl.annotations.RelaxedMockK
-import io.mockk.mockk
+import okhttp3.OkHttpClient
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
-import org.mockito.Mockito.mock
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito.*
 import org.mockito.MockitoAnnotations
+import org.mockito.junit.MockitoJUnitRunner
 
+
+@RunWith(MockitoJUnitRunner::class)
 class OneginiPluginTest {
 
-
-    @MockK
+    @Mock
     lateinit var client: OneginiClient
 
-    @MockK
-    lateinit var oneginiSDK: IOneginiClient
-
-    @MockK
+    @Mock
     lateinit var userClient: UserClient
 
+    @Mock
+    lateinit var userProfile: UserProfile
 
-    @RelaxedMockK
-    lateinit var mockAndroidContext: Context
+    @Mock
+    lateinit var context: Context
 
     private val mockResult = mock(MethodChannel.Result::class.java)
 
+    @get:Rule
+    var rxSchedulerRule = RxSchedulerRule()
 
     @Before
     fun attach() {
         MockitoAnnotations.initMocks(this)
-        MockKAnnotations.init(this, relaxUnitFun = true)
-        OneginiSDK.oneginiClientConfigModel = OneginiConfigModel()
-        OneginiSDK.oneginiSecurityController = SecurityController::class.java
-        every { oneginiSDK.initSDK(mockAndroidContext) } returns client
-        every { oneginiSDK.getOneginiClient(mockAndroidContext) } returns client
-        every { client.userClient } returns userClient
-
+        `when`(client.userClient).thenReturn(userClient)
     }
 
     @Test
-    fun testStartApp() {
-        val twoStepCustomIdentityProviderIds: String? = null
-        val oneginiCustomIdentityProviderList = mutableListOf<OneginiCustomIdentityProvider>()
-        val identityProviderIds = twoStepCustomIdentityProviderIds?.split(",")?.map { it.trim() }
-        identityProviderIds?.forEach { oneginiCustomIdentityProviderList.add(CustomTwoStepIdentityProvider(it)) }
-        val oneginiClient: OneginiClient = oneginiSDK.getOneginiClient(mockAndroidContext)
-        oneginiClient.start(object : OneginiInitializationHandler {
-            override fun onSuccess(removedUserProfiles: Set<UserProfile?>?) {
-                mockResult.success(Gson().toJson(removedUserProfiles))
-            }
-
-            override fun onError(error: OneginiInitializationError) {
-                mockResult.error(error.errorType.toString(), error.message, null)
-            }
-        })
+    fun `registration without identity provider`() {
+        RegistrationHelper.registerUser(null, null, mockResult, client)
     }
 
     @Test
-    fun testRegistrationWithIdentityProvider() {
-        val provider = mockk<OneginiIdentityProvider>()
-        every { provider.id } returns "test"
-        every { userClient.identityProviders } returns mutableSetOf(provider)
-        val identityProviderId = "test"
-        val identityProviders = oneginiSDK.getOneginiClient(mockAndroidContext).userClient.identityProviders
-        for (identityProvider in identityProviders) {
-            if (identityProvider.id == identityProviderId) {
-                assert(true)
-                break
-            }
-            assert(false)
-        }
-
-
+    fun `registration with identity provider`() {
+        val set = mutableSetOf<OneginiIdentityProvider>()
+        set.add(OnegeniProvider())
+        `when`(userClient.identityProviders).thenReturn(set)
+        RegistrationHelper.registerUser("test provider id", null, mockResult, client)
     }
+
+
+    @Test
+    fun `get identity provider list`() {
+        val set = mutableSetOf<OneginiIdentityProvider>()
+        set.add(OnegeniProvider())
+        `when`(userClient.identityProviders).thenReturn(set)
+        RegistrationHelper.getIdentityProviders(mockResult, client)
+    }
+
+    @Test
+    fun `handle registration callback`() {
+        RegistrationHelper.handleRegistrationCallback(Uri.parse("test url"))
+    }
+
+    @Test
+    fun `cancel registration`() {
+        RegistrationHelper.cancelRegistration()
+    }
+
+    @Test
+    fun `start web registration`() {
+        RegistrationRequestHandler(context).startRegistration(Uri.parse("test url"), mock(OneginiBrowserRegistrationCallback::class.java))
+    }
+
+
+    @Test
+    fun `deregister user when user profile is null`() {
+        RegistrationHelper.deregisterUser(mockResult, client)
+    }
+
+
+    @Test
+    fun `deregister user`() {
+        `when`(userClient.authenticatedUserProfile).thenReturn(userProfile)
+        RegistrationHelper.deregisterUser(mockResult, client)
+    }
+
+    @Test
+    fun `authenticate user when user profile is null`() {
+        AuthenticationObject.authenticateUser(null, mockResult, client)
+    }
+
+    @Test
+    fun `authenticate user when authenticator is null`() {
+        `when`(userClient.userProfiles).thenReturn(setOf(userProfile))
+        AuthenticationObject.authenticateUser(null, mockResult, client)
+    }
+
+
+    @Test
+    fun `authenticate user by authenticator`() {
+        `when`(userClient.userProfiles).thenReturn(setOf(userProfile))
+        `when`(userClient.getRegisteredAuthenticators(userProfile)).thenReturn(setOf(OneginiAuthenticator()))
+        AuthenticationObject.authenticateUser("test id", mockResult, client)
+    }
+
+    @Test
+    fun `get registered authenticators`() {
+        `when`(userClient.userProfiles).thenReturn(setOf(userProfile))
+        `when`(userClient.getRegisteredAuthenticators(userProfile)).thenReturn(setOf(OneginiAuthenticator()))
+        AuthenticationObject.getRegisteredAuthenticators(mockResult, client)
+    }
+
+    @Test
+    fun `get registered authenticators when user profiles is null`() {
+        AuthenticationObject.getRegisteredAuthenticators(mockResult, client)
+    }
+
+    @Test
+    fun `get not registered authenticators`() {
+        `when`(userClient.authenticatedUserProfile).thenReturn(userProfile)
+        `when`(userClient.getNotRegisteredAuthenticators(userProfile)).thenReturn(setOf(OneginiAuthenticator()))
+        AuthenticationObject.getNotRegisteredAuthenticators(mockResult, client)
+    }
+
+    @Test
+    fun `register authenticator when id is null`() {
+        `when`(userClient.authenticatedUserProfile).thenReturn(userProfile)
+        `when`(userClient.getNotRegisteredAuthenticators(userProfile)).thenReturn(setOf(OneginiAuthenticator()))
+        AuthenticationObject.registerAuthenticator(null, mockResult, client)
+    }
+
+    @Test
+    fun `register authenticator when authenticated user is null`() {
+        AuthenticationObject.registerAuthenticator(null, mockResult, client)
+    }
+
+
+    @Test
+    fun `register authenticator`() {
+        `when`(userClient.authenticatedUserProfile).thenReturn(userProfile)
+        `when`(userClient.getNotRegisteredAuthenticators(userProfile)).thenReturn(setOf(OneginiAuthenticator()))
+        AuthenticationObject.registerAuthenticator("test id", mockResult, client)
+    }
+
+    @Test
+    fun `mobile auth with otp when data null`() {
+        MobileAuthenticationObject.mobileAuthWithOtp(null, mockResult, client)
+    }
+
+    @Test
+    fun `mobile auth with otp when authinticated profile is null`() {
+        MobileAuthenticationObject.mobileAuthWithOtp("test", mockResult, client)
+    }
+
+    @Test
+    fun `mobile auth with otp`() {
+        `when`(userClient.authenticatedUserProfile).thenReturn(userProfile)
+        MobileAuthenticationObject.mobileAuthWithOtp("test", mockResult, client)
+    }
+
+    @Test
+    fun `mobile auth with otp when user enrollment`() {
+        `when`(userClient.authenticatedUserProfile).thenReturn(userProfile)
+        `when`(userClient.isUserEnrolledForMobileAuth(userProfile)).thenReturn(true)
+        MobileAuthenticationObject.mobileAuthWithOtp("test", mockResult, client)
+    }
+
+    @Test
+    fun `resource - get user client`() {
+        `when`(client.configModel).thenReturn(OneginiConfigModel())
+        `when`(userClient.resourceOkHttpClient).thenReturn(mock(OkHttpClient::class.java))
+        ResourceHelper(MethodCall(Constants.METHOD_GET_RESOURCE, mapOf("path" to "www.test.com", "headers" to hashMapOf(Pair("test", "test")), "body" to "test body", "method" to "POST")), mockResult, client).getUserClient()
+    }
+
+    @Test
+    fun `resource - getImplicit`() {
+        `when`(client.configModel).thenReturn(OneginiConfigModel())
+        `when`(userClient.implicitResourceOkHttpClient).thenReturn(mock(OkHttpClient::class.java))
+        `when`(userClient.authenticatedUserProfile).thenReturn(userProfile)
+        ResourceHelper(MethodCall(Constants.METHOD_GET_IMPLICIT_RESOURCE, null), mockResult, client).getImplicit()
+    }
+
+    @Test
+    fun `resource - getAnonymous`() {
+        val deviceClient = mock(DeviceClient::class.java)
+        `when`(client.configModel).thenReturn(OneginiConfigModel())
+        `when`(client.deviceClient).thenReturn(deviceClient)
+        `when`(deviceClient.anonymousResourceOkHttpClient).thenReturn(mock(OkHttpClient::class.java))
+        ResourceHelper(MethodCall(Constants.METHOD_GET_RESOURCE_ANONYMOUS, null), mockResult, client).getAnonymous()
+    }
+
+    @Test
+    fun `get appToWeb single sign on when url is null`() {
+        val mapper = spy(OnMethodCallMapper(context))
+        mapper.getAppToWebSingleSignOn(null, mockResult, client)
+    }
+
+    @Test
+    fun `get appToWeb single sign on when url is not match`() {
+        val mapper = spy(OnMethodCallMapper(context))
+        mapper.getAppToWebSingleSignOn("test", mockResult, client)
+    }
+
+    @Test
+    fun `get appToWeb single sign on`() {
+        val mapper = spy(OnMethodCallMapper(context))
+        mapper.getAppToWebSingleSignOn("https://login-mobile.test.onegini.com/personal/dashboard", mockResult, client)
+    }
+
+    @Test
+    fun `log out`() {
+        val mapper = spy(OnMethodCallMapper(context))
+        mapper.logout(mockResult, client)
+    }
+
+
+    @Test
+    fun `start change pin flow`() {
+        val mapper = spy(OnMethodCallMapper(context))
+        mapper.startChangePinFlow(mockResult, client)
+    }
+
+    @Test
+    fun `on method call with not found call`() {
+        val mapper = spy(OnMethodCallMapper(context))
+        mapper.onMethodCall(MethodCall("NO", null), mockResult)
+    }
+
+
+//    @Test
+//    fun testRegistrationWithIdentityProvider() {
+//        val provider = mockk<OneginiIdentityProvider>()
+//        every { provider.id } returns "test"
+//        every { userClient.identityProviders } returns mutableSetOf(provider)
+//        val identityProviderId = "test"
+//        val identityProviders = oneginiSDK.getOneginiClient(mockAndroidContext).userClient.identityProviders
+//        for (identityProvider in identityProviders) {
+//            if (identityProvider.id == identityProviderId) {
+//                assert(true)
+//                break
+//            }
+//            assert(false)
+//        }
+//
+//
+//    }
 //
 //    @Test
 //    fun testCancelRegistration() {
