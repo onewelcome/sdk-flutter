@@ -16,8 +16,8 @@ class ResourcesHandler_FetchAnonymousResourceTests: XCTestCase {
     }
     
     func testFetchAnonymousResource() throws {
+        
         var expectation = self.expectation(description: "startOneginiModule")
-
         OneginiModuleSwift.sharedInstance.startOneginiModule { (callback) in
             expectation.fulfill()
         }
@@ -26,13 +26,14 @@ class ResourcesHandler_FetchAnonymousResourceTests: XCTestCase {
         expectation = self.expectation(description: "testFetchAnonymousResource")
 
         var parameters = [String: Any]()
-        parameters["path"] = "devices"
-        parameters["encoding"] = "application/x-www-form-urlencoded";
-        parameters["method"] = "application-details"
+        parameters["path"] = "application-details"
+        parameters["scope"] = "application-details"
 
         handler?.fetchAnonymousResource("application-details", parameters: parameters, completion: { (result) in
-            print("resullll")
-            print((result as! FlutterError).details)
+            print("[\(type(of: self))] completion: \(result.debugDescription)")
+            if let error = result as? FlutterError {
+                print("[\(type(of: self))] error: \(error.description)")
+            }
             expectation.fulfill()
         })
         waitForExpectations(timeout: 10, handler: nil)
