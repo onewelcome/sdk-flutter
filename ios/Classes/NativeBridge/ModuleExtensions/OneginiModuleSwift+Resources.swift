@@ -12,10 +12,10 @@ extension OneginiModuleSwift {
         }
     }
 
-    public func resourceRequest(_ isImplicit: Bool, parameters: [String: Any],
+    public func resourceRequest(isImplicit: Bool, isAnonymousCall: Bool = true, parameters: [String: Any],
                                 callback: @escaping (Any?, FlutterError?) -> Void) {
 
-        bridgeConnector.toResourceFetchHandler.resourceRequest(isImplicit: isImplicit, parameters: parameters, completion: {
+        bridgeConnector.toResourceFetchHandler.resourceRequest(isImplicit: isImplicit, isAnonymousCall: isAnonymousCall, parameters: parameters, completion: {
             (data, error) -> Void in
             callback(data, error?.flutterError())
         })
@@ -25,9 +25,9 @@ extension OneginiModuleSwift {
         switch type {
         case Constants.Routes.getImplicitResource:
             bridgeConnector.toResourceFetchHandler.fetchResourceWithImplicitResource(path, parameters: parameters, completion: callback)
-        case Constants.Routes.getResource:
-            bridgeConnector.toResourceFetchHandler.fetchAnonymousResource(path, parameters: parameters, completion: callback)
         case Constants.Routes.getResourceAnonymous:
+            bridgeConnector.toResourceFetchHandler.fetchAnonymousResource(path, parameters: parameters, completion: callback)
+        case Constants.Routes.getResource:
             bridgeConnector.toResourceFetchHandler.fetchSimpleResources(path, parameters: parameters, completion: callback)
         default:
             callback(SdkError.convertToFlutter(SdkError(customType: .incrorrectResourcesAccess)))
