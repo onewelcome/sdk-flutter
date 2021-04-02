@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:onegini/model/onegini_identity_provider.dart';
+import 'package:onegini/model/onegini_list_response.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini_example/models/application_details.dart';
 import 'package:onegini_example/models/client_resource.dart';
@@ -343,21 +343,21 @@ class Info extends StatefulWidget {
 class _InfoState extends State<Info> {
   Future<ApplicationDetails> getApplicationDetails() async {
     var response = await Onegini.instance.resourcesMethods
-        .getResourceWithAnonymousResourceOkHttpClient(
-            "application-details", "application-details");
+        .getResourceAnonymous(
+            "application-details", scope : "application-details");
     return applicationDetailsFromJson(response);
   }
 
   Future<ClientResource> getClientResource() async {
     var response = await Onegini.instance.resourcesMethods
-        .getResourceWithResourceOkHttpClient("devices");
+        .getResource("devices");
     return clientResourceFromJson(response);
   }
 
   Future<String> getImplicitUserDetails() async {
     var response = await Onegini.instance.resourcesMethods
-        .getResourceWithImplicitResourceOkHttpClient(
-            "user-id-decorated", "read");
+        .getResourceImplicit(
+            "user-id-decorated", scope: "read");
     Map<String, dynamic> responseAsJson = json.decode(response);
     return responseAsJson["decorated_user_id"];
   }
@@ -419,7 +419,7 @@ class _InfoState extends State<Info> {
                                   style: TextStyle(fontSize: 18),
                                 ),
                                 Text(
-                                  snapshot.data.applicationIdentifier,
+                                  snapshot.data.applicationIdentifier ?? "",
                                   style: TextStyle(fontSize: 18),
                                 )
                               ],
@@ -434,7 +434,7 @@ class _InfoState extends State<Info> {
                                   style: TextStyle(fontSize: 18),
                                 ),
                                 Text(
-                                  snapshot.data.applicationPlatform,
+                                  snapshot.data.applicationPlatform ?? "",
                                   style: TextStyle(fontSize: 18),
                                 )
                               ],
@@ -449,7 +449,7 @@ class _InfoState extends State<Info> {
                                   style: TextStyle(fontSize: 18),
                                 ),
                                 Text(
-                                  snapshot.data.applicationVersion,
+                                  snapshot.data.applicationVersion ?? "",
                                   style: TextStyle(fontSize: 18),
                                 )
                               ],

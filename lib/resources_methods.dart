@@ -1,19 +1,22 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 
 import 'constants/constants.dart';
 import 'onegini.dart';
 
 class ResourcesMethods {
-  Future<String> getResourceWithAnonymousResourceOkHttpClient(
-    String path,
-    String scope, {
+  Future<String> getResourceAnonymous(
+    String path, {
+    String? scope,
     Map<String, String>? headers,
     String? method,
     String? encoding,
     String? body,
   }) async {
     try {
-      var response = await Onegini.instance.channel
+      var response;
+      response = await Onegini.instance.channel
           .invokeMethod(Constants.getResourceAnonymous, <String, dynamic>{
         'path': path,
         'scope': scope,
@@ -22,13 +25,14 @@ class ResourcesMethods {
         'encoding': encoding,
         'body': body
       });
+
       return response;
     } on PlatformException catch (error) {
       throw error;
     }
   }
 
-  Future<String> getResourceWithResourceOkHttpClient(
+  Future<String> getResource(
     String path, {
     Map<String, String>? headers,
     String? method,
@@ -50,16 +54,18 @@ class ResourcesMethods {
     }
   }
 
-  Future<String> getResourceWithImplicitResourceOkHttpClient(
-    String path,
-    String scope, {
+  Future<String> getResourceImplicit(
+    String path, {
+    String? scope,
     Map<String, String>? headers,
     String? method,
     String? encoding,
     String? body,
   }) async {
     try {
-      var response = await Onegini.instance.channel
+      var response;
+
+      response = await Onegini.instance.channel
           .invokeMethod(Constants.getImplicitResource, <String, dynamic>{
         'path': path,
         'scope': scope,
@@ -68,6 +74,7 @@ class ResourcesMethods {
         'encoding': encoding,
         'body': body
       });
+
       return response;
     } on PlatformException catch (error) {
       throw error;

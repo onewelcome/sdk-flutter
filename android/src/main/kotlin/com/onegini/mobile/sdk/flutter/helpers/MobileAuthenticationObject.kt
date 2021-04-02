@@ -16,8 +16,8 @@ object MobileAuthenticationObject {
             result.error(OneginiWrapperErrors().qrCodeNotHaveData.code, OneginiWrapperErrors().qrCodeNotHaveData.message, null)
             return
         }
-        val userClient = OneginiSDK.getOneginiClient(context).userClient
-        val authenticatedUserProfile = OneginiSDK.getOneginiClient(context).userClient.authenticatedUserProfile
+        val userClient = OneginiSDK().getOneginiClient(context).userClient
+        val authenticatedUserProfile = OneginiSDK().getOneginiClient(context).userClient.authenticatedUserProfile
         if (authenticatedUserProfile == null) {
             result.error(OneginiWrapperErrors().authenticatedUserProfileIsNull.code, OneginiWrapperErrors().authenticatedUserProfileIsNull.message, null)
             return
@@ -31,7 +31,7 @@ object MobileAuthenticationObject {
 
     }
     private fun handleMobileAuthWithOtp(context:Context,data: String, result: MethodChannel.Result) {
-        OneginiSDK.getOneginiClient(context).userClient.handleMobileAuthWithOtp(data
+        OneginiSDK().getOneginiClient(context).userClient.handleMobileAuthWithOtp(data
                 , object : OneginiMobileAuthWithOtpHandler {
             override fun onSuccess() {
                 result.success("success auth with otp")
@@ -44,7 +44,7 @@ object MobileAuthenticationObject {
     }
 
     private fun enrollMobileAuthentication(context:Context,data: String, result: MethodChannel.Result) {
-        OneginiSDK.getOneginiClient(context).userClient.enrollUserForMobileAuth(object : OneginiMobileAuthEnrollmentHandler {
+        OneginiSDK().getOneginiClient(context).userClient.enrollUserForMobileAuth(object : OneginiMobileAuthEnrollmentHandler {
             override fun onSuccess() {
                 handleMobileAuthWithOtp(context,data, result)
             }
