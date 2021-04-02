@@ -83,7 +83,7 @@ extension LoginHandler: ONGAuthenticationDelegate {
         customChallange = challenge
         
         let customError = mapErrorFromCustomAuthChallenge(challenge)
-        pinHandler?.handleFlowUpdate(PinFlow.authentication, pinError, receiver: self)
+        pinHandler?.handleFlowUpdate(PinFlow.authentication, customError, receiver: self)
         
         guard let _ = customError else { return }
         
