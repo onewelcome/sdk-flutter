@@ -72,7 +72,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 
         let request = ONGResourceRequest.init(path: parameters["path"] as! String, method: parameters["method"] as! String, parameters: parameters["parameters"] as? [String : Any], encoding: encoding)
 
-        ONGUserClient.sharedInstance().fetchResource(request) { response, error in
+        ONGDeviceClient.sharedInstance().fetchResource(request) { response, error in
             if let error = error {
                 completion(nil, SdkError(errorDescription: error.localizedDescription, code: error.code))
             } else {
