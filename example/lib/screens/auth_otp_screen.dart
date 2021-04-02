@@ -34,7 +34,7 @@ class _AuthOtpScreenState extends State<AuthOtpScreen> {
   }
 
   deny(BuildContext context) async {
-    OneginiOtpAcceptDenyCallback().acceptAuthenticationRequest(context).catchError((error){
+    OneginiOtpAcceptDenyCallback().denyAuthenticationRequest().catchError((error){
       if(error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,

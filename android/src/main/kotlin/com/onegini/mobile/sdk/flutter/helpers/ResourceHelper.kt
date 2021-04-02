@@ -26,7 +26,7 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
         // "application-details"
         //"application/json"
         val request = getRequest()
-        val scope = call.argument<String>("scope") ?: "application-details"
+        val scope = call.argument<String>("scope")
         getAnonymousClient(scope, request)
     }
 
@@ -34,7 +34,7 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
         // "read"
         // user-id-decorated
         val request = getRequest()
-        val scope = call.argument<String>("scope") ?: "read"
+        val scope = call.argument<String>("scope")
         getSecuredImplicitUserClient(scope, request)
     }
 

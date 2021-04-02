@@ -343,21 +343,21 @@ class Info extends StatefulWidget {
 class _InfoState extends State<Info> {
   Future<ApplicationDetails> getApplicationDetails() async {
     var response = await Onegini.instance.resourcesMethods
-        .getResourceWithAnonymousResourceOkHttpClient(
-            "application-details", "application-details");
+        .getResourceAnonymous(
+            "application-details", scope : "application-details");
     return applicationDetailsFromJson(response);
   }
 
   Future<ClientResource> getClientResource() async {
     var response = await Onegini.instance.resourcesMethods
-        .getResourceWithResourceOkHttpClient("devices");
+        .getResource("devices");
     return clientResourceFromJson(response);
   }
 
   Future<String> getImplicitUserDetails() async {
     var response = await Onegini.instance.resourcesMethods
-        .getResourceWithImplicitResourceOkHttpClient(
-            "user-id-decorated", "read");
+        .getResourceImplicit(
+            "user-id-decorated", scope: "read");
     Map<String, dynamic> responseAsJson = json.decode(response);
     return responseAsJson["decorated_user_id"];
   }

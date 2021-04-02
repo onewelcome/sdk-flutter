@@ -1,9 +1,7 @@
 //MARK: -
-protocol BridgeToMobileAuthConnectorProtocol: AnyObject {
+protocol BridgeToMobileAuthConnectorProtocol: AuthenticatorsNotificationReceiverProtocol {
     var bridgeConnector: BridgeConnectorProtocol? { get set }
     var mobileAuthHandler: MobileAuthConnectorToHandlerProtocol { get }
-
-    func sendNotification(event: MobileAuthNotification, requestMessage: String?, error: SdkError?) -> Void
 }
 
 //MARK: -

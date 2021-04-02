@@ -15,6 +15,10 @@ protocol PinHandlerToReceiverProtocol: class {
     func handlePin(pin: String?)
 }
 
+protocol PinNotificationReceiverProtocol: class {
+    func sendNotification(event: PinNotification, flow: PinFlow?, error: SdkError?)
+}
+
 enum PINEntryMode {
     case login
     case registration
@@ -28,9 +32,11 @@ class PinHandler: NSObject {
     var mode: PINEntryMode?
     var pinEntryToVerify = Array<String>()
     var changePinCompletion: ((Bool, SdkError?) -> Void)?
+    
     unowned var pinReceiver: PinHandlerToReceiverProtocol?
+    unowned var notificationReceiver: PinNotificationReceiverProtocol?
 
-    func processPin(pinEntry: Array<String>) {
+    private func processPin(pinEntry: Array<String>) {
         let pincode = pinEntry.joined()
         switch mode {
           case .login, .registration:
@@ -47,12 +53,12 @@ class PinHandler: NSObject {
         pinReceiver?.handlePin(pin: nil)
     }
 
-    func notifyOnError(_ error: SdkError) {
+    private func notifyOnError(_ error: SdkError) {
         sendConnectorNotification(PinNotification.showError, flow, error)
     }
 
     private func sendConnectorNotification(_ event: PinNotification, _ flow: PinFlow?, _ error: SdkError?) {
-        BridgeConnector.shared?.toPinHandlerConnector.sendNotification(event: event, flow: flow, error: error)
+        notificationReceiver?.sendNotification(event: event, flow: flow, error: error)
     }
 }
 
@@ -164,12 +170,14 @@ extension PinHandler : PinHandlerToReceiverProtocol {
 //MARK: - ONGChangePinDelegate
 extension PinHandler: ONGChangePinDelegate {
     func userClient(_ userClient: ONGUserClient, didReceive challenge: ONGPinChallenge) {
+        print("[\(type(of: self))] didReceive ONGPinChallenge")
         pinChallenge = challenge
         let pinError = mapErrorFromPinChallenge(challenge)
         handleFlowUpdate(PinFlow.authentication, pinError, receiver: self)
     }
 
     func userClient(_: ONGUserClient, didReceive challenge: ONGCreatePinChallenge) {
+        print("[\(type(of: self))] didReceive ONGCreatePinChallenge")
         pinChallenge = nil
         closeFlow()
         createPinChallenge = challenge
@@ -178,6 +186,7 @@ extension PinHandler: ONGChangePinDelegate {
     }
 
     func userClient(_: ONGUserClient, didFailToChangePinForUser _: ONGUserProfile, error: Error) {
+        print("[\(type(of: self))] didFailToChangePinForUser")
         pinChallenge = nil
         createPinChallenge = nil
         closeFlow()
@@ -194,6 +203,7 @@ extension PinHandler: ONGChangePinDelegate {
     }
 
     func userClient(_: ONGUserClient, didChangePinForUser _: ONGUserProfile) {
+        print("[\(type(of: self))] didChangePinForUser")
         createPinChallenge = nil
         closeFlow()
         changePinCompletion?(true, nil)
