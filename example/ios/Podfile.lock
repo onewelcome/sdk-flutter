@@ -4,7 +4,7 @@ PODS:
     - Flutter
     - Toast
   - MTBBarcodeScanner (5.0.11)
-  - onegini (0.0.1):
+  - onegini (0.2.0):
     - Flutter
   - qr_code_scanner (0.2.0):
     - Flutter
@@ -36,10 +36,10 @@ SPEC CHECKSUMS:
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
-  onegini: 500b8c82d44d2075ab4939029cdafe5f8dd8fdbf
+  onegini: 609350e9cf4e91b786404132d699240140e9da77
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
 
-PODFILE CHECKSUM: 8f971e7c85899b0cc10533eaabbf5219a9c4041b
+PODFILE CHECKSUM: ea19d228d1878d98b1833f07bd0802262fcd457c
 
 COCOAPODS: 1.10.1

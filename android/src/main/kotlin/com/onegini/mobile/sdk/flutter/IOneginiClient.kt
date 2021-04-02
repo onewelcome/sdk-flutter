@@ -11,6 +11,6 @@ interface IOneginiClient {
             context: Context,
             httpConnectionTimeout: Long? = 5,
             httpReadTimeout: Long? = 25,
-            oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider> = mutableListOf(),
+            oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider> = mutableListOf()
     ): OneginiClient
 }
