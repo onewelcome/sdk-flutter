@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:onegini/model/onegini_error.dart';
 
 import 'constants/constants.dart';
 import 'model/authentication_attempt.dart';
@@ -65,7 +66,7 @@ abstract class OneginiEventListener {
                   _context, _event.eventValue!);
             }
             if (_event.eventName == Constants.eventError) {
-              showError(_context, _event.eventValue);
+              showError(_context, oneginiErrorFromJson(_event.eventValue!));
             } else {
               eventOther(_context, _event);
             }
@@ -106,7 +107,7 @@ abstract class OneginiEventListener {
 
   void eventError(BuildContext? buildContext, PlatformException error);
 
-  void showError(BuildContext? buildContext, String? errorMessage);
+  void showError(BuildContext? buildContext, OneginiError? error);
 
   void eventOther(BuildContext? buildContext, Event event);
 }

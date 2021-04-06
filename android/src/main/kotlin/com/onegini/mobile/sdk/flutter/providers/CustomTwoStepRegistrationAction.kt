@@ -7,6 +7,7 @@ import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.flutter.constants.Constants
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.models.CustomTwoStepRegistrationModel
+import com.onegini.mobile.sdk.flutter.models.Error
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
 
 
@@ -22,7 +23,7 @@ class CustomTwoStepRegistrationAction(private val providerId: String) : OneginiC
             val data =  Gson().toJson(CustomTwoStepRegistrationModel(customInfo.data, providerId))
             OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_OPEN_CUSTOM_TWO_STEP_REGISTRATION_SCREEN,data)))
         } else {
-            OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_ERROR, "${customInfo.status}")))
+            OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_ERROR,Gson().toJson(Error(customInfo.status.toString(),customInfo.data)).toString())))
         }
 
     }

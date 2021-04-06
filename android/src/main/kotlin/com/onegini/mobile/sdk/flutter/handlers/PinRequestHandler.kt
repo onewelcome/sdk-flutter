@@ -7,6 +7,7 @@ import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallba
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.constants.Constants
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
+import com.onegini.mobile.sdk.flutter.models.Error
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
 
 class PinRequestHandler : OneginiCreatePinRequestHandler {
@@ -23,7 +24,7 @@ class PinRequestHandler : OneginiCreatePinRequestHandler {
     }
 
     override fun onNextPinCreationAttempt(oneginiPinValidationError: OneginiPinValidationError) {
-        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_ERROR, "${oneginiPinValidationError.message}")))
+        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_ERROR,Gson().toJson(Error(oneginiPinValidationError.errorType.toString(),oneginiPinValidationError.message ?:"")).toString())))
     }
 
     override fun finishPinCreation() {
