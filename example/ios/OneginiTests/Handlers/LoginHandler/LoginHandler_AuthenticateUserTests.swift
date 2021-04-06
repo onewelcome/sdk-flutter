@@ -75,6 +75,7 @@ class LoginHandler_AuthenticateUserTests: XCTestCase, PinConnectorToPinHandler {
         }
         
         handler?.authenticateUser(profile, authenticator: nil, completion: { (authenticatedUser, error) in
+            // check if method return any response
             print("[\(type(of: self))] authenticate user: \(authenticatedUser.debugDescription) ; e: \(error.debugDescription)")
             
             expectation.fulfill()

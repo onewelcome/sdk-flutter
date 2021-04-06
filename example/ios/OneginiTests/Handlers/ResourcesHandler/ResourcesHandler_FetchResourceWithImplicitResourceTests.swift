@@ -30,6 +30,7 @@ class ResourcesHandler_FetchResourceWithImplicitResourceTests: XCTestCase {
         parameters["scope"] = "read"
 
         handler?.fetchResourceWithImplicitResource("application-details", parameters: parameters, completion: { (result) in
+            // check if method return any response
             print("[\(type(of: self))] completion: \(result.debugDescription)")
             if let error = result as? FlutterError {
                 print("[\(type(of: self))] error: \(error.description)")
