@@ -141,7 +141,7 @@ class OneginiTests: XCTestCase {
         plugin!.handle( call, result: {(result)->Void in })
     }
     
-    func testDeregisterUser() throws {
+    func testzDeregisterUser() throws {
         let call = FlutterMethodCall( methodName: "deregisterUser", arguments: nil )
         let expectation = self.expectation(description: "deregisterUser")
         

@@ -2,7 +2,6 @@ package com.onegini.mobile.sdk.flutter
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import android.util.Patterns
 import androidx.annotation.NonNull
 import com.google.gson.Gson
@@ -23,13 +22,16 @@ import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestH
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
-import com.onegini.mobile.sdk.flutter.helpers.*
+import com.onegini.mobile.sdk.flutter.helpers.AuthenticationObject
+import com.onegini.mobile.sdk.flutter.helpers.MobileAuthenticationObject
+import com.onegini.mobile.sdk.flutter.helpers.RegistrationHelper
+import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepIdentityProvider
 import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationAction
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
-class OnMethodCallMapper(var context: Context) {
+class OnMethodCallMapper(private var context: Context) {
 
     fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         when (call.method) {
@@ -39,19 +41,19 @@ class OnMethodCallMapper(var context: Context) {
 
 
             //Register
-            Constants.METHOD_REGISTER_USER -> RegistrationHelper.registerUser(context, call.argument<String>("identityProviderId"), call.argument<String>("scopes"), result)
-            Constants.METHOD_GET_IDENTITY_PROVIDERS -> RegistrationHelper.getIdentityProviders(context, result)
+            Constants.METHOD_REGISTER_USER -> RegistrationHelper.registerUser(call.argument<String>("identityProviderId"), call.argument<String>("scopes"), result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_GET_IDENTITY_PROVIDERS -> RegistrationHelper.getIdentityProviders(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_CANCEL_REGISTRATION -> RegistrationHelper.cancelRegistration()
             Constants.METHOD_ACCEPT_PIN_REGISTRATION_REQUEST -> PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
             Constants.METHOD_DENY_PIN_REGISTRATION_REQUEST -> PinRequestHandler.CALLBACK?.denyAuthenticationRequest()
-            Constants.METHOD_DEREGISTER_USER -> RegistrationHelper.deregisterUser(context, result)
+            Constants.METHOD_DEREGISTER_USER -> RegistrationHelper.deregisterUser(result, OneginiSDK().getOneginiClient(context))
 
             //Authenticate
-            Constants.METHOD_AUTHENTICATE_USER -> AuthenticationObject.authenticateUser(context, call.argument<String>("registeredAuthenticatorId"), result)
-            Constants.METHOD_GET_REGISTERED_AUTHENTICATORS -> AuthenticationObject.getRegisteredAuthenticators(context, result)
-            Constants.METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS -> AuthenticationObject.getNotRegisteredAuthenticators(context, result)
-            Constants.METHOD_REGISTER_AUTHENTICATOR -> AuthenticationObject.registerAuthenticator(context, call.argument<String>("authenticatorId"), result)
-            Constants.METHOD_LOGOUT -> logout(result)
+            Constants.METHOD_AUTHENTICATE_USER -> AuthenticationObject.authenticateUser(call.argument<String>("registeredAuthenticatorId"), result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_GET_REGISTERED_AUTHENTICATORS -> AuthenticationObject.getRegisteredAuthenticators(result,OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS -> AuthenticationObject.getNotRegisteredAuthenticators(result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_REGISTER_AUTHENTICATOR -> AuthenticationObject.registerAuthenticator(call.argument<String>("authenticatorId"), result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_LOGOUT -> logout(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_ACCEPT_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
             Constants.METHOD_DENY_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.denyAuthenticationRequest()
 
@@ -61,18 +63,18 @@ class OnMethodCallMapper(var context: Context) {
             Constants.METHOD_FINGERPRINT_FALL_BACK_TO_PIN -> FingerprintAuthenticationRequestHandler.fingerprintCallback?.fallbackToPin()
 
             //OTP
-            Constants.METHOD_HANDLE_MOBILE_AUTH_WITH_OTP -> MobileAuthenticationObject.mobileAuthWithOtp(context, call.argument<String>("data"), result)
+            Constants.METHOD_HANDLE_MOBILE_AUTH_WITH_OTP -> MobileAuthenticationObject.mobileAuthWithOtp(call.argument<String>("data"), result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_ACCEPT_OTP_AUTHENTICATION_REQUEST -> MobileAuthOtpRequestHandler.CALLBACK?.acceptAuthenticationRequest()
             Constants.METHOD_DENY_OTP_AUTHENTICATION_REQUEST -> MobileAuthOtpRequestHandler.CALLBACK?.denyAuthenticationRequest()
 
             //Resources
-            Constants.METHOD_GET_RESOURCE_ANONYMOUS -> ResourceHelper(context, call, result).getAnonymous()
-            Constants.METHOD_GET_RESOURCE -> ResourceHelper(context, call, result).getUserClient()
-            Constants.METHOD_GET_IMPLICIT_RESOURCE -> ResourceHelper(context, call, result).getImplicit()
+            Constants.METHOD_GET_RESOURCE_ANONYMOUS -> ResourceHelper(call, result, OneginiSDK().getOneginiClient(context)).getAnonymous()
+            Constants.METHOD_GET_RESOURCE -> ResourceHelper(call, result, OneginiSDK().getOneginiClient(context)).getUserClient()
+            Constants.METHOD_GET_IMPLICIT_RESOURCE -> ResourceHelper(call, result, OneginiSDK().getOneginiClient(context)).getImplicit()
 
             //Other
-            Constants.METHOD_CHANGE_PIN -> startChangePinFlow(context, result)
-            Constants.METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON -> getAppToWebSingleSignOn(call.argument<String>("url"), result)
+            Constants.METHOD_CHANGE_PIN -> startChangePinFlow(result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON -> getAppToWebSingleSignOn(call.argument<String>("url"), result, OneginiSDK().getOneginiClient(context))
 
             else -> result.error(OneginiWrapperErrors().methodToCallNotFound.code, OneginiWrapperErrors().methodToCallNotFound.message, null)
         }
@@ -80,19 +82,22 @@ class OnMethodCallMapper(var context: Context) {
 
 
     private fun startApp(twoStepCustomIdentityProviderIds: String?, connectionTimeout: Int?, readTimeout: Int?, result: MethodChannel.Result) {
-
         val oneginiCustomIdentityProviderList = mutableListOf<OneginiCustomIdentityProvider>()
         val identityProviderIds = twoStepCustomIdentityProviderIds?.split(",")?.map { it.trim() }
-        Log.v("PROVIDER", identityProviderIds?.size.toString())
         identityProviderIds?.forEach { oneginiCustomIdentityProviderList.add(CustomTwoStepIdentityProvider(it)) }
-        OneginiSDK(
-                httpConnectionTimeout = connectionTimeout?.toLong(),
-                httpReadTimeout = readTimeout?.toLong(),
-                oneginiCustomIdentityProviders = oneginiCustomIdentityProviderList).buildSDK(context)
-        val oneginiClient: OneginiClient = OneginiSDK.getOneginiClient(context)
+        val oneginiClient: OneginiClient = OneginiSDK().initSDK(context, connectionTimeout?.toLong(), readTimeout?.toLong(), oneginiCustomIdentityProviderList)
         oneginiClient.start(object : OneginiInitializationHandler {
             override fun onSuccess(removedUserProfiles: Set<UserProfile?>?) {
-                result.success(Gson().toJson(removedUserProfiles))
+                val removedUserProfileArray: ArrayList<Map<String, Any>> = ArrayList()
+                if (removedUserProfiles != null) {
+                    for (userProfile in removedUserProfiles) {
+                        val map = mutableMapOf<String, Any>()
+                        map["isDefault"] = userProfile?.isDefault ?: false
+                        map["profileId"] = userProfile?.profileId ?: ""
+                        removedUserProfileArray.add(map)
+                    }
+                }
+                result.success(Gson().toJson(removedUserProfileArray))
             }
 
             override fun onError(error: OneginiInitializationError) {
@@ -102,7 +107,7 @@ class OnMethodCallMapper(var context: Context) {
     }
 
     //"https://login-mobile.test.onegini.com/personal/dashboard"
-    private fun getAppToWebSingleSignOn(url: String?, result: MethodChannel.Result) {
+    fun getAppToWebSingleSignOn(url: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         if (url == null) {
             result.error(OneginiWrapperErrors().urlCantBeNull.code, OneginiWrapperErrors().urlCantBeNull.message, null)
             return
@@ -112,7 +117,7 @@ class OnMethodCallMapper(var context: Context) {
             return
         }
         val targetUri: Uri = Uri.parse(url)
-        OneginiSDK.getOneginiClient(context).userClient.getAppToWebSingleSignOn(targetUri, object : OneginiAppToWebSingleSignOnHandler {
+        oneginiClient.userClient.getAppToWebSingleSignOn(targetUri, object : OneginiAppToWebSingleSignOnHandler {
             override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {
                 result.success(Gson().toJson(mapOf("token" to oneginiAppToWebSingleSignOn.token, "redirectUrl" to oneginiAppToWebSingleSignOn.redirectUrl)))
             }
@@ -124,8 +129,8 @@ class OnMethodCallMapper(var context: Context) {
         })
     }
 
-    private fun logout(result: MethodChannel.Result) {
-        OneginiSDK.getOneginiClient(context).userClient.logout(object : OneginiLogoutHandler {
+    fun logout(result: MethodChannel.Result, oneginiClient: OneginiClient) {
+        oneginiClient.userClient.logout(object : OneginiLogoutHandler {
             override fun onSuccess() {
                 result.success(true)
             }
@@ -136,8 +141,8 @@ class OnMethodCallMapper(var context: Context) {
         })
     }
 
-    fun startChangePinFlow(context:Context,result: MethodChannel.Result) {
-        OneginiSDK.getOneginiClient(context).userClient.changePin(object : OneginiChangePinHandler {
+    fun startChangePinFlow(result: MethodChannel.Result, oneginiClient: OneginiClient) {
+        oneginiClient.userClient.changePin(object : OneginiChangePinHandler {
             override fun onSuccess() {
                 result.success("Pin change successfully")
             }

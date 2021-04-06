@@ -23,7 +23,7 @@ class ResourcesHandler_ResourceRequestTests: XCTestCase {
         try super.tearDownWithError()
     }
 
-    func testResourceRequestWithImplicitlyError() throws {
+    func testResourceRequestWithImplicitly() throws {
         var expectation = self.expectation(description: "startOneginiModule")
 
         OneginiModuleSwift.sharedInstance.startOneginiModule { (callback) in
@@ -38,15 +38,18 @@ class ResourcesHandler_ResourceRequestTests: XCTestCase {
         parameters["encoding"] = "application/x-www-form-urlencoded";
         parameters["method"] = "GET"
 
-        handler?.resourceRequest(isImplicit: true, parameters: parameters, completion: { (success, error) in
-            XCTAssertNil(success)
-            XCTAssertNotNil(error)
+        handler?.resourceRequest(isImplicit: true, parameters: parameters, completion: { (data, error) in
+            print("[\(type(of: self))] completion: \(data.debugDescription)")
+            if let e = error {
+                print("[\(type(of: self))] error: \(e.errorDescription)")
+            }
+            
             expectation.fulfill()
         })
         waitForExpectations(timeout: 5, handler: nil)
     }
     
-    func testResourceRequestWithNoImplicitlyError() throws {
+    func testResourceRequestWithoutImplicitly() throws {
         var expectation = self.expectation(description: "startOneginiModule")
 
         OneginiModuleSwift.sharedInstance.startOneginiModule { (callback) in
@@ -61,9 +64,12 @@ class ResourcesHandler_ResourceRequestTests: XCTestCase {
         parameters["encoding"] = "application/x-www-form-urlencoded";
         parameters["method"] = "GET"
 
-        handler?.resourceRequest(isImplicit: false, parameters: parameters, completion: { (success, error) in
-            XCTAssertNil(success)
-            XCTAssertNotNil(error)
+        handler?.resourceRequest(isImplicit: false, parameters: parameters, completion: { (data, error) in
+            print("[\(type(of: self))] completion: \(data.debugDescription)")
+            if let e = error {
+                print("[\(type(of: self))] error: \(e.errorDescription)")
+            }
+            
             expectation.fulfill()
         })
         waitForExpectations(timeout: 5, handler: nil)

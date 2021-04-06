@@ -36,7 +36,6 @@ class ResourcesHandler_AuthenticateImplicitlyTests: XCTestCase {
         
         let profile = ONGUserProfile(id: "121212")
         handler?.authenticateImplicitly(profile!) { success, error in
-            print("[\(type(of: self))] auth implicity: \(success) - \(error?.errorDescription)")
             expectation.fulfill()
         }
         

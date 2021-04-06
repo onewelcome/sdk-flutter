@@ -7,6 +7,8 @@ import 'package:onegini/onegini_event_listener.dart';
 import 'package:onegini/resources_methods.dart';
 import 'package:onegini/user_client.dart';
 
+import 'model/onegini_removed_user_profile.dart';
+
 class Onegini {
   Onegini._privateConstructor();
 
@@ -24,7 +26,7 @@ class Onegini {
     _eventListener?.context = context;
   }
 
-  Future<String> startApplication(
+  Future<List<RemovedUserProfile>> startApplication(
     OneginiEventListener eventListener, {
     List<String>? twoStepCustomIdentityProviderIds,
     int? connectionTimeout,
@@ -40,7 +42,7 @@ class Onegini {
         'readTimeout': readTimeout
       });
       eventListener.listen();
-      return removedUserProfiles;
+      return removedUserProfileListFromJson(removedUserProfiles);
     } on PlatformException catch (error) {
       throw error;
     }
