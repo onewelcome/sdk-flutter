@@ -27,7 +27,7 @@ class PinConnector : BridgeToPinConnectorProtocol, PinNotificationReceiverProtoc
                 pinHandler.onCancel()
                 break
             default:
-                sendEvent(data: ["eventName": PinNotification.showError.rawValue, "eventValue": "Unsupported pin action. Contact SDK maintainer."])
+                sendEvent(data: ["eventName": PinNotification.showError.rawValue, "eventValue": SdkError.init(errorDescription: "Unsupported pin action. Contact SDK maintainer.").toJSON() as Any?])
                 break
         }
     }
@@ -47,7 +47,7 @@ class PinConnector : BridgeToPinConnectorProtocol, PinNotificationReceiverProtoc
                 sendEvent(data: PinNotification.closeAuth.rawValue)
                 break;
             case .showError:
-                sendEvent(data: String.stringify(json: ["eventName": PinNotification.showError.rawValue, "eventValue": error?.errorDescription]))
+                sendEvent(data: String.stringify(json: ["eventName": PinNotification.showError.rawValue, "eventValue": error?.toJSON() as Any?]))
                 break
         }
     }

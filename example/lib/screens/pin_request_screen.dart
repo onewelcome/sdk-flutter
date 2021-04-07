@@ -95,7 +95,7 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-          await OneginiPinAuthenticationCallback().denyAuthenticationRequest();
+          await OneginiPinRegistrationCallback().denyAuthenticationRequest();
           return true;
       },
       child: Scaffold(

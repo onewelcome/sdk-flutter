@@ -21,8 +21,8 @@ class SdkError {
         self.code = customType.rawValue
     }
     
-    func toJSON() -> Dictionary<String, Any?> {
-        return ["title": title, "errorDescription": errorDescription, "recoverySuggestion": recoverySuggestion, "code": code]
+    func toJSON() -> Dictionary<String, Any?>? {
+        return ["title": title, "message": errorDescription, "recoverySuggestion": recoverySuggestion, "code": code]
     }
     
     func flutterError() -> FlutterError {
