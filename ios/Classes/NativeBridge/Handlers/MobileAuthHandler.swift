@@ -11,6 +11,10 @@ protocol MobileAuthConnectorToHandlerProtocol: AnyObject {
     func handleQrOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Any?, SdkError?) -> Void)
 }
 
+protocol MobileAuthNotificationReceiverProtocol: class {
+    func sendNotification(event: MobileAuthNotification, requestMessage: String?, error: SdkError?)
+}
+
 enum MobileAuthAuthenticatorType: String {
     case fingerprint = "biometric"
     case pin = "PIN"
@@ -25,15 +29,16 @@ class MobileAuthHandler: NSObject {
     var confirmation: ((Bool) -> Void)?
     var mobileAuthCompletion: ((Any?, SdkError?) -> Void)?
     
+    unowned var notificationReceiver: MobileAuthNotificationReceiverProtocol?
+    
     fileprivate func handleConfirmationMobileAuth(_ cancelled: Bool) {
         guard let confirmation = confirmation else { fatalError() }
         
         confirmation(cancelled)
     }
-
     
     private func sendConnectorNotification(_ event: MobileAuthNotification, _ requestMessage: String?, _ error: SdkError?) {
-        BridgeConnector.shared?.toMobileAuthConnector.sendNotification(event: event, requestMessage: requestMessage, error: error)
+        notificationReceiver?.sendNotification(event: event, requestMessage: requestMessage, error: error)
     }
 }
 
@@ -57,6 +62,10 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
     
     func isUserEnrolledForMobileAuth() -> Bool {
         let userClient = ONGUserClient.sharedInstance()
+        return isUserEnrolledForMobileAuth(userClient: userClient)
+    }
+    
+    func isUserEnrolledForMobileAuth(userClient: ONGUserClient) -> Bool {
         if let userProfile = userClient.authenticatedUserProfile() {
             return userClient.isUserEnrolled(forMobileAuth: userProfile)
         }
@@ -64,12 +73,18 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
     }
     
     func handleMobileAuthConfirmation(cancelled: Bool) {
-        if authenticatorType == .fingerprint {
-            //@todo
-        } else if authenticatorType == .confirmation {
+        switch authenticatorType {
+        case .confirmation:
             handleConfirmationMobileAuth(cancelled)
-        } else if authenticatorType == .pin {
+            break
+        case .fingerprint, .pin:
             //@todo
+            confirmation?(cancelled)
+            break
+        default:
+            //@todo
+            confirmation?(cancelled)
+            break
         }
     }
     

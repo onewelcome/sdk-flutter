@@ -7,7 +7,7 @@ typealias FlutterDataCallback = (Any?, SdkError?) -> Void
 protocol FetchResourcesHandlerProtocol: AnyObject {
     func authenticateDevice(_ path: String, completion: @escaping (Bool, SdkError?) -> Void)
     func authenticateImplicitly(_ profile: ONGUserProfile, completion: @escaping (Bool, SdkError?) -> Void)
-    func resourceRequest(isImplicit: Bool, parameters: [String: Any], completion: @escaping FlutterDataCallback)
+    func resourceRequest(isImplicit: Bool, isAnonymousCall: Bool, parameters: [String: Any], completion: @escaping FlutterDataCallback)
     func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
     func fetchAnonymousResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
     func fetchResourceWithImplicitResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
@@ -49,12 +49,12 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         }
     }
 
-    func resourceRequest(isImplicit: Bool, parameters: [String: Any], completion: @escaping FlutterDataCallback) {
+    func resourceRequest(isImplicit: Bool, isAnonymousCall: Bool, parameters: [String: Any], completion: @escaping FlutterDataCallback) {
         print("[\(type(of: self))] resourceRequest")
         if(isImplicit == true){
             implicitResourcesRequest(parameters, completion)
         } else{
-            simpleResourcesRequest(parameters, completion)
+            simpleResourcesRequest(isAnonymousCall: isAnonymousCall, parameters: parameters, completion)
         }
     }
 
@@ -76,13 +76,14 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         }
     }
 
-    private func simpleResourcesRequest(_ parameters: [String: Any], _ completion: @escaping ([String: Any]?, SdkError?) -> Void) {
+    private func simpleResourcesRequest(isAnonymousCall: Bool, parameters: [String: Any], _ completion: @escaping ([String: Any]?, SdkError?) -> Void) {
         print("[\(type(of: self))] simpleResourcesRequest")
+        
         let encoding = getEncodingByValue(parameters["encoding"] as! String)
 
         let request = ONGResourceRequest.init(path: parameters["path"] as! String, method: parameters["method"] as! String, parameters: parameters["parameters"] as? [String : Any], encoding: encoding)
 
-        ONGDeviceClient.sharedInstance().fetchResource(request) { response, error in
+        let completionRequest: ((ONGResourceResponse?, Error?) -> Void)? = { response, error in
             if let error = error {
                 completion(nil, SdkError(errorDescription: error.localizedDescription, code: error.code))
             } else {
@@ -97,6 +98,27 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 }
             }
         }
+        
+        if isAnonymousCall {
+            ONGDeviceClient.sharedInstance().fetchResource(request, completion: completionRequest)
+        } else {
+            ONGUserClient.sharedInstance().fetchResource(request, completion: completionRequest)
+        }
+//        ONGDeviceClient.sharedInstance().fetchResource(request) { response, error in
+//            if let error = error {
+//                completion(nil, SdkError(errorDescription: error.localizedDescription, code: error.code))
+//            } else {
+//                if let data = response?.data {
+//                    if let responseData = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+//                        completion(responseData, nil)
+//                    } else {
+//                        completion(nil, SdkError.init(customType: .failedParseData))
+//                    }
+//                } else {
+//                    completion(nil, SdkError.init(customType: .responseIsNull))
+//                }
+//            }
+//        }
     }
 
     private func implicitResourcesRequest(_ parameters: [String: Any], _ completion: @escaping FlutterDataCallback) {
@@ -135,8 +157,9 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     }
     
     //MARK: - Bridge
-    func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
-        print("[\(type(of: self))] fetchSimpleResources")
+    func fetchAnonymousResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
+        print("[\(type(of: self))] fetchAnonymousResource")
+        
         let newParameters = generateParameters(from: parameters, path: path)
 
         OneginiModuleSwift.sharedInstance.authenticateDeviceForResource(path) { (data) in
@@ -145,7 +168,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 return
             }
 
-            OneginiModuleSwift.sharedInstance.resourceRequest(false, parameters: newParameters) { (_data, error) in
+            OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: false, parameters: newParameters) { (_data, error) in
                 if let _errorResource = error {
                     completion(_errorResource)
                     return
@@ -161,11 +184,11 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         }
     }
     
-    func fetchAnonymousResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
-        print("[\(type(of: self))] fetchAnonymousResource")
+    func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
+        print("[\(type(of: self))] fetchSimpleResources")
         let newParameters = generateParameters(from: parameters, path: path)
 
-        OneginiModuleSwift.sharedInstance.resourceRequest(false, parameters: newParameters) { (_data, error) in
+        OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: false, isAnonymousCall: false, parameters: newParameters) { (_data, error) in
             if let _errorResource = error {
                 completion(_errorResource)
                 return
@@ -191,7 +214,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         
         OneginiModuleSwift.sharedInstance.authenticateUserImplicitly(_profile.profileId) { (value, error) in
             if (error == nil) {
-                OneginiModuleSwift.sharedInstance.resourceRequest(value, parameters: newParameters) { (_data, error) in
+                OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: value, parameters: newParameters) { (_data, error) in
                     if let data = _data, let convertedStringDatat = try? JSONSerialization.data(withJSONObject: data, options: .prettyPrinted) {
                         let convertedString = String(data: convertedStringDatat, encoding: .utf8)
                         completion(convertedString)

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/model/authentication_attempt.dart';
 import 'package:onegini/model/onegini_event.dart';
+import 'package:onegini/model/onegini_error.dart';
 import 'package:onegini/onegini_event_listener.dart';
 import 'package:onegini_example/screens/auth_otp_screen.dart';
 import 'package:onegini_example/screens/fingerprint_screen.dart';
@@ -49,9 +50,9 @@ class OneginiListener extends OneginiEventListener {
   }
 
   @override
-  void showError(BuildContext buildContext, String errorMessage) {
+  void showError(BuildContext buildContext, OneginiError error) {
     Fluttertoast.showToast(
-      msg: errorMessage ?? "Something went wrong",
+      msg: "${error.message} Code: ${error.code} " ?? "Something went wrong",
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 1,

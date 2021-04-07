@@ -235,7 +235,7 @@ extension RegistrationHandler: ONGRegistrationDelegate {
             else
             {
                 successfulRequest = false
-                result["eventValue"] = mapErrorMessageFromStatus(info.status)
+                result["eventValue"] = SdkError.init(errorDescription: mapErrorMessageFromStatus(info.status) ?? "null", code: info.status).toJSON()
             }
         }
 
