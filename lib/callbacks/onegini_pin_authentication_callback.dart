@@ -4,12 +4,11 @@ import 'package:onegini/constants/constants.dart';
 
 import '../onegini.dart';
 
-
-///Callback for pin AUTHENTICATION.
+/// Callback for pin AUTHENTICATION.
+///
+/// {@category Callbacks}
 class OneginiPinAuthenticationCallback {
-
-
-  ///Cancels authentication
+  /// Cancels authentication
   Future<void> denyAuthenticationRequest() async {
     try {
       await Onegini.instance.channel
@@ -19,17 +18,17 @@ class OneginiPinAuthenticationCallback {
     }
   }
 
-  ///Accepts authentication and sent [pin] to the OneginiSdk.
-  Future<void> acceptAuthenticationRequest(BuildContext context,{String? pin}) async {
+  /// Accepts authentication and sent [pin] to the OneginiSdk.
+  Future<void> acceptAuthenticationRequest(BuildContext context,
+      {String? pin}) async {
     Onegini.instance.setEventContext(context);
     try {
-      await Onegini.instance.channel
-          .invokeMethod(Constants.acceptPinAuthenticationRequest, <String, String?>{
+      await Onegini.instance.channel.invokeMethod(
+          Constants.acceptPinAuthenticationRequest, <String, String?>{
         'pin': pin,
       });
     } on PlatformException catch (error) {
       throw error;
     }
   }
-
 }
