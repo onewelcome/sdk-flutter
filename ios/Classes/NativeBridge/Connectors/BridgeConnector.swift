@@ -12,7 +12,7 @@ class BridgeConnector: BridgeConnectorProtocol {
     let toMobileAuthConnector: BridgeToMobileAuthConnectorProtocol = MobileAuthConnector()
     var toLogoutUserHandler = LogoutHandler()
     var toDeregisterUserHandler = DisconnectHandler()
-    let toAuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol = AuthenticatorsHandler()
+    let toAuthenticatorsHandler: AuthenticatorsHandler = AuthenticatorsHandler()
     
     weak var bridge: ConnectorToFlutterBridgeProtocol?
     public static var shared:BridgeConnector?
@@ -25,6 +25,7 @@ class BridgeConnector: BridgeConnectorProtocol {
         let pinHandler = self.toPinHandlerConnector.pinHandler
         self.toRegistrationConnector.registrationHandler.pinHandler = pinHandler
         self.toLoginHandler.pinHandler = pinHandler
+        self.toAuthenticatorsHandler.notificationReceiver = toMobileAuthConnector
     }
   
     func sendBridgeEvent(eventName: OneginiBridgeEvents, data: Any!) {

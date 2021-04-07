@@ -9,6 +9,7 @@ protocol BridgeToAuthenticatorsHandlerProtocol: AnyObject {
     func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Bool, SdkError?) -> Void)
     func getAuthenticatorsListForUserProfile(_ userProfile: ONGUserProfile) -> Array<ONGAuthenticator>
     func isAuthenticatorRegistered(_ authenticatorType: ONGAuthenticatorType, _ userProfile: ONGUserProfile) -> Bool
+    var notificationReceiver: AuthenticatorsNotificationReceiverProtocol? { get }
 }
 
 protocol AuthenticatorsNotificationReceiverProtocol: class {
@@ -22,7 +23,6 @@ class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
     var registrationCompletion: ((Bool, SdkError?) -> Void)?
     var deregistrationCompletion: ((Bool, SdkError?) -> Void)?
 
-    
     unowned var notificationReceiver: AuthenticatorsNotificationReceiverProtocol?
     
     func handlePin(pin: String?) {
