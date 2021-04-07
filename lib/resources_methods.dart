@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'constants/constants.dart';
 import 'onegini.dart';
 
+///Class for calls resources
 class ResourcesMethods {
   Future<String> getResourceAnonymous(
     String path, {

@@ -6,6 +6,8 @@ import 'constants/constants.dart';
 import 'model/authentication_attempt.dart';
 import 'model/onegini_event.dart';
 
+
+///Extend from this class to describe the events that will take place inside OneginiSDK
 abstract class OneginiEventListener {
   static const chanel_name = 'onegini_events';
   static const EventChannel _eventChannel = const EventChannel(chanel_name);

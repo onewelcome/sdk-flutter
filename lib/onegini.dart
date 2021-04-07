@@ -9,6 +9,7 @@ import 'package:onegini/user_client.dart';
 
 import 'model/onegini_removed_user_profile.dart';
 
+///The main class used to call methods
 class Onegini {
   Onegini._privateConstructor();
 
@@ -22,6 +23,7 @@ class Onegini {
   ResourcesMethods resourcesMethods = ResourcesMethods();
   UserClient userClient = UserClient();
 
+  ///Use this method when you want change [BuildContext] in your [OneginiEventListener]
   setEventContext(BuildContext context) {
     _eventListener?.context = context;
   }

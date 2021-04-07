@@ -4,10 +4,11 @@ import 'package:onegini/constants/constants.dart';
 
 import '../onegini.dart';
 
-
+///Callback for pin REGISTRATION.
 class OneginiPinRegistrationCallback{
 
 
+  ///Cancels pin registration
   Future<void> denyAuthenticationRequest() async {
     try {
       await Onegini.instance.channel
@@ -17,6 +18,7 @@ class OneginiPinRegistrationCallback{
     }
   }
 
+  ///Accepts pin registration and sent [pin] to the OneginiSdk.
   Future<void> acceptAuthenticationRequest(BuildContext context,{String? pin, bool isCustomAuthenticator = false}) async {
     Onegini.instance.setEventContext(context);
     try {
