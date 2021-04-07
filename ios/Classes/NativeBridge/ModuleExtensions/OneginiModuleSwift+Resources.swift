@@ -27,19 +27,13 @@ extension OneginiModuleSwift {
             print("super path1 \(path)")
             print("super params1 \(parameters)")
             bridgeConnector.toResourceFetchHandler.fetchResourceWithImplicitResource(path, parameters: parameters, completion: callback)
-<<<<<<< HEAD
-        case Constants.Routes.getResource:
+        case Constants.Routes.getResourceAnonymous:
             print("super path2 \(path)")
             print("super params2 \(parameters)")
             bridgeConnector.toResourceFetchHandler.fetchAnonymousResource(path, parameters: parameters, completion: callback)
-        case Constants.Routes.getResourceAnonymous:
+        case Constants.Routes.getResource:
             print("super path3 \(path)")
             print("super params3 \(parameters)")
-=======
-        case Constants.Routes.getResourceAnonymous:
-            bridgeConnector.toResourceFetchHandler.fetchAnonymousResource(path, parameters: parameters, completion: callback)
-        case Constants.Routes.getResource:
->>>>>>> qa_errorCodeEvent
             bridgeConnector.toResourceFetchHandler.fetchSimpleResources(path, parameters: parameters, completion: callback)
         default:
             callback(SdkError.convertToFlutter(SdkError(customType: .incrorrectResourcesAccess)))
