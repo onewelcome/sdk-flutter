@@ -1,18 +1,18 @@
 //MARK: -
-protocol BridgeToMobileAuthConnectorProtocol: AnyObject {
+protocol BridgeToMobileAuthConnectorProtocol: AuthenticatorsNotificationReceiverProtocol {
     var bridgeConnector: BridgeConnectorProtocol? { get set }
     var mobileAuthHandler: MobileAuthConnectorToHandlerProtocol { get }
-
-    func sendNotification(event: MobileAuthNotification, requestMessage: String?, error: SdkError?) -> Void
 }
 
 //MARK: -
-class MobileAuthConnector : BridgeToMobileAuthConnectorProtocol {
+class MobileAuthConnector : BridgeToMobileAuthConnectorProtocol, MobileAuthNotificationReceiverProtocol {
     var mobileAuthHandler: MobileAuthConnectorToHandlerProtocol
     unowned var bridgeConnector: BridgeConnectorProtocol?
 
     init() {
-        mobileAuthHandler = MobileAuthHandler()
+        let handler = MobileAuthHandler()
+        mobileAuthHandler = handler
+        handler.notificationReceiver = self
     }
 
     func sendNotification(event: MobileAuthNotification, requestMessage: String?, error: SdkError?) {

@@ -9,6 +9,11 @@ protocol BridgeToAuthenticatorsHandlerProtocol: AnyObject {
     func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Bool, SdkError?) -> Void)
     func getAuthenticatorsListForUserProfile(_ userProfile: ONGUserProfile) -> Array<ONGAuthenticator>
     func isAuthenticatorRegistered(_ authenticatorType: ONGAuthenticatorType, _ userProfile: ONGUserProfile) -> Bool
+    var notificationReceiver: AuthenticatorsNotificationReceiverProtocol? { get }
+}
+
+protocol AuthenticatorsNotificationReceiverProtocol: class {
+    func sendNotification(event: MobileAuthNotification, requestMessage: String?, error: SdkError?)
 }
 
 //MARK: -
@@ -17,6 +22,8 @@ class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
     var customAuthChallenge: ONGCustomAuthFinishRegistrationChallenge?
     var registrationCompletion: ((Bool, SdkError?) -> Void)?
     var deregistrationCompletion: ((Bool, SdkError?) -> Void)?
+
+    unowned var notificationReceiver: AuthenticatorsNotificationReceiverProtocol?
     
     func handlePin(pin: String?) {
         guard let customAuthChallenge = self.customAuthChallenge else {
@@ -59,7 +66,9 @@ class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
     }
     
     private func sendConnectorNotification(_ event: MobileAuthNotification, _ requestMessage: String?, _ error: SdkError?) {
-        BridgeConnector.shared?.toMobileAuthConnector.sendNotification(event: event, requestMessage: requestMessage, error: error)
+        
+        notificationReceiver?.sendNotification(event: event, requestMessage: requestMessage, error: error)
+//        BridgeConnector.shared?.toMobileAuthConnector.sendNotification(event: event, requestMessage: requestMessage, error: error)
     }
 }
 
