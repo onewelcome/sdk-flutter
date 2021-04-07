@@ -26,7 +26,7 @@ class RegistrationConnector : BridgeToRegistrationConnectorProtocol {
                 registrationHandler.cancelCustomRegistration()
                 break
             default:
-                sendEvent(data: ["eventName": PinNotification.showError.rawValue, "eventValue": "Unsupported custom registration action. Contact SDK maintainer."])
+                sendEvent(data: ["eventName": PinNotification.showError.rawValue, "eventValue": SdkError.init(errorDescription: "Unsupported custom registration action. Contact SDK maintainer.").toJSON() as Any?])
                 break
         }
     }
