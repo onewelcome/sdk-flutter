@@ -4,10 +4,15 @@
 
 import 'dart:convert';
 
-OneginiError oneginiErrorFromJson(String str) {
+OneginiError oneginiErrorFromJson(dynamic data) {
   var value;
+
+  if (data is Map<String, dynamic>) {
+    return OneginiError.fromJson(data);
+  }
+
   try {
-   value = json.decode(str);
+   value = json.decode(data);
   } catch (error) {
     print("can't decode error");
   }
@@ -15,8 +20,8 @@ OneginiError oneginiErrorFromJson(String str) {
     return OneginiError.fromJson(value);
   } else {
     var _error = OneginiError();
-    _error.code = "401";
-    _error.message = str;
+    _error.code = 8001;
+    _error.message = data;
     return _error;
   }
 }
@@ -30,11 +35,11 @@ class OneginiError {
   });
 
   String? message;
-  String? code;
+  int? code;
 
   factory OneginiError.fromJson(Map<String, dynamic> json) => OneginiError(
         message: json["message"],
-        code: json["code"],
+        code: json["code"] is int ? json["code"] : int.parse(json["code"]),
       );
 
   Map<String, dynamic> toJson() => {
