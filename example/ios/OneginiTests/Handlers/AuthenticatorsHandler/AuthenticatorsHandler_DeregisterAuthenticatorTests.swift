@@ -1,15 +1,16 @@
 //
-//  AuthenticatorsHandlerTests.swift
+//  AuthenticatorsHandler_DeregisterAuthenticatorTests.swift
 //  OneginiTests
 //
-//  Created by Mateusz Mirkowski on 02/04/2021.
+//  Created by Mateusz Mirkowski on 07/04/2021.
 //
 
+import XCTest
 import XCTest
 @testable import onegini
 import OneginiSDKiOS
 
-class AuthenticatorsHandler_Tests: XCTestCase, AuthenticatorsNotificationReceiverProtocol {
+class AuthenticatorsHandler_DeregisterAuthenticatorTests: XCTestCase, AuthenticatorsNotificationReceiverProtocol {
     var handler: AuthenticatorsHandler?
     var authHandlerCallback: ((_ event: MobileAuthNotification, _ requestMessage: String?, _ error: SdkError?) -> ())?
 
@@ -29,7 +30,7 @@ class AuthenticatorsHandler_Tests: XCTestCase, AuthenticatorsNotificationReceive
         authHandlerCallback?(event, requestMessage, error)
     }
 
-    func testOnCancel() throws {
+    func testDeregisterAuthenticatorWithPin() throws {
         var expectation = self.expectation(description: "startOneginiModule")
         OneginiModuleSwift.sharedInstance.startOneginiModule { (callback) in
             expectation.fulfill()
@@ -37,20 +38,20 @@ class AuthenticatorsHandler_Tests: XCTestCase, AuthenticatorsNotificationReceive
         waitForExpectations(timeout: 10, handler: nil)
 
         expectation = self.expectation(description: "authHandlerCallback")
-//        handler!.mode = PINEntryMode.login
 
         authHandlerCallback = {
             (event, requestMessage, error) in
             print("auth handler callback")
             expectation.fulfill()
         }
+
         waitForExpectations(timeout: 10, handler: nil)
 
         let profile = ONGUserProfile(id: "121212")!
 
-        expectation = self.expectation(description: "registerAuthenticator")
+        expectation = self.expectation(description: "deregisterAuthenticator")
 
-        handler!.registerAuthenticator(profile, ONGAuthenticator()) { (success, error) in
+        handler!.deregisterAuthenticator(profile, "0") { (success, error) in
             XCTAssertTrue(success)
             XCTAssertNil(error)
             expectation.fulfill()
@@ -59,7 +60,7 @@ class AuthenticatorsHandler_Tests: XCTestCase, AuthenticatorsNotificationReceive
         waitForExpectations(timeout: 10, handler: nil)
     }
 
-    func testGetAuthenticators() throws {
+    func testDeregisterAuthenticatorWithBiometric() throws {
         var expectation = self.expectation(description: "startOneginiModule")
         OneginiModuleSwift.sharedInstance.startOneginiModule { (callback) in
             expectation.fulfill()
@@ -78,7 +79,44 @@ class AuthenticatorsHandler_Tests: XCTestCase, AuthenticatorsNotificationReceive
 
         let profile = ONGUserProfile(id: "121212")!
 
-        let result = handler!.getAuthenticatorsListForUserProfile(profile)
-        XCTAssertTrue(result.count > 1)
+        expectation = self.expectation(description: "deregisterAuthenticator")
+
+        handler!.deregisterAuthenticator(profile, "1") { (success, error) in
+            XCTAssertTrue(success)
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 10, handler: nil)
+    }
+
+    func testDeregisterAuthenticatorWithCustom() throws {
+        var expectation = self.expectation(description: "startOneginiModule")
+        OneginiModuleSwift.sharedInstance.startOneginiModule { (callback) in
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: 10, handler: nil)
+
+        expectation = self.expectation(description: "authHandlerCallback")
+
+        authHandlerCallback = {
+            (event, requestMessage, error) in
+            print("auth handler callback")
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 10, handler: nil)
+
+        let profile = ONGUserProfile(id: "121212")!
+
+        expectation = self.expectation(description: "deregisterAuthenticator")
+
+        handler!.deregisterAuthenticator(profile, "3") { (success, error) in
+            XCTAssertTrue(success)
+            XCTAssertNil(error)
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 10, handler: nil)
     }
 }
