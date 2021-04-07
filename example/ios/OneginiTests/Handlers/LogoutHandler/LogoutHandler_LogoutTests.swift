@@ -26,6 +26,7 @@ class LogoutHandler_LogoutTests: XCTestCase {
         let expectation = self.expectation(description: "testLogout")
 
         handler?.logout(completion: { (error) in
+            // check if method return any response
             expectation.fulfill()
         })
 

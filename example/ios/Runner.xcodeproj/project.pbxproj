@@ -37,6 +37,13 @@
 		5F7937F726162443001AEE71 /* RegistrationHandler_CurrentChallengeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7937F626162443001AEE71 /* RegistrationHandler_CurrentChallengeTests.swift */; };
 		5F8E28B42617163B00AC0C81 /* ResourcesHandler_FetchAnonymousResourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8E28B32617163B00AC0C81 /* ResourcesHandler_FetchAnonymousResourceTests.swift */; };
 		5F8E28BA2617176700AC0C81 /* ResourcesHandler_FetchResourceWithImplicitResourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8E28B92617176700AC0C81 /* ResourcesHandler_FetchResourceWithImplicitResourceTests.swift */; };
+		5FC8D28B261C3A2B001E5CC9 /* AppToWebHandler_SignInAppToWebTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC8D28A261C3A2B001E5CC9 /* AppToWebHandler_SignInAppToWebTests.swift */; };
+		5FC8D292261C3D40001E5CC9 /* BrowserHandler_HandleUrlTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC8D291261C3D40001E5CC9 /* BrowserHandler_HandleUrlTests.swift */; };
+		5FC8D299261C4DC8001E5CC9 /* MobileAuthHandler_EnrollForMobileAuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC8D298261C4DC8001E5CC9 /* MobileAuthHandler_EnrollForMobileAuthTests.swift */; };
+		5FC8D29F261C4DE4001E5CC9 /* MobileAuthHandler_IsUserEnrolledForMobileAuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC8D29E261C4DE4001E5CC9 /* MobileAuthHandler_IsUserEnrolledForMobileAuthTests.swift */; };
+		5FC8D2A3261C4E14001E5CC9 /* MobileAuthHandler_HandleMobileAuthConfirmationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC8D2A2261C4E14001E5CC9 /* MobileAuthHandler_HandleMobileAuthConfirmationTests.swift */; };
+		5FC8D2A7261C4E33001E5CC9 /* MobileAuthHandler_HandleOTPMobileAuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC8D2A6261C4E33001E5CC9 /* MobileAuthHandler_HandleOTPMobileAuthTests.swift */; };
+		5FC8D2AB261C4E45001E5CC9 /* MobileAuthHandler_HandleQrOTPMobileAuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC8D2AA261C4E45001E5CC9 /* MobileAuthHandler_HandleQrOTPMobileAuthTests.swift */; };
 		5FFE1DC22611C50F003EF280 /* PinHandler_PinProvidedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFE1DC12611C50F003EF280 /* PinHandler_PinProvidedTests.swift */; };
 		5FFE1DCD2611EE8F003EF280 /* PinHandler_HandleFlowUpdateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFE1DCC2611EE8F003EF280 /* PinHandler_HandleFlowUpdateTests.swift */; };
 		5FFE1DD426125C15003EF280 /* PinHandler_CancelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFE1DD326125C15003EF280 /* PinHandler_CancelTests.swift */; };
@@ -136,6 +143,13 @@
 		5F7937F626162443001AEE71 /* RegistrationHandler_CurrentChallengeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationHandler_CurrentChallengeTests.swift; sourceTree = "<group>"; };
 		5F8E28B32617163B00AC0C81 /* ResourcesHandler_FetchAnonymousResourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourcesHandler_FetchAnonymousResourceTests.swift; sourceTree = "<group>"; };
 		5F8E28B92617176700AC0C81 /* ResourcesHandler_FetchResourceWithImplicitResourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourcesHandler_FetchResourceWithImplicitResourceTests.swift; sourceTree = "<group>"; };
+		5FC8D28A261C3A2B001E5CC9 /* AppToWebHandler_SignInAppToWebTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppToWebHandler_SignInAppToWebTests.swift; sourceTree = "<group>"; };
+		5FC8D291261C3D40001E5CC9 /* BrowserHandler_HandleUrlTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserHandler_HandleUrlTests.swift; sourceTree = "<group>"; };
+		5FC8D298261C4DC8001E5CC9 /* MobileAuthHandler_EnrollForMobileAuthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileAuthHandler_EnrollForMobileAuthTests.swift; sourceTree = "<group>"; };
+		5FC8D29E261C4DE4001E5CC9 /* MobileAuthHandler_IsUserEnrolledForMobileAuthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileAuthHandler_IsUserEnrolledForMobileAuthTests.swift; sourceTree = "<group>"; };
+		5FC8D2A2261C4E14001E5CC9 /* MobileAuthHandler_HandleMobileAuthConfirmationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileAuthHandler_HandleMobileAuthConfirmationTests.swift; sourceTree = "<group>"; };
+		5FC8D2A6261C4E33001E5CC9 /* MobileAuthHandler_HandleOTPMobileAuthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileAuthHandler_HandleOTPMobileAuthTests.swift; sourceTree = "<group>"; };
+		5FC8D2AA261C4E45001E5CC9 /* MobileAuthHandler_HandleQrOTPMobileAuthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileAuthHandler_HandleQrOTPMobileAuthTests.swift; sourceTree = "<group>"; };
 		5FFE1DC12611C50F003EF280 /* PinHandler_PinProvidedTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinHandler_PinProvidedTests.swift; sourceTree = "<group>"; };
 		5FFE1DCC2611EE8F003EF280 /* PinHandler_HandleFlowUpdateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinHandler_HandleFlowUpdateTests.swift; sourceTree = "<group>"; };
 		5FFE1DD326125C15003EF280 /* PinHandler_CancelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinHandler_CancelTests.swift; sourceTree = "<group>"; };
@@ -302,13 +316,44 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		5FC8D289261C3A0E001E5CC9 /* AppToWebHandler */ = {
+			isa = PBXGroup;
+			children = (
+				5FC8D28A261C3A2B001E5CC9 /* AppToWebHandler_SignInAppToWebTests.swift */,
+			);
+			path = AppToWebHandler;
+			sourceTree = "<group>";
+		};
+		5FC8D290261C3C0E001E5CC9 /* BrowserHandler */ = {
+			isa = PBXGroup;
+			children = (
+				5FC8D291261C3D40001E5CC9 /* BrowserHandler_HandleUrlTests.swift */,
+			);
+			path = BrowserHandler;
+			sourceTree = "<group>";
+		};
+		5FC8D297261C4DA1001E5CC9 /* MobileAuthHandler */ = {
+			isa = PBXGroup;
+			children = (
+				5FC8D298261C4DC8001E5CC9 /* MobileAuthHandler_EnrollForMobileAuthTests.swift */,
+				5FC8D2A2261C4E14001E5CC9 /* MobileAuthHandler_HandleMobileAuthConfirmationTests.swift */,
+				5FC8D2A6261C4E33001E5CC9 /* MobileAuthHandler_HandleOTPMobileAuthTests.swift */,
+				5FC8D2AA261C4E45001E5CC9 /* MobileAuthHandler_HandleQrOTPMobileAuthTests.swift */,
+				5FC8D29E261C4DE4001E5CC9 /* MobileAuthHandler_IsUserEnrolledForMobileAuthTests.swift */,
+			);
+			path = MobileAuthHandler;
+			sourceTree = "<group>";
+		};
 		5FFE1DC02611C4E5003EF280 /* Handlers */ = {
 			isa = PBXGroup;
 			children = (
 				229F40E4261727FB000EA9B8 /* AuthenticatorsHandler */,
+				5FC8D289261C3A0E001E5CC9 /* AppToWebHandler */,
+				5FC8D290261C3C0E001E5CC9 /* BrowserHandler */,
 				5F7937DF261621DF001AEE71 /* DisconnectHandler */,
 				5F1ADDCE2613A38F0055B23D /* LoginHandler */,
 				229F409026145C05000EA9B8 /* LogoutHandler */,
+				5FC8D297261C4DA1001E5CC9 /* MobileAuthHandler */,
 				5FFE1DC52611DCC4003EF280 /* PinHandler */,
 				5FFE1DE226127466003EF280 /* RegistrationHandler */,
 				225FF1CE2612FEBD00261557 /* ResourcesHandler */,
@@ -711,13 +756,16 @@
 				229F40E626172814000EA9B8 /* AuthenticatorsHandler_RegisterAuthenticatorTests.swift in Sources */,
 				5F1ADDD02613A3F60055B23D /* LoginHandler_AuthenticateUserTests.swift in Sources */,
 				5F7937E7261623EE001AEE71 /* RegistrationHandler_ProcessOTPCodeTests.swift in Sources */,
+				5FC8D29F261C4DE4001E5CC9 /* MobileAuthHandler_IsUserEnrolledForMobileAuthTests.swift in Sources */,
 				5F176CD02615C4FF003E4B74 /* RegistrationHandler_IdentityProvidersTests.swift in Sources */,
+				5FC8D28B261C3A2B001E5CC9 /* AppToWebHandler_SignInAppToWebTests.swift in Sources */,
 				5FFE1DD426125C15003EF280 /* PinHandler_CancelTests.swift in Sources */,
 				5F176CC82615C4DA003E4B74 /* RegistrationHandler_LogoutTests.swift in Sources */,
 				225FF1D02612FF1800261557 /* ResourcesHandler_AuthenticateDeviceTests.swift in Sources */,
 				22353842261D71AD009AE465 /* AuthenticatorsHandler_GetAuthenticatorsTests.swift in Sources */,
 				229F406D26134203000EA9B8 /* ResourcesHandler_ResourceRequestTests.swift in Sources */,
 				5FFE1DD726125E32003EF280 /* PinHandler_CloseFlowTests.swift in Sources */,
+				5FC8D2A7261C4E33001E5CC9 /* MobileAuthHandler_HandleOTPMobileAuthTests.swift in Sources */,
 				5FFE1DCD2611EE8F003EF280 /* PinHandler_HandleFlowUpdateTests.swift in Sources */,
 				5FFE1DE4261274EC003EF280 /* RegistrationHandler_SignUpTests.swift in Sources */,
 				5F8E28B42617163B00AC0C81 /* ResourcesHandler_FetchAnonymousResourceTests.swift in Sources */,
@@ -733,7 +781,11 @@
 				5F176CC32615C4BA003E4B74 /* RegistrationHandler_ProcessRedirectURLTests.swift in Sources */,
 				22353846261D7234009AE465 /* AuthenticatorsHandler_DeregisterAuthenticatorTests.swift in Sources */,
 				5F7937E1261621FE001AEE71 /* DisconnectHandler_DisconnectTests.swift in Sources */,
+				5FC8D2AB261C4E45001E5CC9 /* MobileAuthHandler_HandleQrOTPMobileAuthTests.swift in Sources */,
+				5FC8D292261C3D40001E5CC9 /* BrowserHandler_HandleUrlTests.swift in Sources */,
 				229F407126134528000EA9B8 /* ResourcesHandler_FetchSimpleResourcesTests.swift in Sources */,
+				5FC8D2A3261C4E14001E5CC9 /* MobileAuthHandler_HandleMobileAuthConfirmationTests.swift in Sources */,
+				5FC8D299261C4DC8001E5CC9 /* MobileAuthHandler_EnrollForMobileAuthTests.swift in Sources */,
 				229F405F26131933000EA9B8 /* ResourcesHandler_AuthenticateImplicitlyTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

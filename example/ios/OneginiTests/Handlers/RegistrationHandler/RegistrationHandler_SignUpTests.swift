@@ -40,6 +40,7 @@ class RegistrationHandler_SignUpTests: XCTestCase, BrowserHandlerProtocol {
         // TODO: handle sign up without browser or find better way
         let dummyProviderId = "Dummy-IDP"
         handler?.signUp(dummyProviderId, completion: { (success, userProfile, error) in
+            // check if method return any response
             print("[\(type(of: self))] sign up completion - \(success) ; e: \(error?.errorDescription)")
             expectation.fulfill()
         })

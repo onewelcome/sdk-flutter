@@ -19,6 +19,7 @@ class RegistrationHandler_DeregisterTests: XCTestCase {
         let expectation = self.expectation(description: "testDeregister")
         
         handler?.deregister(completion: { (error) in
+            // check if method return any response
             print("[\(type(of: self))] deregister e: \(error?.errorDescription ?? "nil")")
             expectation.fulfill()
         })

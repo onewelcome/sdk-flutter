@@ -5,12 +5,14 @@ protocol BridgeToMobileAuthConnectorProtocol: AuthenticatorsNotificationReceiver
 }
 
 //MARK: -
-class MobileAuthConnector : BridgeToMobileAuthConnectorProtocol {
+class MobileAuthConnector : BridgeToMobileAuthConnectorProtocol, MobileAuthNotificationReceiverProtocol {
     var mobileAuthHandler: MobileAuthConnectorToHandlerProtocol
     unowned var bridgeConnector: BridgeConnectorProtocol?
 
     init() {
-        mobileAuthHandler = MobileAuthHandler()
+        let handler = MobileAuthHandler()
+        mobileAuthHandler = handler
+        handler.notificationReceiver = self
     }
 
     func sendNotification(event: MobileAuthNotification, requestMessage: String?, error: SdkError?) {

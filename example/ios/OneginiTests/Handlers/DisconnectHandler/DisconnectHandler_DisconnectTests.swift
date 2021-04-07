@@ -19,6 +19,7 @@ class DisconnectHandler_DisconnectTests: XCTestCase {
         let expectation = self.expectation(description: "testDisconnect")
 
         handler?.disconnect(completion: { (error) in
+            // check if method return any response
             expectation.fulfill()
         })
 
