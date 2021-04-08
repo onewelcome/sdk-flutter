@@ -36,7 +36,10 @@ class OneginiError {
     this.code,
   });
 
+  /// Error message
   String? message;
+
+  /// Error code
   int? code;
 
   factory OneginiError.fromJson(Map<String, dynamic> json) => OneginiError(

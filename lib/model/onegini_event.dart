@@ -12,7 +12,10 @@ class Event {
     this.eventValue,
   });
 
+  /// Event name
   String? eventName;
+
+  /// Event value
   dynamic? eventValue;
 
   factory Event.fromJson(Map<String, dynamic> json) => Event(

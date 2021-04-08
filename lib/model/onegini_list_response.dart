@@ -19,7 +19,10 @@ class OneginiListResponse {
     this.name,
   });
 
+  /// Response list ic
   String? id;
+
+  /// Response list name
   String? name;
 
   factory OneginiListResponse.fromJson(Map<String, dynamic> json) =>

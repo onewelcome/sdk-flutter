@@ -19,7 +19,10 @@ class RemovedUserProfile {
     this.profileId,
   });
 
+  /// Is removed profile defaule
   bool? isDefault;
+
+  /// Removed profile id
   String? profileId;
 
   factory RemovedUserProfile.fromJson(Map<String, dynamic> json) =>
