@@ -47,6 +47,7 @@ class Constants {
   //Other
   static const String getAppToWebSingleSignOn = "getAppToWebSingleSignOn";
   static const String changePin = "changePin";
+  static const String userProfiles = "userProfiles";
 
   //CustomRegistration
   static const String customTwoStepRegistrationReturnSuccess =

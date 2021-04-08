@@ -44,6 +44,6 @@ struct Constants {
         //Other
         static let getAppToWebSingleSignOn: String = "getAppToWebSingleSignOn";
         static let changePin: String = "changePin";
-        
+        static let userProfiles: String = "userProfiles";
     }
 }

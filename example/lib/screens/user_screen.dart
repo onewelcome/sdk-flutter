@@ -298,6 +298,11 @@ class Home extends StatelessWidget {
         fontSize: 16.0);
   }
 
+  userProfiles(BuildContext context) async {
+    var data = await Onegini.instance.userClient.fetchUserProfiles();
+    print(data);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -323,6 +328,15 @@ class Home extends StatelessWidget {
                 authWithOpt(context);
               },
               child: Text('auth with opt'),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                userProfiles(context);
+              },
+              child: Text('User profiles'),
             ),
           ],
         ),
