@@ -1,3 +1,6 @@
+/// The class with constant values.
+///
+/// Contains names of methods that Flutter calls on native code, and events that comes back to Flutter.
 class Constants {
   //#region Onegini methods
 
