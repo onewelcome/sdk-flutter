@@ -4,6 +4,7 @@
 
 import 'dart:convert';
 
+/// Parse json to OneginiError
 OneginiError oneginiErrorFromJson(dynamic data) {
   var value;
 
@@ -12,7 +13,7 @@ OneginiError oneginiErrorFromJson(dynamic data) {
   }
 
   try {
-   value = json.decode(data);
+    value = json.decode(data);
   } catch (error) {
     print("can't decode error");
   }
@@ -26,6 +27,7 @@ OneginiError oneginiErrorFromJson(dynamic data) {
   }
 }
 
+/// Parse OneginiError to json
 String oneginiErrorToJson(OneginiError data) => json.encode(data.toJson());
 
 class OneginiError {

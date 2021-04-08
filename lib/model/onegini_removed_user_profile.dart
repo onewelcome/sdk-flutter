@@ -4,9 +4,14 @@
 
 import 'dart:convert';
 
-List<RemovedUserProfile> removedUserProfileListFromJson(String str) => List<RemovedUserProfile>.from(json.decode(str).map((x) => RemovedUserProfile.fromJson(x)));
+/// Parse json to RemovedUserProfile
+List<RemovedUserProfile> removedUserProfileListFromJson(String str) =>
+    List<RemovedUserProfile>.from(
+        json.decode(str).map((x) => RemovedUserProfile.fromJson(x)));
 
-String removedUserProfileListToJson(List<RemovedUserProfile> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
+/// Parse RemovedUserProfile to json
+String removedUserProfileListToJson(List<RemovedUserProfile> data) =>
+    json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class RemovedUserProfile {
   RemovedUserProfile({
@@ -17,13 +22,14 @@ class RemovedUserProfile {
   bool? isDefault;
   String? profileId;
 
-  factory RemovedUserProfile.fromJson(Map<String, dynamic> json) => RemovedUserProfile(
-    isDefault: json["isDefault"],
-    profileId: json["profileId"],
-  );
+  factory RemovedUserProfile.fromJson(Map<String, dynamic> json) =>
+      RemovedUserProfile(
+        isDefault: json["isDefault"],
+        profileId: json["profileId"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "isDefault": isDefault,
-    "profileId": profileId,
-  };
+        "isDefault": isDefault,
+        "profileId": profileId,
+      };
 }
