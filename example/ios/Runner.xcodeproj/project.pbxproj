@@ -18,8 +18,8 @@
 		229F407126134528000EA9B8 /* ResourcesHandler_FetchSimpleResourcesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F407026134528000EA9B8 /* ResourcesHandler_FetchSimpleResourcesTests.swift */; };
 		229F409226145C23000EA9B8 /* LogoutHandler_LogoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F409126145C23000EA9B8 /* LogoutHandler_LogoutTests.swift */; };
 		229F40E626172814000EA9B8 /* AuthenticatorsHandler_RegisterAuthenticatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 229F40E526172814000EA9B8 /* AuthenticatorsHandler_RegisterAuthenticatorTests.swift */; };
+		237088DE02AF0DE066EB4958 /* Pods_OneginiTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CD7720FD14AD76063A5BB8EC /* Pods_OneginiTests.framework */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
-		5F07F1A5260DFB910073BA5E /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F07F1A4260DFB910073BA5E /* Pods_Runner.framework */; };
 		5F07F1B8260DFCFC0073BA5E /* OneginiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F07F1B7260DFCFC0073BA5E /* OneginiTests.swift */; };
 		5F176CBF2615C499003E4B74 /* RegistrationHandler_CancelRegistrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F176CBE2615C499003E4B74 /* RegistrationHandler_CancelRegistrationTests.swift */; };
 		5F176CC32615C4BA003E4B74 /* RegistrationHandler_ProcessRedirectURLTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F176CC22615C4BA003E4B74 /* RegistrationHandler_ProcessRedirectURLTests.swift */; };
@@ -51,11 +51,11 @@
 		5FFE1DDA2612601D003EF280 /* PinHandler_ChangePinCallTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFE1DD92612601D003EF280 /* PinHandler_ChangePinCallTests.swift */; };
 		5FFE1DE4261274EC003EF280 /* RegistrationHandler_SignUpTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FFE1DE3261274EC003EF280 /* RegistrationHandler_SignUpTests.swift */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
-		97520F03FB762CCA3E672CB2 /* Pods_Runner_OneginiUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 762BC894F5F62CE3D0CE9C4F /* Pods_Runner_OneginiUITests.framework */; };
+		93663F8AAF22903EBC4ECC42 /* Pods_Runner_OneginiUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 32B651BDF813215B45ABC10B /* Pods_Runner_OneginiUITests.framework */; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
-		CB4EE3DF3BC5C7D43E67A6B7 /* Pods_OneginiTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E2135D612F95790FA77C8405 /* Pods_OneginiTests.framework */; };
+		A215674B8ED0DB51242459D1 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C80FE171CD07690B0E6A1567 /* Pods_Runner.framework */; };
 		F0D3E8D12576F7FD009D2C24 /* CloudFlareIncECCCA3.cer in Resources */ = {isa = PBXBuildFile; fileRef = F0D3E8CE2576F7FD009D2C24 /* CloudFlareIncECCCA3.cer */; };
 		F0D3E8D22576F7FD009D2C24 /* OneginiConfigModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3E8CF2576F7FD009D2C24 /* OneginiConfigModel.m */; };
 		F0D3E8D32576F7FD009D2C24 /* SecurityController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3E8D02576F7FD009D2C24 /* SecurityController.m */; };
@@ -92,6 +92,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		002316535503DA9070B162E0 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		2235383B261D711F009AE465 /* AuthenticatorsHandler_IsAuthenticatorRegisteredTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticatorsHandler_IsAuthenticatorRegisteredTests.swift; sourceTree = "<group>"; };
@@ -104,24 +105,20 @@
 		229F407026134528000EA9B8 /* ResourcesHandler_FetchSimpleResourcesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourcesHandler_FetchSimpleResourcesTests.swift; sourceTree = "<group>"; };
 		229F409126145C23000EA9B8 /* LogoutHandler_LogoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogoutHandler_LogoutTests.swift; sourceTree = "<group>"; };
 		229F40E526172814000EA9B8 /* AuthenticatorsHandler_RegisterAuthenticatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticatorsHandler_RegisterAuthenticatorTests.swift; sourceTree = "<group>"; };
-		296D560E6DBF20366A24FC19 /* Pods-OneginiTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneginiTests.profile.xcconfig"; path = "Target Support Files/Pods-OneginiTests/Pods-OneginiTests.profile.xcconfig"; sourceTree = "<group>"; };
-		34B2E28612E67C30D1F9DCDE /* Pods-OneginiTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneginiTests.release.xcconfig"; path = "Target Support Files/Pods-OneginiTests/Pods-OneginiTests.release.xcconfig"; sourceTree = "<group>"; };
+		262B81786ED17026C920F025 /* Pods-Runner-OneginiUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner-OneginiUITests.debug.xcconfig"; path = "Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		29B33C0831C8667393AF13BE /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
+		32B651BDF813215B45ABC10B /* Pods_Runner_OneginiUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner_OneginiUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
-		44EEE2485A80EF22F2906015 /* Pods-OneginiUITests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneginiUITests.profile.xcconfig"; path = "Target Support Files/Pods-OneginiUITests/Pods-OneginiUITests.profile.xcconfig"; sourceTree = "<group>"; };
-		473B2C38247A4DD5B7EF0E33 /* Pods-OneginiTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneginiTests.debug.xcconfig"; path = "Target Support Files/Pods-OneginiTests/Pods-OneginiTests.debug.xcconfig"; sourceTree = "<group>"; };
+		421346D8C15B153877182359 /* Pods-OneginiTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneginiTests.release.xcconfig"; path = "Target Support Files/Pods-OneginiTests/Pods-OneginiTests.release.xcconfig"; sourceTree = "<group>"; };
+		58F1B98F225DA60BB434B4BA /* Pods-Runner-OneginiUITests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner-OneginiUITests.profile.xcconfig"; path = "Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests.profile.xcconfig"; sourceTree = "<group>"; };
 		5F07F133260DEC5B0073BA5E /* onegini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = onegini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5F07F136260DEC890073BA5E /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F07F13D260DEE2E0073BA5E /* OneginiCrypto.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OneginiCrypto.xcframework; path = ../../ios/OneginiCrypto.xcframework; sourceTree = "<group>"; };
 		5F07F13F260DEE340073BA5E /* OneginiSDKiOS.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OneginiSDKiOS.xcframework; path = ../../ios/OneginiSDKiOS.xcframework; sourceTree = "<group>"; };
 		5F07F143260DEE650073BA5E /* onegini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = onegini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F07F148260DEED00073BA5E /* onegini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = onegini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5F07F17A260DF35B0073BA5E /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F07F17F260DF47F0073BA5E /* onegini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = onegini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F07F18A260DF8A90073BA5E /* onegini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = onegini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5F07F18C260DF9260073BA5E /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5F07F19A260DFAE40073BA5E /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F07F1A1260DFB1E0073BA5E /* onegini.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = onegini.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5F07F1A4260DFB910073BA5E /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F07F1B5260DFCFC0073BA5E /* OneginiTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OneginiTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F07F1B7260DFCFC0073BA5E /* OneginiTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneginiTests.swift; sourceTree = "<group>"; };
 		5F07F1B9260DFCFC0073BA5E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -156,14 +153,9 @@
 		5FFE1DD626125E32003EF280 /* PinHandler_CloseFlowTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinHandler_CloseFlowTests.swift; sourceTree = "<group>"; };
 		5FFE1DD92612601D003EF280 /* PinHandler_ChangePinCallTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinHandler_ChangePinCallTests.swift; sourceTree = "<group>"; };
 		5FFE1DE3261274EC003EF280 /* RegistrationHandler_SignUpTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationHandler_SignUpTests.swift; sourceTree = "<group>"; };
-		675115B939E47035FEDCBCAE /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		708C6431247BEF0C99056E22 /* Pods-Runner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"; sourceTree = "<group>"; };
-		71078E6F557D82C888A9FC47 /* Pods-Runner-OneginiUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner-OneginiUITests.debug.xcconfig"; path = "Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		762BC894F5F62CE3D0CE9C4F /* Pods_Runner_OneginiUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner_OneginiUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
-		8ECD8BD40B48709DC064F4E4 /* Pods-Runner-OneginiUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner-OneginiUITests.release.xcconfig"; path = "Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests.release.xcconfig"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -171,17 +163,17 @@
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		97C147021CF9000F007C117D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		9E1C13DB91BED710EB679BD1 /* Pods-OneginiUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneginiUITests.release.xcconfig"; path = "Target Support Files/Pods-OneginiUITests/Pods-OneginiUITests.release.xcconfig"; sourceTree = "<group>"; };
-		BC8033DBD016BC3D7B7E8112 /* Pods-Runner.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile.xcconfig"; sourceTree = "<group>"; };
-		CA95884B000B31D8F7D508E4 /* Pods-Runner-OneginiUITests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner-OneginiUITests.profile.xcconfig"; path = "Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests.profile.xcconfig"; sourceTree = "<group>"; };
-		D981F6234D38D042F37393F9 /* Pods-OneginiUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneginiUITests.debug.xcconfig"; path = "Target Support Files/Pods-OneginiUITests/Pods-OneginiUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		E2135D612F95790FA77C8405 /* Pods_OneginiTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OneginiTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		EFE71CA628242FAFEEC9E2D2 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
+		9B5B50C88641924DE0712604 /* Pods-OneginiTests.profile.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneginiTests.profile.xcconfig"; path = "Target Support Files/Pods-OneginiTests/Pods-OneginiTests.profile.xcconfig"; sourceTree = "<group>"; };
+		A606362D51C90C481BA2F99D /* Pods-Runner-OneginiUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner-OneginiUITests.release.xcconfig"; path = "Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests.release.xcconfig"; sourceTree = "<group>"; };
+		C80FE171CD07690B0E6A1567 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD7720FD14AD76063A5BB8EC /* Pods_OneginiTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OneginiTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EEA0691E76170754C9ADEA3D /* Pods-OneginiTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneginiTests.debug.xcconfig"; path = "Target Support Files/Pods-OneginiTests/Pods-OneginiTests.debug.xcconfig"; sourceTree = "<group>"; };
 		F0D3E8CC2576F7FD009D2C24 /* SecurityController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityController.h; sourceTree = "<group>"; };
 		F0D3E8CD2576F7FD009D2C24 /* OneginiConfigModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OneginiConfigModel.h; sourceTree = "<group>"; };
 		F0D3E8CE2576F7FD009D2C24 /* CloudFlareIncECCCA3.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = CloudFlareIncECCCA3.cer; sourceTree = "<group>"; };
 		F0D3E8CF2576F7FD009D2C24 /* OneginiConfigModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OneginiConfigModel.m; sourceTree = "<group>"; };
 		F0D3E8D02576F7FD009D2C24 /* SecurityController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SecurityController.m; sourceTree = "<group>"; };
+		F61E167AD08825FFA992F4C4 /* Pods-Runner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -189,7 +181,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CB4EE3DF3BC5C7D43E67A6B7 /* Pods_OneginiTests.framework in Frameworks */,
+				237088DE02AF0DE066EB4958 /* Pods_OneginiTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,7 +189,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				97520F03FB762CCA3E672CB2 /* Pods_Runner_OneginiUITests.framework in Frameworks */,
+				93663F8AAF22903EBC4ECC42 /* Pods_Runner_OneginiUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -205,7 +197,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				5F07F1A5260DFB910073BA5E /* Pods_Runner.framework in Frameworks */,
+				A215674B8ED0DB51242459D1 /* Pods_Runner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -300,18 +292,15 @@
 		5F837D4545C2413D32620243 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				708C6431247BEF0C99056E22 /* Pods-Runner.debug.xcconfig */,
-				EFE71CA628242FAFEEC9E2D2 /* Pods-Runner.release.xcconfig */,
-				BC8033DBD016BC3D7B7E8112 /* Pods-Runner.profile.xcconfig */,
-				473B2C38247A4DD5B7EF0E33 /* Pods-OneginiTests.debug.xcconfig */,
-				34B2E28612E67C30D1F9DCDE /* Pods-OneginiTests.release.xcconfig */,
-				296D560E6DBF20366A24FC19 /* Pods-OneginiTests.profile.xcconfig */,
-				D981F6234D38D042F37393F9 /* Pods-OneginiUITests.debug.xcconfig */,
-				9E1C13DB91BED710EB679BD1 /* Pods-OneginiUITests.release.xcconfig */,
-				44EEE2485A80EF22F2906015 /* Pods-OneginiUITests.profile.xcconfig */,
-				71078E6F557D82C888A9FC47 /* Pods-Runner-OneginiUITests.debug.xcconfig */,
-				8ECD8BD40B48709DC064F4E4 /* Pods-Runner-OneginiUITests.release.xcconfig */,
-				CA95884B000B31D8F7D508E4 /* Pods-Runner-OneginiUITests.profile.xcconfig */,
+				EEA0691E76170754C9ADEA3D /* Pods-OneginiTests.debug.xcconfig */,
+				421346D8C15B153877182359 /* Pods-OneginiTests.release.xcconfig */,
+				9B5B50C88641924DE0712604 /* Pods-OneginiTests.profile.xcconfig */,
+				29B33C0831C8667393AF13BE /* Pods-Runner.debug.xcconfig */,
+				F61E167AD08825FFA992F4C4 /* Pods-Runner.release.xcconfig */,
+				002316535503DA9070B162E0 /* Pods-Runner.profile.xcconfig */,
+				262B81786ED17026C920F025 /* Pods-Runner-OneginiUITests.debug.xcconfig */,
+				A606362D51C90C481BA2F99D /* Pods-Runner-OneginiUITests.release.xcconfig */,
+				58F1B98F225DA60BB434B4BA /* Pods-Runner-OneginiUITests.profile.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -444,22 +433,17 @@
 		A3B0D248D7723B5FC7E80294 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				5F07F1A4260DFB910073BA5E /* Pods_Runner.framework */,
 				5F07F1A1260DFB1E0073BA5E /* onegini.framework */,
-				5F07F19A260DFAE40073BA5E /* Pods_Runner.framework */,
-				5F07F18C260DF9260073BA5E /* Pods_Runner.framework */,
 				5F07F18A260DF8A90073BA5E /* onegini.framework */,
 				5F07F17F260DF47F0073BA5E /* onegini.framework */,
-				5F07F17A260DF35B0073BA5E /* Pods_Runner.framework */,
 				5F07F148260DEED00073BA5E /* onegini.framework */,
 				5F07F143260DEE650073BA5E /* onegini.framework */,
 				5F07F13F260DEE340073BA5E /* OneginiSDKiOS.xcframework */,
 				5F07F13D260DEE2E0073BA5E /* OneginiCrypto.xcframework */,
-				5F07F136260DEC890073BA5E /* Pods_Runner.framework */,
 				5F07F133260DEC5B0073BA5E /* onegini.framework */,
-				675115B939E47035FEDCBCAE /* Pods_Runner.framework */,
-				E2135D612F95790FA77C8405 /* Pods_OneginiTests.framework */,
-				762BC894F5F62CE3D0CE9C4F /* Pods_Runner_OneginiUITests.framework */,
+				CD7720FD14AD76063A5BB8EC /* Pods_OneginiTests.framework */,
+				C80FE171CD07690B0E6A1567 /* Pods_Runner.framework */,
+				32B651BDF813215B45ABC10B /* Pods_Runner_OneginiUITests.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -483,7 +467,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5F07F1BC260DFCFC0073BA5E /* Build configuration list for PBXNativeTarget "OneginiTests" */;
 			buildPhases = (
-				86A9C3FB4AB162904B7F026E /* [CP] Check Pods Manifest.lock */,
+				7E5AC5F3F28A922EDFF4AE43 /* [CP] Check Pods Manifest.lock */,
 				5F07F1B1260DFCFC0073BA5E /* Sources */,
 				5F07F1B2260DFCFC0073BA5E /* Frameworks */,
 				5F07F1B3260DFCFC0073BA5E /* Resources */,
@@ -502,11 +486,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5F1ADDE326146EE30055B23D /* Build configuration list for PBXNativeTarget "OneginiUITests" */;
 			buildPhases = (
-				F0F90A6FE352E795F7E29BD6 /* [CP] Check Pods Manifest.lock */,
+				20AC4FAD5A404A547E8DBB48 /* [CP] Check Pods Manifest.lock */,
 				5F1ADDD826146EE30055B23D /* Sources */,
 				5F1ADDD926146EE30055B23D /* Frameworks */,
 				5F1ADDDA26146EE30055B23D /* Resources */,
-				72273AF1FD7852F00126979E /* [CP] Embed Pods Frameworks */,
+				1EBC335F6260C37FE5CFAF3A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -522,14 +506,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */;
 			buildPhases = (
-				0BF6E38723E65A90652D212F /* [CP] Check Pods Manifest.lock */,
+				86B6E5A8DE2A10FB4327EB6C /* [CP] Check Pods Manifest.lock */,
 				9740EEB61CF901F6004384FC /* Run Script */,
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
 				97C146EC1CF9000F007C117D /* Resources */,
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
-				86414CB25D396BED734F6F46 /* [CP] Embed Pods Frameworks */,
+				9953D5AB8AEE7AD861632CA4 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -614,7 +598,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		0BF6E38723E65A90652D212F /* [CP] Check Pods Manifest.lock */ = {
+		1EBC335F6260C37FE5CFAF3A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		20AC4FAD5A404A547E8DBB48 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -629,7 +630,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Runner-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Runner-OneginiUITests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -650,41 +651,7 @@
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
 		};
-		72273AF1FD7852F00126979E /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		86414CB25D396BED734F6F46 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		86A9C3FB4AB162904B7F026E /* [CP] Check Pods Manifest.lock */ = {
+		7E5AC5F3F28A922EDFF4AE43 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -706,21 +673,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		9740EEB61CF901F6004384FC /* Run Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n";
-		};
-		F0F90A6FE352E795F7E29BD6 /* [CP] Check Pods Manifest.lock */ = {
+		86B6E5A8DE2A10FB4327EB6C /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -735,11 +688,42 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Runner-OneginiUITests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-Runner-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9740EEB61CF901F6004384FC /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n";
+		};
+		9953D5AB8AEE7AD861632CA4 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -929,7 +913,7 @@
 		};
 		5F07F1BD260DFCFC0073BA5E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 473B2C38247A4DD5B7EF0E33 /* Pods-OneginiTests.debug.xcconfig */;
+			baseConfigurationReference = EEA0691E76170754C9ADEA3D /* Pods-OneginiTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -963,7 +947,7 @@
 		};
 		5F07F1BE260DFCFC0073BA5E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 34B2E28612E67C30D1F9DCDE /* Pods-OneginiTests.release.xcconfig */;
+			baseConfigurationReference = 421346D8C15B153877182359 /* Pods-OneginiTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -994,7 +978,7 @@
 		};
 		5F07F1BF260DFCFC0073BA5E /* Profile */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 296D560E6DBF20366A24FC19 /* Pods-OneginiTests.profile.xcconfig */;
+			baseConfigurationReference = 9B5B50C88641924DE0712604 /* Pods-OneginiTests.profile.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1025,7 +1009,7 @@
 		};
 		5F1ADDE426146EE30055B23D /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 71078E6F557D82C888A9FC47 /* Pods-Runner-OneginiUITests.debug.xcconfig */;
+			baseConfigurationReference = 262B81786ED17026C920F025 /* Pods-Runner-OneginiUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1056,7 +1040,7 @@
 		};
 		5F1ADDE526146EE30055B23D /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8ECD8BD40B48709DC064F4E4 /* Pods-Runner-OneginiUITests.release.xcconfig */;
+			baseConfigurationReference = A606362D51C90C481BA2F99D /* Pods-Runner-OneginiUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -1084,7 +1068,7 @@
 		};
 		5F1ADDE626146EE30055B23D /* Profile */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CA95884B000B31D8F7D508E4 /* Pods-Runner-OneginiUITests.profile.xcconfig */;
+			baseConfigurationReference = 58F1B98F225DA60BB434B4BA /* Pods-Runner-OneginiUITests.profile.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;

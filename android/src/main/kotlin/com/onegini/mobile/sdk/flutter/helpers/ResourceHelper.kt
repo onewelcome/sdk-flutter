@@ -45,6 +45,11 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
 
     }
 
+    fun getUnauthenticatedResource(){
+        val request = getRequest()
+        getUnauthenticatedResourceOkHttpClient(request)
+    }
+
 
     private fun getAnonymousClient(scope: String?, request: Request) {
         val okHttpClient: OkHttpClient = oneginiClient.deviceClient.anonymousResourceOkHttpClient
@@ -62,6 +67,11 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
 
     private fun getStandardUserClient(request: Request) {
         val okHttpClient: OkHttpClient = oneginiClient.userClient.resourceOkHttpClient
+        makeRequest(okHttpClient, request, result)
+    }
+
+    private fun getUnauthenticatedResourceOkHttpClient(request: Request){
+        val okHttpClient: OkHttpClient = oneginiClient.deviceClient.unauthenticatedResourceOkHttpClient
         makeRequest(okHttpClient, request, result)
     }
 
