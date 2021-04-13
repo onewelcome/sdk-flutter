@@ -376,6 +376,13 @@ class _InfoState extends State<Info> {
     return responseAsJson["decorated_user_id"];
   }
 
+  Future<String> makeUnaunthenticatedRequest() async {
+    var response = await Onegini.instance.resourcesMethods
+        .getResourceImplicit(
+            "users");
+    return response;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -476,6 +483,27 @@ class _InfoState extends State<Info> {
                       : Text("");
                 },
               ),
+              SizedBox(
+                height: 20,
+              ),
+              FutureBuilder<String>(
+                  //implicit
+                  future: makeUnaunthenticatedRequest(),
+                  builder: (context, snapshot) {
+                    return snapshot.hasData
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "UnaunthenticatedRequest - Users:",
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Text(snapshot.data,
+                                  style: TextStyle(fontSize: 20)),
+                            ],
+                          )
+                        : SizedBox.shrink();
+                  },),
               Expanded(
                 child: FutureBuilder<ClientResource>(
                   future: getClientResource(),

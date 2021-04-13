@@ -81,4 +81,31 @@ class ResourcesMethods {
       throw error;
     }
   }
+
+  Future<String> unauthenticatedRequest(
+    String path, {
+    String? scope,
+    Map<String, String>? headers,
+    String? method,
+    String? encoding,
+    String? body,
+  }) async {
+    try {
+      var response;
+
+      response = await Onegini.instance.channel
+          .invokeMethod(Constants.unauthenticatedRequest, <String, dynamic>{
+        'path': path,
+        'scope': scope,
+        'headers': headers,
+        'method': method,
+        'encoding': encoding,
+        'body': body
+      });
+
+      return response;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
 }
