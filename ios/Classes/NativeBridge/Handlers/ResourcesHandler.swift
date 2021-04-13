@@ -225,7 +225,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         
         ONGDeviceClient.sharedInstance().fetchUnauthenticatedResource(request) { (_data, error) in
             if let _errorResource = error {
-                callback(_errorResource)
+                callback(SdkError.convertToFlutter(SdkError.init(errorDescription: _errorResource.localizedDescription, code: _errorResource.code)))
                 return
             } else {
                 if let data = _data, let convertedStringDatat = try? JSONSerialization.data(withJSONObject: data, options: .prettyPrinted) {
