@@ -64,7 +64,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     case Constants.Routes.denyOtpAuthenticationRequest: denyOtpAuthenticationRequest(call, result)
         
     // resources
-    case Constants.Routes.getResourceAnonymous, Constants.Routes.getResource, Constants.Routes.getImplicitResource:
+    case Constants.Routes.getResourceAnonymous, Constants.Routes.getResource, Constants.Routes.getImplicitResource, Constants.Routes.unauthenticatedRequest:
         getResource(call, result)
         
     // other
