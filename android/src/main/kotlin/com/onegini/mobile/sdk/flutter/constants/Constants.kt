@@ -37,6 +37,7 @@ interface Constants {
         
         const val METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON ="getAppToWebSingleSignOn"
         const val METHOD_CHANGE_PIN = "changePin"
+        const val METHOD_GET_USER_PROFILES = "userProfiles"
         
 
         //Resources

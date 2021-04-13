@@ -75,6 +75,7 @@ class OnMethodCallMapper(private var context: Context) {
             //Other
             Constants.METHOD_CHANGE_PIN -> startChangePinFlow(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON -> getAppToWebSingleSignOn(call.argument<String>("url"), result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_GET_USER_PROFILES -> result.success(OneginiSDK().getOneginiClient(context).userClient.userProfiles.firstOrNull()?.profileId)
 
             else -> result.error(OneginiWrapperErrors().methodToCallNotFound.code, OneginiWrapperErrors().methodToCallNotFound.message, null)
         }
