@@ -42,11 +42,13 @@ class Constants {
   static const String getResource = "getResource";
   static const String getResourceAnonymous = "getResourceAnonymous";
   static const String getImplicitResource ="getImplicitResource";
+  static const String getUnauthenticatedResource = "getUnauthenticatedResource";
 
 
   //Other
   static const String getAppToWebSingleSignOn = "getAppToWebSingleSignOn";
   static const String changePin = "changePin";
+  static const String userProfiles = "userProfiles";
 
   //CustomRegistration
   static const String customTwoStepRegistrationReturnSuccess =

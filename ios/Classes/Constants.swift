@@ -40,10 +40,11 @@ struct Constants {
         static let getResourceAnonymous: String = "getResourceAnonymous";
         static let getResource: String = "getResource";
         static let getImplicitResource: String = "getImplicitResource";
+        static let unauthenticatedRequest: String = "getUnauthenticatedResource";
 
         //Other
         static let getAppToWebSingleSignOn: String = "getAppToWebSingleSignOn";
         static let changePin: String = "changePin";
-        
+        static let userProfiles: String = "userProfiles";
     }
 }

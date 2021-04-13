@@ -11,10 +11,12 @@ protocol FetchResourcesHandlerProtocol: AnyObject {
     func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
     func fetchAnonymousResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
     func fetchResourceWithImplicitResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
+    func unauthenticatedRequest(_ path: String, parameters: [String: Any?], callback: @escaping FlutterResult)
 }
 
 //MARK: -
 class ResourcesHandler: FetchResourcesHandlerProtocol {
+    
     func authenticateDevice(_ path: String, completion: @escaping (Bool, SdkError?) -> Void) {
         print("[\(type(of: self))] authenticateDevice")
         ONGDeviceClient.sharedInstance().authenticateDevice([path as String]) { success, error in
@@ -104,21 +106,6 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         } else {
             ONGUserClient.sharedInstance().fetchResource(request, completion: completionRequest)
         }
-//        ONGDeviceClient.sharedInstance().fetchResource(request) { response, error in
-//            if let error = error {
-//                completion(nil, SdkError(errorDescription: error.localizedDescription, code: error.code))
-//            } else {
-//                if let data = response?.data {
-//                    if let responseData = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-//                        completion(responseData, nil)
-//                    } else {
-//                        completion(nil, SdkError.init(customType: .failedParseData))
-//                    }
-//                } else {
-//                    completion(nil, SdkError.init(customType: .responseIsNull))
-//                }
-//            }
-//        }
     }
 
     private func implicitResourcesRequest(_ parameters: [String: Any], _ completion: @escaping FlutterDataCallback) {
@@ -224,6 +211,29 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 }
             } else {
                 completion(error)
+            }
+        }
+    }
+    
+    func unauthenticatedRequest(_ path: String, parameters: [String: Any?], callback: @escaping FlutterResult) {
+        print("[\(type(of: self))] unauthenticatedRequest")
+        
+        let newParameters = generateParameters(from: parameters, path: path)
+        let encoding = getEncodingByValue(newParameters["encoding"] as! String)
+
+        let request = ONGResourceRequest.init(path: newParameters["path"] as! String, method: newParameters["method"] as! String, parameters: newParameters["parameters"] as? [String : Any], encoding: encoding)
+        
+        ONGDeviceClient.sharedInstance().fetchUnauthenticatedResource(request) { (_data, error) in
+            if let _errorResource = error {
+                callback(_errorResource)
+                return
+            } else {
+                if let data = _data, let convertedStringDatat = try? JSONSerialization.data(withJSONObject: data, options: .prettyPrinted) {
+                    let convertedString = String(data: convertedStringDatat, encoding: .utf8)
+                    callback(convertedString)
+                } else {
+                    callback(_data)
+                }
             }
         }
     }

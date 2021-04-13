@@ -298,6 +298,11 @@ class Home extends StatelessWidget {
         fontSize: 16.0);
   }
 
+  userProfiles(BuildContext context) async {
+    var data = await Onegini.instance.userClient.fetchUserProfiles();
+    print(data);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -323,6 +328,15 @@ class Home extends StatelessWidget {
                 authWithOpt(context);
               },
               child: Text('auth with opt'),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                userProfiles(context);
+              },
+              child: Text('User profiles'),
             ),
           ],
         ),
@@ -360,6 +374,13 @@ class _InfoState extends State<Info> {
             "user-id-decorated", scope: "read");
     Map<String, dynamic> responseAsJson = json.decode(response);
     return responseAsJson["decorated_user_id"];
+  }
+
+  Future<String> makeUnaunthenticatedRequest() async {
+    var response = await Onegini.instance.resourcesMethods
+        .getResourceImplicit(
+            "users");
+    return response;
   }
 
   @override
@@ -462,6 +483,27 @@ class _InfoState extends State<Info> {
                       : Text("");
                 },
               ),
+              SizedBox(
+                height: 20,
+              ),
+              FutureBuilder<String>(
+                  //implicit
+                  future: makeUnaunthenticatedRequest(),
+                  builder: (context, snapshot) {
+                    return snapshot.hasData
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "UnaunthenticatedRequest - Users:",
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Text(snapshot.data,
+                                  style: TextStyle(fontSize: 20)),
+                            ],
+                          )
+                        : SizedBox.shrink();
+                  },),
               Expanded(
                 child: FutureBuilder<ClientResource>(
                   future: getClientResource(),

@@ -37,12 +37,14 @@ interface Constants {
         
         const val METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON ="getAppToWebSingleSignOn"
         const val METHOD_CHANGE_PIN = "changePin"
+        const val METHOD_GET_USER_PROFILES = "userProfiles"
         
 
         //Resources
         const val METHOD_GET_RESOURCE_ANONYMOUS ="getResourceAnonymous"
         const val METHOD_GET_RESOURCE ="getResource"
         const val METHOD_GET_IMPLICIT_RESOURCE ="getImplicitResource"
+        const val METHOD_GET_UNAUTHENTICATED_RESOURCE = "getUnauthenticatedResource"
 
 
         //Registration
@@ -52,6 +54,7 @@ interface Constants {
         const val METHOD_ACCEPT_PIN_REGISTRATION_REQUEST = "acceptPinRegistrationRequest"
         const val METHOD_GET_IDENTITY_PROVIDERS ="getIdentityProviders"
         const val METHOD_DEREGISTER_USER ="deregisterUser"
+
         
         
 
@@ -61,7 +64,6 @@ interface Constants {
         const val METHOD_GET_REGISTERED_AUTHENTICATORS = "getRegisteredAuthenticators"
         const val METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS = "getAllNotRegisteredAuthenticators"
         const val METHOD_REGISTER_AUTHENTICATOR = "registerAuthenticator"
-        const val METHOD_AUTHENTICATE_WITH_REGISTERED_AUTHENTICATION ="authenticateWithRegisteredAuthentication"
         const val METHOD_AUTHENTICATE_USER = "authenticateUser"
         const val METHOD_LOGOUT ="logout"
 

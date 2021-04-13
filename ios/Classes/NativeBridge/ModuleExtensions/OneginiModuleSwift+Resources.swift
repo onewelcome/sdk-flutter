@@ -35,6 +35,10 @@ extension OneginiModuleSwift {
             print("super path3 \(path)")
             print("super params3 \(parameters)")
             bridgeConnector.toResourceFetchHandler.fetchSimpleResources(path, parameters: parameters, completion: callback)
+        case Constants.Routes.unauthenticatedRequest:
+            print("super path4 \(path)")
+            print("super params4 \(parameters)")
+            bridgeConnector.toResourceFetchHandler.unauthenticatedRequest(path, parameters: parameters, callback: callback)
         default:
             callback(SdkError.convertToFlutter(SdkError(customType: .incrorrectResourcesAccess)))
         }

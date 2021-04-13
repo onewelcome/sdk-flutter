@@ -61,6 +61,15 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
         }
     }
     
+    func fetchUserProfiles(callback: @escaping FlutterResult) {
+        let profiles = ONGUserClient.sharedInstance().userProfiles()
+        let value: [[String: String?]] = profiles.compactMap({ ["profileId": $0.profileId] })
+
+        let data = String.stringify(json: value)
+        
+        callback(data)
+    }
+    
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
         if let _value = eventSinkCustomIdentifier, let _arg = arguments as! String?, _value == _arg {
             self.eventSinkNativePart = events
