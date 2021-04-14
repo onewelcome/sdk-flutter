@@ -8,5 +8,13 @@ nav:
     - '1.4. User authentication': 'topic-guides/4-user-authentication.md'
     - '1.5. User authentication with system biometric authenticators': 'topic-guides/5-user-authentication-with-biometric.md'
     - '1.6. Change pin': 'topic-guides/6-change-pin.md'
+    - '1.7. Logging out': 'topic-guides/7-logging-out.md'
+    - '1.8. Deregister user': 'topic-guides/8-deregister-user.md'
+    - '1.9. Mobile authentication': 
+      - '1.9. Mobile authentication': 'topic-guides/9-mobile-authentication.md'
+      - '1.9.1 Mobile authentication with Push': 'topic-guides/9-1-mobile-authentication-with-push.md'
+      - '1.9.2 Mobile authentication with OTP': 'topic-guides/9-2-mobile-authentication-with-otp.md'
+    - '1.10. Secure resource access': 'topic-guides/10-secure-resource-access.md'
+    - '1.11. Error handling': 'topic-guides/11-error-handling.md'
   - '2. Reference Guides':
     - '2.1. start app': 'reference-guides/1-start.md'

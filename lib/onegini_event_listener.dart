@@ -107,19 +107,19 @@ abstract class OneginiEventListener {
   /// Called to close pin authentication screen.
   void closePinAuth(BuildContext? buildContext);
 
-  /// Callen to open fingerprint screen.
+  /// Called to open fingerprint screen.
   void openFingerprintScreen(BuildContext? buildContext);
 
-  /// Callen to scan fingerprint.
+  /// Called to scan fingerprint.
   void showScanningFingerprint(BuildContext? buildContext);
 
-  /// Callen when fingerprint was received.
+  /// Called when fingerprint was received.
   void receivedFingerprint(BuildContext? buildContext);
 
-  /// Callen to close fingerprint screen.
+  /// Called to close fingerprint screen.
   void closeFingerprintScreen(BuildContext? buildContext);
 
-  /// Callen when two step registration want to open screen.
+  /// Called when two step registration want to open screen.
   void openCustomTwoStepRegistrationScreen(
       BuildContext? buildContext, String data);
 
