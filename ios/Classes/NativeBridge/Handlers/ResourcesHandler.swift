@@ -193,7 +193,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     func fetchResourceWithImplicitResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
         print("[\(type(of: self))] fetchResourceWithImplicitResource")
         guard let _profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
-            completion(SdkError.init(customType: .userProfileIsNull))
+            completion(SdkError.init(customType: .userAuthenticatedProfileIsNull))
             return
         }
         
