@@ -193,7 +193,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     func fetchResourceWithImplicitResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
         print("[\(type(of: self))] fetchResourceWithImplicitResource")
         guard let _profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
-            completion(SdkError.init(customType: .userProfileIsNull))
+            completion(SdkError.init(customType: .userAuthenticatedProfileIsNull))
             return
         }
         
@@ -225,7 +225,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         
         ONGDeviceClient.sharedInstance().fetchUnauthenticatedResource(request) { (_data, error) in
             if let _errorResource = error {
-                callback(_errorResource)
+                callback(SdkError.convertToFlutter(SdkError.init(errorDescription: _errorResource.localizedDescription, code: _errorResource.code)))
                 return
             } else {
                 if let data = _data, let convertedStringDatat = try? JSONSerialization.data(withJSONObject: data, options: .prettyPrinted) {

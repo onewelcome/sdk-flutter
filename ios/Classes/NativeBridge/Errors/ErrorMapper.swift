@@ -3,6 +3,7 @@ import OneginiCrypto
 
 enum OneginiErrorCustomType: Int {
     case userProfileIsNull = 8002
+    case userAuthenticatedProfileIsNull
     case registeredAuthenticatorsIsNull
     case notRegisteredAuthenticatorsIsNull
     case identityProvidersIsNull
@@ -28,6 +29,8 @@ enum OneginiErrorCustomType: Int {
         switch self {
         case .userProfileIsNull:
             message = "User profile is empty."
+        case .userAuthenticatedProfileIsNull:
+            message = "User authenticated profile is empty."
         case .registeredAuthenticatorsIsNull:
             message = "List Registered authenticators is empty."
         case .notRegisteredAuthenticatorsIsNull:
