@@ -71,10 +71,13 @@ class OnMethodCallMapper(private var context: Context) {
             Constants.METHOD_GET_RESOURCE_ANONYMOUS -> ResourceHelper(call, result, OneginiSDK().getOneginiClient(context)).getAnonymous()
             Constants.METHOD_GET_RESOURCE -> ResourceHelper(call, result, OneginiSDK().getOneginiClient(context)).getUserClient()
             Constants.METHOD_GET_IMPLICIT_RESOURCE -> ResourceHelper(call, result, OneginiSDK().getOneginiClient(context)).getImplicit()
+            Constants.METHOD_GET_UNAUTHENTICATED_RESOURCE -> ResourceHelper(call, result, OneginiSDK().getOneginiClient(context)).getUnauthenticatedResource()
+
 
             //Other
             Constants.METHOD_CHANGE_PIN -> startChangePinFlow(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON -> getAppToWebSingleSignOn(call.argument<String>("url"), result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_GET_USER_PROFILES -> result.success(Gson().toJson(OneginiSDK().getOneginiClient(context).userClient.userProfiles))
 
             else -> result.error(OneginiWrapperErrors().methodToCallNotFound.code, OneginiWrapperErrors().methodToCallNotFound.message, null)
         }

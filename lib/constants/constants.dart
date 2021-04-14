@@ -90,6 +90,12 @@ class Constants {
   static const String getResourceAnonymous = "getResourceAnonymous";
 
   /// Get implicit resource method name
+  static const String getImplicitResource ="getImplicitResource";
+
+  /// Get unauthenticated resource method name
+  static const String getUnauthenticatedResource = "getUnauthenticatedResource";
+
+  /// Get implicit resource method name
   static const String getImplicitResource = "getImplicitResource";
 
   // Other
@@ -99,6 +105,7 @@ class Constants {
 
   /// Change pin method name
   static const String changePin = "changePin";
+  static const String userProfiles = "userProfiles";
 
   // CustomRegistration
 
