@@ -78,6 +78,8 @@ interface Constants {
         const val METHOD_HANDLE_MOBILE_AUTH_WITH_OTP = "handleMobileAuthWithOtp"
         const val METHOD_ACCEPT_OTP_AUTHENTICATION_REQUEST = "acceptOtpAuthenticationRequest"
         const val METHOD_DENY_OTP_AUTHENTICATION_REQUEST = "denyOtpAuthenticationRequest"
+
+        const val METHOD_VALIDATE_PIN_WITH_POLICY ="validatePinWithPolicy"
         
     }
 }
