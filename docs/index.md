@@ -16,7 +16,9 @@ For full documentation visit [mkdocs.org](https://www.mkdocs.org).
         index.md  # The documentation homepage.
         ...       # Other markdown pages, images and other files.
 
-# Onegini Flutter Plugin
+<img src="img/onegini.png" alt="Onegini logo" style="max-width:512px"/>
+
+# Onegini Flutter Plugin <img src="img/flutter.png" alt="Flutter logo" style="width:80px"/>
 
 ## Introduction
 
