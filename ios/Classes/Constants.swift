@@ -18,13 +18,14 @@ struct Constants {
         static let deregisterUser: String = "deregisterUser"
         
         //authentication
-        static let authenticateUser: String = "authenticateUser";
-        static let getAllNotRegisteredAuthenticators: String = "getAllNotRegisteredAuthenticators";
-        static let getRegisteredAuthenticators: String = "getRegisteredAuthenticators";
+        static let authenticateUser: String = "authenticateUser"
+        static let getAllNotRegisteredAuthenticators: String = "getAllNotRegisteredAuthenticators"
+        static let getRegisteredAuthenticators: String = "getRegisteredAuthenticators"
         static let registerAuthenticator: String = "registerAuthenticator";
-        static let denyPinAuthenticationRequest: String = "denyPinAuthenticationRequest";
-        static let acceptPinAuthenticationRequest: String = "acceptPinAuthenticationRequest";
-        static let logout: String = "logout";
+        static let denyPinAuthenticationRequest: String = "denyPinAuthenticationRequest"
+        static let acceptPinAuthenticationRequest: String = "acceptPinAuthenticationRequest"
+        static let logout: String = "logout"
+        static let validatePinWithPolicy: String = "validatePinWithPolicy"
 
         //fingerprint
         static let acceptFingerprintAuthenticationRequest: String = "acceptFingerprintAuthenticationRequest";
