@@ -5,12 +5,8 @@ import 'constants/constants.dart';
 import 'model/onegini_list_response.dart';
 import 'onegini.dart';
 
-
-
 ///Сlass with basic methods available to the developer.
 class UserClient {
-
-
   ///Start registration flow.
   ///
   ///If [identityProviderId] is null, starts standard browser registration.
@@ -185,9 +181,19 @@ class UserClient {
   /// User profiles
   Future<String> fetchUserProfiles() async {
     try {
-      var profiles = await Onegini.instance.channel
-          .invokeMethod(Constants.userProfiles);
+      var profiles =
+          await Onegini.instance.channel.invokeMethod(Constants.userProfiles);
       return profiles;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  Future<bool> validatePinWithPolicy(String pin) async {
+    try {
+      var success = await Onegini.instance.channel.invokeMethod(
+          Constants.validatePinWithPolicy, <String, String?>{'pin': pin});
+      return success;
     } on PlatformException catch (error) {
       throw error;
     }

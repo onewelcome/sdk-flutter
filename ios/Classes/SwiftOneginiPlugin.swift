@@ -54,6 +54,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     case Constants.Routes.denyPinAuthenticationRequest: denyPinAuthenticationRequest(call, result)
     
     case Constants.Routes.logout: logout(call, result)
+        
+    case Constants.Routes.validatePinWithPolicy:
+        validatePinWithPolicy(call, result)
     
     // fingerprint
     case Constants.Routes.acceptFingerprintAuthenticationRequest: acceptFingerprintAuthenticationRequest(call, result)

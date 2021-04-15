@@ -22,7 +22,10 @@ protocol OneginiPluginAuthProtocol {
 //MARK: - OneginiPluginAuthProtocol
 extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
     func registerAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        guard let _arg = call.arguments as! [String: Any]?, let _authenticator = _arg["authenticatorId"] as! String? else { return; }
+        guard let _arg = call.arguments as! [String: Any]?, let _authenticator = _arg["authenticatorId"] as! String? else {
+            result(SdkError.init(customType: .emptyInputValue).flutterError())
+            return
+        }
         OneginiModuleSwift.sharedInstance.registerAuthenticator(_authenticator, callback: result)
     }
     
@@ -56,8 +59,19 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
     }
     
     func acceptPinAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        guard let _arg = call.arguments as! [String: Any]?, let _pin = _arg["pin"] as! String? else { return; }
+        guard let _arg = call.arguments as! [String: Any]?, let _pin = _arg["pin"] as! String? else {
+            result(SdkError.init(customType: .emptyInputValue).flutterError())
+            return
+        }
         OneginiModuleSwift.sharedInstance.submitPinAction(PinFlow.authentication.rawValue, action: PinAction.provide.rawValue, pin: _pin)
+    }
+    
+    func validatePinWithPolicy(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        guard let _arg = call.arguments as! [String: Any]?, let _pin = _arg["pin"] as! String? else {
+            result(SdkError.init(customType: .emptyInputValue).flutterError())
+            return;
+        }
+        OneginiModuleSwift.sharedInstance.validatePinWithPolicy(_pin, callback: result)
     }
     
     func denyPinAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
