@@ -20,6 +20,25 @@ And that's all, the plugin is ready to go. Now you need to configure your native
 
 The details about plugin configuration can be found in the [Configuration guide](./2-configuration.md).
 
+## Initialize Onegini Flutter SDK
+
+To start working with the plugin, we need to initialize Onegini SDK by calling `Onegini.instance.startApplication` method. If the initialization was successful, the method will return a list of available user profiles. Otherwise, it will return an error. 
+
+**Example code to initialize SDK:**
+
+    var userProfiles = await Onegini.instance
+        .startApplication(OneginiListener(),
+            twoStepCustomIdentityProviderIds: ["2-way-otp-api"],
+            connectionTimeout: 5,
+            readTimeout: 25)
+        .catchError((error) {
+            print("Initialization failed: " + error.message);
+        });
+    _appStarted = userProfiles != null;
+    if (_appStarted) {
+        print("Initialization success!");
+    }
+
 ## Example
 
 Download manually SDK. Find the `example` folder. Other steps are the same as for package integration, instead, you don't need to modify `pubspec.yaml`.
