@@ -20,6 +20,7 @@ enum OneginiErrorCustomType: Int {
     case authenticatorDeregistrationCancelled
     case failedParseData
     case responseIsNull
+    case emptyInputValue
     // Default case
     case somethingWentWrong = 400
     
@@ -63,6 +64,8 @@ enum OneginiErrorCustomType: Int {
             message = "Failed to parse data."
         case .responseIsNull:
             message = "Response doesn't contain data."
+        case .emptyInputValue:
+            message = "Empty input value."
         default:
             message = "Something went wrong."
         }
