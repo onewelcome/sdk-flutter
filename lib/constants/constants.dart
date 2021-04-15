@@ -23,6 +23,7 @@ class Constants {
   static const String acceptPinAuthenticationRequest =
       "acceptPinAuthenticationRequest";
   static const String logout = 'logout';
+  static const String setPreferredAuthenticator = "setPreferredAuthenticator";
 
   //fingerprint
   static const String acceptFingerprintAuthenticationRequest =

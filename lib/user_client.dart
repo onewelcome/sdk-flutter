@@ -125,6 +125,21 @@ class UserClient {
     }
   }
 
+  ///Set preferred authenticator
+  Future<bool> setPreferredAuthenticator(
+      BuildContext context, String authenticatorId) async {
+    Onegini.instance.setEventContext(context);
+    try {
+      var data = await Onegini.instance.channel
+          .invokeMethod(Constants.setPreferredAuthenticator, <String, String>{
+        'authenticatorId': authenticatorId,
+      });
+      return data;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
   ///Method for log out
   Future<bool> logout() async {
     try {
