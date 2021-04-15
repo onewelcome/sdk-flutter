@@ -12,4 +12,5 @@ class OneginiWrapperErrors {
    val methodToCallNotFound = Error("8007","method to call not found")
    val urlCantBeNull = Error("8008","url can`t be null")
    val urlIsNotWebPath = Error("8009","incorrect url format")
+   val preferredAuthenticator = Error("8010","something went wrong")
 }
