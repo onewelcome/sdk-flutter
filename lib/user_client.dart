@@ -144,6 +144,20 @@ class UserClient {
     }
   }
 
+  Future<bool> deregisterAuthenticator(
+      BuildContext context, String authenticatorId) async {
+    Onegini.instance.setEventContext(context);
+    try {
+      var success = await Onegini.instance.channel
+          .invokeMethod(Constants.deregisterAuthenticator, <String, String>{
+        'authenticatorId': authenticatorId,
+      });
+      return success;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
   ///Method for log out
   Future<bool> logout() async {
     try {

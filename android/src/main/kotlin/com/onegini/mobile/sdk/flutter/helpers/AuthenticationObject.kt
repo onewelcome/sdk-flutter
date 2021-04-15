@@ -3,8 +3,10 @@ package com.onegini.mobile.sdk.flutter.helpers
 import com.google.gson.GsonBuilder
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticationHandler
+import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticatorDeregistrationHandler
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticatorRegistrationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticationError
+import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorDeregistrationError
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorRegistrationError
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
@@ -91,6 +93,36 @@ object AuthenticationObject {
                 result.error(oneginiAuthenticatorRegistrationError.errorType.toString(), oneginiAuthenticatorRegistrationError.message, null)
             }
         })
+    }
+
+    fun deregisterAuthenticator(authenticatorId: String?, result: MethodChannel.Result, oneginiClient: OneginiClient){
+        var authenticator: OneginiAuthenticator? = null
+        val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
+        if (userProfile == null) {
+            result.error(OneginiWrapperErrors().userProfileIsNull.code, OneginiWrapperErrors().userProfileIsNull.message, null)
+            return
+        }
+        val registeredAuthenticators = userProfile.let { oneginiClient.userClient.getRegisteredAuthenticators(it) }
+
+        for (registeredAuthenticator in registeredAuthenticators) {
+            if (registeredAuthenticator.id == authenticatorId) {
+                authenticator = registeredAuthenticator
+            }
+        }
+        if (authenticator == null) {
+            result.error(OneginiWrapperErrors().authenticatorIsNull.code, OneginiWrapperErrors().authenticatorIsNull.message, null)
+            return
+        }
+      oneginiClient.userClient.deregisterAuthenticator(authenticator,object :OneginiAuthenticatorDeregistrationHandler{
+          override fun onSuccess() {
+              result.success(true)
+          }
+
+          override fun onError(oneginiAuthenticatorDeregistrationError: OneginiAuthenticatorDeregistrationError) {
+              result.error(oneginiAuthenticatorDeregistrationError.errorType.toString(),oneginiAuthenticatorDeregistrationError.message ?: "",null)
+          }
+
+      })
     }
 
 
