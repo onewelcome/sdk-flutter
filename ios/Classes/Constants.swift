@@ -26,6 +26,7 @@ struct Constants {
         static let acceptPinAuthenticationRequest: String = "acceptPinAuthenticationRequest";
         static let logout: String = "logout";
         static let setPreferredAuthenticator: String = "setPreferredAuthenticator";
+        static let deregisterAuthenticator: String = "deregisterAuthenticator"
 
         //fingerprint
         static let acceptFingerprintAuthenticationRequest: String = "acceptFingerprintAuthenticationRequest";
