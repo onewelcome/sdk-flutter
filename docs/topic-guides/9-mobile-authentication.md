@@ -16,6 +16,4 @@ When the Token Server is configured, you can enroll and handle mobile authentica
 
 ## Enrollment
 
-#### TODO
-- [ ] add description here
-- [ ] maybe add some code here as well
+The mobile authentication enrollment process is handled by the Onegini Flutter plugin whenever OTP would require it.

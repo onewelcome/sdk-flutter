@@ -25,6 +25,8 @@ It should be noted that there are significant differences between Fingerprint on
 
 In order to enable fingerprint authenticator authentication for a user, the Onegini Flutter plugin provides the `Onegini.instance.userClient.registerAuthenticator` to which you need to pass `authenticatorId`. This function requires the user to authenticate.
 
+**Example code for registering the system biometric authenticator:**
+
     await Onegini.instance.userClient
         .registerAuthenticator(context, authenticatorId)
         .catchError((error) {
@@ -43,20 +45,16 @@ Once the fingerprint authenticator has been registered and set as the preferred 
 
 However, if fingerprint authentication is a possibility for the user, extra handler methods must be implemented. This is in addition to the PIN specific methods (which are necessary in case of fallback to PIN).
 
-#### TODO
-- [ ] finish description for authenticating with fingerprint
+**Example code to log in a user with fingerprint:**
 
+    var userId = await Onegini.instance.userClient
+        .authenticateUser(context, registeredAuthenticatorId)
+        .catchError((error) {
+            print("Authentication failed: " + error.message);
+        });
+    
+    if (userId != null) {
+        print("Authentication success!");
+    }
 
-
-## authentication with fingerprint
-
-### register fingerprint authenticator
-
-In order to enable fingerprint authenticator authentication for a user, the Onegini Flutter plugin provides the Onegini.registerFingerprint. This function requires the user to authenticate. 
-
-### use fingerprint authenticator 
-
-this authenticator will be available in the list of registered authenticators. 
-
-note: When you get ready scan fingerprint use Onegini.activateFingerprintSensor
-
+If the user fails to authenticate using fingerprint too many times (this limit is set by the OS), the fingerprint authenticator is automatically deregistered and the relevant tokens are revoked by the Onegini Flutter plugin. At this point, a fallback to PIN is performed, and the user is request to enter their PIN via `openPinScreenAuth`. If this too, fails, returned value will be `null` which is signalling the authentication has failed.
