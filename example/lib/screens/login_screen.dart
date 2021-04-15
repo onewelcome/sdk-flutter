@@ -117,11 +117,9 @@ class _LoginScreenState extends State<LoginScreen> {
   authenticateWithRegisteredAuthenticators(
       String registeredAuthenticatorId) async {
     setState(() => {isLoading = true, isRegistrationFlow = false});
-    var result = await Onegini.instance.userClient.setPreferredAuthenticator(context, registeredAuthenticatorId);
-    print(result);
-    // var result = await Onegini.instance.userClient.validatePinWithPolicy("55446");
+    // var result = await Onegini.instance.userClient.setPreferredAuthenticator(context, registeredAuthenticatorId);
     // print(result);
-
+    
     var userId = await Onegini.instance.userClient
         .authenticateUser(context, registeredAuthenticatorId).catchError((error) {
       setState(() => isLoading = false);

@@ -44,7 +44,14 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     ];
     super.initState();
     getNotRegisteredAuthenticators();
+
+    //testDeregisterAuthenticator();
   }
+
+  // testDeregisterAuthenticator() async {
+  //   var result = await Onegini.instance.userClient.deregisterAuthenticator(context, "com.onegini.authenticator.TouchID");
+  //   print(result);
+  // }
 
   @override
   void didChangeDependencies() {
