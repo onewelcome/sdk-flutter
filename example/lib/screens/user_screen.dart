@@ -384,7 +384,7 @@ class _InfoState extends State<Info> {
   }
 
   Future<String> makeUnaunthenticatedRequest() async {
-    var response = await Onegini.instance.resourcesMethods.getUnauthenticatedResource("users");
+    var response = await Onegini.instance.resourcesMethods.getUnauthenticatedResource("devices");
     return response;
   }
 

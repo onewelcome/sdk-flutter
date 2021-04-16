@@ -44,7 +44,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                     if let error = error {
                         completion(false, error)
                     } else {
-                        completion(false, SdkError(errorDescription: "Failed to authenticate."))
+                        completion(false, SdkError.init(customType: .failedParseData))
                     }
                 }
             }
@@ -122,10 +122,10 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                     if let responseData = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
                         completion(responseData, nil)
                     } else {
-                        completion(nil, SdkError(errorDescription: "Failed to parse data"))
+                        completion(nil, SdkError.init(customType: .failedParseData))
                     }
                 } else {
-                    completion(nil, SdkError(errorDescription: "Response doesn't contain data"))
+                    completion(nil, SdkError.init(customType: .responseIsNull))
                 }
             }
         }
@@ -223,16 +223,24 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 
         let request = ONGResourceRequest.init(path: newParameters["path"] as! String, method: newParameters["method"] as! String, parameters: newParameters["parameters"] as? [String : Any], encoding: encoding)
         
-        ONGDeviceClient.sharedInstance().fetchUnauthenticatedResource(request) { (_data, error) in
+        ONGDeviceClient.sharedInstance().fetchUnauthenticatedResource(request) { (response, error) in
             if let _errorResource = error {
                 callback(SdkError.convertToFlutter(SdkError.init(errorDescription: _errorResource.localizedDescription, code: _errorResource.code)))
                 return
             } else {
-                if let data = _data, let convertedStringDatat = try? JSONSerialization.data(withJSONObject: data, options: .prettyPrinted) {
-                    let convertedString = String(data: convertedStringDatat, encoding: .utf8)
-                    callback(convertedString)
+                if let data = response?.data {
+                    if let responseData = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                        if let convertedStringData = try? JSONSerialization.data(withJSONObject: responseData, options: .prettyPrinted) {
+                            let convertedString = String(data: convertedStringData, encoding: .utf8)
+                            callback(convertedString)
+                        } else {
+                            callback(responseData)
+                        }
+                    } else {
+                        callback(SdkError.init(customType: .failedParseData).flutterError())
+                    }
                 } else {
-                    callback(_data)
+                    callback(SdkError.init(customType: .responseIsNull))
                 }
             }
         }
