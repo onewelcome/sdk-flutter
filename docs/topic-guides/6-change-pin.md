@@ -9,10 +9,8 @@ The Onegini Flutter plugin exposes a function (`Onegini.instance.userClient.chan
     Onegini.instance.userClient
         .changePin(context)
         .catchError((error) {
-        if (error is PlatformException) {
             print("Pin change failed");
-        }
-    });
+        });
 
 In order to send a pin from a widget use `OneginiPinAuthenticationCallback()` and `OneginiPinRegistrationCallback()`.
 
