@@ -5,14 +5,12 @@
 Starts mobile authentication on web by OTP.
 
 
-    Future<String> mobileAuthWithOtp(String data) async {
-      try {
-        var isSuccess = await Onegini.instance.channel
-            .invokeMethod(Constants.handleMobileAuthWithOtp, <String, dynamic>{
-          'data': data,
+    var isSuccess = await Onegini.instance.userClient
+        .mobileAuthWithOtp(data)
+        .catchError((error) {
+            print("OTP Mobile authentication request failed: " + error.message);
         });
-        return isSuccess;
-      } on PlatformException catch (error) {
-        throw error;
-      }
+
+    if (isSuccess != null && isSuccess.isNotEmpty) {
+        print("OTP Mobile authentication request success!");
     }

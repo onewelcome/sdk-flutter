@@ -5,15 +5,13 @@
 Single sign on the user web page.
 
 
-    Future<String> getAppToWebSingleSignOn(String url) async {
-      try {
-        var oneginiAppToWebSingleSignOn = await Onegini.instance.channel
-            .invokeMethod(Constants.getAppToWebSingleSignOn, <String, String>{
-          'url': url,
+    var oneginiAppToWebSingleSignOn = await Onegini.instance.userClient
+            .getAppToWebSingleSignOn(
+                "https://login-mobile.test.onegini.com/personal/dashboard")
+            .catchError((error) {
+            print("Single sign on failed: " + error.message);
         });
-        print(oneginiAppToWebSingleSignOn);
-        return oneginiAppToWebSingleSignOn;
-      } on PlatformException catch (error) {
-        throw error;
-      }
+
+    if (oneginiAppToWebSingleSignOn) {
+       print("Single sign on!");
     }

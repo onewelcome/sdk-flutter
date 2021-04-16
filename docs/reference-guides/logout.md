@@ -5,12 +5,12 @@
 Method for log out.
 
 
-    Future<bool> logout() async {
-      try {
-        var isSuccess =
-            await Onegini.instance.channel.invokeMethod(Constants.logout);
-        return isSuccess;
-      } on PlatformException catch (error) {
-        throw error;
-      }
+    var isLogOut = await Onegini.instance.userClient
+        .logout()
+        .catchError((error) {
+            print("Logout failed: " + error.message);
+        });
+
+    if (isLogOut) {
+       print("User logged out!");
     }

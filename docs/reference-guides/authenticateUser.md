@@ -7,18 +7,12 @@ If [registeredAuthenticatorId] is null, starts authentication by default authent
 Usually it is Pin authenticator.
 
 
-    Future<String> authenticateUser(
-      BuildContext context,
-      String? registeredAuthenticatorId,
-    ) async {
-      Onegini.instance.setEventContext(context);
-      try {
-        var userId = await Onegini.instance.channel
-            .invokeMethod(Constants.authenticateUser, <String, String?>{
-          'registeredAuthenticatorId': registeredAuthenticatorId,
+    var userId = await Onegini.instance.userClient
+        .authenticateUser(context, registeredAuthenticatorId)
+        .catchError((error) {
+            print("Authentication failed: " + error.message);
         });
-        return userId;
-      } on PlatformException catch (error) {
-        throw error;
-      }
+
+    if (userId != null) {
+        print("Authentication success!");
     }
