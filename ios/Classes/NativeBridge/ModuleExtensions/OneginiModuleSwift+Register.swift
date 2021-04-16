@@ -87,7 +87,7 @@ extension OneginiModuleSwift {
     
     func fetchNotRegisteredAuthenticator(callback: @escaping FlutterResult) -> Void {
         guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
-            callback(SdkError.convertToFlutter(SdkError(customType: .userProfileIsNull)))
+            callback(SdkError.convertToFlutter(SdkError(customType: .userAuthenticatedProfileIsNull)))
             return
         }
         

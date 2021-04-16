@@ -171,7 +171,7 @@ extension AuthenticatorsHandler: ONGAuthenticatorDeregistrationDelegate {
     func userClient(_: ONGUserClient, didDeregister _: ONGAuthenticator, forUser _: ONGUserProfile) {
         print("[AUTH] userClient didDeregister ONGAuthenticator")
         deregistrationCompletion!(true, nil)
-        BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
+        //BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
     }
 
     func userClient(_: ONGUserClient, didReceive challenge: ONGCustomAuthDeregistrationChallenge) {
@@ -183,7 +183,7 @@ extension AuthenticatorsHandler: ONGAuthenticatorDeregistrationDelegate {
 
     func userClient(_: ONGUserClient, didFailToDeregister authenticator: ONGAuthenticator, forUser _: ONGUserProfile, error: Error) {
         print("[AUTH] userClient didFailToDeregister ONGAuthenticator")
-        BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
+        //BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
         if error.code == ONGGenericError.actionCancelled.rawValue {
             deregistrationCompletion?(false, SdkError.init(customType: .authenticatorDeregistrationCancelled))
         } else {

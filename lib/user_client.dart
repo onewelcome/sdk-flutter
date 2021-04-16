@@ -5,9 +5,15 @@ import 'constants/constants.dart';
 import 'model/onegini_list_response.dart';
 import 'onegini.dart';
 
+<<<<<<< HEAD
 /// The class with basic methods available to the developer.
 class UserClient {
   /// Start registration flow.
+=======
+///Сlass with basic methods available to the developer.
+class UserClient {
+  ///Start registration flow.
+>>>>>>> develop
   ///
   /// If [identityProviderId] is null, starts standard browser registration.
   /// Use your [scopes] for registration. By default it is "read".
@@ -125,7 +131,36 @@ class UserClient {
     }
   }
 
-  /// Method for log out.
+  ///Set preferred authenticator
+  Future<bool> setPreferredAuthenticator(
+      BuildContext context, String authenticatorId) async {
+    Onegini.instance.setEventContext(context);
+    try {
+      var data = await Onegini.instance.channel
+          .invokeMethod(Constants.setPreferredAuthenticator, <String, String>{
+        'authenticatorId': authenticatorId,
+      });
+      return data;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  Future<bool> deregisterAuthenticator(
+      BuildContext context, String authenticatorId) async {
+    Onegini.instance.setEventContext(context);
+    try {
+      var success = await Onegini.instance.channel
+          .invokeMethod(Constants.deregisterAuthenticator, <String, String>{
+        'authenticatorId': authenticatorId,
+      });
+      return success;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  ///Method for log out
   Future<bool> logout() async {
     try {
       var isSuccess =
@@ -166,9 +201,19 @@ class UserClient {
   /// User profiles
   Future<String> fetchUserProfiles() async {
     try {
-      var profiles = await Onegini.instance.channel
-          .invokeMethod(Constants.userProfiles);
+      var profiles =
+          await Onegini.instance.channel.invokeMethod(Constants.userProfiles);
       return profiles;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  Future<bool> validatePinWithPolicy(String pin) async {
+    try {
+      var success = await Onegini.instance.channel.invokeMethod(
+          Constants.validatePinWithPolicy, <String, String?>{'pin': pin});
+      return success;
     } on PlatformException catch (error) {
       throw error;
     }

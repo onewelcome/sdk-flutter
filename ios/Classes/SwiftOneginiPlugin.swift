@@ -32,6 +32,8 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     
     case Constants.Routes.getIdentityProviders: getIdentityProviders(call, result)
     case Constants.Routes.cancelRegistration: cancelRegistration(call, result)
+    case Constants.Routes.setPreferredAuthenticator:
+        setPreferredAuthenticator(call, result)
     
     case Constants.Routes.acceptPinRegistrationRequest: acceptPinRegistrationRequest(call, result)
     case Constants.Routes.denyPinRegistrationRequest: denyPinRegistrationRequest(call, result)
@@ -47,11 +49,16 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     
     case Constants.Routes.getRegisteredAuthenticators: getRegisteredAuthenticators(call, result)
     case Constants.Routes.getAllNotRegisteredAuthenticators: getAllNotRegisteredAuthenticators(call, result)
+    case Constants.Routes.deregisterAuthenticator:
+        deregisterAuthenticator(call, result)
     
     case Constants.Routes.acceptPinAuthenticationRequest: acceptPinAuthenticationRequest(call, result)
     case Constants.Routes.denyPinAuthenticationRequest: denyPinAuthenticationRequest(call, result)
     
     case Constants.Routes.logout: logout(call, result)
+        
+    case Constants.Routes.validatePinWithPolicy:
+        validatePinWithPolicy(call, result)
     
     // fingerprint
     case Constants.Routes.acceptFingerprintAuthenticationRequest: acceptFingerprintAuthenticationRequest(call, result)
@@ -64,7 +71,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     case Constants.Routes.denyOtpAuthenticationRequest: denyOtpAuthenticationRequest(call, result)
         
     // resources
-    case Constants.Routes.getResourceAnonymous, Constants.Routes.getResource, Constants.Routes.getImplicitResource:
+    case Constants.Routes.getResourceAnonymous, Constants.Routes.getResource, Constants.Routes.getImplicitResource, Constants.Routes.unauthenticatedRequest:
         getResource(call, result)
         
     // other

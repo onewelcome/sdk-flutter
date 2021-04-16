@@ -54,6 +54,8 @@ class Constants {
 
   /// Logout method name
   static const String logout = 'logout';
+  static const String setPreferredAuthenticator = "setPreferredAuthenticator";
+  static const String deregisterAuthenticator = "deregisterAuthenticator";
 
   // Fingerprint
 
@@ -103,6 +105,7 @@ class Constants {
   /// Change pin method name
   static const String changePin = "changePin";
   static const String userProfiles = "userProfiles";
+  static const String validatePinWithPolicy = "validatePinWithPolicy";
 
   // CustomRegistration
 

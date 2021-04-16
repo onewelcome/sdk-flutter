@@ -6,14 +6,8 @@ import android.util.Patterns
 import androidx.annotation.NonNull
 import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onegini.mobile.sdk.android.handlers.OneginiAppToWebSingleSignOnHandler
-import com.onegini.mobile.sdk.android.handlers.OneginiChangePinHandler
-import com.onegini.mobile.sdk.android.handlers.OneginiInitializationHandler
-import com.onegini.mobile.sdk.android.handlers.OneginiLogoutHandler
-import com.onegini.mobile.sdk.android.handlers.error.OneginiAppToWebSingleSignOnError
-import com.onegini.mobile.sdk.android.handlers.error.OneginiChangePinError
-import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
-import com.onegini.mobile.sdk.android.handlers.error.OneginiLogoutError
+import com.onegini.mobile.sdk.android.handlers.*
+import com.onegini.mobile.sdk.android.handlers.error.*
 import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
 import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
@@ -53,6 +47,8 @@ class OnMethodCallMapper(private var context: Context) {
             Constants.METHOD_GET_REGISTERED_AUTHENTICATORS -> AuthenticationObject.getRegisteredAuthenticators(result,OneginiSDK().getOneginiClient(context))
             Constants.METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS -> AuthenticationObject.getNotRegisteredAuthenticators(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_REGISTER_AUTHENTICATOR -> AuthenticationObject.registerAuthenticator(call.argument<String>("authenticatorId"), result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_SET_PREFERRED_AUTHENTICATOR -> AuthenticationObject.setPreferredAuthenticator(call.argument<String>("authenticatorId"), result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_DEREGISTER_AUTHENTICATOR -> AuthenticationObject.deregisterAuthenticator(call.argument<String>("authenticatorId"), result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_LOGOUT -> logout(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_ACCEPT_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
             Constants.METHOD_DENY_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.denyAuthenticationRequest()
@@ -78,6 +74,8 @@ class OnMethodCallMapper(private var context: Context) {
             Constants.METHOD_CHANGE_PIN -> startChangePinFlow(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON -> getAppToWebSingleSignOn(call.argument<String>("url"), result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_GET_USER_PROFILES -> result.success(Gson().toJson(OneginiSDK().getOneginiClient(context).userClient.userProfiles))
+
+            Constants.METHOD_VALIDATE_PIN_WITH_POLICY -> validatePinWithPolicy(call.argument<String>("pin")?.toCharArray(),result,OneginiSDK().getOneginiClient(context))
 
             else -> result.error(OneginiWrapperErrors().methodToCallNotFound.code, OneginiWrapperErrors().methodToCallNotFound.message, null)
         }
@@ -131,6 +129,20 @@ class OnMethodCallMapper(private var context: Context) {
 
         })
     }
+
+    private fun validatePinWithPolicy(pin: CharArray?,result: MethodChannel.Result, oneginiClient: OneginiClient){
+        oneginiClient.userClient.validatePinWithPolicy(pin, object : OneginiPinValidationHandler{
+            override fun onSuccess() {
+                result.success(true)
+            }
+
+            override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
+               result.error(oneginiPinValidationError.errorType.toString(),oneginiPinValidationError.message,null)
+            }
+
+        })
+    }
+
 
     fun logout(result: MethodChannel.Result, oneginiClient: OneginiClient) {
         oneginiClient.userClient.logout(object : OneginiLogoutHandler {

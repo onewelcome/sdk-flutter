@@ -44,7 +44,14 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     ];
     super.initState();
     getNotRegisteredAuthenticators();
+
+    //testDeregisterAuthenticator();
   }
+
+  // testDeregisterAuthenticator() async {
+  //   var result = await Onegini.instance.userClient.deregisterAuthenticator(context, "com.onegini.authenticator.TouchID");
+  //   print(result);
+  // }
 
   @override
   void didChangeDependencies() {
@@ -377,9 +384,7 @@ class _InfoState extends State<Info> {
   }
 
   Future<String> makeUnaunthenticatedRequest() async {
-    var response = await Onegini.instance.resourcesMethods
-        .getResourceImplicit(
-            "users");
+    var response = await Onegini.instance.resourcesMethods.getUnauthenticatedResource("devices");
     return response;
   }
 
