@@ -8,6 +8,7 @@ protocol ConnectorToFlutterBridgeProtocol: NSObject {
 }
 
 enum OneginiBridgeEvents : String {
+    case registrationNotification = "ONEGINI_REGISTRATION_NOTIFICATION"
     case pinNotification = "ONEGINI_PIN_NOTIFICATION"
     case customRegistrationNotification = "ONEGINI_CUSTOM_REGISTRATION_NOTIFICATION"
     case authWithOtpNotification = "ONEGINI_MOBILE_AUTH_OTP_NOTIFICATION"
@@ -16,7 +17,7 @@ enum OneginiBridgeEvents : String {
 }
 
 //MARK: -
-public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, FlutterStreamHandler {
+public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, FlutterConnectorProtocol, FlutterStreamHandler {
  
     var bridgeConnector: BridgeConnector
     private var eventSink: FlutterEventSink?

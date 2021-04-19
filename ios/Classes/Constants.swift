@@ -50,4 +50,17 @@ struct Constants {
         static let changePin: String = "changePin";
         static let userProfiles: String = "userProfiles";
     }
+    
+    struct Parameters {
+        static let identityProviderId: String = "identityProviderId";
+        static let scopes: String = "scopes";
+        
+        static let pin: String = "pin";
+        
+        static let profileId: String = "profileId";
+        
+        static let eventName: String = "eventName";
+        static let eventValue: String = "eventValue";
+
+    }
 }

@@ -21,6 +21,13 @@ class SdkError {
         self.code = customType.rawValue
     }
     
+    init(customType: PluginCustomErrorType, title: String = "Error", recoverySuggestion: String = "Please try again.") {
+        self.title = title
+        self.errorDescription = customType.message()
+        self.recoverySuggestion = recoverySuggestion
+        self.code = customType.rawValue
+    }
+    
     func toJSON() -> Dictionary<String, Any?>? {
         return ["title": title, "message": errorDescription, "recoverySuggestion": recoverySuggestion, "code": code]
     }
