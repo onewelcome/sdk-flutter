@@ -365,7 +365,7 @@ class _InfoState extends State<Info> {
   Future<ApplicationDetails> getApplicationDetails() async {
     var response = await Onegini.instance.resourcesMethods
         .getResourceAnonymous(
-            "application-details", scope : "application-details");
+            "application-details", scopes : ["read", "write", "application-details"]);
     return applicationDetailsFromJson(response);
   }
 
@@ -384,7 +384,8 @@ class _InfoState extends State<Info> {
   }
 
   Future<String> makeUnaunthenticatedRequest() async {
-    var response = await Onegini.instance.resourcesMethods.getUnauthenticatedResource("devices");
+    var headers = {'Declareren-Appversion': 'CZ.app'};
+    var response = await Onegini.instance.resourcesMethods.getUnauthenticatedResource("devices", headers: headers, method: 'GET');
     return response;
   }
 

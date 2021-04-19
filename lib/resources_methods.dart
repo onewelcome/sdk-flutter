@@ -9,7 +9,7 @@ import 'onegini.dart';
 class ResourcesMethods {
   Future<String> getResourceAnonymous(
     String path, {
-    String? scope,
+    List<String>? scopes,
     Map<String, String>? headers,
     String? method,
     String? encoding,
@@ -20,7 +20,7 @@ class ResourcesMethods {
       response = await Onegini.instance.channel
           .invokeMethod(Constants.getResourceAnonymous, <String, dynamic>{
         'path': path,
-        'scope': scope,
+        'scope': scopes,
         'headers': headers,
         'method': method,
         'encoding': encoding,
