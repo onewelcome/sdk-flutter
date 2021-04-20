@@ -19,6 +19,7 @@ import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.AuthenticationObject
 import com.onegini.mobile.sdk.flutter.helpers.MobileAuthenticationObject
 import com.onegini.mobile.sdk.flutter.helpers.RegistrationHelper
+import com.onegini.mobile.sdk.flutter.helpers.RegistrationHelper.registerUser
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepIdentityProvider
 import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationAction
@@ -35,7 +36,7 @@ class OnMethodCallMapper(private var context: Context) {
 
 
             //Register
-            Constants.METHOD_REGISTER_USER -> RegistrationHelper.registerUser(call.argument<String>("identityProviderId"), call.argument<String>("scopes"), result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_REGISTER_USER -> OneginiMethodsWrapperImpl().registerUser(call.argument<String>("identityProviderId"), call.argument<String>("scopes"), result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_GET_IDENTITY_PROVIDERS -> RegistrationHelper.getIdentityProviders(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_CANCEL_REGISTRATION -> RegistrationHelper.cancelRegistration()
             Constants.METHOD_ACCEPT_PIN_REGISTRATION_REQUEST -> PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
