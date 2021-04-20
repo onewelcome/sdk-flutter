@@ -15,8 +15,9 @@ protocol StartAppConnectorProtocol: FlutterNotificationReceiverProtocol {
 }
 
 class StartAppConnector: NSObject, StartAppConnectorProtocol {
-    unowned var flutterConnector: FlutterConnectorProtocol?
+    
     var wrapper: StartAppWrapperProtocol
+    unowned var flutterConnector: FlutterConnectorProtocol?
     
     init(startAppWrapper: StartAppWrapperProtocol) {
         wrapper = startAppWrapper

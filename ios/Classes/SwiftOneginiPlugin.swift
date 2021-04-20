@@ -6,6 +6,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     var flutterConnector: FlutterConnectorProtocol?
     var startAppConnector: StartAppConnectorProtocol
     var registrationConnector: RegistrationConnectorProtocol
+    var pinConnector: PinConnectorProtocol
 
     override init() {
 //        flutterConnector = FlutterConnector()
@@ -16,7 +17,8 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         registrationConnector = NewRegistrationConnector.init(registrationWrapper: RegistrationWrapper())
         registrationConnector.flutterConnector = flutterConnector
         
-        
+        pinConnector = NewPinConnector.init(pinWrapper: PinWrapper())
+        pinConnector.flutterConnector = flutterConnector
         
         super.init()
     }
@@ -57,6 +59,14 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         case "new_isUserRegistered": registrationConnector.isUserRegistered(call, result)
         case "new_cancelUserRegistration": registrationConnector.cancelFlow(call, result)
         case "new_respondToRegistrationRequest": registrationConnector.respondToRegistrationRequest(call, result)
+            
+        // new pin
+        case "new_authorizePin": pinConnector.authorizePin(call, result)
+        case "new_registerPin": pinConnector.registerPin(call, result)
+        case "new_cancelPin": pinConnector.cancelPin(call, result)
+        case "new_changePin": pinConnector.changePin(call, result)
+        case "new_validatePinWithPolicy": pinConnector.validatePinWithPolicy(call, result)
+            
             
         // base
         case Constants.Routes.startApp: startApp(call, result)

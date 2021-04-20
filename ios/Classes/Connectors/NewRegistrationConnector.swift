@@ -20,8 +20,8 @@ protocol RegistrationConnectorProtocol: FlutterNotificationReceiverProtocol {
 
 class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
     
-    unowned var flutterConnector: FlutterConnectorProtocol?
     var wrapper: RegistrationWrapperProtocol
+    unowned var flutterConnector: FlutterConnectorProtocol?
     
     init(registrationWrapper: RegistrationWrapperProtocol) {
         wrapper = registrationWrapper
@@ -95,7 +95,6 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
 
 extension NewRegistrationConnector: RegistrationNotificationReceiverProtocol {
     func sendNotification(event: RegistrationNotification, eventData: Any?, error: SdkError?) {
-        
         if let error = error {
             var data: [String: Any?] = [:]
             data[Constants.Parameters.eventName] = RegistrationNotification.eventError.rawValue
