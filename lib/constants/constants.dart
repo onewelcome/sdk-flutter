@@ -4,6 +4,7 @@ class Constants {
 
   //registration
   static const String registerUser = 'registerUser';
+  static const String handleRegisteredUserUrl = 'handleRegisteredUserUrl';
   static const String cancelRegistrationMethod = "cancelRegistration";
   static const String getIdentityProvidersMethod = "getIdentityProviders";
   static const String denyPinRegistrationRequest = "denyPinRegistrationRequest";

@@ -38,10 +38,7 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
         if #available(iOS 13.0, *) {
             webAuthSession?.prefersEphemeralWebBrowserSession = true
             webAuthSession?.presentationContextProvider = self;
-        } else {
-          // Fallback on earlier versions
-        };
-
+        }
         webAuthSession?.start()
     }
 

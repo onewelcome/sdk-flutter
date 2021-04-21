@@ -13,7 +13,19 @@ extension OneginiModuleSwift {
     
     func registerUser(_ identityProviderId: String? = nil, callback: @escaping FlutterResult) -> Void {
 
-        bridgeConnector.toRegistrationConnector.registrationHandler.signUp(identityProviderId) {  (_, userProfile, error) -> Void in
+        bridgeConnector.toRegistrationConnector.registrationHandler.signUp(identityProviderId) { (path, error) -> Void in
+
+            if let path = path {
+                callback(path)
+            } else {
+                callback(SdkError.convertToFlutter(error))
+            }
+        }
+    }
+    
+    func handleRegisteredProcessUrl(_ url: String, callback: @escaping FlutterResult) -> Void {
+
+        bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: url) {  (_, userProfile, error) -> Void in
 
             if let _userProfile = userProfile {
                 callback(_userProfile.profileId)
@@ -39,11 +51,11 @@ extension OneginiModuleSwift {
         bridgeConnector.toRegistrationConnector.registrationHandler.cancelCustomRegistration()
     }
     
-    func handleRegistrationCallback(_ url: String) -> Void {
-        guard let _url = URL(string: url) else { return }
-        
-        bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: _url)
-    }
+//    func handleRegistrationCallback(_ url: String) -> Void {
+//        guard let _url = URL(string: url) else { return }
+//        
+//        bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: _url)
+//    }
     
     func registerAuthenticator(_ authenticatorId: String, callback: @escaping FlutterResult) {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first else {

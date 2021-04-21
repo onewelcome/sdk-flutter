@@ -18,10 +18,26 @@ class UserClient {
   ) async {
     Onegini.instance.setEventContext(context);
     try {
-      var userId = await Onegini.instance.channel
+      var regUrl = await Onegini.instance.channel
           .invokeMethod(Constants.registerUser, <String, String?>{
         'scopes': scopes,
         'identityProviderId': identityProviderId,
+      });
+      return regUrl;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  Future<String> handleRegisteredUserUrl(
+    BuildContext context,
+    String? url,
+  ) async {
+    Onegini.instance.setEventContext(context);
+    try {
+      var userId = await Onegini.instance.channel
+          .invokeMethod(Constants.handleRegisteredUserUrl, <String, String?>{
+        'url': url,
       });
       return userId;
     } on PlatformException catch (error) {
