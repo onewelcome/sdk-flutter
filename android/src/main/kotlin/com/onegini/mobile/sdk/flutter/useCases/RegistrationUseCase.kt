@@ -11,7 +11,7 @@ import io.flutter.plugin.common.MethodChannel
 
 
 class RegistrationUseCase {
-    operator fun invoke(call: MethodCall, oneginiClient: OneginiClient, onFinished: (userProfileId: String?, error: OneginiRegistrationError?) -> Unit) {
+    operator fun invoke(call: MethodCall, oneginiClient: OneginiClient,result: MethodChannel.Result) {
         val identityProviderId = call.argument<String>("identityProviderId")
         val scopes = call.argument<String>("scopes")
         if(identityProviderId != null){
@@ -19,21 +19,21 @@ class RegistrationUseCase {
             for (identityProvider in identityProviders) {
                 if (identityProvider.id == identityProviderId) {
                     register(identityProvider, arrayOf(scopes
-                            ?: ""), oneginiClient,onFinished)
+                            ?: ""), oneginiClient,result)
                     break
                 }
             }
-        } else register(null, arrayOf(scopes ?: ""), oneginiClient,onFinished)
+        } else register(null, arrayOf(scopes ?: ""), oneginiClient, result)
 
     }
-    private fun  register(identityProvider: OneginiIdentityProvider?, scopes: Array<String>, oneginiClient: OneginiClient,onFinished: (userProfileId: String?, error: OneginiRegistrationError?) -> Unit){
+    private fun  register(identityProvider: OneginiIdentityProvider?, scopes: Array<String>, oneginiClient: OneginiClient,result: MethodChannel.Result){
         oneginiClient.userClient.registerUser(identityProvider, scopes, object : OneginiRegistrationHandler {
             override fun onSuccess(userProfile: UserProfile, customInfo: CustomInfo?) {
-                onFinished(userProfile.profileId,null)
+                result.success(userProfile.profileId)
             }
 
             override fun onError(oneginiRegistrationError: OneginiRegistrationError) {
-                onFinished(null,oneginiRegistrationError)
+                result.error(oneginiRegistrationError.errorType.toString(),oneginiRegistrationError.message,null)
             }
         })
     }

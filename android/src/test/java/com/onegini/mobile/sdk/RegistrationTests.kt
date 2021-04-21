@@ -35,10 +35,6 @@ class RegistrationTests {
     @Mock
     lateinit var call : MethodCall
 
-    @Mock
-    lateinit var registrationCallback: (userProfileId: String?, error: OneginiRegistrationError?) -> Unit
-
-
     @Before
     fun attach() {
         MockitoAnnotations.initMocks(this)
@@ -52,7 +48,7 @@ class RegistrationTests {
         `when`(userClient.registerUser(any(),any(), any())).thenAnswer{
             it.getArgument<OneginiRegistrationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0,""))
         }
-        RegistrationUseCase().invoke(call,client,registrationCallback)
-        verify(registrationCallback)("QWERTY", null)
+        RegistrationUseCase().invoke(call,client,mockResult)
+        verify(mockResult).success("QWERTY")
     }
 }
