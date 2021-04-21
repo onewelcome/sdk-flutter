@@ -13,6 +13,9 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import okhttp3.*
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 class ResourceHelper(private var call: MethodCall, private var result: MethodChannel.Result, private var oneginiClient: OneginiClient) {
 
@@ -26,7 +29,7 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
         // "application-details"
         //"application/json"
         val request = getRequest()
-        val scope = call.argument<String>("scope")
+        val scope = call.argument<ArrayList<String>>("scope")
         getAnonymousClient(scope, request)
     }
 
@@ -45,10 +48,15 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
 
     }
 
+    fun getUnauthenticatedResource(){
+        val request = getRequest()
+        getUnauthenticatedResourceOkHttpClient(request)
+    }
 
-    private fun getAnonymousClient(scope: String?, request: Request) {
+
+    private fun getAnonymousClient(scope: ArrayList<String>?, request: Request) {
         val okHttpClient: OkHttpClient = oneginiClient.deviceClient.anonymousResourceOkHttpClient
-        oneginiClient.deviceClient.authenticateDevice(arrayOf(scope), object : OneginiDeviceAuthenticationHandler {
+        oneginiClient.deviceClient.authenticateDevice(scope?.toArray(arrayOfNulls<String>(scope.size)), object : OneginiDeviceAuthenticationHandler {
             override fun onSuccess() {
                 makeRequest(okHttpClient, request, result)
             }
@@ -62,6 +70,11 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
 
     private fun getStandardUserClient(request: Request) {
         val okHttpClient: OkHttpClient = oneginiClient.userClient.resourceOkHttpClient
+        makeRequest(okHttpClient, request, result)
+    }
+
+    private fun getUnauthenticatedResourceOkHttpClient(request: Request){
+        val okHttpClient: OkHttpClient = oneginiClient.deviceClient.unauthenticatedResourceOkHttpClient
         makeRequest(okHttpClient, request, result)
     }
 

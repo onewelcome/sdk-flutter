@@ -3,6 +3,7 @@ import OneginiCrypto
 
 enum OneginiErrorCustomType: Int {
     case userProfileIsNull = 8002
+    case userAuthenticatedProfileIsNull
     case registeredAuthenticatorsIsNull
     case notRegisteredAuthenticatorsIsNull
     case identityProvidersIsNull
@@ -19,6 +20,8 @@ enum OneginiErrorCustomType: Int {
     case authenticatorDeregistrationCancelled
     case failedParseData
     case responseIsNull
+    case authenticatorIdIsNull
+    case emptyInputValue
     // Default case
     case somethingWentWrong = 400
     
@@ -28,6 +31,8 @@ enum OneginiErrorCustomType: Int {
         switch self {
         case .userProfileIsNull:
             message = "User profile is empty."
+        case .userAuthenticatedProfileIsNull:
+            message = "User authenticated profile is empty."
         case .registeredAuthenticatorsIsNull:
             message = "List Registered authenticators is empty."
         case .notRegisteredAuthenticatorsIsNull:
@@ -60,6 +65,10 @@ enum OneginiErrorCustomType: Int {
             message = "Failed to parse data."
         case .responseIsNull:
             message = "Response doesn't contain data."
+        case .authenticatorIdIsNull:
+            message = "Authenticator ID is empty."
+        case .emptyInputValue:
+            message = "Empty input value."
         default:
             message = "Something went wrong."
         }

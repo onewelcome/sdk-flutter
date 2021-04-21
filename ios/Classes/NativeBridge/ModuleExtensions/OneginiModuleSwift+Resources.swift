@@ -5,8 +5,8 @@ import Flutter
 
 extension OneginiModuleSwift {
 
-    public func authenticateDeviceForResource(_ path: String, callback: @escaping FlutterResult) -> Void {
-        bridgeConnector.toResourceFetchHandler.authenticateDevice(path) {
+    public func authenticateDeviceForResource(_ scopes: [String], callback: @escaping FlutterResult) -> Void {
+        bridgeConnector.toResourceFetchHandler.authenticateDevice(scopes) {
             (data, error) -> Void in
             error != nil ? callback(error?.flutterError()) : callback(data)
         }
@@ -35,6 +35,10 @@ extension OneginiModuleSwift {
             print("super path3 \(path)")
             print("super params3 \(parameters)")
             bridgeConnector.toResourceFetchHandler.fetchSimpleResources(path, parameters: parameters, completion: callback)
+        case Constants.Routes.unauthenticatedRequest:
+            print("super path4 \(path)")
+            print("super params4 \(parameters)")
+            bridgeConnector.toResourceFetchHandler.unauthenticatedRequest(path, parameters: parameters, callback: callback)
         default:
             callback(SdkError.convertToFlutter(SdkError(customType: .incrorrectResourcesAccess)))
         }
