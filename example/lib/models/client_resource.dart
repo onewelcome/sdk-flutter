@@ -11,7 +11,7 @@ String clientResourceToJson(ClientResource data) => json.encode(data.toJson());
 
 class ClientResource {
   ClientResource({
-    this.devices,
+    required this.devices,
   });
 
   List<Device> devices;
@@ -28,13 +28,13 @@ class ClientResource {
 
 class Device {
   Device({
-    this.id,
-    this.name,
-    this.application,
-    this.model,
-    this.platform,
-    this.mobileAuthenticationEnabled,
-    this.pushAuthenticationEnabled,
+    required this.id,
+    required this.name,
+    required this.application,
+    required this.model,
+    required this.platform,
+    required this.mobileAuthenticationEnabled,
+    required this.pushAuthenticationEnabled,
   });
 
   String id;

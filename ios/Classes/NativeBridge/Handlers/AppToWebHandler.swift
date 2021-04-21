@@ -2,10 +2,12 @@ import Foundation
 import OneginiSDKiOS
 import OneginiCrypto
 
+//MARK: -
 protocol AppToWebHandlerProtocol: AnyObject {
     func signInAppToWeb(targetURL: URL?, completion: @escaping (Dictionary<String, Any>?, SdkError?) -> Void)
 }
 
+//MARK: - 
 class AppToWebHandler: AppToWebHandlerProtocol {
     func signInAppToWeb(targetURL: URL?, completion: @escaping (Dictionary<String, Any>?, SdkError?) -> Void) {
         guard let _targetURL = targetURL else {

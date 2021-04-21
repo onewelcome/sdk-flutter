@@ -1,7 +1,7 @@
 import OneginiSDKiOS
 import OneginiCrypto
 
-protocol RegistrationConnectorToHandlerProtocol: AnyObject {
+protocol RegistrationConnectorToHandlerProtocol: RegistrationHandlerToPinHanlderProtocol {
     func signUp(_ providerId: String?, completion: @escaping (Bool, ONGUserProfile?, SdkError?) -> Void)
     func processRedirectURL(url: URL)
     func cancelRegistration()
@@ -10,10 +10,26 @@ protocol RegistrationConnectorToHandlerProtocol: AnyObject {
     func identityProviders() -> Array<ONGIdentityProvider>
     func processOTPCode(code: String?)
     func cancelCustomRegistration()
+    func processTwoStepRegistration(_ data: String)
+    func cancelTwoStepRegistration(_ error: String)
     func currentChallenge() -> ONGCustomRegistrationChallenge?
 }
 
-class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, PinHandlerToReceiverProtocol {
+protocol RegistrationHandlerToPinHanlderProtocol: class {
+    var pinHandler: PinConnectorToPinHandler? { get set }
+}
+
+protocol CustomRegistrationNotificationReceiverProtocol: class {
+    func sendCustomRegistrationNotification(_ event: CustomRegistrationNotification,_ data: Dictionary<String, Any?>?)
+}
+
+protocol OtpRegistrationNotificationReceiverProtocol: class {
+    func sendCustomOtpNotification(_ event: OneginiBridgeEvents,_ data: Dictionary<String, Any?>?)
+}
+
+class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, PinHandlerToReceiverProtocol, RegistrationHandlerToPinHanlderProtocol {
+    
+    var middleTwoStep: Bool? = nil
     
     var createPinChallenge: ONGCreatePinChallenge?
     var browserRegistrationChallenge: ONGBrowserRegistrationChallenge?
@@ -24,6 +40,11 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     var deregisterUserHandler = DisconnectHandler()
     var signUpCompletion: ((Bool, ONGUserProfile?, SdkError?) -> Void)?
     
+    unowned var pinHandler: PinConnectorToPinHandler?
+    
+    unowned var customNotificationReceiver: CustomRegistrationNotificationReceiverProtocol?
+    unowned var otpNotificationReceiver: OtpRegistrationNotificationReceiverProtocol?
+    
     //MARK:-
     func currentChallenge() -> ONGCustomRegistrationChallenge? {
         return self.customRegistrationChallenge
@@ -32,8 +53,15 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     func identityProviders() -> Array<ONGIdentityProvider> {
         var list = Array(ONGUserClient.sharedInstance().identityProviders())
         
-        if let _providerId =  OneginiModuleSwift.sharedInstance.customIdentifier, list.filter({$0.identifier == _providerId}).count == 0  {
+        let listOutput: [String]? =  OneginiModuleSwift.sharedInstance.customRegIdentifiers.filter { (_id) -> Bool in
+            let element = list.first { (provider) -> Bool in
+                return provider.identifier == _id
+            }
             
+            return element == nil
+        }
+        
+        listOutput?.forEach { (_providerId) in
             let identityProvider = ONGIdentityProvider()
             identityProvider.name = _providerId
             identityProvider.identifier = _providerId
@@ -45,8 +73,8 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     }
     
     func presentBrowserUserRegistrationView(registrationUserURL: URL) {
-        if(browserConntroller != nil) {
-            browserConntroller?.handleUrl(url: registrationUserURL)
+        if let _browserConntroller = browserConntroller {
+            _browserConntroller.handleUrl(url: registrationUserURL)
         } else {
             if #available(iOS 12.0, *) {
                 browserConntroller = BrowserViewController(registerHandlerProtocol: self)
@@ -58,9 +86,10 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     }
 
     func handleRedirectURL(url: URL?) {
+        print("[\(type(of: self))] handleRedirectURL url: \(url)")
         guard let browserRegistrationChallenge = self.browserRegistrationChallenge else { return }
-        if(url != nil) {
-            browserRegistrationChallenge.sender.respond(with: url!, challenge: browserRegistrationChallenge)
+        if let _url = url {
+            browserRegistrationChallenge.sender.respond(with: _url, challenge: browserRegistrationChallenge)
         } else {
             browserRegistrationChallenge.sender.cancel(browserRegistrationChallenge)
         }
@@ -69,8 +98,8 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     func handlePin(pin: String?) {
         guard let createPinChallenge = self.createPinChallenge else { return }
 
-        if(pin != nil) {
-            createPinChallenge.sender.respond(withCreatedPin: pin!, challenge: createPinChallenge)
+        if let _pin = pin {
+            createPinChallenge.sender.respond(withCreatedPin: _pin, challenge: createPinChallenge)
 
         } else {
             createPinChallenge.sender.cancel(createPinChallenge)
@@ -95,12 +124,13 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     }
 
     private func sendCustomRegistrationNotification(_ event: CustomRegistrationNotification,_ data: Dictionary<String, Any?>?) {
-        BridgeConnector.shared?.toRegistrationConnector.sendCustomRegistrationNotification(event, data);
+        customNotificationReceiver?.sendCustomRegistrationNotification(event, data)
     }
 }
 
 //MARK:-
 extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
+    
     func signUp(_ providerId: String?, completion: @escaping (Bool, ONGUserProfile?, SdkError?) -> Void) {
         signUpCompletion = completion
 
@@ -133,6 +163,16 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
     func cancelCustomRegistration() {
         handleOTPCode(nil, true)
     }
+    
+    func processTwoStepRegistration(_ data: String) {
+        guard let customRegistrationChallenge = self.customRegistrationChallenge else { return }
+        customRegistrationChallenge.sender.respond(withData: data, challenge: customRegistrationChallenge)
+    }
+    
+    func cancelTwoStepRegistration(_ error: String) {
+        guard let customRegistrationChallenge = self.customRegistrationChallenge else { return }
+        customRegistrationChallenge.sender.cancel(customRegistrationChallenge)
+    }
 
     func cancelRegistration() {
         handleRedirectURL(url: nil)
@@ -141,69 +181,94 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
 
 extension RegistrationHandler: ONGRegistrationDelegate {
     func userClient(_: ONGUserClient, didReceive challenge: ONGBrowserRegistrationChallenge) {
+        print("[\(type(of: self))] didReceive ONGBrowserRegistrationChallenge")
         browserRegistrationChallenge = challenge
         presentBrowserUserRegistrationView(registrationUserURL: challenge.url)
     }
 
     func userClient(_: ONGUserClient, didReceivePinRegistrationChallenge challenge: ONGCreatePinChallenge) {
+        print("[\(type(of: self))] didReceivePinRegistrationChallenge ONGCreatePinChallenge")
         createPinChallenge = challenge
         let pinError = mapErrorFromPinChallenge(challenge)
-        BridgeConnector.shared?.toPinHandlerConnector.pinHandler.handleFlowUpdate(PinFlow.create, pinError, receiver: self)
+        pinHandler?.handleFlowUpdate(.create, pinError, receiver: self)
     }
 
     func userClient(_: ONGUserClient, didRegisterUser userProfile: ONGUserProfile, info _: ONGCustomInfo?) {
+        print("[\(type(of: self))] didRegisterUser")
         createPinChallenge = nil
         customRegistrationChallenge = nil
-        signUpCompletion!(true, userProfile, nil)
-        BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
+        signUpCompletion?(true, userProfile, nil)
+        pinHandler?.closeFlow()
     }
 
     func userClient(_: ONGUserClient, didReceiveCustomRegistrationInitChallenge challenge: ONGCustomRegistrationChallenge) {
+        print("[\(type(of: self))] didReceiveCustomRegistrationInitChallenge ONGCustomRegistrationChallenge")
         customRegistrationChallenge = challenge
 
         var result = Dictionary<String, Any?>()
         result["eventValue"] = challenge.identityProvider.identifier
-
-        sendCustomRegistrationNotification(CustomRegistrationNotification.initRegistration, result)
         
+        middleTwoStep = true
+        
+        sendCustomRegistrationNotification(CustomRegistrationNotification.initRegistration, result)
+
         challenge.sender.respond(withData: nil, challenge: challenge)
     }
 
     func userClient(_: ONGUserClient, didReceiveCustomRegistrationFinish challenge: ONGCustomRegistrationChallenge) {
+        print("[\(type(of: self))] didReceiveCustomRegistrationFinish ONGCustomRegistrationChallenge")
         customRegistrationChallenge = challenge
 
         var result = Dictionary<String, Any?>()
         result["eventValue"] = challenge.identityProvider.identifier
 
+        var successfulRequest = true
         if let info = challenge.info {
-            var customInfo = Dictionary<String, Any?>()
+            if (info.status < 2001) {
+                var customInfo = Dictionary<String, Any?>()
 
-            customInfo["data"] = info.data
-            customInfo["status"] = info.status
-            result["customInfo"] = customInfo
-            
-            result["eventValue"] = info.data
-            result["value"] = info.data
-            if let _errorMessage = mapErrorMessageFromStatus(info.status) {
-                customInfo["errorMsg"] = _errorMessage
+                customInfo["data"] = info.data
+                customInfo["providerId"] = challenge.identityProvider.identifier
+
+                result["eventValue"] = String.stringify(json: customInfo)
+            }
+            else
+            {
+                successfulRequest = false
+                result["eventValue"] = SdkError.init(errorDescription: mapErrorMessageFromStatus(info.status) ?? "null", code: info.status).toJSON()
             }
         }
 
-        sendCustomRegistrationNotification(CustomRegistrationNotification.finishRegistration, result)
-        
-        BridgeConnector.shared?.toRegistrationConnector.sendCustomOtpNotification(OneginiBridgeEvents.otpOpen, result)
+        if (successfulRequest) {
+            if let _middle = middleTwoStep {
+                if (_middle) {
+                    sendCustomRegistrationNotification(CustomRegistrationNotification.openCustomTwoStepRegistrationScreen, result)
+                    otpNotificationReceiver?.sendCustomOtpNotification(.otpOpen, result)
+                    middleTwoStep = false
+                    return
+                }
+            }
+            
+            sendCustomRegistrationNotification(CustomRegistrationNotification.finishRegistration, result)
+            middleTwoStep = nil
+        }
+        else {
+            sendCustomRegistrationNotification(CustomRegistrationNotification.eventError, result)
+            otpNotificationReceiver?.sendCustomOtpNotification(.errorNotification, result)
+        }
     }
 
     func userClient(_: ONGUserClient, didFailToRegisterWithError error: Error) {
+        print("[\(type(of: self))] didFailToRegisterWithError")
         createPinChallenge = nil
         customRegistrationChallenge = nil
-        BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
+        pinHandler?.closeFlow()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            signUpCompletion!(false, nil, SdkError(customType: .registrationCancelled))
+            signUpCompletion?(false, nil, SdkError(customType: .registrationCancelled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            signUpCompletion!(false, nil, mappedError)
+            signUpCompletion?(false, nil, mappedError)
         }
     }
     

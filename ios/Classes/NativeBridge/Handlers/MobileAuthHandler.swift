@@ -2,12 +2,17 @@ import Foundation
 import OneginiSDKiOS
 import OneginiCrypto
 
+//MARK: -
 protocol MobileAuthConnectorToHandlerProtocol: AnyObject {
     func enrollForMobileAuth(_ completion: @escaping (Bool?, SdkError?) -> Void)
     func isUserEnrolledForMobileAuth() -> Bool
     func handleMobileAuthConfirmation(cancelled: Bool)
-    func handleOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Bool, SdkError?) -> Void)
-    func handleQrOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Bool, SdkError?) -> Void)
+    func handleOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Any?, SdkError?) -> Void)
+    func handleQrOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Any?, SdkError?) -> Void)
+}
+
+protocol MobileAuthNotificationReceiverProtocol: class {
+    func sendNotification(event: MobileAuthNotification, requestMessage: String?, error: SdkError?)
 }
 
 enum MobileAuthAuthenticatorType: String {
@@ -16,25 +21,28 @@ enum MobileAuthAuthenticatorType: String {
     case confirmation = ""
 }
 
+//MARK: -
 class MobileAuthHandler: NSObject {
     var userProfile: ONGUserProfile?
     var message: String?
     var authenticatorType: MobileAuthAuthenticatorType?
     var confirmation: ((Bool) -> Void)?
-    var mobileAuthCompletion: ((Bool, SdkError?) -> Void)?
+    var mobileAuthCompletion: ((Any?, SdkError?) -> Void)?
+    
+    unowned var notificationReceiver: MobileAuthNotificationReceiverProtocol?
     
     fileprivate func handleConfirmationMobileAuth(_ cancelled: Bool) {
         guard let confirmation = confirmation else { fatalError() }
         
         confirmation(cancelled)
     }
-
     
     private func sendConnectorNotification(_ event: MobileAuthNotification, _ requestMessage: String?, _ error: SdkError?) {
-        BridgeConnector.shared?.toMobileAuthConnector.sendNotification(event: event, requestMessage: requestMessage, error: error)
+        notificationReceiver?.sendNotification(event: event, requestMessage: requestMessage, error: error)
     }
 }
 
+//MARK: - MobileAuthConnectorToHandlerProtocol
 extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
     func enrollForMobileAuth(_ completion: @escaping (Bool?, SdkError?) -> Void) {
         ONGClient.sharedInstance().userClient.enroll { enrolled, error in
@@ -54,6 +62,10 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
     
     func isUserEnrolledForMobileAuth() -> Bool {
         let userClient = ONGUserClient.sharedInstance()
+        return isUserEnrolledForMobileAuth(userClient: userClient)
+    }
+    
+    func isUserEnrolledForMobileAuth(userClient: ONGUserClient) -> Bool {
         if let userProfile = userClient.authenticatedUserProfile() {
             return userClient.isUserEnrolled(forMobileAuth: userProfile)
         }
@@ -61,16 +73,22 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
     }
     
     func handleMobileAuthConfirmation(cancelled: Bool) {
-        if authenticatorType == .fingerprint {
-            //@todo
-        } else if authenticatorType == .confirmation {
+        switch authenticatorType {
+        case .confirmation:
             handleConfirmationMobileAuth(cancelled)
-        } else if authenticatorType == .pin {
+            break
+        case .fingerprint, .pin:
             //@todo
+            confirmation?(cancelled)
+            break
+        default:
+            //@todo
+            confirmation?(cancelled)
+            break
         }
     }
     
-    func handleOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Bool, SdkError?) -> Void) {
+    func handleOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Any?, SdkError?) -> Void) {
         mobileAuthCompletion = completion
         
         guard let challenge = customRegistrationChallenge else {
@@ -81,7 +99,7 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
         challenge.sender.respond(withData: otp, challenge: challenge)
     }
     
-    func handleQrOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Bool, SdkError?) -> Void) {
+    func handleQrOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Any?, SdkError?) -> Void) {
         mobileAuthCompletion = completion
         guard ONGUserClient.sharedInstance().canHandleOTPMobileAuthRequest(otp) else {
             completion(false, SdkError(customType: .cantHandleOTP))
@@ -91,12 +109,14 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
     }
 }
 
+//MARK: - ONGMobileAuthRequestDelegate
 extension MobileAuthHandler: ONGMobileAuthRequestDelegate {
     func userClient(_: ONGUserClient, didReceiveConfirmationChallenge confirmation: @escaping (Bool) -> Void, for request: ONGMobileAuthRequest) {
         message = request.message
         userProfile = request.userProfile
         authenticatorType = .confirmation
         self.confirmation = confirmation
+        mobileAuthCompletion?(request.message, nil)
         sendConnectorNotification(MobileAuthNotification.startAuthentication, request.message, nil)
     }
 
@@ -114,14 +134,14 @@ extension MobileAuthHandler: ONGMobileAuthRequestDelegate {
 
     func userClient(_: ONGUserClient, didFailToHandle _: ONGMobileAuthRequest, error: Error) {
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            mobileAuthCompletion!(false, SdkError(customType: .authenticationCancelled))
+            mobileAuthCompletion?(false, SdkError(customType: .authenticationCancelled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            mobileAuthCompletion!(false, mappedError)
+            mobileAuthCompletion?(false, mappedError)
         }
     }
 
     func userClient(_: ONGUserClient, didHandle _: ONGMobileAuthRequest, info _: ONGCustomInfo?) {
-        mobileAuthCompletion!(true, nil)
+        mobileAuthCompletion?(message, nil)
     }
 }

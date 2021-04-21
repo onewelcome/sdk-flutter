@@ -19,5 +19,9 @@ class DisconnectHandler: DisconnectHandlerProtocol {
                 }
             }
         }
+        else
+        {
+            completion(SdkError.init(customType: .userAuthenticatedProfileIsNull))
+        }
     }
 }

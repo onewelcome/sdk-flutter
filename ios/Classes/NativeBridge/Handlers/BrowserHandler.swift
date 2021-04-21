@@ -10,6 +10,7 @@ protocol BrowserHandlerToRegisterHandlerProtocol: AnyObject {
     func handleRedirectURL(url: URL?)
 }
 
+//MARK: - BrowserHandlerProtocol
 @available(iOS 12.0, *)
 class BrowserViewController: NSObject, BrowserHandlerProtocol {
     var webAuthSession: ASWebAuthenticationSession?
@@ -22,14 +23,16 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
 
     func handleUrl(url: URL) {
         let scheme = "oneginiexample";
-
+        
+        print("[\(type(of: self))] handleUrl url: \(url)")
         webAuthSession = ASWebAuthenticationSession(url: url, callbackURLScheme: scheme, completionHandler: { callbackURL, error in
-          guard error == nil, let successURL = callbackURL else {
-            self.cancelButtonPressed()
-            return;
-          }
+            print("[\(type(of: self))] webAuthSession completionHandler")
+            guard error == nil, let successURL = callbackURL else {
+                self.cancelButtonPressed()
+                return;
+            }
 
-          self.handleSuccessUrl(url: successURL)
+            self.handleSuccessUrl(url: successURL)
         })
 
         if #available(iOS 13.0, *) {
@@ -43,18 +46,22 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
     }
 
     private func handleSuccessUrl(url: URL) {
+        print("[\(type(of: self))] handleSuccessUrl url: \(url)")
         registerHandler.handleRedirectURL(url: url)
     }
 
     private func cancelButtonPressed() {
+        print("[\(type(of: self))] cancelButtonPressed")
         registerHandler.handleRedirectURL(url: nil)
     }
 
 }
 
+//MARK: - ASWebAuthenticationPresentationContextProviding
 @available(iOS 12.0, *)
 extension BrowserViewController: ASWebAuthenticationPresentationContextProviding {
     func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
+        print("[\(type(of: self))] presentationAnchor for session")
         var anchor: ASPresentationAnchor?;
         let group = DispatchGroup()
         group.enter()

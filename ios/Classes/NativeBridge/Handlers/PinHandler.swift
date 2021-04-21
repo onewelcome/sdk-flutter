@@ -2,16 +2,22 @@ import OneginiSDKiOS
 import OneginiCrypto
 import Flutter
 
+//MARK: -
 protocol PinConnectorToPinHandler: AnyObject {
     func onPinProvided(pin: String)
     func onChangePinCalled(completion: @escaping (Bool, SdkError?) -> Void)
     func onCancel()
     func handleFlowUpdate(_ flow: PinFlow, _ error: SdkError?, receiver: PinHandlerToReceiverProtocol)
     func closeFlow()
+    func validatePinWithPolicy(pin: String, completion: @escaping (Bool, SdkError?) -> Void)
 }
 
 protocol PinHandlerToReceiverProtocol: class {
     func handlePin(pin: String?)
+}
+
+protocol PinNotificationReceiverProtocol: class {
+    func sendNotification(event: PinNotification, flow: PinFlow?, error: SdkError?)
 }
 
 enum PINEntryMode {
@@ -19,6 +25,7 @@ enum PINEntryMode {
     case registration
 }
 
+//MARK: -
 class PinHandler: NSObject {
     var pinChallenge: ONGPinChallenge?
     var createPinChallenge: ONGCreatePinChallenge?
@@ -26,9 +33,11 @@ class PinHandler: NSObject {
     var mode: PINEntryMode?
     var pinEntryToVerify = Array<String>()
     var changePinCompletion: ((Bool, SdkError?) -> Void)?
+    
     unowned var pinReceiver: PinHandlerToReceiverProtocol?
+    unowned var notificationReceiver: PinNotificationReceiverProtocol?
 
-    func processPin(pinEntry: Array<String>) {
+    private func processPin(pinEntry: Array<String>) {
         let pincode = pinEntry.joined()
         switch mode {
           case .login, .registration:
@@ -36,7 +45,6 @@ class PinHandler: NSObject {
               break
           case .none:
             pinReceiver?.handlePin(pin: pincode)
-//              notifyOnError(SdkError(title: "Pin validation error", errorDescription: "Unexpected PIN mode.", recoverySuggestion: "Open and close modal."))
               break
         }
     }
@@ -46,26 +54,25 @@ class PinHandler: NSObject {
         pinReceiver?.handlePin(pin: nil)
     }
 
-    func notifyOnError(_ error: SdkError) {
+    private func notifyOnError(_ error: SdkError) {
         sendConnectorNotification(PinNotification.showError, flow, error)
     }
 
     private func sendConnectorNotification(_ event: PinNotification, _ flow: PinFlow?, _ error: SdkError?) {
-        BridgeConnector.shared?.toPinHandlerConnector.sendNotification(event: event, flow: flow, error: error)
+        notificationReceiver?.sendNotification(event: event, flow: flow, error: error)
     }
 }
 
+//MARK: -
 extension PinHandler : PinConnectorToPinHandler {
-    
-    // @todo Support different pinLength
     func handleFlowUpdate(_ flow: PinFlow, _ error: SdkError?, receiver: PinHandlerToReceiverProtocol) {
         if(self.flow == nil){
             self.flow = flow
             pinReceiver = receiver
         }
 
-        if(error != nil){
-            notifyOnError(error!)
+        if let _error = error {
+            notifyOnError(_error)
         } else {
             if(mode == nil) {
                 var notification = PinNotification.open;
@@ -118,15 +125,27 @@ extension PinHandler : PinConnectorToPinHandler {
     func onCancel() {
         processCancelAction()
     }
+    
+    func validatePinWithPolicy(pin: String, completion: @escaping (Bool, SdkError?) -> Void) {
+        ONGUserClient.sharedInstance().validatePin(withPolicy: pin) { (value, error) in
+            guard let _error = error else {
+                completion(value, nil)
+                return
+            }
+            
+            completion(false, SdkError.init(errorDescription: _error.localizedDescription, code: _error.code))
+        }
+    }
  }
 
+//MARK: -
 extension PinHandler : PinHandlerToReceiverProtocol {
     func handlePin(pin: String?) {
         guard let createPinChallenge = self.createPinChallenge else {
             guard let pinChallenge = self.pinChallenge else { return }
 
-            if(pin != nil) {
-                pinChallenge.sender.respond(withPin: pin!, challenge: pinChallenge)
+            if let _pin = pin {
+                pinChallenge.sender.respond(withPin: _pin, challenge: pinChallenge)
 
             } else {
                 pinChallenge.sender.cancel(pinChallenge)
@@ -135,8 +154,8 @@ extension PinHandler : PinHandlerToReceiverProtocol {
             return
         }
 
-        if(pin != nil) {
-            createPinChallenge.sender.respond(withCreatedPin: pin!, challenge: createPinChallenge)
+        if let _pin = pin {
+            createPinChallenge.sender.respond(withCreatedPin: _pin, challenge: createPinChallenge)
 
         } else {
             createPinChallenge.sender.cancel(createPinChallenge)
@@ -160,14 +179,17 @@ extension PinHandler : PinHandlerToReceiverProtocol {
     }
 }
 
+//MARK: - ONGChangePinDelegate
 extension PinHandler: ONGChangePinDelegate {
     func userClient(_ userClient: ONGUserClient, didReceive challenge: ONGPinChallenge) {
+        print("[\(type(of: self))] didReceive ONGPinChallenge")
         pinChallenge = challenge
         let pinError = mapErrorFromPinChallenge(challenge)
         handleFlowUpdate(PinFlow.authentication, pinError, receiver: self)
     }
 
     func userClient(_: ONGUserClient, didReceive challenge: ONGCreatePinChallenge) {
+        print("[\(type(of: self))] didReceive ONGCreatePinChallenge")
         pinChallenge = nil
         closeFlow()
         createPinChallenge = challenge
@@ -176,6 +198,7 @@ extension PinHandler: ONGChangePinDelegate {
     }
 
     func userClient(_: ONGUserClient, didFailToChangePinForUser _: ONGUserProfile, error: Error) {
+        print("[\(type(of: self))] didFailToChangePinForUser")
         pinChallenge = nil
         createPinChallenge = nil
         closeFlow()
@@ -183,17 +206,18 @@ extension PinHandler: ONGChangePinDelegate {
         let mappedError = ErrorMapper().mapError(error)
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            changePinCompletion!(false, SdkError(customType: .changingCancelled))
+            changePinCompletion?(false, SdkError(customType: .changingCancelled))
         } else if error.code == ONGGenericError.userDeregistered.rawValue {
-            changePinCompletion!(false, mappedError)
+            changePinCompletion?(false, mappedError)
         } else {
-            changePinCompletion!(false, mappedError)
+            changePinCompletion?(false, mappedError)
         }
     }
 
     func userClient(_: ONGUserClient, didChangePinForUser _: ONGUserProfile) {
+        print("[\(type(of: self))] didChangePinForUser")
         createPinChallenge = nil
         closeFlow()
-        changePinCompletion!(true, nil)
+        changePinCompletion?(true, nil)
     }
 }

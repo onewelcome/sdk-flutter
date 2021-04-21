@@ -8,13 +8,20 @@ protocol LogoutHandlerProtocol: AnyObject {
 
 class LogoutHandler: LogoutHandlerProtocol {
     func logout(completion: @escaping ( SdkError?) -> Void) {
-        ONGUserClient.sharedInstance().logoutUser { _, error in
-            if let error = error {
-                let mappedError = ErrorMapper().mapError(error)
-                completion(mappedError)
-            } else {
-                completion(nil)
+        let userClient = ONGUserClient.sharedInstance()
+        if userClient.authenticatedUserProfile() != nil {
+            userClient.logoutUser { _, error in
+                if let error = error {
+                    let mappedError = ErrorMapper().mapError(error)
+                    completion(mappedError)
+                } else {
+                    completion(nil)
+                }
             }
+        }
+        else
+        {
+            completion(SdkError.init(customType: .userAuthenticatedProfileIsNull))
         }
     }
 }

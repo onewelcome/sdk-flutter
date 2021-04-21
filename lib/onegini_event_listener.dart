@@ -1,16 +1,19 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:onegini/model/onegini_error.dart';
 
 import 'constants/constants.dart';
 import 'model/authentication_attempt.dart';
 import 'model/onegini_event.dart';
 
+
+///Extend from this class to describe the events that will take place inside OneginiSDK
 abstract class OneginiEventListener {
   static const chanel_name = 'onegini_events';
   static const EventChannel _eventChannel = const EventChannel(chanel_name);
 
-  BuildContext _context;
+
+  BuildContext? _context;
 
   set context(BuildContext context) {
     _context = context;
@@ -18,13 +21,15 @@ abstract class OneginiEventListener {
 
   void listen() {
     _eventChannel.receiveBroadcastStream(chanel_name).listen((event) {
-      print("event -> $event");
       switch (event) {
-        case Constants.eventOpenPin:
+        case Constants.eventOpenPin: //2
           openPinRequestScreen(_context);
           break;
-        case Constants.eventOpenPinAuth:
+        case Constants.eventOpenPinAuth: //1
           openPinScreenAuth(_context);
+          break;
+        case Constants.eventOpenPinAuthenticator:
+          openPinAuthenticator(_context);
           break;
         case Constants.eventClosePin:
           closePin(_context);
@@ -47,19 +52,25 @@ abstract class OneginiEventListener {
         case Constants.eventCloseAuthOTP:
           closeAuthOtp(_context);
           break;
-        case Constants.eventCancelAuthOTP:
-
-          break;
+        case Constants.userProfiles:
         default:
           if (event != null) {
             Event _event = eventFromJson(event);
             if (_event.eventName == Constants.eventNextAuthenticationAttempt) {
               nextAuthenticationAttempt(
-                  _context, authenticationAttemptFromJson(_event.eventValue));
-            }if(_event.eventName == Constants.eventOpenAuthOTP){
-              openAuthOtp(_context, _event.eventValue);
+                  _context, authenticationAttemptFromJson(_event.eventValue!));
             }
-            else {
+            if (_event.eventName == Constants.eventOpenAuthOTP) {
+              openAuthOtp(_context, _event.eventValue!);
+            }
+            if (_event.eventName ==
+                Constants.openCustomTwoStepRegistrationScreen) {
+              openCustomTwoStepRegistrationScreen(
+                  _context, _event.eventValue!);
+            }
+            if (_event.eventName == Constants.eventError) {
+              showError(_context, oneginiErrorFromJson(_event.eventValue!));
+            } else {
               eventOther(_context, _event);
             }
           }
@@ -69,31 +80,37 @@ abstract class OneginiEventListener {
     });
   }
 
+  void openAuthOtp(BuildContext? buildContext, String message);
 
-  void openAuthOtp(BuildContext buildContext,String message);
+  void closeAuthOtp(BuildContext? buildContext);
 
-  void closeAuthOtp(BuildContext buildContext);
+  void openPinRequestScreen(BuildContext? buildContext);
 
-  void openPinRequestScreen(BuildContext buildContext);
+  void openPinScreenAuth(BuildContext? buildContext);
 
-  void openPinScreenAuth(BuildContext buildContext);
+  void openPinAuthenticator(BuildContext? buildContext);
 
   void nextAuthenticationAttempt(
-      BuildContext buildContext, AuthenticationAttempt authenticationAttempt);
+      BuildContext? buildContext, AuthenticationAttempt authenticationAttempt);
 
-  void closePin(BuildContext buildContext);
+  void closePin(BuildContext? buildContext);
 
-  void closePinAuth(BuildContext buildContext);
+  void closePinAuth(BuildContext? buildContext);
 
-  void openFingerprintScreen(BuildContext buildContext);
+  void openFingerprintScreen(BuildContext? buildContext);
 
-  void showScanningFingerprint(BuildContext buildContext);
+  void showScanningFingerprint(BuildContext? buildContext);
 
-  void receivedFingerprint(BuildContext buildContext);
+  void receivedFingerprint(BuildContext? buildContext);
 
-  void closeFingerprintScreen(BuildContext buildContext);
+  void closeFingerprintScreen(BuildContext? buildContext);
 
-  void eventError(BuildContext buildContext, PlatformException error);
+  void openCustomTwoStepRegistrationScreen(
+      BuildContext? buildContext, String data);
 
-  void eventOther(BuildContext buildContext, Event event);
+  void eventError(BuildContext? buildContext, PlatformException error);
+
+  void showError(BuildContext? buildContext, OneginiError? error);
+
+  void eventOther(BuildContext? buildContext, Event event);
 }

@@ -1,26 +1,30 @@
-protocol BridgeToMobileAuthConnectorProtocol: AnyObject {
+//MARK: -
+protocol BridgeToMobileAuthConnectorProtocol: AuthenticatorsNotificationReceiverProtocol {
     var bridgeConnector: BridgeConnectorProtocol? { get set }
     var mobileAuthHandler: MobileAuthConnectorToHandlerProtocol { get }
-
-    func sendNotification(event: MobileAuthNotification, requestMessage: String?, error: SdkError?) -> Void
 }
 
-class MobileAuthConnector : BridgeToMobileAuthConnectorProtocol {
+//MARK: -
+class MobileAuthConnector : BridgeToMobileAuthConnectorProtocol, MobileAuthNotificationReceiverProtocol {
     var mobileAuthHandler: MobileAuthConnectorToHandlerProtocol
     unowned var bridgeConnector: BridgeConnectorProtocol?
 
     init() {
-        mobileAuthHandler = MobileAuthHandler()
+        let handler = MobileAuthHandler()
+        mobileAuthHandler = handler
+        handler.notificationReceiver = self
     }
 
     func sendNotification(event: MobileAuthNotification, requestMessage: String?, error: SdkError?) {
         switch (event){
             case .startAuthentication:
-                sendEvent(data: String.stringify(json: ["key": PinNotification.showError.rawValue, "value": error?.errorDescription]))
+                sendEvent(data:MobileAuthNotification.startAuthentication.rawValue)
                 break
             case .finishAuthentication:
                 sendEvent(data: MobileAuthNotification.finishAuthentication.rawValue)
                 break;
+        default:
+            print("MobileAuthNotification: ", event.rawValue)
         }
     }
 
@@ -29,7 +33,9 @@ class MobileAuthConnector : BridgeToMobileAuthConnectorProtocol {
   }
 }
 
+//MARK: -
 enum MobileAuthNotification : String {
-    case startAuthentication = "eventOpenAuthOtp",
+    case eventOpenAuthOtp = "eventOpenAuthOtp",
+         startAuthentication = "eventOpenPin",
          finishAuthentication = "eventClosePin"
 }

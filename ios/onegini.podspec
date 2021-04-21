@@ -4,14 +4,14 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'onegini'
-  s.version          = '0.0.1'
-  s.summary          = 'A new flutter plugin project.'
+  s.version          = '0.2.0'
+  s.summary          = 'Onegini Mobile Flutter plugin - iOS SDK'
   s.description      = <<-DESC
-A new flutter plugin project.
+A flutter plugin project.
                        DESC
-  s.homepage         = 'http://example.com'
+  s.homepage         = 'https://www.onegini.com'
   s.license          = { :file => '../LICENSE' }
-  s.author           = { 'Your Company' => 'email@example.com' }
+  s.author           = { 'Onegini B.V.' => 'info@onegini.com' }
   s.source           = { :path => '.' }
   s.source_files = 'Classes/**/*'
   s.dependency 'Flutter'

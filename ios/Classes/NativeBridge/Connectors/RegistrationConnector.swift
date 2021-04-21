@@ -1,20 +1,23 @@
-protocol BridgeToRegistrationConnectorProtocol: AnyObject {
+//MARK: - 
+protocol BridgeToRegistrationConnectorProtocol: CustomRegistrationNotificationReceiverProtocol, OtpRegistrationNotificationReceiverProtocol {
     var bridgeConnector: BridgeConnectorProtocol? { get set }
     var registrationHandler: RegistrationConnectorToHandlerProtocol { get }
-
     func handleCustomRegistrationAction(_ action: String, _ identityProviderId: String, _ code: String?) -> Void
-    func sendCustomRegistrationNotification(_ event: CustomRegistrationNotification, _ data: Dictionary<String, Any?>?) -> Void
-    func sendCustomOtpNotification(_ event: OneginiBridgeEvents, _ data: Dictionary<String, Any?>?) -> Void
 }
 
-class RegistrationConnector : BridgeToRegistrationConnectorProtocol {
+//MARK: -
+class RegistrationConnector : BridgeToRegistrationConnectorProtocol, CustomRegistrationNotificationReceiverProtocol, OtpRegistrationNotificationReceiverProtocol {
+    
     var registrationHandler: RegistrationConnectorToHandlerProtocol
-    weak var bridgeConnector: BridgeConnectorProtocol?
+    unowned var bridgeConnector: BridgeConnectorProtocol?
 
     init() {
-        registrationHandler = RegistrationHandler()
+        let handler = RegistrationHandler()
+        registrationHandler = handler
+        handler.customNotificationReceiver = self
+        handler.otpNotificationReceiver = self
     }
-
+    
     func handleCustomRegistrationAction(_ action: String, _ identityProviderId: String, _ code: String? = nil) -> Void {
         switch action {
             case CustomRegistrationAction.provide.rawValue:
@@ -24,7 +27,7 @@ class RegistrationConnector : BridgeToRegistrationConnectorProtocol {
                 registrationHandler.cancelCustomRegistration()
                 break
             default:
-                sendEvent(data: ["action": PinNotification.showError.rawValue, "errorMsg": "Unsupported custom registration action. Contact SDK maintainer."])
+                sendEvent(data: ["eventName": PinNotification.showError.rawValue, "eventValue": SdkError.init(errorDescription: "Unsupported custom registration action. Contact SDK maintainer.").toJSON() as Any?])
                 break
         }
     }
@@ -33,13 +36,9 @@ class RegistrationConnector : BridgeToRegistrationConnectorProtocol {
         
         var _data = data
         switch (event){
-            case .initRegistration:
-                _data?["eventName"] = CustomRegistrationNotification.initRegistration.rawValue
-                
-                break
-            case .finishRegistration:
-                _data?["eventName"] = CustomRegistrationNotification.finishRegistration.rawValue
-                break;
+        case .initRegistration, .finishRegistration, .openCustomTwoStepRegistrationScreen, .eventError:
+            _data?["eventName"] = event.rawValue
+            break
         }
         
         sendEvent(data: _data)
@@ -59,11 +58,13 @@ class RegistrationConnector : BridgeToRegistrationConnectorProtocol {
     }
 }
 
-
+//MARK: -
 // Custom registration notification actions
 enum CustomRegistrationNotification : String {
     case initRegistration = "initRegistration",
-         finishRegistration = "finishRegistration"
+         finishRegistration = "finishRegistration",
+         openCustomTwoStepRegistrationScreen = "openCustomTwoStepRegistrationScreen",
+         eventError = "eventError"
 }
 
 

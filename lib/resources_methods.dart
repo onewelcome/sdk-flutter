@@ -1,39 +1,44 @@
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 
 import 'constants/constants.dart';
 import 'onegini.dart';
 
+///Class for calls resources
 class ResourcesMethods {
-  Future<String> getResourceWithAnonymousResourceOkHttpClient(
-    String path,
-    String scope, {
-    Map<String, String> headers,
-    String method,
-    String encoding,
-    String body,
+  Future<String> getResourceAnonymous(
+    String path, {
+    List<String>? scopes,
+    Map<String, String>? headers,
+    String? method,
+    String? encoding,
+    String? body,
   }) async {
     try {
-      var response = await Onegini.instance.channel
+      var response;
+      response = await Onegini.instance.channel
           .invokeMethod(Constants.getResourceAnonymous, <String, dynamic>{
         'path': path,
-        'scope': scope,
+        'scope': scopes,
         'headers': headers,
         'method': method,
         'encoding': encoding,
         'body': body
       });
+
       return response;
     } on PlatformException catch (error) {
       throw error;
     }
   }
 
-  Future<String> getResourceWithResourceOkHttpClient(
+  Future<String> getResource(
     String path, {
-    Map<String, String> headers,
-    String method,
-    String encoding,
-    String body,
+    Map<String, String>? headers,
+    String? method,
+    String? encoding,
+    String? body,
   }) async {
     try {
       var response = await Onegini.instance.channel
@@ -50,19 +55,44 @@ class ResourcesMethods {
     }
   }
 
-  Future<String> getResourceWithImplicitResourceOkHttpClient(
-    String path,
-    String scope, {
-    Map<String, String> headers,
-    String method,
-    String encoding,
-    String body,
+  Future<String> getResourceImplicit(
+    String path, {
+    String? scope,
+    Map<String, String>? headers,
+    String? method,
+    String? encoding,
+    String? body,
   }) async {
     try {
-      var response = await Onegini.instance.channel
+      var response;
+
+      response = await Onegini.instance.channel
           .invokeMethod(Constants.getImplicitResource, <String, dynamic>{
         'path': path,
         'scope': scope,
+        'headers': headers,
+        'method': method,
+        'encoding': encoding,
+        'body': body
+      });
+
+      return response;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  Future<String> getUnauthenticatedResource(
+      String path, {
+        Map<String, String>? headers,
+        String? method,
+        String? encoding,
+        String? body,
+      }) async {
+    try {
+      var response = await Onegini.instance.channel
+          .invokeMethod(Constants.getUnauthenticatedResource, <String, dynamic>{
+        'path': path,
         'headers': headers,
         'method': method,
         'encoding': encoding,

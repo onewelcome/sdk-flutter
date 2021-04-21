@@ -1,3 +1,4 @@
+// @dart = 2.10
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -6,6 +7,8 @@ import 'package:onegini/onegini.dart';
 import 'package:onegini_example/screens/login_screen.dart';
 
 import 'onegini_listener.dart';
+
+final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
 void main() {
   runApp(MyApp());
@@ -16,6 +19,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Onegini test app',
+      navigatorObservers: [routeObserver],
       home: Scaffold(
         appBar: AppBar(
           title: Padding(
@@ -53,7 +57,12 @@ class _BodyWidgetState extends State<BodyWidget> {
 
   void _startApplication() async {
     /// init Onegini sdk on native side
-    var removedUserProfiles = await Onegini.instance.startApplication(OneginiListener()).catchError((error) {
+    var removedUserProfiles = await Onegini.instance
+        .startApplication(OneginiListener(),
+            twoStepCustomIdentityProviderIds: ["2-way-otp-api"],
+            connectionTimeout: 5,
+            readTimeout: 25)
+        .catchError((error) {
       if (error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,
@@ -65,7 +74,7 @@ class _BodyWidgetState extends State<BodyWidget> {
             fontSize: 16.0);
       }
     });
-    _appStarted = removedUserProfiles!=null;
+    _appStarted = removedUserProfiles != null;
     if (_appStarted) {
       Navigator.pushReplacement(
         context,

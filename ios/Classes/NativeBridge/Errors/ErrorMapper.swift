@@ -3,7 +3,7 @@ import OneginiCrypto
 
 enum OneginiErrorCustomType: Int {
     case userProfileIsNull = 8002
-    case fingerprintAuthenticatorIsNull
+    case userAuthenticatedProfileIsNull
     case registeredAuthenticatorsIsNull
     case notRegisteredAuthenticatorsIsNull
     case identityProvidersIsNull
@@ -15,6 +15,13 @@ enum OneginiErrorCustomType: Int {
     case registrationCancelled
     case cantHandleOTP
     case incrorrectResourcesAccess
+    case authenticatorNotAvailable
+    case authenticatorNotRegistered
+    case authenticatorDeregistrationCancelled
+    case failedParseData
+    case responseIsNull
+    case authenticatorIdIsNull
+    case emptyInputValue
     // Default case
     case somethingWentWrong = 400
     
@@ -23,13 +30,13 @@ enum OneginiErrorCustomType: Int {
         
         switch self {
         case .userProfileIsNull:
-            message = "User profile is null"
-        case .fingerprintAuthenticatorIsNull:
-            message = "Fingerprint authenticator is empty."
+            message = "User profile is empty."
+        case .userAuthenticatedProfileIsNull:
+            message = "User authenticated profile is empty."
         case .registeredAuthenticatorsIsNull:
-            message = "Registered authenticators is empty."
+            message = "List Registered authenticators is empty."
         case .notRegisteredAuthenticatorsIsNull:
-            message = "Not Registered authenticators is empty."
+            message = "List Not Registered authenticators is empty."
         case .identityProvidersIsNull:
             message = "Identity providers is empty."
         case .providedUrlIncorrect:
@@ -40,6 +47,8 @@ enum OneginiErrorCustomType: Int {
             message = "Login cancelled."
         case .authenticationCancelled:
             message = "Authentication cancelled."
+        case .authenticatorDeregistrationCancelled:
+            message = "Authenticator deregistration cancelled."
         case .changingCancelled:
             message = "Changing cancelled."
         case .registrationCancelled:
@@ -48,6 +57,18 @@ enum OneginiErrorCustomType: Int {
             message = "Can't handle otp authentication request."
         case .incrorrectResourcesAccess:
             message = "Incorrect access to resources."
+        case .authenticatorNotAvailable:
+            message = "This authenticator is not available."
+        case .authenticatorNotRegistered:
+            message = "This authenticator is not registered."
+        case .failedParseData:
+            message = "Failed to parse data."
+        case .responseIsNull:
+            message = "Response doesn't contain data."
+        case .authenticatorIdIsNull:
+            message = "Authenticator ID is empty."
+        case .emptyInputValue:
+            message = "Empty input value."
         default:
             message = "Something went wrong."
         }

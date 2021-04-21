@@ -1,18 +1,20 @@
-protocol BridgeToPinConnectorProtocol: AnyObject {
+//MARK: - BridgeToPinConnectorProtocol
+protocol BridgeToPinConnectorProtocol: PinNotificationReceiverProtocol {
     var bridgeConnector: BridgeConnectorProtocol? { get set }
     var pinHandler: PinConnectorToPinHandler { get }
 
     func handlePinAction(_ flow: String, _ action: String, _ pin: String) -> Void
-    func sendNotification(event: PinNotification, flow: PinFlow?, error: SdkError?) -> Void
 }
 
-//@todo handle change and auth flows
-class PinConnector : BridgeToPinConnectorProtocol {
+//MARK: - PinConnector
+class PinConnector : BridgeToPinConnectorProtocol, PinNotificationReceiverProtocol {
     var pinHandler: PinConnectorToPinHandler
     unowned var bridgeConnector: BridgeConnectorProtocol?
 
     init() {
-        pinHandler = PinHandler()
+        let handler = PinHandler()
+        pinHandler = handler
+        handler.notificationReceiver = self
     }
 
     func handlePinAction(_ flow: String, _ action: String, _ pin: String) {
@@ -25,7 +27,7 @@ class PinConnector : BridgeToPinConnectorProtocol {
                 pinHandler.onCancel()
                 break
             default:
-                sendEvent(data: ["flow": flow, "action": PinNotification.showError.rawValue, "errorMsg": "Unsupported pin action. Contact SDK maintainer."])
+                sendEvent(data: ["eventName": PinNotification.showError.rawValue, "eventValue": SdkError.init(errorDescription: "Unsupported pin action. Contact SDK maintainer.").toJSON() as Any?])
                 break
         }
     }
@@ -45,7 +47,7 @@ class PinConnector : BridgeToPinConnectorProtocol {
                 sendEvent(data: PinNotification.closeAuth.rawValue)
                 break;
             case .showError:
-                sendEvent(data: String.stringify(json: ["key": PinNotification.showError.rawValue, "value": error?.errorDescription]))
+                sendEvent(data: String.stringify(json: ["eventName": PinNotification.showError.rawValue, "eventValue": error?.toJSON() as Any?]))
                 break
         }
     }
@@ -55,12 +57,13 @@ class PinConnector : BridgeToPinConnectorProtocol {
   }
 }
 
+//MARK: -
 enum PinNotification : String {
     case open = "eventOpenPin",
          close = "eventClosePin",
          openAuth = "eventOpenPinAuth",
          closeAuth = "eventClosePinAuth",
-         showError = "show_error"
+         showError = "eventError"
 }
 
 enum PinAction : String {

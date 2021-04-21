@@ -10,12 +10,12 @@ class Event {
     this.eventValue,
   });
 
-  String eventName;
-  String eventValue;
+  String? eventName;
+  dynamic? eventValue;
 
   factory Event.fromJson(Map<String, dynamic> json) => Event(
     eventName: json["eventName"].toString(),
-    eventValue: json["eventValue"].toString(),
+    eventValue: json["eventValue"] is Map<String, dynamic> ? json["eventValue"] : json["eventValue"].toString(),
   );
 
   Map<String, dynamic> toJson() => {
