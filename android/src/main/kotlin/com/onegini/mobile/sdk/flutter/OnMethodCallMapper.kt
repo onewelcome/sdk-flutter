@@ -26,9 +26,11 @@ import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationAction
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
-class OnMethodCallMapper(private var context: Context) {
+class OnMethodCallMapper(private var context: Context)  : MethodChannel.MethodCallHandler {
 
-    fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
+    private val oneginiMethodsWrapper = OneginiMethodsWrapperImpl()
+
+    override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         when (call.method) {
             Constants.METHOD_START_APP -> startApp(call.argument<String>("twoStepCustomIdentityProviderIds"), call.argument<Int>("connectionTimeout"), call.argument<Int>("readTimeout"), result)
             Constants.METHOD_CUSTOM_TWO_STEP_REGISTRATION_RETURN_SUCCESS -> CustomTwoStepRegistrationAction.CALLBACK?.returnSuccess(call.argument("data"))
@@ -36,7 +38,7 @@ class OnMethodCallMapper(private var context: Context) {
 
 
             //Register
-            Constants.METHOD_REGISTER_USER -> OneginiMethodsWrapperImpl().registerUser(call.argument<String>("identityProviderId"), call.argument<String>("scopes"), result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_REGISTER_USER -> oneginiMethodsWrapper.registerUser(call, result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_GET_IDENTITY_PROVIDERS -> RegistrationHelper.getIdentityProviders(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_CANCEL_REGISTRATION -> RegistrationHelper.cancelRegistration()
             Constants.METHOD_ACCEPT_PIN_REGISTRATION_REQUEST -> PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
