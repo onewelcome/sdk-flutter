@@ -9,6 +9,7 @@ import OneginiSDKiOS
 
 protocol BrowserRegistrationChallengeProtocol {
     func respond(withUrl: URL)
+    func getUrl() -> URL
     func cancel()
 }
 
@@ -22,6 +23,10 @@ class BrowserRegistrationChallenge: BrowserRegistrationChallengeProtocol {
     
     func respond(withUrl url: URL) {
         challenge.sender.respond(with: url, challenge: challenge)
+    }
+    
+    func getUrl() -> URL {
+        return challenge.url
     }
     
     func cancel() {

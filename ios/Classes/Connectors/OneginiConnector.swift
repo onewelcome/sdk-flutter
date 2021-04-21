@@ -68,6 +68,7 @@ class OneginiConnector: NSObject, OneginiConnectorProtocol {
     
     var startAppConnector: StartAppConnectorProtocol?
     var registrationConnector: RegistrationConnectorProtocol?
+    var authenticatorConnector: AuthenticatorConnectorProtocol?
 //    var pinConnector: PinConnectorProtocol?
     var changePinConnector: ChangePinConnectorProtocol?
     
@@ -77,8 +78,11 @@ class OneginiConnector: NSObject, OneginiConnectorProtocol {
         startAppConnector = StartAppConnector.init(startAppWrapper: StartAppWrapper())
 
         registrationConnector = NewRegistrationConnector.init(registrationWrapper: RegistrationWrapper())
-//        registrationConnector?.flutterConnector = flutterConnector
+        registrationConnector?.flutterConnector = flutterConnector
 
+        authenticatorConnector = AuthenticatorConnector()
+        authenticatorConnector?.flutterConnector = flutterConnector
+        
 //        pinConnector = NewPinConnector.init(pinWrapper: PinWrapper())
 //        pinConnector.flutterConnector = flutterConnector
         
@@ -115,27 +119,27 @@ class OneginiConnector: NSObject, OneginiConnectorProtocol {
     }
     
     func getIdentityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        fatalError("not implemented")
+        authenticatorConnector?.getIdentityProviders(call, result)
     }
     
     func setPreferredAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        fatalError("not implemented")
+        authenticatorConnector?.setPreferredAuthenticator(call, result)
     }
     
     func getRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        fatalError("not implemented")
+        authenticatorConnector?.getRegisteredAuthenticators(call, result)
     }
     
     func getAllNotRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        fatalError("not implemented")
+        authenticatorConnector?.getAllNotRegisteredAuthenticators(call, result)
     }
     
     func registerAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        fatalError("not implemented")
+        authenticatorConnector?.registerAuthenticator(call, result)
     }
     
     func deregisterAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        fatalError("not implemented")
+        authenticatorConnector?.deregisterAuthenticator(call, result)
     }
     
     func acceptPinRegistrationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {

@@ -23,6 +23,8 @@ class ChangePinConnector: NSObject, ChangePinConnectorProtocol {
     var providePinChallenge: ProvidePinChallengeProtocol?
     var createPinChallenge: CreatePinChallengeProtocol?
     
+    var changePinCallback: FlutterResult?
+    
     init(changePinWrapper: ChangePinWrapperProtocol) {
         wrapper = changePinWrapper
         
@@ -34,35 +36,50 @@ class ChangePinConnector: NSObject, ChangePinConnectorProtocol {
         wrapper.changePinFailed = onChangePinFailed
     }
     
-    
     func changePin(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        changePinCallback = result
+        
         wrapper.changePin()
     }
     
     func cancel(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        if let challenge = providePinChallenge {
+            challenge.cancel()
+        }
         
+        if let challenge = createPinChallenge {
+            challenge.cancel()
+        }
     }
     
     // callbacks
     func onProvidePin(challenge: ProvidePinChallengeProtocol) -> Void {
         providePinChallenge = challenge
-        // TODO: send info back to flutter
+        
+        flutterConnector?.sendBridgeEvent(eventName: .pinNotification, data: Constants.Events.eventOpenAutorizePin)
     }
     
     func onCreatePin(challenge: CreatePinChallengeProtocol) -> Void {
         createPinChallenge = challenge
-        // TODO: send info back to flutter
+        
+        flutterConnector?.sendBridgeEvent(eventName: .pinNotification, data: Constants.Events.eventOpenCreatePin)
     }
     
     func onChangePinSuccess(userProfile: ONGUserProfile) -> Void {
         providePinChallenge = nil
         createPinChallenge = nil
+        
         // send info back to flutter
+        changePinCallback?(true)
+        changePinCallback = nil
     }
     
     func onChangePinFailed(userProfile: ONGUserProfile, error: Error) -> Void {
         providePinChallenge = nil
         createPinChallenge = nil
+        
         // send info back to flutter
+        changePinCallback?(SdkError.init(errorDescription: error.localizedDescription, code: error.code).flutterError())
+        changePinCallback = nil
     }
 }

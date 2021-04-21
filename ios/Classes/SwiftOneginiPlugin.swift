@@ -50,6 +50,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         // user
         case Constants.Routes.userProfiles: oneginiConnector.userProfiles(call, result)
         case Constants.Routes.authenticateUser: oneginiConnector.authenticateUser(call, result)
+        case Constants.Routes.getAppToWebSingleSignOn: oneginiConnector.getAppToWebSingleSignOn(call, result)
         case Constants.Routes.logout: oneginiConnector.logout(call, result)
         case Constants.Routes.deregisterUser: oneginiConnector.deregisterUser(call, result)
             
@@ -88,10 +89,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         case Constants.Routes.getResourceAnonymous, Constants.Routes.getResource, Constants.Routes.getImplicitResource, Constants.Routes.unauthenticatedRequest:
             oneginiConnector.getResource(call, result)
             
-        // other
-        case Constants.Routes.getAppToWebSingleSignOn: oneginiConnector.getAppToWebSingleSignOn(call, result)
-        
-        
         default: do {
             print("Method wasn't handled: " + call.method)
             result(FlutterMethodNotImplemented)

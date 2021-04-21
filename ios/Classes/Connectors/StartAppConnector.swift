@@ -31,7 +31,13 @@ class StartAppConnector: NSObject, StartAppConnectorProtocol {
                 return
             }
             
-            result(success)
+            // TODO: gather this through wrapper
+            let profiles = ONGUserClient.sharedInstance().userProfiles()
+            let value: [[String: String?]] = profiles.compactMap({ ["profileId": $0.profileId] })
+
+            let data = String.stringify(json: value)
+            
+            result(data)
         }
     }
     
