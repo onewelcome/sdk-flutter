@@ -5,12 +5,18 @@ import 'constants/constants.dart';
 import 'model/onegini_list_response.dart';
 import 'onegini.dart';
 
+<<<<<<< HEAD
+/// The class with basic methods available to the developer.
+class UserClient {
+  /// Start registration flow.
+=======
 ///Сlass with basic methods available to the developer.
 class UserClient {
   ///Start registration flow.
+>>>>>>> develop
   ///
-  ///If [identityProviderId] is null, starts standard browser registration.
-  ///Use your [scopes] for registration. By default it is "read"
+  /// If [identityProviderId] is null, starts standard browser registration.
+  /// Use your [scopes] for registration. By default it is "read".
   Future<String> registerUser(
     BuildContext context,
     String? identityProviderId,
@@ -29,7 +35,7 @@ class UserClient {
     }
   }
 
-  ///Returns a list of available identity providers
+  /// Returns a list of available identity providers.
   Future<List<OneginiListResponse>> getIdentityProviders(
       BuildContext context) async {
     Onegini.instance.setEventContext(context);
@@ -42,7 +48,7 @@ class UserClient {
     }
   }
 
-  ///Deletes the user
+  /// Deletes the user.
   Future<bool> deregisterUser() async {
     try {
       var isSuccess = await Onegini.instance.channel
@@ -53,7 +59,7 @@ class UserClient {
     }
   }
 
-  ///Returns a list of authenticators registered and available to the user
+  /// Returns a list of authenticators registered and available to the user.
   Future<List<OneginiListResponse>> getRegisteredAuthenticators(
       BuildContext context) async {
     Onegini.instance.setEventContext(context);
@@ -66,10 +72,10 @@ class UserClient {
     }
   }
 
-  ///Starts authentication flow.
+  /// Starts authentication flow.
   ///
-  ///If [registeredAuthenticatorId] is null, starts authentication by default authenticator.
-  ///Usually it is Pin authenticator.
+  /// If [registeredAuthenticatorId] is null, starts authentication by default authenticator.
+  /// Usually it is Pin authenticator.
   Future<String> authenticateUser(
     BuildContext context,
     String? registeredAuthenticatorId,
@@ -86,7 +92,7 @@ class UserClient {
     }
   }
 
-  ///Returns a list of authenticators available to the user, but not yet registered.
+  /// Returns a list of authenticators available to the user, but not yet registered.
   Future<List<OneginiListResponse>> getNotRegisteredAuthenticators(
       BuildContext context) async {
     try {
@@ -98,7 +104,7 @@ class UserClient {
     }
   }
 
-  ///Starts change pin flow.
+  /// Starts change pin flow.
   Future<void> changePin(
     BuildContext context,
   ) async {
@@ -110,7 +116,7 @@ class UserClient {
     }
   }
 
-  ///Registers authenticator from [getNotRegisteredAuthenticators] list.
+  /// Registers authenticator from [getNotRegisteredAuthenticators] list.
   Future<String> registerAuthenticator(
       BuildContext context, String authenticatorId) async {
     Onegini.instance.setEventContext(context);
@@ -165,7 +171,7 @@ class UserClient {
     }
   }
 
-  ///Starts mobile authentication on web by OTP.
+  /// Starts mobile authentication on web by OTP.
   Future<String> mobileAuthWithOtp(String data) async {
     try {
       var isSuccess = await Onegini.instance.channel
@@ -178,7 +184,7 @@ class UserClient {
     }
   }
 
-  ///Single sign on the user web page.
+  /// Single sign on the user web page.
   Future<String> getAppToWebSingleSignOn(String url) async {
     try {
       var oneginiAppToWebSingleSignOn = await Onegini.instance.channel
