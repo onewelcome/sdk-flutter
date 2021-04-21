@@ -3,22 +3,15 @@ import UIKit
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     
-    var flutterConnector: FlutterConnectorProtocol?
-    var startAppConnector: StartAppConnectorProtocol
-    var registrationConnector: RegistrationConnectorProtocol
-    var pinConnector: PinConnectorProtocol
+    var flutterConnector: FlutterConnectorProtocol
+    
+    var oneginiConnector: OneginiConnectorProtocol
 
     override init() {
 //        flutterConnector = FlutterConnector()
         flutterConnector = OneginiModuleSwift.sharedInstance
         
-        startAppConnector = StartAppConnector.init(startAppWrapper: StartAppWrapper())
-        
-        registrationConnector = NewRegistrationConnector.init(registrationWrapper: RegistrationWrapper())
-        registrationConnector.flutterConnector = flutterConnector
-        
-        pinConnector = NewPinConnector.init(pinWrapper: PinWrapper())
-        pinConnector.flutterConnector = flutterConnector
+        oneginiConnector = OneginiConnector(flutterConnector: self.flutterConnector)
         
         super.init()
     }
@@ -47,81 +40,57 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         
         switch call.method {
         
-        // TODO: add new methods to constants
-        // new start app
-        case "new_startApp": startAppConnector.startApp(call, result)
-        case "new_reset": startAppConnector.reset(call, result)
-        
-        // new register
-        case "new_registerUser": registrationConnector.register(call, result)
-        case "new_createPin": registrationConnector.createPin(call, result)
-        case "new_getUserProfiles": registrationConnector.getUserProfiles(call, result)
-        case "new_isUserRegistered": registrationConnector.isUserRegistered(call, result)
-        case "new_cancelUserRegistration": registrationConnector.cancelFlow(call, result)
-        case "new_respondToRegistrationRequest": registrationConnector.respondToRegistrationRequest(call, result)
-            
-        // new pin
-        case "new_authorizePin": pinConnector.authorizePin(call, result)
-        case "new_registerPin": pinConnector.registerPin(call, result)
-        case "new_cancelPin": pinConnector.cancelPin(call, result)
-        case "new_changePin": pinConnector.changePin(call, result)
-        case "new_validatePinWithPolicy": pinConnector.validatePinWithPolicy(call, result)
-            
-            
         // base
-        case Constants.Routes.startApp: startApp(call, result)
+        case Constants.Routes.startApp: oneginiConnector.startApp(call, result)
             
         // register
-        case Constants.Routes.registerUser: registerUser(call, result)
+        case Constants.Routes.registerUser: oneginiConnector.registerUser(call, result)
+        case Constants.Routes.cancelRegistration: oneginiConnector.cancelRegistration(call, result)
         
-        case Constants.Routes.getIdentityProviders: getIdentityProviders(call, result)
-        case Constants.Routes.cancelRegistration: cancelRegistration(call, result)
-        case Constants.Routes.setPreferredAuthenticator:
-            setPreferredAuthenticator(call, result)
-        
-        case Constants.Routes.acceptPinRegistrationRequest: acceptPinRegistrationRequest(call, result)
-        case Constants.Routes.denyPinRegistrationRequest: denyPinRegistrationRequest(call, result)
-        
-        case Constants.Routes.customTwoStepRegistrationReturnSuccess: customTwoStepRegistrationReturnSuccess(call, result)
-        case Constants.Routes.customTwoStepRegistrationReturnError: customTwoStepRegistrationReturnError(call, result)
+        // user
+        case Constants.Routes.userProfiles: oneginiConnector.userProfiles(call, result)
+        case Constants.Routes.authenticateUser: oneginiConnector.authenticateUser(call, result)
+        case Constants.Routes.logout: oneginiConnector.logout(call, result)
+        case Constants.Routes.deregisterUser: oneginiConnector.deregisterUser(call, result)
             
-        case Constants.Routes.deregisterUser: deregisterUser(call, result)
-            
-        // auth
-        case Constants.Routes.registerAuthenticator: registerAuthenticator(call, result)
-        case Constants.Routes.authenticateUser: authenticateUser(call, result)
-        
-        case Constants.Routes.getRegisteredAuthenticators: getRegisteredAuthenticators(call, result)
-        case Constants.Routes.getAllNotRegisteredAuthenticators: getAllNotRegisteredAuthenticators(call, result)
+        // authenticator
+        case Constants.Routes.getIdentityProviders: oneginiConnector.getIdentityProviders(call, result)
+        case Constants.Routes.setPreferredAuthenticator: oneginiConnector.setPreferredAuthenticator(call, result)
+        case Constants.Routes.getRegisteredAuthenticators: oneginiConnector.getRegisteredAuthenticators(call, result)
+        case Constants.Routes.getAllNotRegisteredAuthenticators: oneginiConnector.getAllNotRegisteredAuthenticators(call, result)
+        case Constants.Routes.registerAuthenticator: oneginiConnector.registerAuthenticator(call, result)
         case Constants.Routes.deregisterAuthenticator:
-            deregisterAuthenticator(call, result)
+            oneginiConnector.deregisterAuthenticator(call, result)
         
-        case Constants.Routes.acceptPinAuthenticationRequest: acceptPinAuthenticationRequest(call, result)
-        case Constants.Routes.denyPinAuthenticationRequest: denyPinAuthenticationRequest(call, result)
-        
-        case Constants.Routes.logout: logout(call, result)
+        // pin
+        case Constants.Routes.acceptPinRegistrationRequest: oneginiConnector.acceptPinRegistrationRequest(call, result)
+        case Constants.Routes.denyPinRegistrationRequest: oneginiConnector.denyPinRegistrationRequest(call, result)
+        case Constants.Routes.acceptPinAuthenticationRequest: oneginiConnector.acceptPinAuthenticationRequest(call, result)
+        case Constants.Routes.denyPinAuthenticationRequest: oneginiConnector.denyPinAuthenticationRequest(call, result)
+        case Constants.Routes.validatePinWithPolicy:oneginiConnector.validatePinWithPolicy(call, result)
+        case Constants.Routes.changePin: oneginiConnector.changePin(call, result)
             
-        case Constants.Routes.validatePinWithPolicy:
-            validatePinWithPolicy(call, result)
+        // custom
+        case Constants.Routes.customTwoStepRegistrationReturnSuccess: oneginiConnector.customTwoStepRegistrationReturnSuccess(call, result)
+        case Constants.Routes.customTwoStepRegistrationReturnError: oneginiConnector.customTwoStepRegistrationReturnError(call, result)
         
         // fingerprint
-        case Constants.Routes.acceptFingerprintAuthenticationRequest: acceptFingerprintAuthenticationRequest(call, result)
-        case Constants.Routes.denyFingerprintAuthenticationRequest: denyFingerprintAuthenticationRequest(call, result)
-        case Constants.Routes.fingerprintFallbackToPin: fingerprintFallbackToPin(call, result)
+        case Constants.Routes.acceptFingerprintAuthenticationRequest: oneginiConnector.acceptFingerprintAuthenticationRequest(call, result)
+        case Constants.Routes.denyFingerprintAuthenticationRequest: oneginiConnector.denyFingerprintAuthenticationRequest(call, result)
+        case Constants.Routes.fingerprintFallbackToPin: oneginiConnector.fingerprintFallbackToPin(call, result)
             
         // otp
-        case Constants.Routes.handleMobileAuthWithOtp: handleMobileAuthWithOtp(call, result)
-        case Constants.Routes.acceptOtpAuthenticationRequest: acceptOtpAuthenticationRequest(call, result)
-        case Constants.Routes.denyOtpAuthenticationRequest: denyOtpAuthenticationRequest(call, result)
+        case Constants.Routes.handleMobileAuthWithOtp: oneginiConnector.handleMobileAuthWithOtp(call, result)
+        case Constants.Routes.acceptOtpAuthenticationRequest: oneginiConnector.acceptOtpAuthenticationRequest(call, result)
+        case Constants.Routes.denyOtpAuthenticationRequest: oneginiConnector.denyOtpAuthenticationRequest(call, result)
             
         // resources
         case Constants.Routes.getResourceAnonymous, Constants.Routes.getResource, Constants.Routes.getImplicitResource, Constants.Routes.unauthenticatedRequest:
-            getResource(call, result)
+            oneginiConnector.getResource(call, result)
             
         // other
-        case Constants.Routes.changePin: changePin(call, result)
-        case Constants.Routes.getAppToWebSingleSignOn: getAppToWebSingleSignOn(call, result)
-        case Constants.Routes.userProfiles: fetchUserProfiles(result)
+        case Constants.Routes.getAppToWebSingleSignOn: oneginiConnector.getAppToWebSingleSignOn(call, result)
+        
         
         default: do {
             print("Method wasn't handled: " + call.method)
