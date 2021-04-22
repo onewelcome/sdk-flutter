@@ -34,7 +34,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       var userId = await Onegini.instance.userClient
-          .handleRegisteredUserUrl(context, regUrl);
+          .handleRegisteredUserUrl(context, regUrl, openIsideApp: true);
 
       if (userId != null)
         Navigator.pushAndRemoveUntil(
@@ -69,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       var userId = await Onegini.instance.userClient
-          .handleRegisteredUserUrl(context, regUrl);
+          .handleRegisteredUserUrl(context, regUrl, openIsideApp: true);
 
       if (userId != null)
         Navigator.pushAndRemoveUntil(

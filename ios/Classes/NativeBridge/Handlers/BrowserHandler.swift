@@ -3,7 +3,7 @@ import OneginiSDKiOS
 import OneginiCrypto
 
 protocol BrowserHandlerProtocol {
-    func handleUrl(url: URL)
+    func handleUrl(url: URL, insideApp: Bool)
 }
 
 protocol BrowserHandlerToRegisterHandlerProtocol: AnyObject {
@@ -21,10 +21,14 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
         self.registerHandler = registerHandlerProtocol
     }
 
-    func handleUrl(url: URL) {
-        let scheme = "oneginiexample";
-        
+    func handleUrl(url: URL, insideApp: Bool) {
         print("[\(type(of: self))] handleUrl url: \(url)")
+        guard insideApp else {
+            openExternalBrowser(url: url)
+            return
+        }
+
+        let scheme = OneginiModuleSwift.sharedInstance.schemeDeepLink;
         webAuthSession = ASWebAuthenticationSession(url: url, callbackURLScheme: scheme, completionHandler: { callbackURL, error in
             print("[\(type(of: self))] webAuthSession completionHandler")
             guard error == nil, let successURL = callbackURL else {
@@ -40,6 +44,13 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
             webAuthSession?.presentationContextProvider = self;
         }
         webAuthSession?.start()
+    }
+    
+    private func openExternalBrowser(url: URL) {
+        guard UIApplication.shared.canOpenURL(url) else { return }
+        UIApplication.shared.open(url, options: [:]) { (value) in
+            debugPrint("Opened external browser: \(value)")
+        }
     }
 
     private func handleSuccessUrl(url: URL) {

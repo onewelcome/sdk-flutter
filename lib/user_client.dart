@@ -31,13 +31,14 @@ class UserClient {
 
   Future<String> handleRegisteredUserUrl(
     BuildContext context,
-    String? url,
+    String? url, {bool openIsideApp = false }
   ) async {
     Onegini.instance.setEventContext(context);
     try {
       var userId = await Onegini.instance.channel
-          .invokeMethod(Constants.handleRegisteredUserUrl, <String, String?>{
+          .invokeMethod(Constants.handleRegisteredUserUrl, <String, Object?>{
         'url': url,
+        'insideApp': openIsideApp,
       });
       return userId;
     } on PlatformException catch (error) {

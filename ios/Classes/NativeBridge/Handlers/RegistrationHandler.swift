@@ -3,7 +3,7 @@ import OneginiCrypto
 
 protocol RegistrationConnectorToHandlerProtocol: RegistrationHandlerToPinHanlderProtocol {
     func signUp(_ providerId: String?, completion: @escaping (String?, SdkError?) -> Void)
-    func processRedirectURL(url: String, completion: @escaping (Bool, ONGUserProfile?, SdkError?) -> Void)
+    func processRedirectURL(url: String, insideApp: Bool, completion: @escaping (Bool, ONGUserProfile?, SdkError?) -> Void)
     func cancelRegistration()
     func logout(completion: @escaping (SdkError?) -> Void)
     func deregister(completion: @escaping (SdkError?) -> Void)
@@ -75,14 +75,14 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
         return list
     }
     
-    func presentBrowserUserRegistrationView(registrationUserURL: URL) {
+    func presentBrowserUserRegistrationView(registrationUserURL: URL, insideApp: Bool) {
         guard let browserController = browserConntroller else {
             browserConntroller = BrowserViewController(registerHandlerProtocol: self)
-            browserConntroller?.handleUrl(url: registrationUserURL)
+            browserConntroller?.handleUrl(url: registrationUserURL, insideApp: insideApp)
             return
         }
         
-        browserController.handleUrl(url: registrationUserURL)
+        browserController.handleUrl(url: registrationUserURL, insideApp: insideApp)
     }
 
     func handleRedirectURL(url: URL?) {
@@ -158,14 +158,14 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
         deregisterUserHandler.disconnect(completion: completion)
     }
 
-    func processRedirectURL(url: String, completion: @escaping (Bool, ONGUserProfile?, SdkError?) -> Void) {
+    func processRedirectURL(url: String, insideApp: Bool, completion: @escaping (Bool, ONGUserProfile?, SdkError?) -> Void) {
         guard let url = URL.init(string: url) else {
             completion(false, nil, SdkError.init(customType: .providedUrlIncorrect))
             return
         }
         proccessUrlCompletion = completion
         signUpCompletion = nil
-        presentBrowserUserRegistrationView(registrationUserURL: url)
+        presentBrowserUserRegistrationView(registrationUserURL: url, insideApp: insideApp)
     }
 
     func processOTPCode(code: String?) {
