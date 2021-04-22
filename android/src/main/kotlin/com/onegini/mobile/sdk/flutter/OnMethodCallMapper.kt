@@ -127,7 +127,7 @@ class OnMethodCallMapper(private var context: Context) {
             targetUri,
             object : OneginiAppToWebSingleSignOnHandler {
                 override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {
-                    result.success(Gson().toJson(mapOf("token" to oneginiAppToWebSingleSignOn.token, "redirectUrl" to oneginiAppToWebSingleSignOn.redirectUrl)))
+                    result.success(Gson().toJson(mapOf("token" to oneginiAppToWebSingleSignOn.token, "redirectUrl" to oneginiAppToWebSingleSignOn.redirectUrl.toString())))
                 }
 
                 override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
