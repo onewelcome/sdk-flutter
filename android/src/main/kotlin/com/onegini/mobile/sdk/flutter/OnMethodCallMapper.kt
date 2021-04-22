@@ -36,6 +36,7 @@ class OnMethodCallMapper(private var context: Context) {
 
             //Register
             Constants.METHOD_REGISTER_USER -> RegistrationHelper.registerUser(call.argument<String>("identityProviderId"), call.argument<String>("scopes"), result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_HANDLE_REGISTERED_URL -> RegistrationHelper.handleRegisteredUrl(call.argument<String>("url"),context,result)
             Constants.METHOD_GET_IDENTITY_PROVIDERS -> RegistrationHelper.getIdentityProviders(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_CANCEL_REGISTRATION -> RegistrationHelper.cancelRegistration()
             Constants.METHOD_ACCEPT_PIN_REGISTRATION_REQUEST -> PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
