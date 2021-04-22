@@ -18,8 +18,10 @@ import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.kotlin.argThat
 import org.mockito.kotlin.times
 import org.mockito.kotlin.whenever
+
 
 @RunWith(MockitoJUnitRunner::class)
 class RegistrationUseCaseTests {
@@ -42,28 +44,40 @@ class RegistrationUseCaseTests {
     }
 
     @Test
-    fun `registration test when provider is null`(){
+    fun `Registration going by web and is successfully without identity provider`(){
         whenever(call.argument<String>("identityProviderId")).thenReturn(null)
         whenever(call.argument<String>("scopes")).thenReturn("read")
-        whenever(userClient.registerUser(any(),any(), any())).thenAnswer{
-            it.getArgument<OneginiRegistrationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0,""))
+        whenever(userClient.registerUser(any(), any(), any())).thenAnswer{
+            it.getArgument<OneginiRegistrationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0, ""))
         }
-        RegistrationUseCase(client)(call,mockResult)
+        RegistrationUseCase(client)(call, mockResult)
         verify(mockResult).success("QWERTY")
     }
 
-
     @Test
-    fun `test registration when provider is not null`(){
+    fun `Registration going with right identity provider`(){
         val set = mutableSetOf<OneginiIdentityProvider>()
         set.add(OnegeniProviderTest())
         whenever(call.argument<String>("identityProviderId")).thenReturn("test provider id")
         whenever(call.argument<String>("scopes")).thenReturn("read")
         whenever(userClient.identityProviders).thenReturn(set)
-        whenever(userClient.registerUser(any(),any(), any())).thenAnswer{
-            it.getArgument<OneginiRegistrationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0,""))
+        RegistrationUseCase(client)(call, mockResult)
+        verify(client.userClient).registerUser(argThat { x -> x.id == OnegeniProviderTest().id }, any(), any())
+    }
+
+
+
+    @Test
+    fun `Registration going with found identity provider and successfully`(){
+        val set = mutableSetOf<OneginiIdentityProvider>()
+        set.add(OnegeniProviderTest())
+        whenever(call.argument<String>("identityProviderId")).thenReturn("test provider id")
+        whenever(call.argument<String>("scopes")).thenReturn("read")
+        whenever(userClient.identityProviders).thenReturn(set)
+        whenever(userClient.registerUser(any(), any(), any())).thenAnswer{
+            it.getArgument<OneginiRegistrationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0, ""))
         }
-        RegistrationUseCase(client)(call,mockResult)
+        RegistrationUseCase(client)(call, mockResult)
         verify(mockResult).success("QWERTY")
     }
 
@@ -71,8 +85,8 @@ class RegistrationUseCaseTests {
     fun `test if SDK called 'registerUser' method once`(){
         whenever(call.argument<String>("identityProviderId")).thenReturn(null)
         whenever(call.argument<String>("scopes")).thenReturn("read")
-        RegistrationUseCase(client)(call,mockResult)
-        verify(client.userClient, times(1)).registerUser(any(),any(),any())
+        RegistrationUseCase(client)(call, mockResult)
+        verify(client.userClient, times(1)).registerUser(any(), any(), any())
     }
 
 }
