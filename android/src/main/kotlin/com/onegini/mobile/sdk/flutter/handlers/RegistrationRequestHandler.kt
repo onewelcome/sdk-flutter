@@ -1,10 +1,10 @@
 package com.onegini.mobile.sdk.flutter.handlers
 
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import com.onegini.mobile.sdk.android.handlers.request.OneginiBrowserRegistrationRequestHandler
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiBrowserRegistrationCallback
+import com.onegini.mobile.sdk.flutter.helpers.RegistrationHelper
 
 
 class RegistrationRequestHandler(var context: Context) : OneginiBrowserRegistrationRequestHandler {
@@ -37,11 +37,7 @@ class RegistrationRequestHandler(var context: Context) : OneginiBrowserRegistrat
 
     override fun startRegistration(uri: Uri, oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback) {
         CALLBACK = oneginiBrowserRegistrationCallback
-
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-        context.startActivity(intent)
+        RegistrationHelper.returnUrl(uri)
     }
 
 }
