@@ -41,8 +41,6 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     var signUpCompletion: ((String?, SdkError?) -> Void)?
     var proccessUrlCompletion: ((Bool, ONGUserProfile?, SdkError?) -> Void)?
     
-    var testUrl: URL?
-    
     unowned var pinHandler: PinConnectorToPinHandler?
     
     unowned var customNotificationReceiver: CustomRegistrationNotificationReceiverProtocol?
