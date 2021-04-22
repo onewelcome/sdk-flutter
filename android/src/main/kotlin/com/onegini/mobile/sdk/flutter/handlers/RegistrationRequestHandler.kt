@@ -6,9 +6,7 @@ import android.net.Uri
 import com.onegini.mobile.sdk.android.handlers.request.OneginiBrowserRegistrationRequestHandler
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiBrowserRegistrationCallback
 
-
 class RegistrationRequestHandler(var context: Context) : OneginiBrowserRegistrationRequestHandler {
-
 
     companion object {
         private var CALLBACK: OneginiBrowserRegistrationCallback? = null
@@ -32,7 +30,6 @@ class RegistrationRequestHandler(var context: Context) : OneginiBrowserRegistrat
                 CALLBACK = null
             }
         }
-
     }
 
     override fun startRegistration(uri: Uri, oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback) {
@@ -43,5 +40,4 @@ class RegistrationRequestHandler(var context: Context) : OneginiBrowserRegistrat
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
         context.startActivity(intent)
     }
-
 }
