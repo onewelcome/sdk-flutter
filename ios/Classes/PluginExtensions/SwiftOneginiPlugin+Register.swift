@@ -34,7 +34,8 @@ extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
     func handleRegisteredProcessUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         guard let _arg = call.arguments as! [String: Any]? else { return }
         let url = _arg["url"] as? String
-        OneginiModuleSwift.sharedInstance.handleRegisteredProcessUrl(url ?? "", callback: result)
+        let insideApp = _arg["insideApp"] as! Bool?
+        OneginiModuleSwift.sharedInstance.handleRegisteredProcessUrl(url ?? "", insideApp: insideApp ?? true, callback: result)
     }
     
     func cancelRegistration(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {

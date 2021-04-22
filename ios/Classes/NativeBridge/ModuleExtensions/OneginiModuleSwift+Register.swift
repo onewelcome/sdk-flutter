@@ -23,9 +23,9 @@ extension OneginiModuleSwift {
         }
     }
     
-    func handleRegisteredProcessUrl(_ url: String, callback: @escaping FlutterResult) -> Void {
+    func handleRegisteredProcessUrl(_ url: String, insideApp: Bool, callback: @escaping FlutterResult) -> Void {
 
-        bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: url) {  (_, userProfile, error) -> Void in
+        bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: url, insideApp: insideApp) {  (_, userProfile, error) -> Void in
 
             if let _userProfile = userProfile {
                 callback(_userProfile.profileId)
@@ -33,6 +33,13 @@ extension OneginiModuleSwift {
                 callback(SdkError.convertToFlutter(error))
             }
         }
+    }
+    
+    public func handleDeepLinkCallbackUrl(_ url: URL) -> Bool {
+        guard let scheme = url.scheme,
+              scheme.localizedCaseInsensitiveCompare(OneginiModuleSwift.sharedInstance.schemeDeepLink) == .orderedSame else { return false }
+        bridgeConnector.toRegistrationConnector.registrationHandler.handleRedirectURL(url: url)
+        return true
     }
     
     func handleTwoStepRegistration(_ data: String) {
