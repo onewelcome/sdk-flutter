@@ -1,5 +1,7 @@
 package com.onegini.mobile.sdk.flutter.helpers
 
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import androidx.annotation.Nullable
 import com.google.gson.GsonBuilder
@@ -17,19 +19,33 @@ import io.flutter.plugin.common.MethodChannel
 
 object RegistrationHelper {
 
-    private fun register(@Nullable identityProvider: OneginiIdentityProvider?, scopes: Array<String>, result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        oneginiClient.userClient.registerUser(
-            identityProvider, scopes,
-            object : OneginiRegistrationHandler {
-                override fun onSuccess(userProfile: UserProfile, customInfo: CustomInfo?) {
-                    result.success(userProfile.profileId)
-                }
+   private var mResult : MethodChannel.Result? = null
+   private fun register(@Nullable identityProvider: OneginiIdentityProvider?, scopes: Array<String>, result: MethodChannel.Result,oneginiClient: OneginiClient) {
+       mResult = result
+        oneginiClient.userClient.registerUser(identityProvider, scopes, object : OneginiRegistrationHandler {
+            override fun onSuccess(userProfile: UserProfile, customInfo: CustomInfo?) {
+                mResult?.success(userProfile.profileId)
+            }
 
-                override fun onError(oneginiRegistrationError: OneginiRegistrationError) {
-                    result.error(oneginiRegistrationError.errorType.toString(), oneginiRegistrationError.message, null)
-                }
+            override fun onError(oneginiRegistrationError: OneginiRegistrationError) {
+                mResult?.error(oneginiRegistrationError.errorType.toString(), oneginiRegistrationError.message, null)
             }
         )
+    }
+
+
+    fun returnUrl(uri:Uri){
+        mResult?.success(uri.toString())
+    }
+
+
+    fun handleRegisteredUrl(url:String?,context:Context,result: MethodChannel.Result){
+        mResult = result
+        val uri = Uri.parse(url)
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
+        context.startActivity(intent)
     }
 
     fun handleRegistrationCallback(uri: Uri) {

@@ -23,6 +23,7 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
     public var eventSinkNativePart: FlutterEventSink?
     public var eventSinkCustomIdentifier: String?
     public var customRegIdentifiers = [String]()
+    //public var schemeDeepLink: String!
     
     static public let sharedInstance = OneginiModuleSwift()
     

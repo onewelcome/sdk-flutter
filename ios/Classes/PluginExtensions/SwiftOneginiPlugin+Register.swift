@@ -3,11 +3,17 @@ import OneginiSDKiOS
 import OneginiCrypto
 import Flutter
 
+enum WebSignInType: Int {
+  case insideApp = 0
+  case safari
+}
+
 protocol OneginiPluginRegisterProtocol {
     
     func getIdentityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     
     func registerUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
+    func handleRegisteredProcessUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func cancelRegistration(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     
     func acceptPinRegistrationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
@@ -28,6 +34,19 @@ extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
         guard let _arg = call.arguments as! [String: Any]? else { return; }
         let _identifier = _arg["identityProviderId"] as? String
         OneginiModuleSwift.sharedInstance.registerUser(_identifier, callback: result)
+    }
+    
+    func handleRegisteredProcessUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        guard let _arg = call.arguments as! [String: Any]? else { return }
+        let url = _arg["url"] as? String
+        let typeValue = _arg["type"] as! Int?
+        
+        var type: WebSignInType = .insideApp
+        if let _typeValue = typeValue, let value = WebSignInType.init(rawValue: _typeValue) {
+            type = value
+        }
+        
+        OneginiModuleSwift.sharedInstance.handleRegisteredProcessUrl(url ?? "", webSignInType: type, callback: result)
     }
     
     func cancelRegistration(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {

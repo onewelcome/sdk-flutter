@@ -2,8 +2,8 @@ import OneginiSDKiOS
 import OneginiCrypto
 
 protocol RegistrationConnectorToHandlerProtocol: RegistrationHandlerToPinHanlderProtocol {
-    func signUp(_ providerId: String?, completion: @escaping (Bool, ONGUserProfile?, SdkError?) -> Void)
-    func processRedirectURL(url: URL)
+    func signUp(_ providerId: String?, completion: @escaping (String?, SdkError?) -> Void)
+    func processRedirectURL(url: String, webSignInType: WebSignInType, completion: @escaping (Bool, ONGUserProfile?, SdkError?) -> Void)
     func cancelRegistration()
     func logout(completion: @escaping (SdkError?) -> Void)
     func deregister(completion: @escaping (SdkError?) -> Void)
@@ -38,7 +38,8 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     
     var logoutUserHandler = LogoutHandler()
     var deregisterUserHandler = DisconnectHandler()
-    var signUpCompletion: ((Bool, ONGUserProfile?, SdkError?) -> Void)?
+    var signUpCompletion: ((String?, SdkError?) -> Void)?
+    var proccessUrlCompletion: ((Bool, ONGUserProfile?, SdkError?) -> Void)?
     
     unowned var pinHandler: PinConnectorToPinHandler?
     
@@ -72,27 +73,29 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
         return list
     }
     
-    func presentBrowserUserRegistrationView(registrationUserURL: URL) {
-        if let _browserConntroller = browserConntroller {
-            _browserConntroller.handleUrl(url: registrationUserURL)
-        } else {
-            if #available(iOS 12.0, *) {
-                browserConntroller = BrowserViewController(registerHandlerProtocol: self)
-                browserConntroller?.handleUrl(url: registrationUserURL)
-            } else {
-              // Fallback on earlier versions
-            }
+    func presentBrowserUserRegistrationView(registrationUserURL: URL, webSignInType: WebSignInType) {
+        guard let browserController = browserConntroller else {
+            browserConntroller = BrowserViewController(registerHandlerProtocol: self)
+            browserConntroller?.handleUrl(url: registrationUserURL, webSignInType: webSignInType)
+            return
         }
+        
+        browserController.handleUrl(url: registrationUserURL, webSignInType: webSignInType)
     }
 
     func handleRedirectURL(url: URL?) {
         print("[\(type(of: self))] handleRedirectURL url: \(url)")
-        guard let browserRegistrationChallenge = self.browserRegistrationChallenge else { return }
-        if let _url = url {
-            browserRegistrationChallenge.sender.respond(with: _url, challenge: browserRegistrationChallenge)
-        } else {
-            browserRegistrationChallenge.sender.cancel(browserRegistrationChallenge)
+        guard let browserRegistrationChallenge = self.browserRegistrationChallenge else {
+            proccessUrlCompletion?(false, nil, SdkError.init(customType: .somethingWentWrong))
+            return
         }
+        
+        guard let url = url else {
+            browserRegistrationChallenge.sender.cancel(browserRegistrationChallenge)
+            return
+        }
+        
+        browserRegistrationChallenge.sender.respond(with: url, challenge: browserRegistrationChallenge)
     }
 
     func handlePin(pin: String?) {
@@ -131,7 +134,8 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
 //MARK:-
 extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
     
-    func signUp(_ providerId: String?, completion: @escaping (Bool, ONGUserProfile?, SdkError?) -> Void) {
+    func signUp(_ providerId: String?, completion: @escaping (String?, SdkError?) -> Void) {
+        proccessUrlCompletion = nil
         signUpCompletion = completion
 
         var identityProvider = identityProviders().first(where: { $0.identifier == providerId})
@@ -152,8 +156,20 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
         deregisterUserHandler.disconnect(completion: completion)
     }
 
-    func processRedirectURL(url: URL) {
-        handleRedirectURL(url: url)
+    func processRedirectURL(url: String, webSignInType: WebSignInType, completion: @escaping (Bool, ONGUserProfile?, SdkError?) -> Void) {
+        guard let url = URL.init(string: url) else {
+            completion(false, nil, SdkError.init(customType: .providedUrlIncorrect))
+            return
+        }
+        
+        if webSignInType != .insideApp && !UIApplication.shared.canOpenURL(url) {
+            completion(false, nil, SdkError.init(customType: .providedUrlIncorrect))
+            return
+        }
+        
+        proccessUrlCompletion = completion
+        signUpCompletion = nil
+        presentBrowserUserRegistrationView(registrationUserURL: url, webSignInType: webSignInType)
     }
 
     func processOTPCode(code: String?) {
@@ -183,7 +199,8 @@ extension RegistrationHandler: ONGRegistrationDelegate {
     func userClient(_: ONGUserClient, didReceive challenge: ONGBrowserRegistrationChallenge) {
         print("[\(type(of: self))] didReceive ONGBrowserRegistrationChallenge")
         browserRegistrationChallenge = challenge
-        presentBrowserUserRegistrationView(registrationUserURL: challenge.url)
+        debugPrint(challenge.url)
+        signUpCompletion?(challenge.url.absoluteString, nil)
     }
 
     func userClient(_: ONGUserClient, didReceivePinRegistrationChallenge challenge: ONGCreatePinChallenge) {
@@ -197,8 +214,8 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         print("[\(type(of: self))] didRegisterUser")
         createPinChallenge = nil
         customRegistrationChallenge = nil
-        signUpCompletion?(true, userProfile, nil)
         pinHandler?.closeFlow()
+        proccessUrlCompletion?(true, userProfile, nil)
     }
 
     func userClient(_: ONGUserClient, didReceiveCustomRegistrationInitChallenge challenge: ONGCustomRegistrationChallenge) {
@@ -265,10 +282,10 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         pinHandler?.closeFlow()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            signUpCompletion?(false, nil, SdkError(customType: .registrationCancelled))
+            proccessUrlCompletion?(false, nil, SdkError(customType: .registrationCancelled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            signUpCompletion?(false, nil, mappedError)
+            proccessUrlCompletion?(false, nil, mappedError)
         }
     }
     

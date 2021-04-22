@@ -11,8 +11,7 @@ class Constants {
 
   /// Register user method name
   static const String registerUser = 'registerUser';
-
-  /// Cancel registration method name
+  static const String handleRegisteredUserUrl = 'handleRegisteredUserUrl';
   static const String cancelRegistrationMethod = "cancelRegistration";
 
   /// Get identity providers method name

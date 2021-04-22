@@ -1,14 +1,14 @@
 //MARK: - 
 protocol BridgeToRegistrationConnectorProtocol: CustomRegistrationNotificationReceiverProtocol, OtpRegistrationNotificationReceiverProtocol {
     var bridgeConnector: BridgeConnectorProtocol? { get set }
-    var registrationHandler: RegistrationConnectorToHandlerProtocol { get }
+    var registrationHandler: RegistrationConnectorToHandlerProtocol & BrowserHandlerToRegisterHandlerProtocol { get }
     func handleCustomRegistrationAction(_ action: String, _ identityProviderId: String, _ code: String?) -> Void
 }
 
 //MARK: -
 class RegistrationConnector : BridgeToRegistrationConnectorProtocol, CustomRegistrationNotificationReceiverProtocol, OtpRegistrationNotificationReceiverProtocol {
     
-    var registrationHandler: RegistrationConnectorToHandlerProtocol
+    var registrationHandler: RegistrationConnectorToHandlerProtocol & BrowserHandlerToRegisterHandlerProtocol
     unowned var bridgeConnector: BridgeConnectorProtocol?
 
     init() {
