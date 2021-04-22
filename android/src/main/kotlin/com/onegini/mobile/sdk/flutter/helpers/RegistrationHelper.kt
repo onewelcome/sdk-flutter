@@ -30,9 +30,9 @@ object RegistrationHelper {
             override fun onError(oneginiRegistrationError: OneginiRegistrationError) {
                 mResult?.error(oneginiRegistrationError.errorType.toString(), oneginiRegistrationError.message, null)
             }
+        }
         )
-    }
-
+   }
 
     fun returnUrl(uri:Uri){
         mResult?.success(uri.toString())
