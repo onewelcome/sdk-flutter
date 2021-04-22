@@ -5,8 +5,11 @@ import 'package:flutter/services.dart';
 import 'constants/constants.dart';
 import 'onegini.dart';
 
-///Class for calls resources
+/// The class with resources methods
 class ResourcesMethods {
+  /// Gets resources anonymously.
+  ///
+  /// Method requires [path] parameter.
   Future<String> getResourceAnonymous(
     String path, {
     List<String>? scopes,
@@ -33,6 +36,9 @@ class ResourcesMethods {
     }
   }
 
+  /// Gets resources.
+  ///
+  /// Method requires [path] parameter.
   Future<String> getResource(
     String path, {
     Map<String, String>? headers,
@@ -55,6 +61,9 @@ class ResourcesMethods {
     }
   }
 
+  /// Gets implicit resource.
+  ///
+  /// Method requires [path] parameter.
   Future<String> getResourceImplicit(
     String path, {
     String? scope,

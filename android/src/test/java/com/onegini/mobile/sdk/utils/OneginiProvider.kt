@@ -9,7 +9,6 @@ class OnegeniProvider : OneginiIdentityProvider {
     }
 
     override fun writeToParcel(p0: Parcel?, p1: Int) {
-
     }
     override fun getId(): String {
         return "test provider id"
@@ -18,5 +17,4 @@ class OnegeniProvider : OneginiIdentityProvider {
     override fun getName(): String {
         return "test provider id"
     }
-
 }

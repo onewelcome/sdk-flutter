@@ -8,9 +8,9 @@ interface IOneginiClient {
     fun getOneginiClient(context: Context): OneginiClient
 
     fun initSDK(
-            context: Context,
-            httpConnectionTimeout: Long? = 5,
-            httpReadTimeout: Long? = 25,
-            oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider> = mutableListOf()
+        context: Context,
+        httpConnectionTimeout: Long? = 5,
+        httpReadTimeout: Long? = 25,
+        oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider> = mutableListOf()
     ): OneginiClient
 }

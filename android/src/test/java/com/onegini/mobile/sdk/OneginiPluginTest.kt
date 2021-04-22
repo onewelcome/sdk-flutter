@@ -27,10 +27,11 @@ import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.Mockito.*
+import org.mockito.Mockito.`when`
+import org.mockito.Mockito.mock
+import org.mockito.Mockito.spy
 import org.mockito.MockitoAnnotations
 import org.mockito.junit.MockitoJUnitRunner
-
 
 @RunWith(MockitoJUnitRunner::class)
 class OneginiPluginTest {
@@ -71,7 +72,6 @@ class OneginiPluginTest {
         RegistrationHelper.registerUser("test provider id", null, mockResult, client)
     }
 
-
     @Test
     fun `get identity provider list`() {
         val set = mutableSetOf<OneginiIdentityProvider>()
@@ -95,12 +95,10 @@ class OneginiPluginTest {
         RegistrationRequestHandler(context).startRegistration(Uri.parse("test url"), mock(OneginiBrowserRegistrationCallback::class.java))
     }
 
-
     @Test
     fun `deregister user when user profile is null`() {
         RegistrationHelper.deregisterUser(mockResult, client)
     }
-
 
     @Test
     fun `deregister user`() {
@@ -118,7 +116,6 @@ class OneginiPluginTest {
         `when`(userClient.userProfiles).thenReturn(setOf(userProfile))
         AuthenticationObject.authenticateUser(null, mockResult, client)
     }
-
 
     @Test
     fun `authenticate user by authenticator`() {
@@ -157,7 +154,6 @@ class OneginiPluginTest {
     fun `register authenticator when authenticated user is null`() {
         AuthenticationObject.registerAuthenticator(null, mockResult, client)
     }
-
 
     @Test
     fun `register authenticator`() {
@@ -237,7 +233,6 @@ class OneginiPluginTest {
         mapper.logout(mockResult, client)
     }
 
-
     @Test
     fun `start change pin flow`() {
         val mapper = spy(OnMethodCallMapper(context))
@@ -249,7 +244,6 @@ class OneginiPluginTest {
         val mapper = spy(OnMethodCallMapper(context))
         mapper.onMethodCall(MethodCall("NO", null), mockResult)
     }
-
 
 //    @Test
 //    fun testRegistrationWithIdentityProvider() {
@@ -347,5 +341,4 @@ class OneginiPluginTest {
 //    fun testChangePin() {
 //        assertEquals(plugin.onMethodCall(MethodCall(Constants.METHOD_CHANGE_PIN, null), mockResult), Unit)
 //    }
-
 }

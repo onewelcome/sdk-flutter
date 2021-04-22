@@ -6,9 +6,7 @@ import com.onegini.mobile.sdk.android.handlers.request.OneginiBrowserRegistratio
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiBrowserRegistrationCallback
 import com.onegini.mobile.sdk.flutter.helpers.RegistrationHelper
 
-
 class RegistrationRequestHandler(var context: Context) : OneginiBrowserRegistrationRequestHandler {
-
 
     companion object {
         private var CALLBACK: OneginiBrowserRegistrationCallback? = null
@@ -32,12 +30,10 @@ class RegistrationRequestHandler(var context: Context) : OneginiBrowserRegistrat
                 CALLBACK = null
             }
         }
-
     }
 
     override fun startRegistration(uri: Uri, oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback) {
         CALLBACK = oneginiBrowserRegistrationCallback
         RegistrationHelper.returnUrl(uri)
     }
-
 }
