@@ -67,9 +67,14 @@ class _LoginScreenState extends State<LoginScreen> {
         identityProviderId,
         "read",
       );
-
-      var userId = await Onegini.instance.userClient
-          .handleRegisteredUserUrl(context, regUrl, openIsideApp: true);
+      bool _validURL = Uri.parse(regUrl).isAbsolute;
+      var userId;
+      if(_validURL){
+         userId = await Onegini.instance.userClient
+            .handleRegisteredUserUrl(context, regUrl, openIsideApp: true);
+      }else{
+         userId = regUrl;
+      }
 
       if (userId != null)
         Navigator.pushAndRemoveUntil(
