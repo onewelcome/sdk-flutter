@@ -8,7 +8,7 @@ import 'onegini.dart';
 ///Сlass with basic methods available to the developer.
 class UserClient {
   ///Start registration flow.
-
+  ///
   /// If [identityProviderId] is null, starts standard browser registration.
   /// Use your [scopes] for registration. By default it is "read".
   Future<String> registerUser(
