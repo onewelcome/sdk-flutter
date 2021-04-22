@@ -10,8 +10,8 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
 
-class RegistrationUseCase {
-    operator fun invoke(call: MethodCall, oneginiClient: OneginiClient,result: MethodChannel.Result) {
+class RegistrationUseCase(private var oneginiClient: OneginiClient) {
+    operator fun invoke(call: MethodCall,result: MethodChannel.Result) {
         val identityProviderId = call.argument<String>("identityProviderId")
         val scopes = call.argument<String>("scopes")
         if(identityProviderId != null){
@@ -19,14 +19,14 @@ class RegistrationUseCase {
             for (identityProvider in identityProviders) {
                 if (identityProvider.id == identityProviderId) {
                     register(identityProvider, arrayOf(scopes
-                            ?: ""), oneginiClient,result)
+                            ?: ""),result)
                     break
                 }
             }
-        } else register(null, arrayOf(scopes ?: ""), oneginiClient, result)
+        } else register(null, arrayOf(scopes ?: ""),result)
 
     }
-    private fun  register(identityProvider: OneginiIdentityProvider?, scopes: Array<String>, oneginiClient: OneginiClient,result: MethodChannel.Result){
+    private fun  register(identityProvider: OneginiIdentityProvider?, scopes: Array<String>,result: MethodChannel.Result){
         oneginiClient.userClient.registerUser(identityProvider, scopes, object : OneginiRegistrationHandler {
             override fun onSuccess(userProfile: UserProfile, customInfo: CustomInfo?) {
                 result.success(userProfile.profileId)

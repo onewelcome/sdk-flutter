@@ -3,7 +3,7 @@ package com.onegini.mobile.sdk.utils
 import android.os.Parcel
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 
-class OnegeniProvider : OneginiIdentityProvider {
+class OnegeniProviderTest : OneginiIdentityProvider {
     override fun describeContents(): Int {
         return 0
     }
