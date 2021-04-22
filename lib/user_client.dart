@@ -5,15 +5,9 @@ import 'constants/constants.dart';
 import 'model/onegini_list_response.dart';
 import 'onegini.dart';
 
-<<<<<<< HEAD
-/// The class with basic methods available to the developer.
-class UserClient {
-  /// Start registration flow.
-=======
 ///Сlass with basic methods available to the developer.
 class UserClient {
   ///Start registration flow.
->>>>>>> develop
   ///
   /// If [identityProviderId] is null, starts standard browser registration.
   /// Use your [scopes] for registration. By default it is "read".
