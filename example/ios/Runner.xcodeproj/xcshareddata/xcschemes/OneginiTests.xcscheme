@@ -38,6 +38,122 @@
                BlueprintName = "OneginiTests"
                ReferencedContainer = "container:Runner.xcodeproj">
             </BuildableReference>
+            <SkippedTests>
+               <Test
+                  Identifier = "AppToWebHandler_SignInAppToWebTests">
+               </Test>
+               <Test
+                  Identifier = "AuthenticatorsHandler_DeregisterAuthenticatorTests">
+               </Test>
+               <Test
+                  Identifier = "AuthenticatorsHandler_GetAuthenticatorsTests">
+               </Test>
+               <Test
+                  Identifier = "AuthenticatorsHandler_IsAuthenticatorRegisteredTests">
+               </Test>
+               <Test
+                  Identifier = "AuthenticatorsHandler_RegisterAuthenticatorTests">
+               </Test>
+               <Test
+                  Identifier = "AuthenticatorsHandler_SetPrefferedAuthenticatorTests">
+               </Test>
+               <Test
+                  Identifier = "BrowserHandler_HandleUrlTests">
+               </Test>
+               <Test
+                  Identifier = "DisconnectHandler_DisconnectTests">
+               </Test>
+               <Test
+                  Identifier = "LoginHandler_AuthenticateUserTests">
+               </Test>
+               <Test
+                  Identifier = "LogoutHandler_LogoutTests">
+               </Test>
+               <Test
+                  Identifier = "MobileAuthHandler_EnrollForMobileAuthTests">
+               </Test>
+               <Test
+                  Identifier = "MobileAuthHandler_HandleMobileAuthConfirmationTests">
+               </Test>
+               <Test
+                  Identifier = "MobileAuthHandler_HandleOTPMobileAuthTests">
+               </Test>
+               <Test
+                  Identifier = "MobileAuthHandler_HandleQrOTPMobileAuthTests">
+               </Test>
+               <Test
+                  Identifier = "MobileAuthHandler_IsUserEnrolledForMobileAuthTests">
+               </Test>
+               <Test
+                  Identifier = "OneginiTests">
+               </Test>
+               <Test
+                  Identifier = "PinHandler_CancelTests">
+               </Test>
+               <Test
+                  Identifier = "PinHandler_ChangePinCallTests">
+               </Test>
+               <Test
+                  Identifier = "PinHandler_CloseFlowTests">
+               </Test>
+               <Test
+                  Identifier = "PinHandler_HandleFlowUpdateTests">
+               </Test>
+               <Test
+                  Identifier = "PinHandler_PinProvidedTests">
+               </Test>
+               <Test
+                  Identifier = "RegistrationHandler_CancelCustomRegistrationTests">
+               </Test>
+               <Test
+                  Identifier = "RegistrationHandler_CancelRegistrationTests">
+               </Test>
+               <Test
+                  Identifier = "RegistrationHandler_CancelTwoStepRegistrationTests">
+               </Test>
+               <Test
+                  Identifier = "RegistrationHandler_CurrentChallengeTests">
+               </Test>
+               <Test
+                  Identifier = "RegistrationHandler_DeregisterTests">
+               </Test>
+               <Test
+                  Identifier = "RegistrationHandler_IdentityProvidersTests">
+               </Test>
+               <Test
+                  Identifier = "RegistrationHandler_LogoutTests">
+               </Test>
+               <Test
+                  Identifier = "RegistrationHandler_ProcessOTPCodeTests">
+               </Test>
+               <Test
+                  Identifier = "RegistrationHandler_ProcessRedirectURLTests">
+               </Test>
+               <Test
+                  Identifier = "RegistrationHandler_ProcessTwoStepRegistrationTests">
+               </Test>
+               <Test
+                  Identifier = "RegistrationHandler_SignUpTests">
+               </Test>
+               <Test
+                  Identifier = "ResourcesHandler_AuthenticateDeviceTests">
+               </Test>
+               <Test
+                  Identifier = "ResourcesHandler_AuthenticateImplicitlyTests">
+               </Test>
+               <Test
+                  Identifier = "ResourcesHandler_FetchAnonymousResourceTests">
+               </Test>
+               <Test
+                  Identifier = "ResourcesHandler_FetchResourceWithImplicitResourceTests">
+               </Test>
+               <Test
+                  Identifier = "ResourcesHandler_FetchSimpleResourcesTests">
+               </Test>
+               <Test
+                  Identifier = "ResourcesHandler_ResourceRequestTests">
+               </Test>
+            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>

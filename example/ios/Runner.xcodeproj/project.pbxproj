@@ -29,6 +29,9 @@
 		5F1ADDD02613A3F60055B23D /* LoginHandler_AuthenticateUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F1ADDCF2613A3F60055B23D /* LoginHandler_AuthenticateUserTests.swift */; };
 		5F1ADDDF26146EE30055B23D /* OneginiUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F1ADDDE26146EE30055B23D /* OneginiUITests.swift */; };
 		5F1ADDEE2614701E0055B23D /* RegistrationHandler_SignUpUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F1ADDED2614701E0055B23D /* RegistrationHandler_SignUpUITests.swift */; };
+		5F2DDAF7263142DE00225B47 /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F2DDAF6263142DE00225B47 /* Quick.framework */; };
+		5F2DDAF9263142F400225B47 /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F2DDAF8263142F400225B47 /* Nimble.framework */; };
+		5F2DDB0A263148D000225B47 /* RegistrationConnectorSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2DDB09263148D000225B47 /* RegistrationConnectorSpecs.swift */; };
 		5F7937E1261621FE001AEE71 /* DisconnectHandler_DisconnectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7937E0261621FE001AEE71 /* DisconnectHandler_DisconnectTests.swift */; };
 		5F7937E7261623EE001AEE71 /* RegistrationHandler_ProcessOTPCodeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7937E6261623EE001AEE71 /* RegistrationHandler_ProcessOTPCodeTests.swift */; };
 		5F7937EB26162405001AEE71 /* RegistrationHandler_ProcessTwoStepRegistrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7937EA26162405001AEE71 /* RegistrationHandler_ProcessTwoStepRegistrationTests.swift */; };
@@ -132,6 +135,9 @@
 		5F1ADDDE26146EE30055B23D /* OneginiUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneginiUITests.swift; sourceTree = "<group>"; };
 		5F1ADDE026146EE30055B23D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5F1ADDED2614701E0055B23D /* RegistrationHandler_SignUpUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationHandler_SignUpUITests.swift; sourceTree = "<group>"; };
+		5F2DDAF6263142DE00225B47 /* Quick.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Quick.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F2DDAF8263142F400225B47 /* Nimble.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Nimble.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5F2DDB09263148D000225B47 /* RegistrationConnectorSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationConnectorSpecs.swift; sourceTree = "<group>"; };
 		5F7937E0261621FE001AEE71 /* DisconnectHandler_DisconnectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisconnectHandler_DisconnectTests.swift; sourceTree = "<group>"; };
 		5F7937E6261623EE001AEE71 /* RegistrationHandler_ProcessOTPCodeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationHandler_ProcessOTPCodeTests.swift; sourceTree = "<group>"; };
 		5F7937EA26162405001AEE71 /* RegistrationHandler_ProcessTwoStepRegistrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationHandler_ProcessTwoStepRegistrationTests.swift; sourceTree = "<group>"; };
@@ -181,6 +187,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5F2DDAF9263142F400225B47 /* Nimble.framework in Frameworks */,
+				5F2DDAF7263142DE00225B47 /* Quick.framework in Frameworks */,
 				237088DE02AF0DE066EB4958 /* Pods_OneginiTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -240,6 +248,7 @@
 		5F07F1B6260DFCFC0073BA5E /* OneginiTests */ = {
 			isa = PBXGroup;
 			children = (
+				5F2DDAEF2631417700225B47 /* Connectors */,
 				5FFE1DC02611C4E5003EF280 /* Handlers */,
 				5F07F1B7260DFCFC0073BA5E /* OneginiTests.swift */,
 				5F07F1B9260DFCFC0073BA5E /* Info.plist */,
@@ -279,6 +288,14 @@
 				5F1ADDED2614701E0055B23D /* RegistrationHandler_SignUpUITests.swift */,
 			);
 			path = RegistrationHandler;
+			sourceTree = "<group>";
+		};
+		5F2DDAEF2631417700225B47 /* Connectors */ = {
+			isa = PBXGroup;
+			children = (
+				5F2DDB09263148D000225B47 /* RegistrationConnectorSpecs.swift */,
+			);
+			path = Connectors;
 			sourceTree = "<group>";
 		};
 		5F7937DF261621DF001AEE71 /* DisconnectHandler */ = {
@@ -433,6 +450,8 @@
 		A3B0D248D7723B5FC7E80294 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5F2DDAF8263142F400225B47 /* Nimble.framework */,
+				5F2DDAF6263142DE00225B47 /* Quick.framework */,
 				5F07F1A1260DFB1E0073BA5E /* onegini.framework */,
 				5F07F18A260DF8A90073BA5E /* onegini.framework */,
 				5F07F17F260DF47F0073BA5E /* onegini.framework */,
@@ -471,6 +490,7 @@
 				5F07F1B1260DFCFC0073BA5E /* Sources */,
 				5F07F1B2260DFCFC0073BA5E /* Frameworks */,
 				5F07F1B3260DFCFC0073BA5E /* Resources */,
+				DDE2139EEAA3EDE9602D0CC1 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -726,6 +746,23 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		DDE2139EEAA3EDE9602D0CC1 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-OneginiTests/Pods-OneginiTests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-OneginiTests/Pods-OneginiTests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-OneginiTests/Pods-OneginiTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -765,6 +802,7 @@
 				5F176CC32615C4BA003E4B74 /* RegistrationHandler_ProcessRedirectURLTests.swift in Sources */,
 				22353846261D7234009AE465 /* AuthenticatorsHandler_DeregisterAuthenticatorTests.swift in Sources */,
 				5F7937E1261621FE001AEE71 /* DisconnectHandler_DisconnectTests.swift in Sources */,
+				5F2DDB0A263148D000225B47 /* RegistrationConnectorSpecs.swift in Sources */,
 				5FC8D2AB261C4E45001E5CC9 /* MobileAuthHandler_HandleQrOTPMobileAuthTests.swift in Sources */,
 				5FC8D292261C3D40001E5CC9 /* BrowserHandler_HandleUrlTests.swift in Sources */,
 				229F407126134528000EA9B8 /* ResourcesHandler_FetchSimpleResourcesTests.swift in Sources */,
@@ -922,6 +960,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				HEADER_SEARCH_PATHS = "$(inherited)/**";
@@ -956,6 +995,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)/**";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				HEADER_SEARCH_PATHS = "$(inherited)/**";
@@ -987,6 +1027,7 @@
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
 				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherited)/**";
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				HEADER_SEARCH_PATHS = "$(inherited)/**";

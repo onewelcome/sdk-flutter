@@ -38,14 +38,14 @@ class ResourcesHandler_ResourceRequestTests: XCTestCase {
         parameters["encoding"] = "application/x-www-form-urlencoded";
         parameters["method"] = "GET"
 
-        handler?.resourceRequest(isImplicit: true, parameters: parameters, completion: { (data, error) in
-            print("[\(type(of: self))] completion: \(data.debugDescription)")
-            if let e = error {
-                print("[\(type(of: self))] error: \(e.errorDescription)")
-            }
-            
-            expectation.fulfill()
-        })
+//        handler?.resourceRequest(isImplicit: true, parameters: parameters, completion: { (data, error) in
+//            print("[\(type(of: self))] completion: \(data.debugDescription)")
+//            if let e = error {
+//                print("[\(type(of: self))] error: \(e.errorDescription)")
+//            }
+//            
+//            expectation.fulfill()
+//        })
         waitForExpectations(timeout: 5, handler: nil)
     }
     
@@ -64,14 +64,14 @@ class ResourcesHandler_ResourceRequestTests: XCTestCase {
         parameters["encoding"] = "application/x-www-form-urlencoded";
         parameters["method"] = "GET"
 
-        handler?.resourceRequest(isImplicit: false, parameters: parameters, completion: { (data, error) in
-            print("[\(type(of: self))] completion: \(data.debugDescription)")
-            if let e = error {
-                print("[\(type(of: self))] error: \(e.errorDescription)")
-            }
-            
-            expectation.fulfill()
-        })
+//        handler?.resourceRequest(isImplicit: false, parameters: parameters, completion: { (data, error) in
+//            print("[\(type(of: self))] completion: \(data.debugDescription)")
+//            if let e = error {
+//                print("[\(type(of: self))] error: \(e.errorDescription)")
+//            }
+//
+//            expectation.fulfill()
+//        })
         waitForExpectations(timeout: 5, handler: nil)
     }
 }

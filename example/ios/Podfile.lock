@@ -4,22 +4,28 @@ PODS:
     - Flutter
     - Toast
   - MTBBarcodeScanner (5.0.11)
+  - Nimble (9.0.0)
   - onegini (0.2.0):
     - Flutter
   - qr_code_scanner (0.2.0):
     - Flutter
     - MTBBarcodeScanner
+  - Quick (3.1.2)
   - Toast (4.0.0)
 
 DEPENDENCIES:
   - Flutter (from `Flutter`)
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
+  - Nimble
   - onegini (from `.symlinks/plugins/onegini/ios`)
   - qr_code_scanner (from `.symlinks/plugins/qr_code_scanner/ios`)
+  - Quick
 
 SPEC REPOS:
   trunk:
     - MTBBarcodeScanner
+    - Nimble
+    - Quick
     - Toast
 
 EXTERNAL SOURCES:
@@ -36,10 +42,12 @@ SPEC CHECKSUMS:
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
+  Nimble: 3b4ec3fd40f1dc178058e0981107721c615643d8
   onegini: 609350e9cf4e91b786404132d699240140e9da77
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
+  Quick: 60f0ea3b8e0cfc0df3259a5c06a238ad8b3c46e0
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
 
-PODFILE CHECKSUM: ea19d228d1878d98b1833f07bd0802262fcd457c
+PODFILE CHECKSUM: 01416bdaf8ec2bd4e59cd4fd989562ee1bf16377
 
 COCOAPODS: 1.10.1

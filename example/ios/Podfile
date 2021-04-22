@@ -37,8 +37,15 @@ target 'Runner' do
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 
+  def testing_pods
+    pod 'Quick'
+    pod 'Nimble'
+  end
+
   target 'OneginiTests' do
     inherit! :search_paths
+    
+    testing_pods
   end
   target 'OneginiUITests' do
     inherit! :complete

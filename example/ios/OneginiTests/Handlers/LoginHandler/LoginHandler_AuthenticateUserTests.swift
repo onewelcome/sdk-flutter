@@ -3,7 +3,7 @@ import XCTest
 import OneginiSDKiOS
 import OneginiCrypto
 
-class LoginHandler_AuthenticateUserTests: XCTestCase, PinConnectorToPinHandler {
+class LoginHandler_AuthenticateUserTests: XCTestCase /*, PinConnectorToPinHandler*/ {
     var handler: LoginHandler?
     
     var onPinProvidedCallback: ((_ pin: String) -> ())?
@@ -15,7 +15,7 @@ class LoginHandler_AuthenticateUserTests: XCTestCase, PinConnectorToPinHandler {
     override func setUpWithError() throws {
         try super.setUpWithError()
         handler = LoginHandler()
-        handler!.pinHandler = self
+//        handler!.pinHandler = self
     }
 
     override func tearDownWithError() throws {
