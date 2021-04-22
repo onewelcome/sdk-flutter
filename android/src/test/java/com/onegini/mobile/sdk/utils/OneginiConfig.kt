@@ -3,8 +3,6 @@ package com.onegini.mobile.sdk.utils
 import android.os.Build
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 
-
-
 class OneginiConfigModel : OneginiClientConfigModel {
     private val appIdentifier = "ExampleApp"
     private val appPlatform = "android"
