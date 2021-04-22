@@ -67,6 +67,8 @@ class OneginiConnector: NSObject, OneginiConnectorProtocol {
     unowned var flutterConnector: FlutterConnectorProtocol
     
     var startAppConnector: StartAppConnectorProtocol?
+    var identityProviderConnector: IdentityProviderConnectorProtocol?
+    
     var registrationConnector: RegistrationConnectorProtocol?
     var authenticatorConnector: AuthenticatorConnectorProtocol?
 //    var pinConnector: PinConnectorProtocol?
@@ -77,7 +79,11 @@ class OneginiConnector: NSObject, OneginiConnectorProtocol {
         
         startAppConnector = StartAppConnector.init(startAppWrapper: StartAppWrapper())
 
-        registrationConnector = NewRegistrationConnector.init(registrationWrapper: RegistrationWrapper())
+        identityProviderConnector = IdentityProviderConnector()
+        
+        // TODO: remove in near future, need the reference to the current pin handler to don't break wrapper
+        let pinHandler = OneginiModuleSwift.sharedInstance.bridgeConnector.toPinHandlerConnector.pinHandler
+        registrationConnector = NewRegistrationConnector.init(registrationWrapper: RegistrationWrapper(), identityProvider: identityProviderConnector!, pinHandler: pinHandler)
         registrationConnector?.flutterConnector = flutterConnector
 
         authenticatorConnector = AuthenticatorConnector()

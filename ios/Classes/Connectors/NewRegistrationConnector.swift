@@ -16,17 +16,24 @@ protocol RegistrationConnectorProtocol: FlutterNotificationReceiverProtocol {
 
 class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
     
+    // references
     var wrapper: RegistrationWrapperProtocol
+    var identityProviderConnector: IdentityProviderConnectorProtocol
+    var pinConnector: PinConnectorToPinHandler
     
     unowned var flutterConnector: FlutterConnectorProtocol?
     
+    // challanges
     var createPinChallenge: CreatePinChallengeProtocol?
     var browserRegistrationChallenge: BrowserRegistrationChallengeProtocol?
     
+    // callbacks
     var registrationCallback: FlutterResult?
     
-    init(registrationWrapper: RegistrationWrapperProtocol) {
+    init(registrationWrapper: RegistrationWrapperProtocol, identityProvider: IdentityProviderConnectorProtocol, pinHandler: PinConnectorToPinHandler) {
         wrapper = registrationWrapper
+        identityProviderConnector = identityProvider
+        pinConnector = pinHandler
         
         super.init()
         
@@ -48,15 +55,7 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
             scopes = arg[Constants.Parameters.scopes] as? Array<String>
         }
         
-        // TODO: don't call SDK directly
-        let identityProviders = Array(ONGUserClient.sharedInstance().identityProviders())
-        var identityProvider = identityProviders.first(where: { $0.identifier == providerId})
-        if let _providerId = providerId, identityProvider == nil {
-            identityProvider = ONGIdentityProvider()
-            identityProvider?.name = _providerId
-            identityProvider?.identifier = _providerId
-        }
-        
+        let identityProvider = identityProviderConnector.getIdentityProvider(providerId: providerId)
         wrapper.register(identityProvider: identityProvider, scopes: scopes)
     }
     
@@ -74,7 +73,12 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
     func onCreatePin(challenge: CreatePinChallengeProtocol) -> Void {
         createPinChallenge = challenge
         
-        flutterConnector?.sendBridgeEvent(eventName: .registrationNotification, data: Constants.Events.eventOpenCreatePin)
+        // TODO: remove this after finishing with new pin handling connector
+        pinConnector.handleFlowUpdate(.create, nil, receiver: self)
+        
+        // TODO: uncomment this section when new pin flow will be implemented
+        // send event back to flutter to open pin creation
+//        flutterConnector?.sendBridgeEvent(eventName: .registrationNotification, data: Constants.Events.eventOpenCreatePin)
     }
     
     func onBrowserRegistration(challenge: BrowserRegistrationChallengeProtocol) -> Void {
@@ -84,7 +88,8 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
         let browser = BrowserViewController(registerHandlerProtocol: self)
         browser.handleUrl(url: challenge.getUrl())
         
-        // TODO: return url back to flutter
+        // TODO: uncomment this section when new pin flow will be implemented
+        // return url back to flutter
 //        var data: [String: Any] = [:]
 //        data[Constants.Parameters.eventName] = Constants.Events.eventOpenUrl
 //        data[Constants.Parameters.eventValue] = challenge.getUrl().absoluteString
@@ -95,6 +100,7 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
     func onRegistrationSuccess(userProfile: ONGUserProfile, info: ONGCustomInfo?) -> Void {
         createPinChallenge = nil
         browserRegistrationChallenge = nil
+        pinConnector.closeFlow()
         
         registrationCallback?(userProfile.profileId)
         registrationCallback = nil
@@ -103,9 +109,26 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
     func onRegistrationFailed(error: Error) -> Void {
         createPinChallenge = nil
         browserRegistrationChallenge = nil
+        pinConnector.closeFlow()
         
         registrationCallback?(SdkError.init(errorDescription: error.localizedDescription, code: error.code).flutterError())
         registrationCallback = nil
+    }
+}
+
+// TODO: remove this after finishing with new pin handling connector
+extension NewRegistrationConnector: PinHandlerToReceiverProtocol {
+    func handlePin(pin: String?) {
+        guard let createPinChallenge = createPinChallenge else {
+            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .createPinNotInProgress))
+            return
+        }
+        
+        if let pin = pin {
+            createPinChallenge.respond(withPin: pin)
+        } else {
+            createPinChallenge.cancel()
+        }
     }
 }
 
