@@ -15,6 +15,8 @@ class RegistrationConnectorSpecs: QuickSpec {
     override func spec() {
         
         var connector: NewRegistrationConnector?
+        var pinHandler: TestPinHandler?
+        
         let flutterConnector = TestFlutterListener()
         
         describe("registration connector") {
@@ -31,7 +33,10 @@ class RegistrationConnectorSpecs: QuickSpec {
                 
                 beforeEach {
                     let wrapper = TestRegistrationWrapper()
-                    connector = NewRegistrationConnector.init(registrationWrapper: wrapper)
+                    pinHandler = TestPinHandler()
+                    pinHandler?.flutterConnector = flutterConnector
+                    
+                    connector = NewRegistrationConnector.init(registrationWrapper: wrapper, identityProvider: IdentityProviderConnector(), pinHandler: pinHandler!)
                     connector?.flutterConnector = flutterConnector
                 }
                 
@@ -40,11 +45,11 @@ class RegistrationConnectorSpecs: QuickSpec {
                     waitUntil { done in
                         
                         flutterConnector.receiveEvent = {
-                            event, data in
+                            eventName, eventData in
                             
-                            let d = data as! String
-                            expect(event).to(equal(.registrationNotification))
-                            expect(d).to(equal(Constants.Events.eventOpenCreatePin))
+                            let data = eventData as! String
+                            expect(eventName).to(equal(.pinNotification))
+                            expect(data).to(equal(Constants.Events.eventOpenCreatePin))
                             
                             done()
                         }
@@ -58,7 +63,6 @@ class RegistrationConnectorSpecs: QuickSpec {
                         connector?.register(method, result)
                         
                     }
-                    
                 }
             }
         }
@@ -124,5 +128,44 @@ class TestRegistrationBrowserChallange: BrowserRegistrationChallengeProtocol {
     func cancel() {
         let error = NSError()
         receiver.registrationFailed?(error)
+    }
+}
+
+class TestPinHandler: PinConnectorToPinHandler {
+    
+    var flutterConnector: TestFlutterListener?
+    
+    var flow : PinFlow?
+    var pinReceiver: PinHandlerToReceiverProtocol?
+    
+    func onPinProvided(pin: String) {
+        pinReceiver?.handlePin(pin: pin)
+    }
+    
+    func onChangePinCalled(completion: @escaping (Bool, SdkError?) -> Void) {
+        // not needed here
+    }
+    
+    func onCancel() {
+        pinReceiver?.handlePin(pin: nil)
+    }
+    
+    func handleFlowUpdate(_ flow: PinFlow, _ error: SdkError?, receiver: PinHandlerToReceiverProtocol) {
+        self.flow = flow
+        pinReceiver = receiver
+        
+        if flow == .create {
+            flutterConnector?.sendBridgeEvent(eventName: .pinNotification, data: Constants.Events.eventOpenCreatePin)
+        } else {
+            flutterConnector?.sendBridgeEvent(eventName: .pinNotification, data: Constants.Events.eventOpenAutorizePin)
+        }
+    }
+    
+    func closeFlow() {
+        // not needed here
+    }
+    
+    func validatePinWithPolicy(pin: String, completion: @escaping (Bool, SdkError?) -> Void) {
+        // not needed here
     }
 }
