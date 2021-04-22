@@ -12,13 +12,12 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 
-
 /** OneginiPlugin */
 class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
-    /// The MethodChannel that will the communication between Flutter and native Android
-    ///
-    /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-    /// when the Flutter Engine is detached from the Activity
+    // / The MethodChannel that will the communication between Flutter and native Android
+    // /
+    // / This local reference serves to register the plugin with the Flutter Engine and unregister it
+    // / when the Flutter Engine is detached from the Activity
     private lateinit var channel: MethodChannel
     private lateinit var eventChannel: EventChannel
     private lateinit var context: Context
@@ -35,7 +34,6 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
             override fun onCancel(arguments: Any?) {
                 OneginiEventsSender.setEventSink(null)
             }
-
         })
         context = flutterPluginBinding.applicationContext
     }
@@ -56,15 +54,11 @@ class OneginiPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
-
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
-
     }
-
 }
