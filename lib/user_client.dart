@@ -31,14 +31,14 @@ class UserClient {
 
   Future<String> handleRegisteredUserUrl(
     BuildContext context,
-    String? url, {bool openIsideApp = false }
+    String? url, {WebSignInType signInType = WebSignInType.insideApp }
   ) async {
     Onegini.instance.setEventContext(context);
     try {
       var userId = await Onegini.instance.channel
           .invokeMethod(Constants.handleRegisteredUserUrl, <String, Object?>{
         'url': url,
-        'insideApp': openIsideApp,
+        'type': signInType.value,
       });
       return userId;
     } on PlatformException catch (error) {
@@ -227,6 +227,23 @@ class UserClient {
       return success;
     } on PlatformException catch (error) {
       throw error;
+    }
+  }
+}
+
+
+enum WebSignInType {
+  insideApp,
+  safari,
+}
+
+extension WebSignInTypeExtension on WebSignInType {
+  int get value {
+    switch (this) {
+      case WebSignInType.safari:
+        return 1;
+      default:
+        return 0;
     }
   }
 }

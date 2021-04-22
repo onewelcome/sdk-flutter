@@ -23,8 +23,6 @@ import OneginiCrypto
         eventChannel.setStreamHandler(OneginiModuleSwift.sharedInstance)
 
         OneginiModuleSwift.sharedInstance.eventSinkCustomIdentifier = exampleCustomEventIdentifier
-        
-        OneginiModuleSwift.sharedInstance.schemeDeepLink = "oneginiexample"
 
         methodChannel.setMethodCallHandler({
             (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in

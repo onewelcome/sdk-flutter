@@ -7,6 +7,7 @@ import 'package:onegini/callbacks/onegini_pin_registration_callback.dart';
 import 'package:onegini/callbacks/onegini_registration_callback.dart';
 import 'package:onegini/model/onegini_list_response.dart';
 import 'package:onegini/onegini.dart';
+import 'package:onegini/user_client.dart';
 import 'package:onegini_example/screens/user_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -34,7 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       var userId = await Onegini.instance.userClient
-          .handleRegisteredUserUrl(context, regUrl, openIsideApp: true);
+          .handleRegisteredUserUrl(context, regUrl, signInType: WebSignInType.safari);
 
       if (userId != null)
         Navigator.pushAndRemoveUntil(
@@ -71,7 +72,7 @@ class _LoginScreenState extends State<LoginScreen> {
       var userId;
       if(_validURL){
          userId = await Onegini.instance.userClient
-            .handleRegisteredUserUrl(context, regUrl, openIsideApp: true);
+            .handleRegisteredUserUrl(context, regUrl, signInType: WebSignInType.safari);
       }else{
          userId = regUrl;
       }

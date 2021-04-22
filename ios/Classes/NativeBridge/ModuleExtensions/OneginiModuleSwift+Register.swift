@@ -23,9 +23,9 @@ extension OneginiModuleSwift {
         }
     }
     
-    func handleRegisteredProcessUrl(_ url: String, insideApp: Bool, callback: @escaping FlutterResult) -> Void {
+    func handleRegisteredProcessUrl(_ url: String, webSignInType: WebSignInType, callback: @escaping FlutterResult) -> Void {
 
-        bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: url, insideApp: insideApp) {  (_, userProfile, error) -> Void in
+        bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: url, webSignInType: webSignInType) {  (_, userProfile, error) -> Void in
 
             if let _userProfile = userProfile {
                 callback(_userProfile.profileId)
@@ -36,8 +36,9 @@ extension OneginiModuleSwift {
     }
     
     public func handleDeepLinkCallbackUrl(_ url: URL) -> Bool {
+        let schemeLibrary = URL.init(string: ONGClient.sharedInstance().configModel.redirectURL)!.scheme
         guard let scheme = url.scheme,
-              scheme.localizedCaseInsensitiveCompare(OneginiModuleSwift.sharedInstance.schemeDeepLink) == .orderedSame else { return false }
+              scheme.localizedCaseInsensitiveCompare(schemeLibrary!) == .orderedSame else { return false }
         bridgeConnector.toRegistrationConnector.registrationHandler.handleRedirectURL(url: url)
         return true
     }
