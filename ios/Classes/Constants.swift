@@ -53,6 +53,7 @@ struct Constants {
         static let openUrl: String = "openUrl";
     }
     
+    // TODO: change to enum
     struct Events {
         
         // pin
@@ -77,7 +78,6 @@ struct Constants {
 
         // custom
         static let openCustomTwoStepRegistrationScreen: String = "openCustomTwoStepRegistrationScreen";
-        
         
         static let eventNextAuthenticationAttempt: String = "eventNextAuthenticationAttempt";
 

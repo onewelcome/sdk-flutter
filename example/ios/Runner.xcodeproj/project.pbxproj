@@ -32,6 +32,7 @@
 		5F2DDAF7263142DE00225B47 /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F2DDAF6263142DE00225B47 /* Quick.framework */; };
 		5F2DDAF9263142F400225B47 /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F2DDAF8263142F400225B47 /* Nimble.framework */; };
 		5F2DDB0A263148D000225B47 /* RegistrationConnectorSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2DDB09263148D000225B47 /* RegistrationConnectorSpecs.swift */; };
+		5F2DDB0F2631678F00225B47 /* TestFlutterListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2DDB0E2631678F00225B47 /* TestFlutterListener.swift */; };
 		5F7937E1261621FE001AEE71 /* DisconnectHandler_DisconnectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7937E0261621FE001AEE71 /* DisconnectHandler_DisconnectTests.swift */; };
 		5F7937E7261623EE001AEE71 /* RegistrationHandler_ProcessOTPCodeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7937E6261623EE001AEE71 /* RegistrationHandler_ProcessOTPCodeTests.swift */; };
 		5F7937EB26162405001AEE71 /* RegistrationHandler_ProcessTwoStepRegistrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7937EA26162405001AEE71 /* RegistrationHandler_ProcessTwoStepRegistrationTests.swift */; };
@@ -138,6 +139,7 @@
 		5F2DDAF6263142DE00225B47 /* Quick.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Quick.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F2DDAF8263142F400225B47 /* Nimble.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Nimble.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F2DDB09263148D000225B47 /* RegistrationConnectorSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationConnectorSpecs.swift; sourceTree = "<group>"; };
+		5F2DDB0E2631678F00225B47 /* TestFlutterListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFlutterListener.swift; sourceTree = "<group>"; };
 		5F7937E0261621FE001AEE71 /* DisconnectHandler_DisconnectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisconnectHandler_DisconnectTests.swift; sourceTree = "<group>"; };
 		5F7937E6261623EE001AEE71 /* RegistrationHandler_ProcessOTPCodeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationHandler_ProcessOTPCodeTests.swift; sourceTree = "<group>"; };
 		5F7937EA26162405001AEE71 /* RegistrationHandler_ProcessTwoStepRegistrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationHandler_ProcessTwoStepRegistrationTests.swift; sourceTree = "<group>"; };
@@ -248,6 +250,7 @@
 		5F07F1B6260DFCFC0073BA5E /* OneginiTests */ = {
 			isa = PBXGroup;
 			children = (
+				5F2DDB0D2631657100225B47 /* Helpers */,
 				5F2DDAEF2631417700225B47 /* Connectors */,
 				5FFE1DC02611C4E5003EF280 /* Handlers */,
 				5F07F1B7260DFCFC0073BA5E /* OneginiTests.swift */,
@@ -296,6 +299,14 @@
 				5F2DDB09263148D000225B47 /* RegistrationConnectorSpecs.swift */,
 			);
 			path = Connectors;
+			sourceTree = "<group>";
+		};
+		5F2DDB0D2631657100225B47 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				5F2DDB0E2631678F00225B47 /* TestFlutterListener.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		5F7937DF261621DF001AEE71 /* DisconnectHandler */ = {
@@ -794,6 +805,7 @@
 				5F176CBF2615C499003E4B74 /* RegistrationHandler_CancelRegistrationTests.swift in Sources */,
 				5F7937F32616242F001AEE71 /* RegistrationHandler_CancelCustomRegistrationTests.swift in Sources */,
 				5F7937EB26162405001AEE71 /* RegistrationHandler_ProcessTwoStepRegistrationTests.swift in Sources */,
+				5F2DDB0F2631678F00225B47 /* TestFlutterListener.swift in Sources */,
 				5F8E28BA2617176700AC0C81 /* ResourcesHandler_FetchResourceWithImplicitResourceTests.swift in Sources */,
 				2235383C261D711F009AE465 /* AuthenticatorsHandler_IsAuthenticatorRegisteredTests.swift in Sources */,
 				5F7937EF26162418001AEE71 /* RegistrationHandler_CancelTwoStepRegistrationTests.swift in Sources */,
