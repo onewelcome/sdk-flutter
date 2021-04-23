@@ -28,7 +28,6 @@ class OneginiPlugin : FlutterPlugin {
             override fun onCancel(arguments: Any?) {
                 OneginiEventsSender.setEventSink(null)
             }
-
         })
     }
 

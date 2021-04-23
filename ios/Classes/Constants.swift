@@ -16,6 +16,7 @@ struct Constants {
         static let denyPinRegistrationRequest: String = "denyPinRegistrationRequest"
         static let acceptPinRegistrationRequest: String = "acceptPinRegistrationRequest"
         static let deregisterUser: String = "deregisterUser"
+        static let handleRegisteredUserUrl: String = "handleRegisteredUserUrl"
         
         //authentication
         static let authenticateUser: String = "authenticateUser"

@@ -4,11 +4,9 @@ import 'package:onegini/constants/constants.dart';
 
 import '../onegini.dart';
 
-///A callback for mobile authentication by OTP
+/// A callback for mobile authentication with OTP
 class OneginiOtpAcceptDenyCallback {
-
-
-  ///Cancels authentication
+  /// Cancels OTP authentication.
   Future<void> denyAuthenticationRequest() async {
     try {
       await Onegini.instance.channel
@@ -18,7 +16,7 @@ class OneginiOtpAcceptDenyCallback {
     }
   }
 
-  ///Accepts authentication
+  /// Accepts OTP authentication.
   Future<void> acceptAuthenticationRequest(BuildContext context) async {
     Onegini.instance.setEventContext(context);
     try {

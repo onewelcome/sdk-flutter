@@ -7,6 +7,7 @@ import 'package:onegini/callbacks/onegini_pin_registration_callback.dart';
 import 'package:onegini/callbacks/onegini_registration_callback.dart';
 import 'package:onegini/model/onegini_list_response.dart';
 import 'package:onegini/onegini.dart';
+import 'package:onegini/user_client.dart';
 import 'package:onegini_example/screens/user_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -26,12 +27,25 @@ class _LoginScreenState extends State<LoginScreen> {
   openWeb() async {
     /// Start registration
     setState(() => {isLoading = true, isRegistrationFlow = true});
-    var userId = await Onegini.instance.userClient
-        .registerUser(
+    try {
+      var regUrl = await Onegini.instance.userClient.registerUser(
+        context,
+        null,
+        "read",
+      );
+
+      var userId = await Onegini.instance.userClient
+          .handleRegisteredUserUrl(context, regUrl, signInType: WebSignInType.safari);
+
+      if (userId != null)
+        Navigator.pushAndRemoveUntil(
             context,
-            null,
-            "read",)
-        .catchError((error) {
+            MaterialPageRoute(
+                builder: (context) => UserScreen(
+                      userProfileId: userId,
+                    )),
+            (Route<dynamic> route) => false);
+    } catch (error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
         Fluttertoast.showToast(
@@ -43,26 +57,35 @@ class _LoginScreenState extends State<LoginScreen> {
             textColor: Colors.white,
             fontSize: 16.0);
       }
-    });
-    if (userId != null)
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (context) => UserScreen(
-                    userProfileId: userId,
-                  )),
-          (Route<dynamic> route) => false);
+    }
   }
 
   registrationWithIdentityProvider(String identityProviderId) async {
     setState(() => {isLoading = true, isRegistrationFlow = true});
-    var userId = await Onegini.instance.userClient
-        .registerUser(
+    try {
+      var regUrl = await Onegini.instance.userClient.registerUser(
+        context,
+        identityProviderId,
+        "read",
+      );
+      bool _validURL = Uri.parse(regUrl).isAbsolute;
+      var userId;
+      if(_validURL){
+         userId = await Onegini.instance.userClient
+            .handleRegisteredUserUrl(context, regUrl, signInType: WebSignInType.safari);
+      }else{
+         userId = regUrl;
+      }
+
+      if (userId != null)
+        Navigator.pushAndRemoveUntil(
             context,
-            identityProviderId,
-            "read",
-            )
-        .catchError((error) {
+            MaterialPageRoute(
+                builder: (context) => UserScreen(
+                      userProfileId: userId,
+                    )),
+            (Route<dynamic> route) => false);
+    } catch (error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
         Fluttertoast.showToast(
@@ -74,23 +97,16 @@ class _LoginScreenState extends State<LoginScreen> {
             textColor: Colors.white,
             fontSize: 16.0);
       }
-    });
-    if (userId != null)
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (context) => UserScreen(
-                    userProfileId: userId,
-                  )),
-          (Route<dynamic> route) => false);
+    }
   }
 
   pinAuthentication() async {
     setState(() => {isLoading = true, isRegistrationFlow = false});
     var userId = await Onegini.instance.userClient
         .authenticateUser(
-            context,
-            null,)
+      context,
+      null,
+    )
         .catchError((error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
@@ -119,9 +135,10 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => {isLoading = true, isRegistrationFlow = false});
     // var result = await Onegini.instance.userClient.setPreferredAuthenticator(context, registeredAuthenticatorId);
     // print(result);
-    
+
     var userId = await Onegini.instance.userClient
-        .authenticateUser(context, registeredAuthenticatorId).catchError((error) {
+        .authenticateUser(context, registeredAuthenticatorId)
+        .catchError((error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
         Fluttertoast.showToast(
@@ -180,7 +197,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   cancelAuth() async {
     setState(() => isLoading = false);
-     OneginiPinAuthenticationCallback()
+    OneginiPinAuthenticationCallback()
         .denyAuthenticationRequest()
         .catchError((error) {
       setState(() => isLoading = false);

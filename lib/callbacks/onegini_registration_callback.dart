@@ -3,10 +3,9 @@ import 'package:onegini/constants/constants.dart';
 
 import '../onegini.dart';
 
-///Callback for registration
+/// A callback for registration.
 class OneginiRegistrationCallback {
-
-  ///Cancels registration action
+  /// Cancels registration action.
   Future<void> cancelRegistration() async {
     try {
       await Onegini.instance.channel

@@ -157,7 +157,7 @@ class OneginiListener extends OneginiEventListener {
   void openCustomTwoStepRegistrationScreen(BuildContext buildContext, String data) {
     var response = jsonDecode(data);
     if(response["providerId"] == "2-way-otp-api")
-    Navigator.pushReplacement(
+    Navigator.push(
       buildContext,
       MaterialPageRoute(
           builder: (context) => OtpScreen(
