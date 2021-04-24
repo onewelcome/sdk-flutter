@@ -26,17 +26,15 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     }
 
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-#if DEBUG
-        print("call.method: ", call.method)
-        let _arg = call.arguments as! [String: Any]?
-        if ((_arg) != nil) {
-            for key in _arg!.keys {
-                print("key: " + key)
-                let val = _arg?[key]
-                print("value: " + String(describing: val))
+        Logger.log("call.method: \(call.method)", sender: self, logType: .log)
+        let arg = call.arguments as! [String: Any]?
+        if arg != nil {
+            for key in arg!.keys {
+                Logger.log("key: " + key)
+                let val = arg?[key]
+                Logger.log("value: " + String(describing: val))
             }
         }
-#endif
         
         switch call.method {
         
