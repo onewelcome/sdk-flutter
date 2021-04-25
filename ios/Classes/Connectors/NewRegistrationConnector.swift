@@ -19,32 +19,43 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
     // references
     var wrapper: RegistrationWrapperProtocol
     var identityProviderConnector: IdentityProviderConnectorProtocol
-    var pinConnector: PinConnectorToPinHandler
+    var userProfileConnector: UserProfileConnectorProtocol
     
     unowned var flutterConnector: FlutterConnectorProtocol?
     
+    // requests
+    var browserRegistrationRequest: BrowserRequestConnectorProtocol
+    var pinRegistrationRequest: PinRequestConnectorProtocol
+    
     // challanges
-    var createPinChallenge: CreatePinChallengeProtocol?
     var browserRegistrationChallenge: BrowserRegistrationChallengeProtocol?
+    var createPinChallenge: CreatePinChallengeProtocol?
     
     // callbacks
     var registrationCallback: FlutterResult?
     
-    init(registrationWrapper: RegistrationWrapperProtocol, identityProvider: IdentityProviderConnectorProtocol, pinHandler: PinConnectorToPinHandler) {
+    init(registrationWrapper: RegistrationWrapperProtocol, identityProvider: IdentityProviderConnectorProtocol, userProfile: UserProfileConnectorProtocol, browserRegistrationRequest: BrowserRequestConnectorProtocol, pinRegistrationRequest: PinRequestConnectorProtocol) {
         wrapper = registrationWrapper
         identityProviderConnector = identityProvider
-        pinConnector = pinHandler
+        userProfileConnector = userProfile
+        
+        self.browserRegistrationRequest = browserRegistrationRequest
+        self.pinRegistrationRequest = pinRegistrationRequest
         
         super.init()
         
-        wrapper.createPin = onCreatePin
         wrapper.browserRegistration = onBrowserRegistration
+        wrapper.createPin = onCreatePin
         wrapper.registrationSuccess = onRegistrationSuccess
         wrapper.registrationFailed = onRegistrationFailed
     }
     
     func register(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         
+        if registrationCallback != nil {
+            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .actionInProgress))
+            return
+        }
         registrationCallback = result
         
         var providerId: String?
@@ -60,29 +71,26 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
     }
     
     func cancel(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        if let challenge = createPinChallenge {
-            challenge.cancel()
-        }
         
-        if let challenge = browserRegistrationChallenge {
-            challenge.cancel()
-        }
+        browserRegistrationChallenge?.cancel()
+        browserRegistrationChallenge = nil
+        browserRegistrationRequest.removeListener(listener: self)
+        
+        createPinChallenge?.cancel()
+        createPinChallenge = nil
+        pinRegistrationRequest.removeListener(listener: self)
+        
+        registrationCallback?(nil) // or should it send error?
+        registrationCallback = nil
+        
+        result(nil)
     }
     
     // callbacks
-    func onCreatePin(challenge: CreatePinChallengeProtocol) -> Void {
-        createPinChallenge = challenge
-        
-        // TODO: remove this after finishing with new pin handling connector
-        pinConnector.handleFlowUpdate(.create, nil, receiver: self)
-        
-        // TODO: uncomment this section when new pin flow will be implemented
-        // send event back to flutter to open pin creation
-//        flutterConnector?.sendBridgeEvent(eventName: .registrationNotification, data: Constants.Events.eventOpenCreatePin)
-    }
-    
     func onBrowserRegistration(challenge: BrowserRegistrationChallengeProtocol) -> Void {
         browserRegistrationChallenge = challenge
+        
+        browserRegistrationRequest.addListener(listener: self)
         
         // TODO: remove this after finishing with new browser connector
         let browser = BrowserViewController(registerHandlerProtocol: self)
@@ -97,10 +105,20 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
 //        flutterConnector?.sendBridgeEvent(eventName: .registrationNotification, data: String.stringify(json: data))
     }
     
+    func onCreatePin(challenge: CreatePinChallengeProtocol) -> Void {
+        createPinChallenge = challenge
+        
+        pinRegistrationRequest.addListener(listener: self)
+        
+        // send event back to flutter to open pin creation
+        flutterConnector?.sendBridgeEvent(eventName: .registrationNotification, data: Constants.Events.eventOpenCreatePin)
+    }
+    
     func onRegistrationSuccess(userProfile: ONGUserProfile, info: ONGCustomInfo?) -> Void {
         createPinChallenge = nil
         browserRegistrationChallenge = nil
-        pinConnector.closeFlow()
+        
+        userProfileConnector.setAuthenticatedUser(authenticatedUser: userProfile)
         
         registrationCallback?(userProfile.profileId)
         registrationCallback = nil
@@ -109,37 +127,68 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
     func onRegistrationFailed(error: Error) -> Void {
         createPinChallenge = nil
         browserRegistrationChallenge = nil
-        pinConnector.closeFlow()
         
         registrationCallback?(SdkError.init(errorDescription: error.localizedDescription, code: error.code).flutterError())
         registrationCallback = nil
     }
 }
 
-// TODO: remove this after finishing with new pin handling connector
-extension NewRegistrationConnector: PinHandlerToReceiverProtocol {
-    func handlePin(pin: String?) {
+extension NewRegistrationConnector: BrowserListener {
+    func acceptUrl(url: URL) {
+        browserRegistrationRequest.removeListener(listener: self)
+        guard let browserRegistrationChallenge = browserRegistrationChallenge else {
+            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .browserRegistrationNotInProgress))
+            return
+        }
+        
+        browserRegistrationChallenge.respond(withUrl: url)
+    }
+    
+    func denyUrl() {
+        browserRegistrationRequest.removeListener(listener: self)
+        guard let browserRegistrationChallenge = browserRegistrationChallenge else {
+            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .browserRegistrationNotInProgress))
+            return
+        }
+        
+        browserRegistrationChallenge.cancel()
+    }
+}
+
+extension NewRegistrationConnector: PinListener {
+    func acceptPin(pin: String) {
+        pinRegistrationRequest.removeListener(listener: self)
         guard let createPinChallenge = createPinChallenge else {
             flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .createPinNotInProgress))
             return
         }
         
-        if let pin = pin {
-            createPinChallenge.respond(withPin: pin)
-        } else {
-            createPinChallenge.cancel()
+        createPinChallenge.respond(withPin: pin)
+    }
+    
+    func denyPin() {
+        pinRegistrationRequest.removeListener(listener: self)
+        guard let createPinChallenge = createPinChallenge else {
+            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .createPinNotInProgress))
+            return
         }
+        
+        createPinChallenge.cancel()
     }
 }
 
 // TODO: remove after implementing new browser connector
 extension NewRegistrationConnector: BrowserHandlerToRegisterHandlerProtocol {
     func handleRedirectURL(url: URL?) {
-        if let url = url {
-            browserRegistrationChallenge?.respond(withUrl: url)
+        guard let browserRegistrationChallenge = browserRegistrationChallenge else {
+            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .browserRegistrationNotInProgress))
+            return
         }
-        else {
-            browserRegistrationChallenge?.cancel()
+        
+        if let url = url {
+            browserRegistrationChallenge.respond(withUrl: url)
+        } else {
+            browserRegistrationChallenge.cancel()
         }
     }
 }

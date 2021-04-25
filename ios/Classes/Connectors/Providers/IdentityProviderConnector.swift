@@ -9,12 +9,17 @@ import Foundation
 import OneginiSDKiOS
 
 protocol IdentityProviderConnectorProtocol: class {
+    func identityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     func getIdentityProviders() -> Array<ONGIdentityProvider>
     func getIdentityProvider(providerId: String?) -> ONGIdentityProvider?
     func setCustomIdentifiers(customIdentifiers: [String])
 }
 
 class IdentityProviderConnector: IdentityProviderConnectorProtocol {
+    func identityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        result(getIdentityProviders())
+    }
+    
     func getIdentityProviders() -> Array<ONGIdentityProvider> {
         
         // TODO: implement wrapper

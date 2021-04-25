@@ -10,18 +10,20 @@ import Foundation
 enum PluginCustomErrorType: Int {
     case pluginInternalError = 8000
 //    case configuration = 8001
-    case invalidArguments = 8001
-    case illegalArgument = 8002
-    case profileNotRegistered = 8003
-    case noUserAuthenticated = 8005
-    case noSuchAuthenticator = 8006
-    case createPinNotInProgress = 8007
-    case providePinNotInProgress = 8008
-    case fingerprintNotInProgress = 8009
-    case invalidMobileAuthenticationMethod = 8010
-    case ioException = 8011
-    case incorrentPin = 8012
-    case httpError = 8013
+    case invalidArguments// = 8001
+    case actionInProgress // = 80??
+    case illegalArgument// = 8002
+    case profileNotRegistered// = 8003
+    case noUserAuthenticated// = 8005
+    case noSuchAuthenticator// = 8006
+    case browserRegistrationNotInProgress// = 80??
+    case createPinNotInProgress// = 8007
+    case providePinNotInProgress// = 8008
+    case biometricNotInProgress// = 8009
+    case invalidMobileAuthenticationMethod// = 8010
+    case ioException// = 8011
+    case incorrentPin// = 8012
+    case httpError// = 8013
     
     // default case
     case newSomethingWentWrong = 400
@@ -49,7 +51,7 @@ enum PluginCustomErrorType: Int {
             message = "Onegini: create pin called, but no registration in progress."
         case .providePinNotInProgress:
             message = "Onegini: provide pin called, but no pin authentication in progress."
-        case .fingerprintNotInProgress:
+        case .biometricNotInProgress:
             message = "Onegini: received reply for fingerprint authentication, but no fingerprint authentication in progress."
         case .invalidMobileAuthenticationMethod:
             message = "Onegini: Invalid mobile authentication method."

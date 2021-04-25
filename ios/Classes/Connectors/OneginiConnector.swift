@@ -14,18 +14,25 @@ protocol OneginiConnectorProtocol {
     // registration
     func registerUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     func cancelRegistration(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
-    func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
+    
+    // authentication
+    func authenticateUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
+    func cancelAuthentication(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     
     // user
-    func userProfiles(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
-    func authenticateUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
+    func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     func logout(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     
-    // authenticator
-    func getIdentityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
+    // providers
+    func identityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
+    func userProfiles(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
+    
+    // authenticators
     func setPreferredAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     func getRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     func getAllNotRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
+    
+    // authenticator registration
     func registerAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     func deregisterAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     
@@ -34,12 +41,14 @@ protocol OneginiConnectorProtocol {
     func denyPinRegistrationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     func acceptPinAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     func denyPinAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
+    
     func changePin(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     func validatePinWithPolicy(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     
     // fingerprint
     func acceptFingerprintAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     func denyFingerprintAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
+    
     func fingerprintFallbackToPin(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     
     // custom
@@ -47,9 +56,10 @@ protocol OneginiConnectorProtocol {
     func customTwoStepRegistrationReturnError(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     
     // otp
-    func handleMobileAuthWithOtp(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     func acceptOtpAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     func denyOtpAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
+    
+    func handleMobileAuthWithOtp(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     
     // resources
     func getResourceAnonymous(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
@@ -66,34 +76,56 @@ class OneginiConnector: NSObject, OneginiConnectorProtocol {
     
     unowned var flutterConnector: FlutterConnectorProtocol
     
-    var startAppConnector: StartAppConnectorProtocol?
+    // providers
     var identityProviderConnector: IdentityProviderConnectorProtocol?
+    var userProfileConnector: UserProfileConnectorProtocol?
+    
+    // requests
+    var browserRequest: BrowserRequestConnectorProtocol?
+    var pinRegistrationRequest: PinRequestConnectorProtocol?
+    var pinAuthenticationRequest: PinRequestConnectorProtocol?
+    var biometricRequest: BiometricRequestConnectorProtocol?
+    
+    // connectors
+    var startAppConnector: StartAppConnectorProtocol?
     
     var registrationConnector: RegistrationConnectorProtocol?
-    var authenticatorConnector: AuthenticatorConnectorProtocol?
-//    var pinConnector: PinConnectorProtocol?
+    var pinValidationConnector: PinValidationConnectorProtocol?
+    
+    var authenticatorsConnector: AuthenticatorsConnectorProtocol?
+    var authenticatorRegistrationConnector: AuthenticatorRegistrationConnectorProtocol?
+    var authenticationConnector: AuthenticationConnectorProtocol?
+    
     var changePinConnector: ChangePinConnectorProtocol?
     
     init(flutterConnector: FlutterConnectorProtocol) {
         self.flutterConnector = flutterConnector
         
-        startAppConnector = StartAppConnector.init(startAppWrapper: StartAppWrapper())
-
         identityProviderConnector = IdentityProviderConnector()
+        userProfileConnector = UserProfileConnector()
         
-        // TODO: remove in near future, need the reference to the current pin handler to don't break wrapper
-        let pinHandler = OneginiModuleSwift.sharedInstance.bridgeConnector.toPinHandlerConnector.pinHandler
-        registrationConnector = NewRegistrationConnector.init(registrationWrapper: RegistrationWrapper(), identityProvider: identityProviderConnector!, pinHandler: pinHandler)
+        
+        browserRequest = BrowserRequestConnector()
+        pinRegistrationRequest = PinRequestConnector()
+        pinAuthenticationRequest = PinRequestConnector()
+        biometricRequest = BiometricRequestConnector()
+        
+        
+        startAppConnector = StartAppConnector.init(startAppWrapper: StartAppWrapper(), userProfileConnector: userProfileConnector!)
+
+        registrationConnector = NewRegistrationConnector.init(registrationWrapper: RegistrationWrapper(), identityProvider: identityProviderConnector!, userProfile: userProfileConnector!, browserRegistrationRequest: browserRequest!, pinRegistrationRequest: pinRegistrationRequest!)
         registrationConnector?.flutterConnector = flutterConnector
 
-        authenticatorConnector = AuthenticatorConnector()
-        authenticatorConnector?.flutterConnector = flutterConnector
+        authenticatorsConnector = AuthenticatorsConnector.init(authenticatorsWrapper: AuthenticatorsWrapper(), userProfileConnector: userProfileConnector!)
         
-//        pinConnector = NewPinConnector.init(pinWrapper: PinWrapper())
-//        pinConnector.flutterConnector = flutterConnector
+        authenticatorRegistrationConnector = AuthenticatorRegistrationConnector.init(registrationWrapper: AuthenticatorRegistrationWrapper(), deregistrationWrapper: AuthenticatorDeregistrationWrapper(), userProfileConnector: userProfileConnector!, authenticatorsConnector: authenticatorsConnector!)
         
-        changePinConnector = ChangePinConnector.init(changePinWrapper: ChangePinWrapper())
+        authenticationConnector = AuthenticationConnector.init(authenticationWrapper: AuthenticationWrapper(), authenticators: authenticatorsConnector!, userProfile: userProfileConnector!, pinAuthenticationRequest: pinAuthenticationRequest!, biometricRequest: biometricRequest!)
+        
+        changePinConnector = ChangePinConnector.init(changePinWrapper: ChangePinWrapper(), identityProvider: identityProviderConnector!, pinAuthenticationRequest: pinAuthenticationRequest!, pinCreationRequest: pinRegistrationRequest!)
         changePinConnector?.flutterConnector = flutterConnector
+        
+        pinValidationConnector = PinValidationConnector()
     }
     
     func startApp(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
@@ -113,75 +145,79 @@ class OneginiConnector: NSObject, OneginiConnectorProtocol {
     }
     
     func userProfiles(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        fatalError("not implemented")
+        userProfileConnector?.userProfiles(call, result)
     }
     
     func authenticateUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        fatalError("not implemented")
+        authenticationConnector?.authenticate(call, result)
+    }
+    
+    func cancelAuthentication(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        authenticationConnector?.cancel(call, result)
     }
     
     func logout(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         fatalError("not implemented")
     }
     
-    func getIdentityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        authenticatorConnector?.getIdentityProviders(call, result)
+    func identityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        identityProviderConnector?.identityProviders(call, result)
     }
     
     func setPreferredAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        authenticatorConnector?.setPreferredAuthenticator(call, result)
+        authenticatorsConnector?.setPreferredAuthenticator(call, result)
     }
     
     func getRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        authenticatorConnector?.getRegisteredAuthenticators(call, result)
+        authenticatorsConnector?.getRegisteredAuthenticators(call, result)
     }
     
     func getAllNotRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        authenticatorConnector?.getAllNotRegisteredAuthenticators(call, result)
+        authenticatorsConnector?.getAllNotRegisteredAuthenticators(call, result)
     }
     
     func registerAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        authenticatorConnector?.registerAuthenticator(call, result)
+        authenticatorRegistrationConnector?.registerAuthenticator(call, result)
     }
     
     func deregisterAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        authenticatorConnector?.deregisterAuthenticator(call, result)
+        authenticatorRegistrationConnector?.deregisterAuthenticator(call, result)
     }
     
     func acceptPinRegistrationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        fatalError("not implemented")
+        pinRegistrationRequest?.acceptPin(call, result)
     }
     
     func denyPinRegistrationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        fatalError("not implemented")
+        pinRegistrationRequest?.denyPin(call, result)
     }
     
     func acceptPinAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        fatalError("not implemented")
+        pinAuthenticationRequest?.acceptPin(call, result)
     }
     
     func denyPinAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        fatalError("not implemented")
+        pinAuthenticationRequest?.denyPin(call, result)
     }
     
     func changePin(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        fatalError("not implemented")
+        changePinConnector?.changePin(call, result)
     }
     
     func validatePinWithPolicy(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        fatalError("not implemented")
+        pinValidationConnector?.validatePinWithPolicy(call, result)
     }
     
     func acceptFingerprintAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        fatalError("not implemented")
+        biometricRequest?.acceptBiometric(call, result)
     }
     
     func denyFingerprintAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        fatalError("not implemented")
+        biometricRequest?.denyBiometric(call, result)
     }
     
     func fingerprintFallbackToPin(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        fatalError("not implemented")
+        biometricRequest?.fallbackToPin(call, result)
     }
     
     func customTwoStepRegistrationReturnSuccess(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
@@ -223,6 +259,4 @@ class OneginiConnector: NSObject, OneginiConnectorProtocol {
     func getAppToWebSingleSignOn(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         fatalError("not implemented")
     }
-    
-    
 }

@@ -1,6 +1,7 @@
 import Foundation
 
 struct Constants {
+    // TODO: change it to enum
     struct Routes {
         
         // onegini methods
@@ -53,48 +54,51 @@ struct Constants {
         static let openUrl: String = "openUrl";
     }
     
-    // TODO: change to enum
-    struct Events {
+    enum Events: String {
         
         // pin
-        static let eventOpenCreatePin: String = "eventOpenPin";
-        static let eventCloseCreatePin: String = "eventClosePin";
-        static let eventOpenAutorizePin: String = "eventOpenPinAuth";
-        static let eventCloseAutorizePin: String = "eventClosePinAuth";
+        case eventOpenCreatePin = "eventOpenPin"
+        case eventCloseCreatePin = "eventClosePin"
+        case eventOpenAutorizePin = "eventOpenPinAuth"
+        case eventCloseAutorizePin = "eventClosePinAuth"
         
         // browser
-        static let eventOpenUrl: String = "eventOpenUrl";
+        case eventOpenUrl = "eventOpenUrl"
         
         // fingerprint
-        static let eventOpenFingerprintAuth: String = "eventOpenFingerprintAuth";
-        static let eventReceivedFingerprintAuth: String = "eventReceivedFingerprintAuth";
-        static let eventShowScanningFingerprintAuth: String = "eventShowScanningFingerprintAuth";
-        static let eventCloseFingerprintAuth: String = "eventCloseFingerprintAuth";
+        case eventOpenFingerprintAuth = "eventOpenFingerprintAuth"
+        case eventReceivedFingerprintAuth = "eventReceivedFingerprintAuth"
+        case eventShowScanningFingerprintAuth = "eventShowScanningFingerprintAuth"
+        case eventCloseFingerprintAuth = "eventCloseFingerprintAuth"
 
         // otp
-        static let eventOpenAuthOTP: String = "eventOpenAuthOtp";
-        static let eventCancelAuthOTP: String = "eventCancelAuthOtp";
-        static let eventCloseAuthOTP: String = "eventCloseAuthOtp";
+        case eventOpenAuthOTP = "eventOpenAuthOtp"
+        case eventCancelAuthOTP = "eventCancelAuthOtp"
+        case eventCloseAuthOTP = "eventCloseAuthOtp"
 
         // custom
-        static let openCustomTwoStepRegistrationScreen: String = "openCustomTwoStepRegistrationScreen";
+        case openCustomTwoStepRegistrationScreen = "openCustomTwoStepRegistrationScreen"
         
-        static let eventNextAuthenticationAttempt: String = "eventNextAuthenticationAttempt";
+        case eventNextAuthenticationAttempt = "eventNextAuthenticationAttempt"
 
         // error
-        static let eventError: String = "eventError";
+        case eventError = "eventError"
     }
     
     struct Parameters {
-        static let identityProviderId: String = "identityProviderId";
-        static let scopes: String = "scopes";
+        static let identityProviderId: String = "identityProviderId"
+        static let scopes: String = "scopes"
         
-        static let pin: String = "pin";
+        static let url: String = "url"
+        static let pin: String = "pin"
+        static let prompt: String = "prompt"
         
-        static let profileId: String = "profileId";
+        static let profileId: String = "profileId"
+        static let authenticatorId: String = "authenticatorId"
+        static let registeredAuthenticatorId: String = "registeredAuthenticatorId"
         
-        static let eventName: String = "eventName";
-        static let eventValue: String = "eventValue";
+        static let eventName: String = "eventName"
+        static let eventValue: String = "eventValue"
 
     }
 }

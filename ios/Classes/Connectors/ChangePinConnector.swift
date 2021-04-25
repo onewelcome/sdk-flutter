@@ -17,6 +17,9 @@ protocol ChangePinConnectorProtocol: FlutterNotificationReceiverProtocol {
 class ChangePinConnector: NSObject, ChangePinConnectorProtocol {
     
     var wrapper: ChangePinWrapperProtocol
+    var identityProviderConnector: IdentityProviderConnectorProtocol
+    var pinAuthenticationRequest: PinRequestConnectorProtocol
+    var pinCreationRequest: PinRequestConnectorProtocol
     
     unowned var flutterConnector: FlutterConnectorProtocol?
     
@@ -25,8 +28,13 @@ class ChangePinConnector: NSObject, ChangePinConnectorProtocol {
     
     var changePinCallback: FlutterResult?
     
-    init(changePinWrapper: ChangePinWrapperProtocol) {
+    var isAutorized: Bool = false
+    
+    init(changePinWrapper: ChangePinWrapperProtocol, identityProvider: IdentityProviderConnectorProtocol, pinAuthenticationRequest: PinRequestConnectorProtocol, pinCreationRequest: PinRequestConnectorProtocol) {
         wrapper = changePinWrapper
+        identityProviderConnector = identityProvider
+        self.pinAuthenticationRequest = pinAuthenticationRequest
+        self.pinCreationRequest = pinCreationRequest
         
         super.init()
         
@@ -37,30 +45,46 @@ class ChangePinConnector: NSObject, ChangePinConnectorProtocol {
     }
     
     func changePin(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        
+        if changePinCallback != nil {
+            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .actionInProgress))
+            return
+        }
         changePinCallback = result
         
+        isAutorized = false
         wrapper.changePin()
     }
     
     func cancel(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        if let challenge = providePinChallenge {
-            challenge.cancel()
-        }
         
-        if let challenge = createPinChallenge {
-            challenge.cancel()
-        }
+        providePinChallenge?.cancel()
+        providePinChallenge = nil
+        pinAuthenticationRequest.removeListener(listener: self)
+        
+        createPinChallenge?.cancel()
+        createPinChallenge = nil
+        pinCreationRequest.removeListener(listener: self)
+        
+        changePinCallback?(nil) // or should it send error?
+        changePinCallback = nil
+        
+        result(nil)
     }
     
     // callbacks
     func onProvidePin(challenge: ProvidePinChallengeProtocol) -> Void {
         providePinChallenge = challenge
         
+        pinAuthenticationRequest.addListener(listener: self)
+        
         flutterConnector?.sendBridgeEvent(eventName: .pinNotification, data: Constants.Events.eventOpenAutorizePin)
     }
     
     func onCreatePin(challenge: CreatePinChallengeProtocol) -> Void {
         createPinChallenge = challenge
+        
+        pinCreationRequest.addListener(listener: self)
         
         flutterConnector?.sendBridgeEvent(eventName: .pinNotification, data: Constants.Events.eventOpenCreatePin)
     }
@@ -82,4 +106,49 @@ class ChangePinConnector: NSObject, ChangePinConnectorProtocol {
         changePinCallback?(SdkError.init(errorDescription: error.localizedDescription, code: error.code).flutterError())
         changePinCallback = nil
     }
+}
+
+extension ChangePinConnector: PinListener {
+    func acceptPin(pin: String) {
+        if !isAutorized {
+            // first need to be authorized
+            pinAuthenticationRequest.removeListener(listener: self)
+            guard let challenge = providePinChallenge else {
+                flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .providePinNotInProgress))
+                return
+            }
+            
+            challenge.respond(withPin: pin)
+        } else {
+            pinCreationRequest.removeListener(listener: self)
+            guard let challenge = providePinChallenge else {
+                flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .createPinNotInProgress))
+                return
+            }
+            
+            challenge.respond(withPin: pin)
+        }
+    }
+    
+    func denyPin() {
+        if !isAutorized {
+            // first need to be authorized
+            pinAuthenticationRequest.removeListener(listener: self)
+            guard let challenge = providePinChallenge else {
+                flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .providePinNotInProgress))
+                return
+            }
+            
+            challenge.cancel()
+        } else {
+            pinCreationRequest.removeListener(listener: self)
+            guard let challenge = providePinChallenge else {
+                flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .createPinNotInProgress))
+                return
+            }
+            
+            challenge.cancel()
+        }
+    }
+    
 }

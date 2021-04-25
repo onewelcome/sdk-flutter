@@ -17,10 +17,14 @@ protocol StartAppConnectorProtocol: FlutterNotificationReceiverProtocol {
 class StartAppConnector: NSObject, StartAppConnectorProtocol {
     
     var wrapper: StartAppWrapperProtocol
+    var userProfileConnector: UserProfileConnectorProtocol
+    
     unowned var flutterConnector: FlutterConnectorProtocol?
     
-    init(startAppWrapper: StartAppWrapperProtocol) {
+    init(startAppWrapper: StartAppWrapperProtocol, userProfileConnector: UserProfileConnectorProtocol) {
         wrapper = startAppWrapper
+        self.userProfileConnector = userProfileConnector
+        
         super.init()
     }
     
@@ -31,9 +35,8 @@ class StartAppConnector: NSObject, StartAppConnectorProtocol {
                 return
             }
             
-            // TODO: gather this through wrapper
-            let profiles = ONGUserClient.sharedInstance().userProfiles()
-            let value: [[String: String?]] = profiles.compactMap({ ["profileId": $0.profileId] })
+            let profiles = self.userProfileConnector.getUserProfiles()
+            let value: [[String: String?]] = profiles.compactMap({ [Constants.Parameters.profileId: $0.profileId] })
 
             let data = String.stringify(json: value)
             
@@ -48,7 +51,12 @@ class StartAppConnector: NSObject, StartAppConnectorProtocol {
                 return
             }
             
-            result(success)
+            let profiles = self.userProfileConnector.getUserProfiles()
+            let value: [[String: String?]] = profiles.compactMap({ [Constants.Parameters.profileId: $0.profileId] })
+
+            let data = String.stringify(json: value)
+            
+            result(data)
         }
     }
     
