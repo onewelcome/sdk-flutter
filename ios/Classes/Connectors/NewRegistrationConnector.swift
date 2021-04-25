@@ -99,7 +99,7 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
         // TODO: uncomment this section when new pin flow will be implemented
         // return url back to flutter
 //        var data: [String: Any] = [:]
-//        data[Constants.Parameters.eventName] = Constants.Events.eventOpenUrl
+//        data[Constants.Parameters.eventName] = Constants.Events.eventOpenUrl.rawValue
 //        data[Constants.Parameters.eventValue] = challenge.getUrl().absoluteString
 //
 //        flutterConnector?.sendBridgeEvent(eventName: .registrationNotification, data: String.stringify(json: data))
@@ -111,7 +111,7 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
         pinRegistrationRequest.addListener(listener: self)
         
         // send event back to flutter to open pin creation
-        flutterConnector?.sendBridgeEvent(eventName: .registrationNotification, data: Constants.Events.eventOpenCreatePin)
+        flutterConnector?.sendBridgeEvent(eventName: .registrationNotification, data: Constants.Events.eventOpenCreatePin.rawValue)
     }
     
     func onRegistrationSuccess(userProfile: ONGUserProfile, info: ONGCustomInfo?) -> Void {

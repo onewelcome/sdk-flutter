@@ -58,20 +58,23 @@ class AuthenticationConnector: NSObject, AuthenticationConnectorProtocol {
         authenticationCallback = result
         
         var userId: String?
-        var registeredAuthenticatorId: String?
+        var authenticatorId: String?
         
         if let arg = call.arguments as! [String: Any]? {
             userId = arg[Constants.Parameters.profileId] as? String
-            registeredAuthenticatorId = arg[Constants.Parameters.registeredAuthenticatorId] as? String
+            authenticatorId = arg[Constants.Parameters.registeredAuthenticatorId] as? String
         }
         
-        let user = userProfileConnector.getUserProfile(profileId: userId)
+        // TODO: user should pass userID to this method.
+//        let user = userProfileConnector.getUserProfile(profileId: userId)
+        // HACK: current workaround is to get first user
+        let user = userProfileConnector.getUserProfiles().first
         guard user != nil else {
-            result(SdkError.init(customType: .noUserAuthenticated))
+            result(SdkError.init(customType: .noUserAuthenticated).flutterError())
             return
         }
         
-        let authenticator = authenticatorsConnector.getAuthenticator(user: user!, authenticatorId: registeredAuthenticatorId)
+        let authenticator = authenticatorsConnector.getAuthenticator(user: user!, authenticatorId: authenticatorId)
         wrapper.authenticateUser(user: user!, authenticator: authenticator)
     }
     
@@ -93,22 +96,25 @@ class AuthenticationConnector: NSObject, AuthenticationConnectorProtocol {
     
     // callbacks
     func onProvidePin(challange: ProvidePinChallengeProtocol) -> Void {
+        
         providePinChallenge = challange
         pinAuthenticationRequest.addListener(listener: self)
         
         // call flutter to open pin
-        flutterConnector?.sendBridgeEvent(eventName: .registrationNotification, data: Constants.Events.eventOpenAutorizePin)
+        flutterConnector?.sendBridgeEvent(eventName: .registrationNotification, data: Constants.Events.eventOpenAutorizePin.rawValue)
     }
     
     func onProvideBiometric(challange: BiometricChallengeProtocol) -> Void {
+        
         biometricChallenge = challange
         biometricRequest.addListener(listener: self)
         
         // call flutter to open biometric
-        flutterConnector?.sendBridgeEvent(eventName: .registrationNotification, data: Constants.Events.eventOpenFingerprintAuth)
+        flutterConnector?.sendBridgeEvent(eventName: .registrationNotification, data: Constants.Events.eventOpenFingerprintAuth.rawValue)
     }
     
     func onAuthorizationSuccess(user: ONGUserProfile, authenticator: ONGAuthenticator, info: ONGCustomInfo?) -> Void {
+        
         providePinChallenge = nil
         biometricChallenge = nil
         
@@ -119,6 +125,7 @@ class AuthenticationConnector: NSObject, AuthenticationConnectorProtocol {
     }
     
     func onAuthorizationFailed(user: ONGUserProfile, authenticator: ONGAuthenticator, error: Error) -> Void {
+        
         providePinChallenge = nil
         biometricChallenge = nil
         

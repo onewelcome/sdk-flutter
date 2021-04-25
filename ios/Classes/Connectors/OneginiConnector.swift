@@ -121,6 +121,7 @@ class OneginiConnector: NSObject, OneginiConnectorProtocol {
         authenticatorRegistrationConnector = AuthenticatorRegistrationConnector.init(registrationWrapper: AuthenticatorRegistrationWrapper(), deregistrationWrapper: AuthenticatorDeregistrationWrapper(), userProfileConnector: userProfileConnector!, authenticatorsConnector: authenticatorsConnector!)
         
         authenticationConnector = AuthenticationConnector.init(authenticationWrapper: AuthenticationWrapper(), authenticators: authenticatorsConnector!, userProfile: userProfileConnector!, pinAuthenticationRequest: pinAuthenticationRequest!, biometricRequest: biometricRequest!)
+        authenticationConnector?.flutterConnector = flutterConnector
         
         changePinConnector = ChangePinConnector.init(changePinWrapper: ChangePinWrapper(), identityProvider: identityProviderConnector!, pinAuthenticationRequest: pinAuthenticationRequest!, pinCreationRequest: pinRegistrationRequest!)
         changePinConnector?.flutterConnector = flutterConnector

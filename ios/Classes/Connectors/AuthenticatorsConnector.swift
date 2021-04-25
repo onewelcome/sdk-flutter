@@ -68,9 +68,9 @@ class AuthenticatorsConnector: NSObject, AuthenticatorsConnectorProtocol {
         }
         
         let registeredAuthenticators = wrapper.getRegisteredAuthenticators(forUser: profile)
-        let authenticators: [[String: String]] = registeredAuthenticators.compactMap({ ["id" : $0.identifier, "name": $0.name] })
+        let jsonData: [[String: String]] = registeredAuthenticators.compactMap({ ["id" : $0.identifier, "name": $0.name] })
 
-        let data = String.stringify(json: authenticators)
+        let data = String.stringify(json: jsonData)
         result(data)
     }
     

@@ -74,24 +74,34 @@ class ChangePinConnector: NSObject, ChangePinConnectorProtocol {
     
     // callbacks
     func onProvidePin(challenge: ProvidePinChallengeProtocol) -> Void {
+        
         providePinChallenge = challenge
         
         pinAuthenticationRequest.addListener(listener: self)
         
-        flutterConnector?.sendBridgeEvent(eventName: .pinNotification, data: Constants.Events.eventOpenAutorizePin)
+        // send event to open pin authentication
+        flutterConnector?.sendBridgeEvent(eventName: .pinNotification, data: Constants.Events.eventOpenAutorizePin.rawValue)
     }
     
     func onCreatePin(challenge: CreatePinChallengeProtocol) -> Void {
+        
+        isAutorized = true
         createPinChallenge = challenge
         
         pinCreationRequest.addListener(listener: self)
         
-        flutterConnector?.sendBridgeEvent(eventName: .pinNotification, data: Constants.Events.eventOpenCreatePin)
+        // send event to close pin authentication and open pin creation
+        flutterConnector?.sendBridgeEvent(eventName: .pinNotification, data: Constants.Events.eventCloseAutorizePin.rawValue)
+        flutterConnector?.sendBridgeEvent(eventName: .pinNotification, data: Constants.Events.eventOpenCreatePin.rawValue)
     }
     
     func onChangePinSuccess(userProfile: ONGUserProfile) -> Void {
+        
         providePinChallenge = nil
         createPinChallenge = nil
+        
+        // send event to close pin creation
+        flutterConnector?.sendBridgeEvent(eventName: .pinNotification, data: Constants.Events.eventCloseCreatePin.rawValue)
         
         // send info back to flutter
         changePinCallback?(true)
@@ -99,6 +109,7 @@ class ChangePinConnector: NSObject, ChangePinConnectorProtocol {
     }
     
     func onChangePinFailed(userProfile: ONGUserProfile, error: Error) -> Void {
+        
         providePinChallenge = nil
         createPinChallenge = nil
         
@@ -121,7 +132,7 @@ extension ChangePinConnector: PinListener {
             challenge.respond(withPin: pin)
         } else {
             pinCreationRequest.removeListener(listener: self)
-            guard let challenge = providePinChallenge else {
+            guard let challenge = createPinChallenge else {
                 flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .createPinNotInProgress))
                 return
             }
@@ -142,7 +153,7 @@ extension ChangePinConnector: PinListener {
             challenge.cancel()
         } else {
             pinCreationRequest.removeListener(listener: self)
-            guard let challenge = providePinChallenge else {
+            guard let challenge = createPinChallenge else {
                 flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .createPinNotInProgress))
                 return
             }

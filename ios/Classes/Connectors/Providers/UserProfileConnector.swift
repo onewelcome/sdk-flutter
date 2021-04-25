@@ -22,7 +22,11 @@ class UserProfileConnector: UserProfileConnectorProtocol {
     var authenticatedUser: ONGUserProfile?
     
     func userProfiles(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        result(getUserProfiles())
+        let profiles = getUserProfiles()
+        let jsonData: [[String: String]] = profiles.compactMap({ ["profileId" : $0.profileId] })
+        
+        let data = String.stringify(json: jsonData)
+        result(data)
     }
     
     func setAuthenticatedUser(authenticatedUser: ONGUserProfile?) {

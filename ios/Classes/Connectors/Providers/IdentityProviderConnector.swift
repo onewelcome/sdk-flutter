@@ -17,7 +17,11 @@ protocol IdentityProviderConnectorProtocol: class {
 
 class IdentityProviderConnector: IdentityProviderConnectorProtocol {
     func identityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        result(getIdentityProviders())
+        let providers = getIdentityProviders()
+        let jsonData: [[String: String]] = providers.compactMap({ ["id" : $0.identifier, "name": $0.name] })
+        
+        let data = String.stringify(json: jsonData)
+        result(data)
     }
     
     func getIdentityProviders() -> Array<ONGIdentityProvider> {

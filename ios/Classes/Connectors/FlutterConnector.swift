@@ -41,6 +41,7 @@ class FlutterConnector: NSObject, FlutterConnectorProtocol, FlutterStreamHandler
     }
     
     func sendBridgeEvent(eventName: OneginiBridgeEvents, data: Any!) -> Void {
+        Logger.log("event name: \(eventName)", sender: self, logType: .log)
         if eventName == OneginiBridgeEvents.otpOpen {
             eventSinkNativePart?(data)
             return;
