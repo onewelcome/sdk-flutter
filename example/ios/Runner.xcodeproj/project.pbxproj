@@ -33,6 +33,10 @@
 		5F2DDAF9263142F400225B47 /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5F2DDAF8263142F400225B47 /* Nimble.framework */; };
 		5F2DDB0A263148D000225B47 /* RegistrationConnectorSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2DDB09263148D000225B47 /* RegistrationConnectorSpecs.swift */; };
 		5F2DDB0F2631678F00225B47 /* TestFlutterListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F2DDB0E2631678F00225B47 /* TestFlutterListener.swift */; };
+		5F31933B2636CD49001782B5 /* TestIdentityProviderConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F31933A2636CD49001782B5 /* TestIdentityProviderConnector.swift */; };
+		5F31934D2636D76D001782B5 /* PinRequestConnectorSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F31934C2636D76D001782B5 /* PinRequestConnectorSpecs.swift */; };
+		5F3193532636DDA4001782B5 /* BrowserRequestConnectorSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F3193522636DDA4001782B5 /* BrowserRequestConnectorSpecs.swift */; };
+		5F3193572636DFDC001782B5 /* BiometricRequestConnectorSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F3193562636DFDC001782B5 /* BiometricRequestConnectorSpecs.swift */; };
 		5F7937E1261621FE001AEE71 /* DisconnectHandler_DisconnectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7937E0261621FE001AEE71 /* DisconnectHandler_DisconnectTests.swift */; };
 		5F7937E7261623EE001AEE71 /* RegistrationHandler_ProcessOTPCodeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7937E6261623EE001AEE71 /* RegistrationHandler_ProcessOTPCodeTests.swift */; };
 		5F7937EB26162405001AEE71 /* RegistrationHandler_ProcessTwoStepRegistrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7937EA26162405001AEE71 /* RegistrationHandler_ProcessTwoStepRegistrationTests.swift */; };
@@ -41,6 +45,10 @@
 		5F7937F726162443001AEE71 /* RegistrationHandler_CurrentChallengeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F7937F626162443001AEE71 /* RegistrationHandler_CurrentChallengeTests.swift */; };
 		5F8E28B42617163B00AC0C81 /* ResourcesHandler_FetchAnonymousResourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8E28B32617163B00AC0C81 /* ResourcesHandler_FetchAnonymousResourceTests.swift */; };
 		5F8E28BA2617176700AC0C81 /* ResourcesHandler_FetchResourceWithImplicitResourceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5F8E28B92617176700AC0C81 /* ResourcesHandler_FetchResourceWithImplicitResourceTests.swift */; };
+		5FC48C772636AC74003927F5 /* TestCreatePinChallange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC48C762636AC74003927F5 /* TestCreatePinChallange.swift */; };
+		5FC48C7D2636ACA9003927F5 /* TestBrowserChallange.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC48C7C2636ACA9003927F5 /* TestBrowserChallange.swift */; };
+		5FC48C822636AD11003927F5 /* TestRegistrationWrapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC48C812636AD11003927F5 /* TestRegistrationWrapper.swift */; };
+		5FC48C972636CBE1003927F5 /* TestUserProfileConnector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC48C962636CBE1003927F5 /* TestUserProfileConnector.swift */; };
 		5FC8D28B261C3A2B001E5CC9 /* AppToWebHandler_SignInAppToWebTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC8D28A261C3A2B001E5CC9 /* AppToWebHandler_SignInAppToWebTests.swift */; };
 		5FC8D292261C3D40001E5CC9 /* BrowserHandler_HandleUrlTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC8D291261C3D40001E5CC9 /* BrowserHandler_HandleUrlTests.swift */; };
 		5FC8D299261C4DC8001E5CC9 /* MobileAuthHandler_EnrollForMobileAuthTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FC8D298261C4DC8001E5CC9 /* MobileAuthHandler_EnrollForMobileAuthTests.swift */; };
@@ -140,6 +148,10 @@
 		5F2DDAF8263142F400225B47 /* Nimble.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Nimble.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5F2DDB09263148D000225B47 /* RegistrationConnectorSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationConnectorSpecs.swift; sourceTree = "<group>"; };
 		5F2DDB0E2631678F00225B47 /* TestFlutterListener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFlutterListener.swift; sourceTree = "<group>"; };
+		5F31933A2636CD49001782B5 /* TestIdentityProviderConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestIdentityProviderConnector.swift; sourceTree = "<group>"; };
+		5F31934C2636D76D001782B5 /* PinRequestConnectorSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinRequestConnectorSpecs.swift; sourceTree = "<group>"; };
+		5F3193522636DDA4001782B5 /* BrowserRequestConnectorSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserRequestConnectorSpecs.swift; sourceTree = "<group>"; };
+		5F3193562636DFDC001782B5 /* BiometricRequestConnectorSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BiometricRequestConnectorSpecs.swift; sourceTree = "<group>"; };
 		5F7937E0261621FE001AEE71 /* DisconnectHandler_DisconnectTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DisconnectHandler_DisconnectTests.swift; sourceTree = "<group>"; };
 		5F7937E6261623EE001AEE71 /* RegistrationHandler_ProcessOTPCodeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationHandler_ProcessOTPCodeTests.swift; sourceTree = "<group>"; };
 		5F7937EA26162405001AEE71 /* RegistrationHandler_ProcessTwoStepRegistrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationHandler_ProcessTwoStepRegistrationTests.swift; sourceTree = "<group>"; };
@@ -148,6 +160,10 @@
 		5F7937F626162443001AEE71 /* RegistrationHandler_CurrentChallengeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationHandler_CurrentChallengeTests.swift; sourceTree = "<group>"; };
 		5F8E28B32617163B00AC0C81 /* ResourcesHandler_FetchAnonymousResourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourcesHandler_FetchAnonymousResourceTests.swift; sourceTree = "<group>"; };
 		5F8E28B92617176700AC0C81 /* ResourcesHandler_FetchResourceWithImplicitResourceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResourcesHandler_FetchResourceWithImplicitResourceTests.swift; sourceTree = "<group>"; };
+		5FC48C762636AC74003927F5 /* TestCreatePinChallange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestCreatePinChallange.swift; sourceTree = "<group>"; };
+		5FC48C7C2636ACA9003927F5 /* TestBrowserChallange.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestBrowserChallange.swift; sourceTree = "<group>"; };
+		5FC48C812636AD11003927F5 /* TestRegistrationWrapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestRegistrationWrapper.swift; sourceTree = "<group>"; };
+		5FC48C962636CBE1003927F5 /* TestUserProfileConnector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestUserProfileConnector.swift; sourceTree = "<group>"; };
 		5FC8D28A261C3A2B001E5CC9 /* AppToWebHandler_SignInAppToWebTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppToWebHandler_SignInAppToWebTests.swift; sourceTree = "<group>"; };
 		5FC8D291261C3D40001E5CC9 /* BrowserHandler_HandleUrlTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrowserHandler_HandleUrlTests.swift; sourceTree = "<group>"; };
 		5FC8D298261C4DC8001E5CC9 /* MobileAuthHandler_EnrollForMobileAuthTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MobileAuthHandler_EnrollForMobileAuthTests.swift; sourceTree = "<group>"; };
@@ -296,6 +312,7 @@
 		5F2DDAEF2631417700225B47 /* Connectors */ = {
 			isa = PBXGroup;
 			children = (
+				5F31934B2636D75D001782B5 /* Requests */,
 				5F2DDB09263148D000225B47 /* RegistrationConnectorSpecs.swift */,
 			);
 			path = Connectors;
@@ -304,9 +321,22 @@
 		5F2DDB0D2631657100225B47 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				5FC48C9A2636CBE9003927F5 /* Providers */,
+				5FC48C802636AD06003927F5 /* Wrappers */,
+				5FC48C752636AC30003927F5 /* Challenges */,
 				5F2DDB0E2631678F00225B47 /* TestFlutterListener.swift */,
 			);
 			path = Helpers;
+			sourceTree = "<group>";
+		};
+		5F31934B2636D75D001782B5 /* Requests */ = {
+			isa = PBXGroup;
+			children = (
+				5F31934C2636D76D001782B5 /* PinRequestConnectorSpecs.swift */,
+				5F3193522636DDA4001782B5 /* BrowserRequestConnectorSpecs.swift */,
+				5F3193562636DFDC001782B5 /* BiometricRequestConnectorSpecs.swift */,
+			);
+			path = Requests;
 			sourceTree = "<group>";
 		};
 		5F7937DF261621DF001AEE71 /* DisconnectHandler */ = {
@@ -331,6 +361,32 @@
 				58F1B98F225DA60BB434B4BA /* Pods-Runner-OneginiUITests.profile.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		5FC48C752636AC30003927F5 /* Challenges */ = {
+			isa = PBXGroup;
+			children = (
+				5FC48C762636AC74003927F5 /* TestCreatePinChallange.swift */,
+				5FC48C7C2636ACA9003927F5 /* TestBrowserChallange.swift */,
+			);
+			path = Challenges;
+			sourceTree = "<group>";
+		};
+		5FC48C802636AD06003927F5 /* Wrappers */ = {
+			isa = PBXGroup;
+			children = (
+				5FC48C812636AD11003927F5 /* TestRegistrationWrapper.swift */,
+			);
+			path = Wrappers;
+			sourceTree = "<group>";
+		};
+		5FC48C9A2636CBE9003927F5 /* Providers */ = {
+			isa = PBXGroup;
+			children = (
+				5FC48C962636CBE1003927F5 /* TestUserProfileConnector.swift */,
+				5F31933A2636CD49001782B5 /* TestIdentityProviderConnector.swift */,
+			);
+			path = Providers;
 			sourceTree = "<group>";
 		};
 		5FC8D289261C3A0E001E5CC9 /* AppToWebHandler */ = {
@@ -783,6 +839,7 @@
 			files = (
 				5FFE1DC22611C50F003EF280 /* PinHandler_PinProvidedTests.swift in Sources */,
 				229F409226145C23000EA9B8 /* LogoutHandler_LogoutTests.swift in Sources */,
+				5F31933B2636CD49001782B5 /* TestIdentityProviderConnector.swift in Sources */,
 				5FFE1DDA2612601D003EF280 /* PinHandler_ChangePinCallTests.swift in Sources */,
 				5F7937F726162443001AEE71 /* RegistrationHandler_CurrentChallengeTests.swift in Sources */,
 				229F40E626172814000EA9B8 /* AuthenticatorsHandler_RegisterAuthenticatorTests.swift in Sources */,
@@ -799,15 +856,19 @@
 				5FFE1DD726125E32003EF280 /* PinHandler_CloseFlowTests.swift in Sources */,
 				5FC8D2A7261C4E33001E5CC9 /* MobileAuthHandler_HandleOTPMobileAuthTests.swift in Sources */,
 				5FFE1DCD2611EE8F003EF280 /* PinHandler_HandleFlowUpdateTests.swift in Sources */,
+				5FC48C822636AD11003927F5 /* TestRegistrationWrapper.swift in Sources */,
 				5FFE1DE4261274EC003EF280 /* RegistrationHandler_SignUpTests.swift in Sources */,
 				5F8E28B42617163B00AC0C81 /* ResourcesHandler_FetchAnonymousResourceTests.swift in Sources */,
+				5F31934D2636D76D001782B5 /* PinRequestConnectorSpecs.swift in Sources */,
 				2235384C261D7293009AE465 /* AuthenticatorsHandler_SetPrefferedAuthenticatorTests.swift in Sources */,
 				5F176CBF2615C499003E4B74 /* RegistrationHandler_CancelRegistrationTests.swift in Sources */,
 				5F7937F32616242F001AEE71 /* RegistrationHandler_CancelCustomRegistrationTests.swift in Sources */,
 				5F7937EB26162405001AEE71 /* RegistrationHandler_ProcessTwoStepRegistrationTests.swift in Sources */,
+				5FC48C772636AC74003927F5 /* TestCreatePinChallange.swift in Sources */,
 				5F2DDB0F2631678F00225B47 /* TestFlutterListener.swift in Sources */,
 				5F8E28BA2617176700AC0C81 /* ResourcesHandler_FetchResourceWithImplicitResourceTests.swift in Sources */,
 				2235383C261D711F009AE465 /* AuthenticatorsHandler_IsAuthenticatorRegisteredTests.swift in Sources */,
+				5F3193572636DFDC001782B5 /* BiometricRequestConnectorSpecs.swift in Sources */,
 				5F7937EF26162418001AEE71 /* RegistrationHandler_CancelTwoStepRegistrationTests.swift in Sources */,
 				5F07F1B8260DFCFC0073BA5E /* OneginiTests.swift in Sources */,
 				5F176CCC2615C4E8003E4B74 /* RegistrationHandler_DeregisterTests.swift in Sources */,
@@ -815,11 +876,14 @@
 				22353846261D7234009AE465 /* AuthenticatorsHandler_DeregisterAuthenticatorTests.swift in Sources */,
 				5F7937E1261621FE001AEE71 /* DisconnectHandler_DisconnectTests.swift in Sources */,
 				5F2DDB0A263148D000225B47 /* RegistrationConnectorSpecs.swift in Sources */,
+				5FC48C972636CBE1003927F5 /* TestUserProfileConnector.swift in Sources */,
 				5FC8D2AB261C4E45001E5CC9 /* MobileAuthHandler_HandleQrOTPMobileAuthTests.swift in Sources */,
 				5FC8D292261C3D40001E5CC9 /* BrowserHandler_HandleUrlTests.swift in Sources */,
 				229F407126134528000EA9B8 /* ResourcesHandler_FetchSimpleResourcesTests.swift in Sources */,
 				5FC8D2A3261C4E14001E5CC9 /* MobileAuthHandler_HandleMobileAuthConfirmationTests.swift in Sources */,
+				5FC48C7D2636ACA9003927F5 /* TestBrowserChallange.swift in Sources */,
 				5FC8D299261C4DC8001E5CC9 /* MobileAuthHandler_EnrollForMobileAuthTests.swift in Sources */,
+				5F3193532636DDA4001782B5 /* BrowserRequestConnectorSpecs.swift in Sources */,
 				229F405F26131933000EA9B8 /* ResourcesHandler_AuthenticateImplicitlyTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

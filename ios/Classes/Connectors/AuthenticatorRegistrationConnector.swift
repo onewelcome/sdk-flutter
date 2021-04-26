@@ -61,7 +61,7 @@ class AuthenticatorRegistrationConnector: NSObject, AuthenticatorRegistrationCon
         }
         
         guard let user = userProfileConnector.getAuthenticatedUser() else {
-            result(SdkError(customType: .noUserAuthenticated))
+            result(SdkError(customType: .noUserAuthenticated).flutterError())
             return
         }
         

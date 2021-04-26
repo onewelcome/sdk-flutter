@@ -53,7 +53,7 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
     func register(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         
         if registrationCallback != nil {
-            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .actionInProgress))
+            result(SdkError.init(customType: .actionInProgress).flutterError())
             return
         }
         registrationCallback = result
@@ -92,17 +92,16 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
         
         browserRegistrationRequest.addListener(listener: self)
         
+        // return url back to flutter
+        var data: [String: String] = [:]
+        data[Constants.Parameters.eventName] = Constants.Events.eventOpenUrl.rawValue
+        data[Constants.Parameters.eventValue] = challenge.getUrl().absoluteString
+
+        flutterConnector?.sendBridgeEvent(eventName: .registrationNotification, data: String.stringify(json: data))
+        
         // TODO: remove this after finishing with new browser connector
         let browser = BrowserViewController(registerHandlerProtocol: self)
         browser.handleUrl(url: challenge.getUrl())
-        
-        // TODO: uncomment this section when new pin flow will be implemented
-        // return url back to flutter
-//        var data: [String: Any] = [:]
-//        data[Constants.Parameters.eventName] = Constants.Events.eventOpenUrl.rawValue
-//        data[Constants.Parameters.eventValue] = challenge.getUrl().absoluteString
-//
-//        flutterConnector?.sendBridgeEvent(eventName: .registrationNotification, data: String.stringify(json: data))
     }
     
     func onCreatePin(challenge: CreatePinChallengeProtocol) -> Void {

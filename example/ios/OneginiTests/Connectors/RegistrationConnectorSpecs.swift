@@ -15,31 +15,73 @@ class RegistrationConnectorSpecs: QuickSpec {
     override func spec() {
         
         var connector: NewRegistrationConnector?
-        var pinHandler: TestPinHandler?
-        
         let flutterConnector = TestFlutterListener()
+        let browserConnector = BrowserRequestConnector()
+        let pinConnector = PinRequestConnector()
         
         describe("registration connector") {
-            describe("start registration") {
-                
-                afterEach {
-                    let method = FlutterMethodCall()
-                    let result: FlutterResult = { val in
+            
+            afterEach {
+                let method = FlutterMethodCall()
+                let result: FlutterResult = { val in
+                    
+                }
+                connector?.cancel(method, result)
+                connector = nil
+            }
+            
+            beforeEach {
+                connector = NewRegistrationConnector.init(registrationWrapper: TestRegistrationWrapper(), identityProvider: TestIdentityProviderConnector(), userProfile: TestUserProfileConnector(), browserRegistrationRequest: browserConnector, pinRegistrationRequest: pinConnector)
+                connector?.flutterConnector = flutterConnector
+            }
+            
+            describe("handling url") {
+            
+                it("expect open url event") {
+                    
+                    waitUntil { done in
+                        
+                        flutterConnector.receiveEvent = {
+                            eventName, eventData in
+                            
+                            expect(eventName).to(equal(.registrationNotification))
+                            
+                            let data = eventData as! String
+                            do {
+                                
+                                let json = try JSONDecoder().decode(Dictionary<String,String>.self, from: data.data(using: .utf8)!)
+                                let name = json[Constants.Parameters.eventName]
+                                let value = json[Constants.Parameters.eventValue]
+                                
+                                expect(name).to(equal(Constants.Events.eventOpenUrl.rawValue))
+                                expect(value).toNot(beNil())
+                                
+                                let url = URL.init(string: value!)
+                                expect(url).toNot(beNil())
+                                
+                            } catch {
+                                print(error)
+                                expect(false).to(beTrue())
+                            }
+
+                            done()
+                        }
+                        
+                        let method = FlutterMethodCall(
+                            methodName: Constants.Routes.registerUser,
+                            arguments: [Constants.Parameters.identityProviderId: nil,
+                                        Constants.Parameters.scopes: ["read"]])
+                        let result: FlutterResult = { val in /* don't need result in this case */}
+                        
+                        connector?.register(method, result)
                         
                     }
-                    connector?.cancel(method, result)
-                    connector = nil
                 }
                 
-                beforeEach {
-                    let wrapper = TestRegistrationWrapper()
-                    pinHandler = TestPinHandler()
-                    pinHandler?.flutterConnector = flutterConnector
-                    
-                    connector = NewRegistrationConnector.init(registrationWrapper: wrapper, identityProvider: IdentityProviderConnector(), pinHandler: pinHandler!)
-                    connector?.flutterConnector = flutterConnector
-                }
-                
+            }
+            
+            describe("handling pin") {
+            
                 it("expect create pin event") {
                     
                     waitUntil { done in
@@ -47,9 +89,38 @@ class RegistrationConnectorSpecs: QuickSpec {
                         flutterConnector.receiveEvent = {
                             eventName, eventData in
                             
+                            expect(eventName).to(equal(.registrationNotification))
                             let data = eventData as! String
-                            expect(eventName).to(equal(.pinNotification))
-                            expect(data).to(equal(Constants.Events.eventOpenCreatePin))
+                            
+                            if data != Constants.Events.eventOpenCreatePin.rawValue {
+                                do {
+                                    
+                                    let json = try JSONDecoder().decode(Dictionary<String,String>.self, from: data.data(using: .utf8)!)
+                                    let name = json[Constants.Parameters.eventName]
+                                    let value = json[Constants.Parameters.eventValue]
+                                    
+                                    expect(name).to(equal(Constants.Events.eventOpenUrl.rawValue))
+                                    expect(value).toNot(beNil())
+                                    
+                                    let url = URL.init(string: value!)
+                                    expect(url).toNot(beNil())
+                                    
+                                    let method = FlutterMethodCall(
+                                        methodName: Constants.Routes.openUrl,
+                                        arguments: [Constants.Parameters.url: "http://test.com"])
+                                    let result: FlutterResult = { val in /* don't need result in this case */}
+                                    
+                                    browserConnector.acceptUrl(method, result)
+                                    
+                                } catch {
+                                    print(error)
+                                    expect(false).to(beTrue())
+                                }
+                                
+                                return
+                            }
+                            
+                            expect(data).to(equal(Constants.Events.eventOpenCreatePin.rawValue))
                             
                             done()
                         }
@@ -64,108 +135,218 @@ class RegistrationConnectorSpecs: QuickSpec {
                         
                     }
                 }
+                
+            }
+            
+            describe("handling registration") {
+                
+                it("expect registration completion") {
+                    
+                    waitUntil { done in
+                        
+                        flutterConnector.receiveEvent = {
+                            eventName, eventData in
+                            
+                            expect(eventName).to(equal(.registrationNotification))
+                            let data = eventData as! String
+                            
+                            if data != Constants.Events.eventOpenCreatePin.rawValue {
+                                do {
+                                    
+                                    let json = try JSONDecoder().decode(Dictionary<String,String>.self, from: data.data(using: .utf8)!)
+                                    let name = json[Constants.Parameters.eventName]
+                                    let value = json[Constants.Parameters.eventValue]
+                                    
+                                    expect(name).to(equal(Constants.Events.eventOpenUrl.rawValue))
+                                    expect(value).toNot(beNil())
+                                    
+                                    let url = URL.init(string: value!)
+                                    expect(url).toNot(beNil())
+                                    
+                                    let method = FlutterMethodCall(
+                                        methodName: Constants.Routes.openUrl,
+                                        arguments: [Constants.Parameters.url: "http://test.com"])
+                                    let result: FlutterResult = { val in /* don't need result in this case */}
+                                    
+                                    browserConnector.acceptUrl(method, result)
+                                    
+                                } catch {
+                                    // fail test
+                                    expect(false).to(beTrue())
+                                }
+                                
+                                return
+                            }
+                            
+                            if data == Constants.Events.eventOpenCreatePin.rawValue {
+                                
+                                let method = FlutterMethodCall(
+                                    methodName: Constants.Routes.acceptPinRegistrationRequest,
+                                    arguments: [Constants.Parameters.pin: "12345"])
+                                let result: FlutterResult = { val in /* don't need result in this case */}
+                                
+                                pinConnector.acceptPin(method, result)
+                                
+                                return
+                            }
+                            
+                        }
+                        
+                        let method = FlutterMethodCall(
+                            methodName: Constants.Routes.registerUser,
+                            arguments: [Constants.Parameters.identityProviderId: nil,
+                                        Constants.Parameters.scopes: ["read"]])
+                        let result: FlutterResult = { val in
+                            
+                            let userId = val as! String
+                            
+                            expect(userId).toNot(beNil())
+                            
+                            done()
+                        }
+                        
+                        connector?.register(method, result)
+                        
+                    }
+                }
+                
+                
+                describe("handling cancelations") {
+                
+                    it("expect registration cancelation") {
+                        
+                        waitUntil { done in
+                            
+                            let method = FlutterMethodCall(
+                                methodName: Constants.Routes.cancelRegistration,
+                                arguments: [])
+                            let result: FlutterResult = { val in
+                                
+                                done()
+                            }
+                            
+                            connector?.cancel(method, result)
+                        }
+                    }
+                    
+                    it("cancel on open url event") {
+                        
+                        waitUntil { done in
+                            
+                            flutterConnector.receiveEvent = {
+                                eventName, eventData in
+                                
+                                expect(eventName).to(equal(.registrationNotification))
+                                
+                                let data = eventData as! String
+                                do {
+                                    
+                                    let json = try JSONDecoder().decode(Dictionary<String,String>.self, from: data.data(using: .utf8)!)
+                                    let name = json[Constants.Parameters.eventName]
+                                    let value = json[Constants.Parameters.eventValue]
+                                    
+                                    expect(name).to(equal(Constants.Events.eventOpenUrl.rawValue))
+                                    expect(value).toNot(beNil())
+                                    
+                                    let url = URL.init(string: value!)
+                                    expect(url).toNot(beNil())
+                                    
+                                    let method = FlutterMethodCall(
+                                        methodName: Constants.Routes.cancelRegistration,
+                                        arguments: [])
+                                    let result: FlutterResult = { val in /* don't need result in this case */ }
+                                    
+                                    connector?.cancel(method, result)
+                                    
+                                } catch {
+                                    print(error)
+                                    expect(false).to(beTrue())
+                                }
+
+                            }
+                            
+                            let method = FlutterMethodCall(
+                                methodName: Constants.Routes.registerUser,
+                                arguments: [Constants.Parameters.identityProviderId: nil,
+                                            Constants.Parameters.scopes: ["read"]])
+                            let result: FlutterResult = { val in
+                                
+                                print("result for registration: \(String.init(describing: val))")
+                                done()
+                            }
+                            
+                            connector?.register(method, result)
+                            
+                        }
+                    }
+                        
+                        
+                    it("cancel on create pin event") {
+                        
+                        waitUntil { done in
+                            
+                            flutterConnector.receiveEvent = {
+                                eventName, eventData in
+                                
+                                expect(eventName).to(equal(.registrationNotification))
+                                let data = eventData as! String
+                                
+                                if data != Constants.Events.eventOpenCreatePin.rawValue {
+                                    do {
+                                        
+                                        let json = try JSONDecoder().decode(Dictionary<String,String>.self, from: data.data(using: .utf8)!)
+                                        let name = json[Constants.Parameters.eventName]
+                                        let value = json[Constants.Parameters.eventValue]
+                                        
+                                        expect(name).to(equal(Constants.Events.eventOpenUrl.rawValue))
+                                        expect(value).toNot(beNil())
+                                        
+                                        let url = URL.init(string: value!)
+                                        expect(url).toNot(beNil())
+                                        
+                                        let method = FlutterMethodCall(
+                                            methodName: Constants.Routes.openUrl,
+                                            arguments: [Constants.Parameters.url: "http://test.com"])
+                                        let result: FlutterResult = { val in /* don't need result in this case */}
+                                        
+                                        browserConnector.acceptUrl(method, result)
+                                        
+                                    } catch {
+                                        print(error)
+                                        expect(false).to(beTrue())
+                                    }
+                                    
+                                    return
+                                }
+                                
+                                expect(data).to(equal(Constants.Events.eventOpenCreatePin.rawValue))
+                                
+                                
+                                let method = FlutterMethodCall(
+                                    methodName: Constants.Routes.cancelRegistration,
+                                    arguments: [])
+                                let result: FlutterResult = { val in /* don't need result in this case */}
+                                
+                                connector?.cancel(method, result)
+                                
+                            }
+                            
+                            let method = FlutterMethodCall(
+                                methodName: Constants.Routes.registerUser,
+                                arguments: [Constants.Parameters.identityProviderId: nil,
+                                            Constants.Parameters.scopes: ["read"]])
+                            let result: FlutterResult = { val in
+                                
+                                print("result for registration: \(String.init(describing: val))")
+                                done()
+                            }
+                            
+                            connector?.register(method, result)
+                            
+                        }
+                    }
+                }
             }
         }
-    }
-}
-
-class TestRegistrationWrapper: NSObject, RegistrationWrapperProtocol {
-    func register(identityProvider: ONGIdentityProvider?, scopes: Array<String>?) {
-        if let identityProvider = identityProvider {
-            // browser / TODO: fingerprint
-            browserRegistration?(TestRegistrationBrowserChallange(receiver: self))
-        } else {
-            // pin
-            createPin?(TestRegistrationCreatePinChallange(receiver: self))
-        }
-    }
-    
-    var createPin: ((CreatePinChallengeProtocol) -> Void)?
-    
-    var browserRegistration: ((BrowserRegistrationChallengeProtocol) -> Void)?
-    
-    var registrationSuccess: ((ONGUserProfile, ONGCustomInfo?) -> Void)?
-    
-    var registrationFailed: ((Error) -> Void)?
-}
-
-class TestRegistrationCreatePinChallange: CreatePinChallengeProtocol {
-    
-    var receiver: RegistrationWrapperProtocol
-    
-    init(receiver: RegistrationWrapperProtocol) {
-        self.receiver = receiver
-    }
-    
-    func respond(withPin: String) {
-        let userProfile = ONGUserProfile(id: "someId")!
-        receiver.registrationSuccess?(userProfile, nil)
-    }
-    
-    func cancel() {
-        let error = NSError(domain: "", code: -1, userInfo: [:])
-        receiver.registrationFailed?(error)
-    }
-}
-
-class TestRegistrationBrowserChallange: BrowserRegistrationChallengeProtocol {
-    
-    var receiver: RegistrationWrapperProtocol
-    
-    init(receiver: RegistrationWrapperProtocol) {
-        self.receiver = receiver
-    }
-    
-    func respond(withUrl: URL) {
-        let userProfile = ONGUserProfile(id: "someId")!
-        receiver.registrationSuccess?(userProfile, nil)
-    }
-    
-    func getUrl() -> URL {
-        return URL.init(string: "https://test.onegini.com")!
-    }
-    
-    func cancel() {
-        let error = NSError()
-        receiver.registrationFailed?(error)
-    }
-}
-
-class TestPinHandler: PinConnectorToPinHandler {
-    
-    var flutterConnector: TestFlutterListener?
-    
-    var flow : PinFlow?
-    var pinReceiver: PinHandlerToReceiverProtocol?
-    
-    func onPinProvided(pin: String) {
-        pinReceiver?.handlePin(pin: pin)
-    }
-    
-    func onChangePinCalled(completion: @escaping (Bool, SdkError?) -> Void) {
-        // not needed here
-    }
-    
-    func onCancel() {
-        pinReceiver?.handlePin(pin: nil)
-    }
-    
-    func handleFlowUpdate(_ flow: PinFlow, _ error: SdkError?, receiver: PinHandlerToReceiverProtocol) {
-        self.flow = flow
-        pinReceiver = receiver
-        
-        if flow == .create {
-            flutterConnector?.sendBridgeEvent(eventName: .pinNotification, data: Constants.Events.eventOpenCreatePin)
-        } else {
-            flutterConnector?.sendBridgeEvent(eventName: .pinNotification, data: Constants.Events.eventOpenAutorizePin)
-        }
-    }
-    
-    func closeFlow() {
-        // not needed here
-    }
-    
-    func validatePinWithPolicy(pin: String, completion: @escaping (Bool, SdkError?) -> Void) {
-        // not needed here
     }
 }
