@@ -55,7 +55,8 @@ class RegistrationUseCaseTests {
             it.getArgument<OneginiRegistrationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0, ""))
         }
         RegistrationUseCase(clientMock)(callMock, resultSpy)
-        verify(resultSpy).success(Gson().toJson(mapOf("userProfile" to UserProfile("QWERTY"), "customInfo" to CustomInfo(0, ""))))
+        val expectedResult = Gson().toJson(mapOf("userProfile" to UserProfile("QWERTY"), "customInfo" to CustomInfo(0, "")))
+        verify(resultSpy).success(expectedResult)
     }
 
     @Test
@@ -108,7 +109,8 @@ class RegistrationUseCaseTests {
         }
 
         RegistrationUseCase(clientMock)(callMock, resultSpy)
-        verify(resultSpy).success(Gson().toJson(mapOf("userProfile" to UserProfile("QWERTY"), "customInfo" to CustomInfo(0, ""))))
+        val expectedResult = Gson().toJson(mapOf("userProfile" to UserProfile("QWERTY"), "customInfo" to CustomInfo(0, "")))
+        verify(resultSpy).success(expectedResult)
     }
 
     @Test

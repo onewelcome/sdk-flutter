@@ -30,7 +30,8 @@ class RegistrationUseCase(private var oneginiClient: OneginiClient) {
     private fun register(identityProvider: OneginiIdentityProvider?, scopes: Array<String>, result: MethodChannel.Result) {
         oneginiClient.userClient.registerUser(identityProvider, scopes, object : OneginiRegistrationHandler {
             override fun onSuccess(userProfile: UserProfile, customInfo: CustomInfo?) {
-                result.success(Gson().toJson(mapOf("userProfile" to userProfile, "customInfo" to customInfo)))
+                val returnedResult = Gson().toJson(mapOf("userProfile" to userProfile, "customInfo" to customInfo))
+                result.success(returnedResult)
             }
 
             override fun onError(oneginiRegistrationError: OneginiRegistrationError) {
