@@ -1,5 +1,7 @@
 package com.onegini.mobile.sdk
 
+import com.google.common.truth.Truth.assertThat
+import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiRegistrationHandler
@@ -7,7 +9,6 @@ import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.useCases.RegistrationUseCase
-import com.onegini.mobile.sdk.utils.OnegeniProviderTest
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.junit.Before
@@ -18,75 +19,124 @@ import org.mockito.Mock
 import org.mockito.Mockito.verify
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.argThat
-import org.mockito.kotlin.times
-import org.mockito.kotlin.whenever
+import org.mockito.kotlin.*
 
 
 @RunWith(MockitoJUnitRunner::class)
 class RegistrationUseCaseTests {
 
     @Mock
-    lateinit var client: OneginiClient
+    lateinit var clientMock: OneginiClient
 
     @Mock
-    lateinit var userClient: UserClient
+    lateinit var userClientMock: UserClient
 
     @Spy
-    lateinit var mockResult: MethodChannel.Result
+    lateinit var resultSpy: MethodChannel.Result
 
     @Mock
-    lateinit var call : MethodCall
+    lateinit var callMock: MethodCall
+
+    @Mock
+    lateinit var oneginiIdentityProviderMock: OneginiIdentityProvider
 
     @Before
     fun attach() {
-        whenever(client.userClient).thenReturn(userClient)
+        whenever(clientMock.userClient).thenReturn(userClientMock)
     }
 
     @Test
-    fun `Registration going by web and is successfully without identity provider`(){
-        whenever(call.argument<String>("identityProviderId")).thenReturn(null)
-        whenever(call.argument<String>("scopes")).thenReturn("read")
-        whenever(userClient.registerUser(any(), any(), any())).thenAnswer{
+    fun `should call result success with identity provider id as a param when given identity provider id is null`() {
+        whenever(callMock.argument<String>("identityProviderId")).thenReturn(null)
+
+        whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
+
+        whenever(userClientMock.registerUser(isNull(), eq(arrayOf("read")), any())).thenAnswer {
             it.getArgument<OneginiRegistrationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0, ""))
         }
-        RegistrationUseCase(client)(call, mockResult)
-        verify(mockResult).success("QWERTY")
+        RegistrationUseCase(clientMock)(callMock, resultSpy)
+        verify(resultSpy).success(Gson().toJson(mapOf("userProfile" to UserProfile("QWERTY"), "customInfo" to CustomInfo(0, ""))))
     }
 
     @Test
-    fun `Registration going with right identity provider`(){
-        val set = mutableSetOf<OneginiIdentityProvider>()
-        set.add(OnegeniProviderTest())
-        whenever(call.argument<String>("identityProviderId")).thenReturn("test provider id")
-        whenever(call.argument<String>("scopes")).thenReturn("read")
-        whenever(userClient.identityProviders).thenReturn(set)
-        RegistrationUseCase(client)(call, mockResult)
-        verify(client.userClient).registerUser(argThat { x -> x.id == OnegeniProviderTest().id }, any(), any())
+    fun `should match the IDs with the identity provider id as a parameter when the given ID is found in the SDK identity providers`() {
+        val setOfIdentityProviders = setOf(oneginiIdentityProviderMock)
+        whenever(oneginiIdentityProviderMock.id).thenReturn("testId")
+
+        whenever(callMock.argument<String>("identityProviderId")).thenReturn("testId")
+
+        whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
+
+        whenever(userClientMock.identityProviders).thenReturn(setOfIdentityProviders)
+        RegistrationUseCase(clientMock)(callMock, resultSpy)
+        argumentCaptor<OneginiIdentityProvider> {
+            verify(clientMock.userClient).registerUser(capture(), eq(arrayOf("read")), any())
+            assertThat(firstValue.id).isEqualTo("testId")
+        }
     }
 
+    @Test
+    fun `should the identity provider be null when the given ID is not found in the SDK identity providers`() {
+        val setOfIdentityProviders = setOf(oneginiIdentityProviderMock)
+        whenever(oneginiIdentityProviderMock.id).thenReturn("test")
 
+        whenever(callMock.argument<String>("identityProviderId")).thenReturn("testId")
+
+        whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
+
+        whenever(userClientMock.identityProviders).thenReturn(setOfIdentityProviders)
+        RegistrationUseCase(clientMock)(callMock, resultSpy)
+        argumentCaptor<OneginiIdentityProvider> {
+            verify(clientMock.userClient).registerUser(capture(), eq(arrayOf("read")), any())
+            assertThat(firstValue).isEqualTo(null)
+        }
+    }
 
     @Test
-    fun `Registration going with found identity provider and successfully`(){
-        val set = mutableSetOf<OneginiIdentityProvider>()
-        set.add(OnegeniProviderTest())
-        whenever(call.argument<String>("identityProviderId")).thenReturn("test provider id")
-        whenever(call.argument<String>("scopes")).thenReturn("read")
-        whenever(userClient.identityProviders).thenReturn(set)
-        whenever(userClient.registerUser(any(), any(), any())).thenAnswer{
+    fun `should call result success with identity provider id as a param when given identity provider id is 'testId' and given id found in SDK identity providers`() {
+        val setOfIdentityProviders = setOf(oneginiIdentityProviderMock)
+        whenever(oneginiIdentityProviderMock.id).thenReturn("testId")
+
+        whenever(callMock.argument<String>("identityProviderId")).thenReturn("testId")
+
+        whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
+
+        whenever(userClientMock.identityProviders).thenReturn(setOfIdentityProviders)
+
+        whenever(userClientMock.registerUser(isNotNull(), eq(arrayOf("read")), any())).thenAnswer {
             it.getArgument<OneginiRegistrationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0, ""))
         }
-        RegistrationUseCase(client)(call, mockResult)
-        verify(mockResult).success("QWERTY")
+
+        RegistrationUseCase(clientMock)(callMock, resultSpy)
+        verify(resultSpy).success(Gson().toJson(mapOf("userProfile" to UserProfile("QWERTY"), "customInfo" to CustomInfo(0, ""))))
     }
 
     @Test
-    fun `test if SDK called 'registerUser' method once`(){
-        whenever(call.argument<String>("identityProviderId")).thenReturn(null)
-        whenever(call.argument<String>("scopes")).thenReturn("read")
-        RegistrationUseCase(client)(call, mockResult)
-        verify(client.userClient, times(1)).registerUser(any(), any(), any())
+    fun `should call 'registerUser' method once when given identity provider id is null`() {
+        whenever(callMock.argument<String>("identityProviderId")).thenReturn(null)
+
+        whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
+        RegistrationUseCase(clientMock)(callMock, resultSpy)
+        verify(clientMock.userClient).registerUser(isNull(), eq(arrayOf("read")), any())
     }
 
+    @Test
+    fun `should array length equals to 2 with scopes list as a param when given scopes is 'read' and 'write'`() {
+        whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read", "write"))
+        RegistrationUseCase(clientMock)(callMock, resultSpy)
+        argumentCaptor<Array<String>> {
+            verify(clientMock.userClient).registerUser(isNull(), capture(), any())
+            assertThat(firstValue.size).isEqualTo(2)
+        }
+    }
+
+    @Test
+    fun `should scopes param be array of zero lengths when given scopes is null`(){
+        whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(null)
+        RegistrationUseCase(clientMock)(callMock, resultSpy)
+        argumentCaptor<Array<String>> {
+            verify(clientMock.userClient).registerUser(isNull(), capture(), any())
+            assertThat(firstValue.size).isEqualTo(0)
+        }
+    }
 }

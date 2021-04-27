@@ -141,6 +141,9 @@ class Constants {
   static const String eventNextAuthenticationAttempt =
       "eventNextAuthenticationAttempt";
 
+  ///Handle url for registration
+  static const String eventHandleRegisteredUrl = "eventHandleRegisteredUrl";
+
   // Fingerprint
 
   /// Open fingerprint auth event name

@@ -7,7 +7,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/model/authentication_attempt.dart';
 import 'package:onegini/model/onegini_event.dart';
 import 'package:onegini/model/onegini_error.dart';
+import 'package:onegini/onegini.dart';
 import 'package:onegini/onegini_event_listener.dart';
+import 'package:onegini/user_client.dart';
 import 'package:onegini_example/screens/auth_otp_screen.dart';
 import 'package:onegini_example/screens/fingerprint_screen.dart';
 import 'package:onegini_example/screens/pin_request_screen.dart';
@@ -164,5 +166,11 @@ class OneginiListener extends OneginiEventListener {
             password: response["data"],
           )),
     );
+  }
+
+  @override
+  void handleRegisteredUrl(BuildContext buildContext, String url) async {
+     await Onegini.instance.userClient
+        .handleRegisteredUserUrl(buildContext, url, signInType: WebSignInType.safari);
   }
 }

@@ -22,6 +22,8 @@ interface Constants {
         const val EVENT_CLOSE_AUTH_OTP = "eventCloseAuthOtp"
 
         const val EVENT_OPEN_CUSTOM_TWO_STEP_REGISTRATION_SCREEN = "openCustomTwoStepRegistrationScreen"
+        
+        const val EVENT_HANDLE_REGISTERED_URL = "eventHandleRegisteredUrl"
 
         /**
          * MethodsName
