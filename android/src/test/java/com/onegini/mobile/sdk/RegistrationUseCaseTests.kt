@@ -8,6 +8,7 @@ import com.onegini.mobile.sdk.android.handlers.OneginiRegistrationHandler
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
 import com.onegini.mobile.sdk.flutter.useCases.RegistrationUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -48,13 +49,13 @@ class RegistrationUseCaseTests {
     @Test
     fun `should call result success with identity provider id as a param when given identity provider id is null`() {
         whenever(callMock.argument<String>("identityProviderId")).thenReturn(null)
-
         whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
-
         whenever(userClientMock.registerUser(isNull(), eq(arrayOf("read")), any())).thenAnswer {
             it.getArgument<OneginiRegistrationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0, ""))
         }
+
         RegistrationUseCase(clientMock)(callMock, resultSpy)
+
         val expectedResult = Gson().toJson(mapOf("userProfile" to UserProfile("QWERTY"), "customInfo" to CustomInfo(0, "")))
         verify(resultSpy).success(expectedResult)
     }
@@ -62,14 +63,14 @@ class RegistrationUseCaseTests {
     @Test
     fun `should match the IDs with the identity provider id as a parameter when the given ID is found in the SDK identity providers`() {
         val setOfIdentityProviders = setOf(oneginiIdentityProviderMock)
+
         whenever(oneginiIdentityProviderMock.id).thenReturn("testId")
-
         whenever(callMock.argument<String>("identityProviderId")).thenReturn("testId")
-
         whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
-
         whenever(userClientMock.identityProviders).thenReturn(setOfIdentityProviders)
+
         RegistrationUseCase(clientMock)(callMock, resultSpy)
+
         argumentCaptor<OneginiIdentityProvider> {
             verify(clientMock.userClient).registerUser(capture(), eq(arrayOf("read")), any())
             assertThat(firstValue.id).isEqualTo("testId")
@@ -77,38 +78,33 @@ class RegistrationUseCaseTests {
     }
 
     @Test
-    fun `should the identity provider be null when the given ID is not found in the SDK identity providers`() {
+    fun `should return error when the given ID is not found in the SDK identity providers`() {
         val setOfIdentityProviders = setOf(oneginiIdentityProviderMock)
+
         whenever(oneginiIdentityProviderMock.id).thenReturn("test")
-
         whenever(callMock.argument<String>("identityProviderId")).thenReturn("testId")
-
         whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
-
         whenever(userClientMock.identityProviders).thenReturn(setOfIdentityProviders)
+
         RegistrationUseCase(clientMock)(callMock, resultSpy)
-        argumentCaptor<OneginiIdentityProvider> {
-            verify(clientMock.userClient).registerUser(capture(), eq(arrayOf("read")), any())
-            assertThat(firstValue).isEqualTo(null)
-        }
+
+        verify(resultSpy).error(eq(OneginiWrapperErrors.IDENTITY_PROVIDER_NOT_FOUND.code),eq(OneginiWrapperErrors.IDENTITY_PROVIDER_NOT_FOUND.message), isNull())
     }
 
     @Test
-    fun `should call result success with identity provider id as a param when given identity provider id is 'testId' and given id found in SDK identity providers`() {
+    fun `should call result success with identity provider id as a param when given identity provider id is found in SDK identity providers`() {
         val setOfIdentityProviders = setOf(oneginiIdentityProviderMock)
+
         whenever(oneginiIdentityProviderMock.id).thenReturn("testId")
-
         whenever(callMock.argument<String>("identityProviderId")).thenReturn("testId")
-
         whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
-
         whenever(userClientMock.identityProviders).thenReturn(setOfIdentityProviders)
-
         whenever(userClientMock.registerUser(isNotNull(), eq(arrayOf("read")), any())).thenAnswer {
             it.getArgument<OneginiRegistrationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0, ""))
         }
 
         RegistrationUseCase(clientMock)(callMock, resultSpy)
+
         val expectedResult = Gson().toJson(mapOf("userProfile" to UserProfile("QWERTY"), "customInfo" to CustomInfo(0, "")))
         verify(resultSpy).success(expectedResult)
     }
@@ -116,29 +112,35 @@ class RegistrationUseCaseTests {
     @Test
     fun `should call 'registerUser' method once when given identity provider id is null`() {
         whenever(callMock.argument<String>("identityProviderId")).thenReturn(null)
-
         whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
+
         RegistrationUseCase(clientMock)(callMock, resultSpy)
+
         verify(clientMock.userClient).registerUser(isNull(), eq(arrayOf("read")), any())
     }
 
     @Test
-    fun `should array length equals to 2 with scopes list as a param when given scopes is 'read' and 'write'`() {
+    fun `should scopes param be array of two scopes when given scopes contains two strings`() {
         whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read", "write"))
+
         RegistrationUseCase(clientMock)(callMock, resultSpy)
+
         argumentCaptor<Array<String>> {
             verify(clientMock.userClient).registerUser(isNull(), capture(), any())
             assertThat(firstValue.size).isEqualTo(2)
+            assertThat(firstValue).isEqualTo(arrayOf("read", "write"))
         }
     }
 
     @Test
     fun `should scopes param be array of zero lengths when given scopes is null`(){
         whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(null)
+
         RegistrationUseCase(clientMock)(callMock, resultSpy)
+
         argumentCaptor<Array<String>> {
             verify(clientMock.userClient).registerUser(isNull(), capture(), any())
-            assertThat(firstValue.size).isEqualTo(0)
+            assertThat(firstValue).isEmpty()
         }
     }
 }

@@ -12,13 +12,13 @@ object MobileAuthenticationObject {
 
     fun mobileAuthWithOtp(data: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         if (data == null) {
-            result.error(OneginiWrapperErrors().qrCodeNotHaveData.code, OneginiWrapperErrors().qrCodeNotHaveData.message, null)
+            result.error(OneginiWrapperErrors.QR_CODE_NOT_HAVE_DATA.code, OneginiWrapperErrors.QR_CODE_NOT_HAVE_DATA.message, null)
             return
         }
         val userClient = oneginiClient.userClient
         val authenticatedUserProfile = oneginiClient.userClient.authenticatedUserProfile
         if (authenticatedUserProfile == null) {
-            result.error(OneginiWrapperErrors().authenticatedUserProfileIsNull.code, OneginiWrapperErrors().authenticatedUserProfileIsNull.message, null)
+            result.error(OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
             return
         }
         if (authenticatedUserProfile.let { userClient.isUserEnrolledForMobileAuth(it) }) {

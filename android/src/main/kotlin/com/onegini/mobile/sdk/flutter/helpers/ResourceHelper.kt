@@ -85,7 +85,7 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
         val okHttpClient = oneginiClient.userClient.implicitResourceOkHttpClient
         val userProfile = oneginiClient.userClient.authenticatedUserProfile
         if (userProfile == null) {
-            result.error(OneginiWrapperErrors().authenticatedUserProfileIsNull.code, OneginiWrapperErrors().authenticatedUserProfileIsNull.message, null)
+            result.error(OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
             return
         }
         oneginiClient.userClient.authenticateUserImplicitly(
