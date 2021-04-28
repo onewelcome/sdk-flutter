@@ -1,0 +1,1 @@
+#import <OneginiSDKiOS/OneginiSDKiOS.h>
