@@ -12,7 +12,7 @@ import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
 import java.util.concurrent.TimeUnit
 
-class OneginiSDK : IOneginiClient {
+class OneginiSDK {
 
     private var httpConnectionTimeout: Long? = 5
     private var httpReadTimeout: Long? = 25
@@ -24,9 +24,7 @@ class OneginiSDK : IOneginiClient {
     }
 
     private fun buildSDK(context: Context): OneginiClient {
-        if (oneginiClientConfigModel == null) throw Exception("OneginiClientConfigModel must be not null!")
         val applicationContext = context.applicationContext
-            ?: throw Exception("Context can`t be null!")
         val registrationRequestHandler = RegistrationRequestHandler()
         val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
         val pinAuthenticationRequestHandler = PinAuthenticationRequestHandler()
@@ -49,7 +47,7 @@ class OneginiSDK : IOneginiClient {
         return clientBuilder.build()
     }
 
-    override fun getOneginiClient(context: Context): OneginiClient {
+    fun getOneginiClient(context: Context): OneginiClient {
         var oneginiClient = OneginiClient.getInstance()
         if (oneginiClient == null) {
             oneginiClient = buildSDK(context)
@@ -57,7 +55,7 @@ class OneginiSDK : IOneginiClient {
         return oneginiClient
     }
 
-    override fun initSDK(context: Context, httpConnectionTimeout: Long?, httpReadTimeout: Long?, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>): OneginiClient {
+    fun initSDK(context: Context, httpConnectionTimeout: Long?, httpReadTimeout: Long?, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>): OneginiClient {
         this.httpConnectionTimeout = httpConnectionTimeout
         this.httpReadTimeout = httpReadTimeout
         this.oneginiCustomIdentityProviders = oneginiCustomIdentityProviders
