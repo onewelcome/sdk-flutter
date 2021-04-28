@@ -1,0 +1,6 @@
+framework module onegini {
+  umbrella header "onegini-umbrella.h"
+
+  export *
+  module * { export * }
+}

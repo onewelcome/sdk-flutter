@@ -1,0 +1,11 @@
+framework module onegini {
+  umbrella header "onegini-umbrella.h"
+
+  export *
+  module * { export * }
+}
+
+module onegini.Swift {
+    header "onegini-Swift.h"
+    requires objc
+}

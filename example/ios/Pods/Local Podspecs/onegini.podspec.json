@@ -1,0 +1,35 @@
+{
+  "name": "onegini",
+  "version": "0.2.0",
+  "summary": "Onegini Mobile Flutter plugin - iOS SDK",
+  "description": "A flutter plugin project.",
+  "homepage": "https://www.onegini.com",
+  "license": {
+    "file": "../LICENSE"
+  },
+  "authors": {
+    "Onegini B.V.": "info@onegini.com"
+  },
+  "source": {
+    "path": "."
+  },
+  "source_files": "Classes/**/*",
+  "dependencies": {
+    "Flutter": [
+
+    ]
+  },
+  "platforms": {
+    "ios": "12.0"
+  },
+  "vendored_frameworks": [
+    "OneginiCrypto.xcframework",
+    "OneginiSDKiOS.xcframework"
+  ],
+  "pod_target_xcconfig": {
+    "DEFINES_MODULE": "YES",
+    "EXCLUDED_ARCHS[sdk=iphonesimulator*]": "i386"
+  },
+  "swift_versions": "5.0",
+  "swift_version": "5.0"
+}

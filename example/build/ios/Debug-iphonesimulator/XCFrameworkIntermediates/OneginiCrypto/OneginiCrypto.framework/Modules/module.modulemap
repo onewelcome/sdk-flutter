@@ -1,0 +1,6 @@
+framework module OneginiCrypto {
+  umbrella header "OneginiCrypto.h"
+
+  export *
+  module * { export * }
+}
