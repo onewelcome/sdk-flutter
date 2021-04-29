@@ -45,6 +45,8 @@ struct Constants {
         static let getResource: String = "getResource";
         static let getImplicitResource: String = "getImplicitResource";
         static let unauthenticatedRequest: String = "getUnauthenticatedResource";
+        
+        static let eventHandleRegisteredUrl: String = "eventHandleRegisteredUrl"
 
         //Other
         static let getAppToWebSingleSignOn: String = "getAppToWebSingleSignOn";

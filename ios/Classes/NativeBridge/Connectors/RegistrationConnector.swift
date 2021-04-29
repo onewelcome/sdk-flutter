@@ -36,7 +36,7 @@ class RegistrationConnector : BridgeToRegistrationConnectorProtocol, CustomRegis
         
         var _data = data
         switch (event){
-        case .initRegistration, .finishRegistration, .openCustomTwoStepRegistrationScreen, .eventError:
+        case .initRegistration, .finishRegistration, .openCustomTwoStepRegistrationScreen, .eventError, .eventHandleRegisteredUrl:
             _data?["eventName"] = event.rawValue
             break
         }
@@ -64,7 +64,8 @@ enum CustomRegistrationNotification : String {
     case initRegistration = "initRegistration",
          finishRegistration = "finishRegistration",
          openCustomTwoStepRegistrationScreen = "openCustomTwoStepRegistrationScreen",
-         eventError = "eventError"
+         eventError = "eventError",
+         eventHandleRegisteredUrl = "eventHandleRegisteredUrl"
 }
 
 

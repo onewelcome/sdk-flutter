@@ -13,26 +13,26 @@ extension OneginiModuleSwift {
     
     func registerUser(_ identityProviderId: String? = nil, callback: @escaping FlutterResult) -> Void {
 
-        bridgeConnector.toRegistrationConnector.registrationHandler.signUp(identityProviderId) { (path, error) -> Void in
-
-            if let path = path {
-                callback(path)
+        bridgeConnector.toRegistrationConnector.registrationHandler.signUp(identityProviderId) { (_, userProfile, userInfo, error) -> Void in
+            
+            if let _userProfile = userProfile {
+                var result = Dictionary<String, Any?>()
+                result["userProfile"] = ["profileId": _userProfile.profileId]
+                
+                if let userInfo = userInfo {
+                    result["customInfo"] = ["status": userInfo.status, "data": userInfo.data]
+                }
+                
+                callback(String.stringify(json: result))
             } else {
                 callback(SdkError.convertToFlutter(error))
             }
         }
     }
     
-    func handleRegisteredProcessUrl(_ url: String, webSignInType: WebSignInType, callback: @escaping FlutterResult) -> Void {
+    func handleRegisteredProcessUrl(_ url: String, webSignInType: WebSignInType) -> Void {
 
-        bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: url, webSignInType: webSignInType) {  (_, userProfile, error) -> Void in
-
-            if let _userProfile = userProfile {
-                callback(_userProfile.profileId)
-            } else {
-                callback(SdkError.convertToFlutter(error))
-            }
-        }
+        bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: url, webSignInType: webSignInType)
     }
     
     public func handleDeepLinkCallbackUrl(_ url: URL) -> Bool {
