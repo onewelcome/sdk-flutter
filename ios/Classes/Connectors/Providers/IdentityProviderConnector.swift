@@ -10,6 +10,7 @@ import OneginiSDKiOS
 
 protocol IdentityProviderConnectorProtocol: class {
     func identityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
+    //FIXME: have to handled in other way
     func getIdentityProviders() -> Array<ONGIdentityProvider>
     func getIdentityProvider(providerId: String?) -> ONGIdentityProvider?
     func setCustomIdentifiers(customIdentifiers: [String])

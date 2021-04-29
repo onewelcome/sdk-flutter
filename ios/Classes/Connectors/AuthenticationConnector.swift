@@ -52,9 +52,10 @@ class AuthenticationConnector: NSObject, AuthenticationConnectorProtocol {
     
     func authenticate(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         if authenticationCallback != nil {
-            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .actionInProgress))
+            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: FlutterError.configure(customType: .actionInProgress))
             return
         }
+        
         authenticationCallback = result
         
         var userId: String?
@@ -70,7 +71,7 @@ class AuthenticationConnector: NSObject, AuthenticationConnectorProtocol {
         // HACK: current workaround is to get first user
         let user = userProfileConnector.getUserProfiles().first
         guard user != nil else {
-            result(SdkError.init(customType: .noUserAuthenticated).flutterError())
+            result(FlutterError.configure(customType: .noUserAuthenticated))
             return
         }
         
@@ -138,7 +139,7 @@ extension AuthenticationConnector: PinListener {
     func acceptPin(pin: String) {
         pinAuthenticationRequest.removeListener(listener: self)
         guard let providePinChallenge = providePinChallenge else {
-            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .providePinNotInProgress))
+            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: FlutterError.configure(customType: .providePinNotInProgress))
             return
         }
         
@@ -148,7 +149,7 @@ extension AuthenticationConnector: PinListener {
     func denyPin() {
         pinAuthenticationRequest.removeListener(listener: self)
         guard let providePinChallenge = providePinChallenge else {
-            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .providePinNotInProgress))
+            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: FlutterError.configure(customType: .providePinNotInProgress))
             return
         }
         
@@ -160,7 +161,7 @@ extension AuthenticationConnector: BiometricListener {
     func acceptBiometric(prompt: String) {
         biometricRequest.removeListener(listener: self)
         guard let biometricChallenge = biometricChallenge else {
-            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .biometricNotInProgress))
+            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: FlutterError.configure(customType: .biometricNotInProgress))
             return
         }
         
@@ -170,7 +171,7 @@ extension AuthenticationConnector: BiometricListener {
     func fallbackToPin() {
         biometricRequest.removeListener(listener: self)
         guard let biometricChallenge = biometricChallenge else {
-            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .biometricNotInProgress))
+            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: FlutterError.configure(customType: .biometricNotInProgress))
             return
         }
         
@@ -180,7 +181,7 @@ extension AuthenticationConnector: BiometricListener {
     func denyBiometric() {
         biometricRequest.removeListener(listener: self)
         guard let biometricChallenge = biometricChallenge else {
-            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .biometricNotInProgress))
+            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: FlutterError.configure(customType: .biometricNotInProgress))
             return
         }
         

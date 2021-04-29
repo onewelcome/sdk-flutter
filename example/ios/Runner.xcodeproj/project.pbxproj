@@ -68,6 +68,7 @@
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		A215674B8ED0DB51242459D1 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C80FE171CD07690B0E6A1567 /* Pods_Runner.framework */; };
+		F0BBFD43263A894A00819AEB /* NewRegistrationConnectorSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = F0BBFD42263A894A00819AEB /* NewRegistrationConnectorSpecs.swift */; };
 		F0D3E8D12576F7FD009D2C24 /* CloudFlareIncECCCA3.cer in Resources */ = {isa = PBXBuildFile; fileRef = F0D3E8CE2576F7FD009D2C24 /* CloudFlareIncECCCA3.cer */; };
 		F0D3E8D22576F7FD009D2C24 /* OneginiConfigModel.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3E8CF2576F7FD009D2C24 /* OneginiConfigModel.m */; };
 		F0D3E8D32576F7FD009D2C24 /* SecurityController.m in Sources */ = {isa = PBXBuildFile; fileRef = F0D3E8D02576F7FD009D2C24 /* SecurityController.m */; };
@@ -192,6 +193,7 @@
 		C80FE171CD07690B0E6A1567 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CD7720FD14AD76063A5BB8EC /* Pods_OneginiTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_OneginiTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEA0691E76170754C9ADEA3D /* Pods-OneginiTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-OneginiTests.debug.xcconfig"; path = "Target Support Files/Pods-OneginiTests/Pods-OneginiTests.debug.xcconfig"; sourceTree = "<group>"; };
+		F0BBFD42263A894A00819AEB /* NewRegistrationConnectorSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewRegistrationConnectorSpecs.swift; sourceTree = "<group>"; };
 		F0D3E8CC2576F7FD009D2C24 /* SecurityController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecurityController.h; sourceTree = "<group>"; };
 		F0D3E8CD2576F7FD009D2C24 /* OneginiConfigModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OneginiConfigModel.h; sourceTree = "<group>"; };
 		F0D3E8CE2576F7FD009D2C24 /* CloudFlareIncECCCA3.cer */ = {isa = PBXFileReference; lastKnownFileType = file; path = CloudFlareIncECCCA3.cer; sourceTree = "<group>"; };
@@ -314,6 +316,7 @@
 			children = (
 				5F31934B2636D75D001782B5 /* Requests */,
 				5F2DDB09263148D000225B47 /* RegistrationConnectorSpecs.swift */,
+				F0BBFD42263A894A00819AEB /* NewRegistrationConnectorSpecs.swift */,
 			);
 			path = Connectors;
 			sourceTree = "<group>";
@@ -873,6 +876,7 @@
 				5F07F1B8260DFCFC0073BA5E /* OneginiTests.swift in Sources */,
 				5F176CCC2615C4E8003E4B74 /* RegistrationHandler_DeregisterTests.swift in Sources */,
 				5F176CC32615C4BA003E4B74 /* RegistrationHandler_ProcessRedirectURLTests.swift in Sources */,
+				F0BBFD43263A894A00819AEB /* NewRegistrationConnectorSpecs.swift in Sources */,
 				22353846261D7234009AE465 /* AuthenticatorsHandler_DeregisterAuthenticatorTests.swift in Sources */,
 				5F7937E1261621FE001AEE71 /* DisconnectHandler_DisconnectTests.swift in Sources */,
 				5F2DDB0A263148D000225B47 /* RegistrationConnectorSpecs.swift in Sources */,

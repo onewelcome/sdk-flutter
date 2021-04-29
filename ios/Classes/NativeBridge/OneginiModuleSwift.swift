@@ -13,7 +13,7 @@ enum OneginiBridgeEvents : String {
     case customRegistrationNotification = "ONEGINI_CUSTOM_REGISTRATION_NOTIFICATION"
     case authWithOtpNotification = "ONEGINI_MOBILE_AUTH_OTP_NOTIFICATION"
     case otpOpen = "OPEN_OTP"
-    case errorNotification = "ONEGINI_ERROR_NOTIFICATION"
+    case errorNotification = "eventError"
 }
 
 //MARK: -

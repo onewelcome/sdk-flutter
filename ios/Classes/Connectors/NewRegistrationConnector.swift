@@ -53,7 +53,7 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
     func register(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         
         if registrationCallback != nil {
-            result(SdkError.init(customType: .actionInProgress).flutterError())
+            result(FlutterError.configure(customType: .actionInProgress))
             return
         }
         registrationCallback = result
@@ -127,8 +127,26 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
         createPinChallenge = nil
         browserRegistrationChallenge = nil
         
-        registrationCallback?(SdkError.init(errorDescription: error.localizedDescription, code: error.code).flutterError())
+        registrationCallback?(FlutterError.configure(error: error))
         registrationCallback = nil
+    }
+    
+    // private
+    func getIdentityProvider(providerId: String?) -> ONGIdentityProvider? {
+        let identityProviders = getIdentityProviders()
+        var identityProvider = identityProviders.first(where: { $0.identifier == providerId})
+        if let _providerId = providerId, identityProvider == nil {
+            identityProvider = ONGIdentityProvider()
+            identityProvider?.name = _providerId
+            identityProvider?.identifier = _providerId
+        }
+        
+        return identityProvider
+    }
+    
+    func getIdentityProviders() -> Array<ONGIdentityProvider> {
+        let identityProviders = Array(ONGUserClient.sharedInstance().identityProviders())
+        return identityProviders
     }
 }
 
@@ -136,7 +154,7 @@ extension NewRegistrationConnector: BrowserListener {
     func acceptUrl(url: URL) {
         browserRegistrationRequest.removeListener(listener: self)
         guard let browserRegistrationChallenge = browserRegistrationChallenge else {
-            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .browserRegistrationNotInProgress))
+            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: FlutterError.configure(customType: .browserRegistrationNotInProgress))
             return
         }
         
@@ -146,7 +164,7 @@ extension NewRegistrationConnector: BrowserListener {
     func denyUrl() {
         browserRegistrationRequest.removeListener(listener: self)
         guard let browserRegistrationChallenge = browserRegistrationChallenge else {
-            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .browserRegistrationNotInProgress))
+            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: FlutterError.configure(customType: .browserRegistrationNotInProgress))
             return
         }
         
@@ -158,7 +176,7 @@ extension NewRegistrationConnector: PinListener {
     func acceptPin(pin: String) {
         pinRegistrationRequest.removeListener(listener: self)
         guard let createPinChallenge = createPinChallenge else {
-            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .createPinNotInProgress))
+            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: FlutterError.configure(customType: .createPinNotInProgress))
             return
         }
         
@@ -168,7 +186,7 @@ extension NewRegistrationConnector: PinListener {
     func denyPin() {
         pinRegistrationRequest.removeListener(listener: self)
         guard let createPinChallenge = createPinChallenge else {
-            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .createPinNotInProgress))
+            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: FlutterError.configure(customType: .createPinNotInProgress))
             return
         }
         
@@ -180,7 +198,7 @@ extension NewRegistrationConnector: PinListener {
 extension NewRegistrationConnector: BrowserHandlerToRegisterHandlerProtocol {
     func handleRedirectURL(url: URL?) {
         guard let browserRegistrationChallenge = browserRegistrationChallenge else {
-            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: SdkError.init(customType: .browserRegistrationNotInProgress))
+            flutterConnector?.sendBridgeEvent(eventName: .errorNotification, data: FlutterError.configure(customType: .browserRegistrationNotInProgress))
             return
         }
         
