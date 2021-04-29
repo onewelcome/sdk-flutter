@@ -78,18 +78,18 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
 
             Constants.METHOD_VALIDATE_PIN_WITH_POLICY -> validatePinWithPolicy(call.argument<String>("pin")?.toCharArray(), result, OneginiSDK().getOneginiClient(context))
 
-            else -> result.error(OneginiWrapperErrors().methodToCallNotFound.code, OneginiWrapperErrors().methodToCallNotFound.message, null)
+            else -> result.error(OneginiWrapperErrors.METHOD_TO_CALL_NOT_FOUND.code, OneginiWrapperErrors.METHOD_TO_CALL_NOT_FOUND.message, null)
         }
     }
 
     // "https://login-mobile.test.onegini.com/personal/dashboard"
     fun getAppToWebSingleSignOn(url: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         if (url == null) {
-            result.error(OneginiWrapperErrors().urlCantBeNull.code, OneginiWrapperErrors().urlCantBeNull.message, null)
+            result.error(OneginiWrapperErrors.URL_CANT_BE_NULL.code, OneginiWrapperErrors.URL_CANT_BE_NULL.message, null)
             return
         }
         if (!Patterns.WEB_URL.matcher(url).matches()) {
-            result.error(OneginiWrapperErrors().urlIsNotWebPath.code, OneginiWrapperErrors().urlIsNotWebPath.message, null)
+            result.error(OneginiWrapperErrors.URL_IS_NOT_WEB_PATH.code, OneginiWrapperErrors.URL_IS_NOT_WEB_PATH.message, null)
             return
         }
         val targetUri: Uri = Uri.parse(url)

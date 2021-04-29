@@ -20,7 +20,7 @@ object AuthenticationObject {
         val gson = GsonBuilder().serializeNulls().create()
         val authenticatedUserProfile = oneginiClient.userClient.authenticatedUserProfile
         if (authenticatedUserProfile == null) {
-            result.error(OneginiWrapperErrors().authenticatedUserProfileIsNull.code, OneginiWrapperErrors().authenticatedUserProfileIsNull.message, null)
+            result.error(OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
             return
         }
         val notRegisteredAuthenticators = authenticatedUserProfile.let { oneginiClient.userClient.getNotRegisteredAuthenticators(it) }
@@ -40,7 +40,7 @@ object AuthenticationObject {
         var authenticator: OneginiAuthenticator? = null
         val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
         if (userProfile == null) {
-            result.error(OneginiWrapperErrors().userProfileIsNull.code, OneginiWrapperErrors().userProfileIsNull.message, null)
+            result.error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
             return
         }
         val registeredAuthenticators = userProfile.let { oneginiClient.userClient.getRegisteredAuthenticators(it) }
@@ -51,14 +51,14 @@ object AuthenticationObject {
             }
         }
         if (authenticator == null) {
-            result.error(OneginiWrapperErrors().authenticatorIsNull.code, OneginiWrapperErrors().authenticatorIsNull.message, null)
+            result.error(OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.message, null)
             return
         }
         try {
             oneginiClient.userClient.setPreferredAuthenticator(authenticator)
             result.success(true)
         } catch (e: Exception) {
-            result.error(OneginiWrapperErrors().preferredAuthenticator.code, OneginiWrapperErrors().preferredAuthenticator.message, null)
+            result.error(OneginiWrapperErrors.PREFERRED_AUTHENTICATOR_ERROR.code, OneginiWrapperErrors.PREFERRED_AUTHENTICATOR_ERROR.message, null)
         }
     }
 
@@ -66,7 +66,7 @@ object AuthenticationObject {
         var authenticator: OneginiAuthenticator? = null
         val authenticatedUserProfile = oneginiClient.userClient.authenticatedUserProfile
         if (authenticatedUserProfile == null) {
-            result.error(OneginiWrapperErrors().authenticatedUserProfileIsNull.code, OneginiWrapperErrors().authenticatedUserProfileIsNull.message, null)
+            result.error(OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
             return
         }
         val notRegisteredAuthenticators = authenticatedUserProfile.let { oneginiClient.userClient.getNotRegisteredAuthenticators(it) }
@@ -78,7 +78,7 @@ object AuthenticationObject {
             }
         }
         if (authenticator == null) {
-            result.error(OneginiWrapperErrors().authenticatorIsNull.code, OneginiWrapperErrors().authenticatorIsNull.message, null)
+            result.error(OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.message, null)
             return
         }
         oneginiClient.userClient.registerAuthenticator(
@@ -99,7 +99,7 @@ object AuthenticationObject {
         var authenticator: OneginiAuthenticator? = null
         val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
         if (userProfile == null) {
-            result.error(OneginiWrapperErrors().userProfileIsNull.code, OneginiWrapperErrors().userProfileIsNull.message, null)
+            result.error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
             return
         }
         val registeredAuthenticators = userProfile.let { oneginiClient.userClient.getRegisteredAuthenticators(it) }
@@ -110,7 +110,7 @@ object AuthenticationObject {
             }
         }
         if (authenticator == null) {
-            result.error(OneginiWrapperErrors().authenticatorIsNull.code, OneginiWrapperErrors().authenticatorIsNull.message, null)
+            result.error(OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.message, null)
             return
         }
         oneginiClient.userClient.deregisterAuthenticator(
@@ -131,7 +131,7 @@ object AuthenticationObject {
         val gson = GsonBuilder().serializeNulls().create()
         val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
         if (userProfile == null) {
-            result.error(OneginiWrapperErrors().userProfileIsNull.code, OneginiWrapperErrors().userProfileIsNull.message, null)
+            result.error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
             return
         }
         val registeredAuthenticators = userProfile.let { oneginiClient.userClient.getRegisteredAuthenticators(it) }
@@ -150,7 +150,7 @@ object AuthenticationObject {
         var authenticator: OneginiAuthenticator? = null
         val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
         if (userProfile == null) {
-            result.error(OneginiWrapperErrors().userProfileIsNull.code, OneginiWrapperErrors().userProfileIsNull.message, null)
+            result.error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
             return
         }
         val registeredAuthenticators = userProfile.let { oneginiClient.userClient.getRegisteredAuthenticators(it) }
