@@ -39,7 +39,12 @@ class LoginHandler: NSObject, PinHandlerToReceiverProtocol {
 
     fileprivate func mapErrorFromPinChallenge(_ challenge: ONGPinChallenge) -> SdkError? {
         if let error = challenge.error, error.code != ONGAuthenticationError.touchIDAuthenticatorFailure.rawValue {
-            return ErrorMapper().mapError(error, pinChallenge: challenge)
+            guard let maxAttempts = pinChallenge?.maxFailureCount,
+                  let previousCount = pinChallenge?.previousFailureCount,
+                  maxAttempts != previousCount else {
+                return ErrorMapper().mapError(error, pinChallenge: challenge)
+            }
+            return SdkError(errorDescription: "Failed attempts \(previousCount) from \(maxAttempts)", code: 0)
         } else {
             return nil
         }
@@ -69,11 +74,15 @@ extension LoginHandler: ONGAuthenticationDelegate {
         let pinError = mapErrorFromPinChallenge(challenge)
         
         pinHandler?.handleFlowUpdate(PinFlow.authentication, pinError, receiver: self)
-        
+
         guard let _ = pinError else { return }
+        guard challenge.maxFailureCount == challenge.previousFailureCount else {
+            return
+        }
+
         pinHandler?.closeFlow()
         pinHandler?.onCancel()
-        
+
         loginCompletion?(nil, pinError)
     }
 
