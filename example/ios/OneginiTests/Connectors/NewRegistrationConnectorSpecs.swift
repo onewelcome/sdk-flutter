@@ -11,6 +11,7 @@ class NewRegistrationConnectorSpecs: QuickSpec {
         let flutterConnector = TestFlutterListener()
         let browserConnector = BrowserRequestConnector()
         let pinConnector = PinRequestConnector()
+        let simpleMockRegWrapper = SimpleMockRegistrationWrapper()
         
         describe("Registration connector") {
             afterEach {
@@ -23,37 +24,42 @@ class NewRegistrationConnectorSpecs: QuickSpec {
             }
             
             beforeEach {
-                connector = NewRegistrationConnector.init(registrationWrapper: TestRegistrationWrapper(), identityProvider: TestIdentityProviderConnector(), userProfile: TestUserProfileConnector(), browserRegistrationRequest: browserConnector, pinRegistrationRequest: pinConnector)
+                connector = NewRegistrationConnector.init(registrationWrapper: simpleMockRegWrapper, identityProvider: TestIdentityProviderConnector(), userProfile: TestUserProfileConnector(), browserRegistrationRequest: browserConnector, pinRegistrationRequest: pinConnector)
                 connector?.flutterConnector = flutterConnector
             }
             
-            describe("register user method - fetch registration url") {
+            describe("when call with register method") {
             
-                it("when wrapper responds with browser registration url") {
+                it("should call register method in wrapper") {
                     
-                    waitUntil { done in
-                        
-                        flutterConnector.receiveEvent = {
-                            eventName, eventData in
-                            
-                            expect(eventName).to(equal(.registrationNotification))
-                            
-                            let data = eventData as! String
-                            let result = self.configureRegMethodResponce(data: data)
-                            
-                            expect(result.name).to(equal(Constants.Events.eventOpenUrl.rawValue))
-                            expect(result.value).toNot(beNil())
-                            
-                            let url = URL.init(string: result.value!)
-                            expect(url).toNot(beNil())
-                            
-                            done()
-                        }
-                        
-                        let parameters = self.configureRegMethodInputParameters()
-                        connector?.register(parameters.call, parameters.result)
-                        
-                    }
+                    let parameters = self.configureRegMethodInputParameters()
+                    //connector?.register(parameters.call, parameters.result)
+                    
+                    //expect(simpleMockRegWrapper.didRegister).to(beTrue())
+                    XCTAssert(simpleMockRegWrapper.didRegister == true)
+//                    waitUntil { done in
+//
+//                        flutterConnector.receiveEvent = {
+//                            eventName, eventData in
+//
+//                            expect(eventName).to(equal(.registrationNotification))
+//
+//                            let data = eventData as! String
+//                            let result = self.configureRegMethodResponce(data: data)
+//
+//                            expect(result.name).to(equal(Constants.Events.eventOpenUrl.rawValue))
+//                            expect(result.value).toNot(beNil())
+//
+//                            let url = URL.init(string: result.value!)
+//                            expect(url).toNot(beNil())
+//
+//                            done()
+//                        }
+//
+//                        let parameters = self.configureRegMethodInputParameters()
+//                        connector?.register(parameters.call, parameters.result)
+//
+//                    }
                 }
             }
         }
@@ -81,5 +87,23 @@ class NewRegistrationConnectorSpecs: QuickSpec {
             print(error)
             return (nil, nil, error)
         }
+    }
+}
+
+class SimpleMockRegistrationWrapper: RegistrationWrapperProtocol {
+    var registerScopes: [String]?
+    var didRegister: Bool = false
+    
+    var createPin: ((CreatePinChallengeProtocol) -> Void)?
+    
+    var browserRegistration: ((BrowserRegistrationChallengeProtocol) -> Void)?
+    
+    var registrationSuccess: ((ONGUserProfile, ONGCustomInfo?) -> Void)?
+    
+    var registrationFailed: ((Error) -> Void)?
+    
+    func register(identityProvider: ONGIdentityProvider?, scopes: Array<String>?) {
+        registerScopes = scopes
+        didRegister = true
     }
 }
