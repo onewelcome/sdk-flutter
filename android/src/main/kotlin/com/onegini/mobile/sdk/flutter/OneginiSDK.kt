@@ -27,7 +27,7 @@ class OneginiSDK : IOneginiClient {
         if (oneginiClientConfigModel == null) throw Exception("OneginiClientConfigModel must be not null!")
         val applicationContext = context.applicationContext
             ?: throw Exception("Context can`t be null!")
-        val registrationRequestHandler = RegistrationRequestHandler(applicationContext)
+        val registrationRequestHandler = RegistrationRequestHandler()
         val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
         val pinAuthenticationRequestHandler = PinAuthenticationRequestHandler()
         val createPinRequestHandler = PinRequestHandler()

@@ -28,21 +28,18 @@ class _LoginScreenState extends State<LoginScreen> {
     /// Start registration
     setState(() => {isLoading = true, isRegistrationFlow = true});
     try {
-      var regUrl = await Onegini.instance.userClient.registerUser(
+      var registrationResponse = await Onegini.instance.userClient.registerUser(
         context,
         null,
-        "read",
+        ["read"],
       );
 
-      var userId = await Onegini.instance.userClient
-          .handleRegisteredUserUrl(context, regUrl, signInType: WebSignInType.safari);
-
-      if (userId != null)
+      if (registrationResponse.userProfile.profileId != null)
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
                 builder: (context) => UserScreen(
-                      userProfileId: userId,
+                      userProfileId: registrationResponse.userProfile.profileId,
                     )),
             (Route<dynamic> route) => false);
     } catch (error) {
@@ -63,26 +60,17 @@ class _LoginScreenState extends State<LoginScreen> {
   registrationWithIdentityProvider(String identityProviderId) async {
     setState(() => {isLoading = true, isRegistrationFlow = true});
     try {
-      var regUrl = await Onegini.instance.userClient.registerUser(
+      var registrationResponse = await Onegini.instance.userClient.registerUser(
         context,
         identityProviderId,
-        "read",
+        ["read"],
       );
-      bool _validURL = Uri.parse(regUrl).isAbsolute;
-      var userId;
-      if(_validURL){
-         userId = await Onegini.instance.userClient
-            .handleRegisteredUserUrl(context, regUrl, signInType: WebSignInType.safari);
-      }else{
-         userId = regUrl;
-      }
-
-      if (userId != null)
+      if (registrationResponse.userProfile.profileId != null)
         Navigator.pushAndRemoveUntil(
             context,
             MaterialPageRoute(
                 builder: (context) => UserScreen(
-                      userProfileId: userId,
+                      userProfileId: registrationResponse.userProfile.profileId,
                     )),
             (Route<dynamic> route) => false);
     } catch (error) {
