@@ -44,7 +44,7 @@ class StartAppUseCaseTests {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(setOf(UserProfile("QWERTY")))
         }
 
-        StartAppUseCase()(callMock, resultSpy, contextMock, oneginiSDKMock)
+        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         val expectedList = setOf(mapOf("isDefault" to false, "profileId" to "QWERTY"))
         val expectedResult = Gson().toJson(expectedList)
@@ -58,7 +58,7 @@ class StartAppUseCaseTests {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(setOf(UserProfile("QWERTY"), UserProfile("ASDFGH")))
         }
 
-        StartAppUseCase()(callMock, resultSpy, contextMock, oneginiSDKMock)
+        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         val expectedList = setOf(mapOf("isDefault" to false, "profileId" to "QWERTY"), mapOf("isDefault" to false, "profileId" to "ASDFGH"))
         val expectedResult = Gson().toJson(expectedList)
@@ -72,7 +72,7 @@ class StartAppUseCaseTests {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
 
-        StartAppUseCase()(callMock, resultSpy, contextMock, oneginiSDKMock)
+        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         val expectedList = emptySet<UserProfile>()
         val expectedResult = Gson().toJson(expectedList)
@@ -87,7 +87,7 @@ class StartAppUseCaseTests {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
 
-        StartAppUseCase()(callMock, resultSpy, contextMock, oneginiSDKMock)
+        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         argumentCaptor<List<OneginiCustomIdentityProvider>> {
             verify(oneginiSDKMock).initSDK(eq(contextMock), isNull(), isNull(), capture())
@@ -106,10 +106,10 @@ class StartAppUseCaseTests {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
 
-        StartAppUseCase()(callMock, resultSpy, contextMock, oneginiSDKMock)
+        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         argumentCaptor<Long> {
-            verify(oneginiSDKMock).initSDK(eq(contextMock), capture(), capture(),  eq(mutableListOf()))
+            verify(oneginiSDKMock).initSDK(eq(contextMock), capture(), capture(), eq(mutableListOf()))
             assertThat(firstValue).isEqualTo(5)
             assertThat(secondValue).isEqualTo(20)
         }

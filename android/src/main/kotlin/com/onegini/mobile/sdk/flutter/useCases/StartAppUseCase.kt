@@ -12,8 +12,8 @@ import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepIdentityProvider
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
-class StartAppUseCase {
-    operator fun invoke(call: MethodCall, result: MethodChannel.Result, context: Context,oneginiSDK: OneginiSDK) {
+class StartAppUseCase(private val context: Context, private val oneginiSDK: OneginiSDK) {
+    operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
         val twoStepCustomIdentityProviderIds = call.argument<ArrayList<String>>("twoStepCustomIdentityProviderIds")
         val connectionTimeout = call.argument<Int>("connectionTimeout")
         val readTimeout = call.argument<Int>("readTimeout")

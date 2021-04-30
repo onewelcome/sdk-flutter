@@ -19,6 +19,6 @@ class OneginiMethodsWrapper {
     }
 
     fun startApp(call: MethodCall,result: MethodChannel.Result,context: Context){
-        StartAppUseCase()(call,result,context,OneginiSDK())
+        StartAppUseCase(context,OneginiSDK())(call,result)
     }
 }
