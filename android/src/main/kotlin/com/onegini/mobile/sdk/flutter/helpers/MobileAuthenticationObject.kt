@@ -12,13 +12,13 @@ object MobileAuthenticationObject {
 
     fun mobileAuthWithOtp(data: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         if (data == null) {
-            result.error(OneginiWrapperErrors().qrCodeNotHaveData.code, OneginiWrapperErrors().qrCodeNotHaveData.message, null)
+            result.error(OneginiWrapperErrors.QR_CODE_NOT_HAVE_DATA.code, OneginiWrapperErrors.QR_CODE_NOT_HAVE_DATA.message, null)
             return
         }
         val userClient = oneginiClient.userClient
         val authenticatedUserProfile = oneginiClient.userClient.authenticatedUserProfile
         if (authenticatedUserProfile == null) {
-            result.error(OneginiWrapperErrors().authenticatedUserProfileIsNull.code, OneginiWrapperErrors().authenticatedUserProfileIsNull.message, null)
+            result.error(OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
             return
         }
         if (authenticatedUserProfile.let { userClient.isUserEnrolledForMobileAuth(it) }) {
@@ -26,20 +26,21 @@ object MobileAuthenticationObject {
         } else {
             enrollMobileAuthentication(data, result, oneginiClient)
         }
-
-
     }
 
     private fun handleMobileAuthWithOtp(data: String, result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        oneginiClient.userClient.handleMobileAuthWithOtp(data, object : OneginiMobileAuthWithOtpHandler {
-            override fun onSuccess() {
-                result.success("success auth with otp")
-            }
+        oneginiClient.userClient.handleMobileAuthWithOtp(
+            data,
+            object : OneginiMobileAuthWithOtpHandler {
+                override fun onSuccess() {
+                    result.success("success auth with otp")
+                }
 
-            override fun onError(p0: OneginiMobileAuthWithOtpError) {
-                result.error(p0.errorType.toString(), p0.message, null)
+                override fun onError(p0: OneginiMobileAuthWithOtpError) {
+                    result.error(p0.errorType.toString(), p0.message, null)
+                }
             }
-        })
+        )
     }
 
     private fun enrollMobileAuthentication(data: String, result: MethodChannel.Result, oneginiClient: OneginiClient) {
@@ -51,8 +52,6 @@ object MobileAuthenticationObject {
             override fun onError(p0: OneginiMobileAuthEnrollmentError) {
                 result.error(p0.errorType.toString(), p0.message, null)
             }
-
         })
     }
-
 }

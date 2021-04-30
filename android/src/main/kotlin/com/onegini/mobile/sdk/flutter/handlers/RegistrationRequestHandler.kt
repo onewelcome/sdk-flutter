@@ -1,14 +1,14 @@
 package com.onegini.mobile.sdk.flutter.handlers
 
-import android.content.Context
-import android.content.Intent
 import android.net.Uri
+import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.handlers.request.OneginiBrowserRegistrationRequestHandler
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiBrowserRegistrationCallback
+import com.onegini.mobile.sdk.flutter.constants.Constants
+import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
+import com.onegini.mobile.sdk.flutter.models.OneginiEvent
 
-
-class RegistrationRequestHandler(var context: Context) : OneginiBrowserRegistrationRequestHandler {
-
+class RegistrationRequestHandler : OneginiBrowserRegistrationRequestHandler {
 
     companion object {
         private var CALLBACK: OneginiBrowserRegistrationCallback? = null
@@ -32,16 +32,10 @@ class RegistrationRequestHandler(var context: Context) : OneginiBrowserRegistrat
                 CALLBACK = null
             }
         }
-
     }
 
     override fun startRegistration(uri: Uri, oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback) {
         CALLBACK = oneginiBrowserRegistrationCallback
-
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-        context.startActivity(intent)
+        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_HANDLE_REGISTERED_URL, uri.toString())))
     }
-
 }

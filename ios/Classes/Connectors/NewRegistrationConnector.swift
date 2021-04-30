@@ -101,7 +101,8 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
         
         // TODO: remove this after finishing with new browser connector
         let browser = BrowserViewController(registerHandlerProtocol: self)
-        browser.handleUrl(url: challenge.getUrl())
+        //FIXME: Need to update according to the latest changes
+        browser.handleUrl(url: challenge.getUrl(), webSignInType: .insideApp)
     }
     
     func onCreatePin(challenge: CreatePinChallengeProtocol) -> Void {

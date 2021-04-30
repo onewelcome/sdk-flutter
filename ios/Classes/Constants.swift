@@ -16,6 +16,7 @@ struct Constants {
         static let deregisterUser: String = "deregisterUser"
         static let customTwoStepRegistrationReturnSuccess: String = "customTwoStepRegistrationReturnSuccess"
         static let customTwoStepRegistrationReturnError: String = "customTwoStepRegistrationReturnError"
+        static let handleRegisteredUserUrl: String = "handleRegisteredUserUrl"
         
         // authentication
         static let authenticateUser: String = "authenticateUser"
@@ -44,6 +45,8 @@ struct Constants {
         static let getResource: String = "getResource";
         static let getImplicitResource: String = "getImplicitResource";
         static let unauthenticatedRequest: String = "getUnauthenticatedResource";
+        
+        static let eventHandleRegisteredUrl: String = "eventHandleRegisteredUrl"
 
         // other
         static let getAppToWebSingleSignOn: String = "getAppToWebSingleSignOn";

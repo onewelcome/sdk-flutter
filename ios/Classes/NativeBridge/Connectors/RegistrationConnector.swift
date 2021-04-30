@@ -1,14 +1,14 @@
 //MARK: - 
 protocol BridgeToRegistrationConnectorProtocol: CustomRegistrationNotificationReceiverProtocol, OtpRegistrationNotificationReceiverProtocol {
     var bridgeConnector: BridgeConnectorProtocol? { get set }
-    var registrationHandler: RegistrationConnectorToHandlerProtocol { get }
+    var registrationHandler: RegistrationConnectorToHandlerProtocol & BrowserHandlerToRegisterHandlerProtocol { get }
     func handleCustomRegistrationAction(_ action: String, _ identityProviderId: String, _ code: String?) -> Void
 }
 
 //MARK: -
 class RegistrationConnector : BridgeToRegistrationConnectorProtocol, CustomRegistrationNotificationReceiverProtocol, OtpRegistrationNotificationReceiverProtocol {
     
-    var registrationHandler: RegistrationConnectorToHandlerProtocol
+    var registrationHandler: RegistrationConnectorToHandlerProtocol & BrowserHandlerToRegisterHandlerProtocol
     unowned var bridgeConnector: BridgeConnectorProtocol?
 
     init() {
@@ -36,7 +36,7 @@ class RegistrationConnector : BridgeToRegistrationConnectorProtocol, CustomRegis
         
         var _data = data
         switch (event){
-        case .initRegistration, .finishRegistration, .openCustomTwoStepRegistrationScreen, .eventError:
+        case .initRegistration, .finishRegistration, .openCustomTwoStepRegistrationScreen, .eventError, .eventHandleRegisteredUrl:
             _data?["eventName"] = event.rawValue
             break
         }
@@ -64,7 +64,8 @@ enum CustomRegistrationNotification : String {
     case initRegistration = "initRegistration",
          finishRegistration = "finishRegistration",
          openCustomTwoStepRegistrationScreen = "openCustomTwoStepRegistrationScreen",
-         eventError = "eventError"
+         eventError = "eventError",
+         eventHandleRegisteredUrl = "eventHandleRegisteredUrl"
 }
 
 

@@ -10,9 +10,8 @@ import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
 
 class PinAuthenticationRequestHandler : OneginiPinAuthenticationRequestHandler {
-    companion object{
+    companion object {
         var CALLBACK: OneginiPinCallback ? = null
-
     }
 
     override fun startAuthentication(userProfile: UserProfile, oneginiPinCallback: OneginiPinCallback, attemptCounter: AuthenticationAttemptCounter?) {
@@ -21,11 +20,10 @@ class PinAuthenticationRequestHandler : OneginiPinAuthenticationRequestHandler {
     }
 
     override fun onNextAuthenticationAttempt(attemptCounter: AuthenticationAttemptCounter) {
-       OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_NEXT_AUTHENTICATION_ATTEMPT,Gson().toJson(attemptCounter).toString())))
+        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_NEXT_AUTHENTICATION_ATTEMPT, Gson().toJson(attemptCounter).toString())))
     }
 
     override fun finishAuthentication() {
         OneginiEventsSender.events?.success(Constants.EVENT_CLOSE_PIN_AUTH)
     }
-
 }

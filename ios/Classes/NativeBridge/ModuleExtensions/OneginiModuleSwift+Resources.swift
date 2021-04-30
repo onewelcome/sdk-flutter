@@ -5,8 +5,8 @@ import Flutter
 
 extension OneginiModuleSwift {
 
-    public func authenticateDeviceForResource(_ path: String, callback: @escaping FlutterResult) -> Void {
-        bridgeConnector.toResourceFetchHandler.authenticateDevice(path) {
+    public func authenticateDeviceForResource(_ scopes: [String], callback: @escaping FlutterResult) -> Void {
+        bridgeConnector.toResourceFetchHandler.authenticateDevice(scopes) {
             (data, error) -> Void in
             error != nil ? callback(error?.flutterError()) : callback(data)
         }

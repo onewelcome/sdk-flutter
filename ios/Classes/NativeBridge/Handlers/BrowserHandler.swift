@@ -3,7 +3,7 @@ import OneginiSDKiOS
 import OneginiCrypto
 
 protocol BrowserHandlerProtocol {
-    func handleUrl(url: URL)
+    func handleUrl(url: URL, webSignInType: WebSignInType)
 }
 
 protocol BrowserHandlerToRegisterHandlerProtocol: AnyObject {
@@ -21,10 +21,30 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
         self.registerHandler = registerHandlerProtocol
     }
 
-    func handleUrl(url: URL) {
-        let scheme = "oneginiexample";
-        
+    func handleUrl(url: URL, webSignInType: WebSignInType) {
         print("[\(type(of: self))] handleUrl url: \(url)")
+        switch webSignInType {
+        case .safari:
+            openExternalBrowser(url: url)
+        default:
+            openInternalBrowser(url: url)
+        }
+
+        
+    }
+    
+    private func openExternalBrowser(url: URL) {
+        guard UIApplication.shared.canOpenURL(url) else {
+            self.cancelButtonPressed()
+            return
+        }
+        UIApplication.shared.open(url, options: [:]) { (value) in
+            debugPrint("Opened external browser: \(value)")
+        }
+    }
+    
+    private func openInternalBrowser(url: URL) {
+        let scheme = URL(string: ONGClient.sharedInstance().configModel.redirectURL)!.scheme
         webAuthSession = ASWebAuthenticationSession(url: url, callbackURLScheme: scheme, completionHandler: { callbackURL, error in
             print("[\(type(of: self))] webAuthSession completionHandler")
             guard error == nil, let successURL = callbackURL else {
@@ -38,10 +58,7 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
         if #available(iOS 13.0, *) {
             webAuthSession?.prefersEphemeralWebBrowserSession = true
             webAuthSession?.presentationContextProvider = self;
-        } else {
-          // Fallback on earlier versions
-        };
-
+        }
         webAuthSession?.start()
     }
 
