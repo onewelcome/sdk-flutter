@@ -10,16 +10,19 @@ class HandleRegisteredUrlUseCase {
     operator fun invoke(call: MethodCall, context: Context) {
         val url = call.argument<String>("url") ?: ""
         val isInAppBrowser = call.argument<Int>("type")
-        var intent : Intent? = null
-        intent = if(isInAppBrowser == null || isInAppBrowser == 0){
+        val intent = prepareIntentBasedOnType(isInAppBrowser, context, url)
+        context.startActivity(intent)
+    }
+
+    private fun prepareIntentBasedOnType(type: Int?, context: Context, url: String): Intent {
+        val intent: Intent = if (type == null || type == 0) {
             Intent(context, ActivityWebView::class.java).putExtra("url", url)
-        }else{
+        } else {
             val uri = Uri.parse(url)
             Intent(Intent.ACTION_VIEW, uri)
         }
-
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY)
-        context.startActivity(intent)
+        return intent
     }
 }
