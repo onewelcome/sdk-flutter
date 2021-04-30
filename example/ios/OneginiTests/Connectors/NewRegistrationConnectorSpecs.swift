@@ -12,49 +12,47 @@ class NewRegistrationConnectorSpecs: QuickSpec {
         let browserConnector = BrowserRequestConnector()
         let pinConnector = PinRequestConnector()
         let simpleMockRegWrapper = SimpleMockRegistrationWrapper()
-        
-        var scopes: [String]?
-        var identityProvider: String?
+        let simpleMockIdentityProvider = SimpleMockIdentityProvider()
         
         describe("Registration connector") {
             afterEach {
             }
             
             beforeEach {
-                connector = NewRegistrationConnector.init(registrationWrapper: simpleMockRegWrapper, identityProvider: SimpleMockIdentityProvider(), userProfile: TestUserProfileConnector(), browserRegistrationRequest: browserConnector, pinRegistrationRequest: pinConnector)
+                connector = NewRegistrationConnector.init(registrationWrapper: simpleMockRegWrapper,
+                                                          identityProvider: simpleMockIdentityProvider,
+                                                          userProfile: TestUserProfileConnector(),
+                                                          browserRegistrationRequest: browserConnector,
+                                                          pinRegistrationRequest: pinConnector)
                 connector?.flutterConnector = flutterConnector
             }
             
             describe("when calling with register method") {
             
-                describe("should call register method in wrapper") {
-                    var parameters: (call: FlutterMethodCall, result: FlutterResult)!
+                simpleMockIdentityProvider.filterIdentityProvider = SimpleMockIdentityProviderObject.init(id: "TestId")
+                let parameters = self.configureRegMethodInputParameters(identityProviderId: "TestId", scopes: ["read"])
+                
+                it("should call register method in wrapper with proper parameters") {
+                    connector?.register(parameters.call, parameters.result)
                     
-                    beforeEach {
-                        scopes = ["read"]
-                        identityProvider = "TestId"//
-                        
-                        parameters = self.configureRegMethodInputParameters(identityProviderId: identityProvider, scopes: scopes)
-                    }
-                    
-                    afterEach {
-                        scopes = nil
-                        identityProvider = nil
-                    }
-                    
-                    it("with proper parameters") {
-                        // with proper parameters
-                        // to check whether input parameters are accepted
-                        connector?.register(parameters.call, parameters.result)
-                        expect(simpleMockRegWrapper.didRegister).to(beTrue())
-                        expect(simpleMockRegWrapper.registerScopes).toNot(beNil())
-                        expect(simpleMockRegWrapper.identityProvider?.identifier).to(equal("TestId"))
-                        
-                    }
+                    expect(simpleMockRegWrapper.didRegister).to(beTrue())
+                    expect(simpleMockRegWrapper.registerScopes).to(equal(["read"]))
+                    expect(simpleMockRegWrapper.identityProvider?.identifier).to(equal("TestId"))
                 }
+            }
+            
+            describe("when calling with register method without scopes") {
+            
+                simpleMockIdentityProvider.filterIdentityProvider = SimpleMockIdentityProviderObject.init(id: "TestId")
+                let parameters = self.configureRegMethodInputParameters(identityProviderId: "TestId", scopes: [])
                 
-                
-                   
+                it("should call register method in wrapper with empty scopes") {
+                    connector?.register(parameters.call, parameters.result)
+                    
+                    expect(simpleMockRegWrapper.didRegister).to(beTrue())
+                    expect(simpleMockRegWrapper.registerScopes).to(equal([]))
+                    expect(simpleMockRegWrapper.identityProvider?.identifier).to(equal("TestId"))
+                }
             }
         }
     }
@@ -113,6 +111,8 @@ class SimpleMockRegistrationWrapper: RegistrationWrapperProtocol {
 }
 
 class SimpleMockIdentityProvider: IdentityProviderConnectorProtocol {
+    var filterIdentityProvider: ONGIdentityProvider?
+    
     func getIdentityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         
     }
@@ -122,34 +122,6 @@ class SimpleMockIdentityProvider: IdentityProviderConnectorProtocol {
     }
     
     func getIdentityProviderWith(providerId: String?) -> ONGIdentityProvider? {
-        return SimpleMockIdentityProviderObject.init(id: "TestId")
+        return filterIdentityProvider
     }
-    
-
 }
-
-
-//XCTAssert(simpleMockRegWrapper.didRegister == true)
-//                    waitUntil { done in
-//
-//                        flutterConnector.receiveEvent = {
-//                            eventName, eventData in
-//
-//                            expect(eventName).to(equal(.registrationNotification))
-//
-//                            let data = eventData as! String
-//                            let result = self.configureRegMethodResponce(data: data)
-//
-//                            expect(result.name).to(equal(Constants.Events.eventOpenUrl.rawValue))
-//                            expect(result.value).toNot(beNil())
-//
-//                            let url = URL.init(string: result.value!)
-//                            expect(url).toNot(beNil())
-//
-//                            done()
-//                        }
-//
-//                        let parameters = self.configureRegMethodInputParameters()
-//                        connector?.register(parameters.call, parameters.result)
-//
-//                    }
