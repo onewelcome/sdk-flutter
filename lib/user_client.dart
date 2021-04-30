@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/model/registration_response.dart';
@@ -223,6 +225,27 @@ class UserClient {
       var success = await Onegini.instance.channel.invokeMethod(
           Constants.validatePinWithPolicy, <String, String?>{'pin': pin});
       return success;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  Future<String> getAccessToken(String pin) async {
+    try {
+      var accessToken =
+          await Onegini.instance.channel.invokeMethod(Constants.getAccessToken);
+      return accessToken;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  Future<UserProfile> getAuthenticatedUserProfile(String pin) async {
+    try {
+      var userProfile = await Onegini.instance.channel
+          .invokeMethod(Constants.getAuthenticatedUserProfile);
+
+      return UserProfile.fromJson(json.decode(userProfile));
     } on PlatformException catch (error) {
       throw error;
     }
