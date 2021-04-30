@@ -9,15 +9,19 @@ import Foundation
 import OneginiSDKiOS
 
 protocol IdentityProviderConnectorProtocol: class {
-    func identityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
-    //FIXME: have to handled in other way
+    func getIdentityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     func getIdentityProviders() -> Array<ONGIdentityProvider>
-    func getIdentityProvider(providerId: String?) -> ONGIdentityProvider?
-    func setCustomIdentifiers(customIdentifiers: [String])
+    func getIdentityProviderWith(providerId: String?) -> ONGIdentityProvider?
 }
 
 class IdentityProviderConnector: IdentityProviderConnectorProtocol {
-    func identityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+    var wrapper: IdentityProviderWrapperProtocol
+    
+    init(identityProviderWrapper: IdentityProviderWrapperProtocol) {
+        self.wrapper = identityProviderWrapper
+    }
+    
+    func getIdentityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         let providers = getIdentityProviders()
         let jsonData: [[String: String]] = providers.compactMap({ ["id" : $0.identifier, "name": $0.name] })
         
@@ -26,13 +30,10 @@ class IdentityProviderConnector: IdentityProviderConnectorProtocol {
     }
     
     func getIdentityProviders() -> Array<ONGIdentityProvider> {
-        
-        // TODO: implement wrapper
-        let identityProviders = Array(ONGUserClient.sharedInstance().identityProviders())
-        return identityProviders
+        return self.wrapper.getIdentityProviders()
     }
     
-    func getIdentityProvider(providerId: String?) -> ONGIdentityProvider? {
+    func getIdentityProviderWith(providerId: String?) -> ONGIdentityProvider? {
         let identityProviders = getIdentityProviders()
         var identityProvider = identityProviders.first(where: { $0.identifier == providerId})
         if let _providerId = providerId, identityProvider == nil {
@@ -43,9 +44,15 @@ class IdentityProviderConnector: IdentityProviderConnectorProtocol {
         
         return identityProvider
     }
-    
-    func setCustomIdentifiers(customIdentifiers: [String]) {
-        
-        // TODO: implement
+}
+
+protocol IdentityProviderWrapperProtocol: class {
+    func getIdentityProviders() -> Array<ONGIdentityProvider>
+}
+
+class IdentityProviderWrapper: IdentityProviderWrapperProtocol {
+    func getIdentityProviders() -> Array<ONGIdentityProvider> {
+        let identityProviders = Array(ONGUserClient.sharedInstance().identityProviders())
+        return identityProviders
     }
 }

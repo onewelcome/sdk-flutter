@@ -101,7 +101,7 @@ class OneginiConnector: NSObject, OneginiConnectorProtocol {
     init(flutterConnector: FlutterConnectorProtocol) {
         self.flutterConnector = flutterConnector
         
-        identityProviderConnector = IdentityProviderConnector()
+        identityProviderConnector = IdentityProviderConnector(identityProviderWrapper: IdentityProviderWrapper())
         userProfileConnector = UserProfileConnector()
         
         
@@ -161,8 +161,9 @@ class OneginiConnector: NSObject, OneginiConnectorProtocol {
         fatalError("not implemented")
     }
     
+    //FIXME: change name to get...
     func identityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        identityProviderConnector?.identityProviders(call, result)
+        identityProviderConnector?.getIdentityProviders(call, result)
     }
     
     func setPreferredAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {

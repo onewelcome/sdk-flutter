@@ -66,7 +66,7 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
             scopes = arg[Constants.Parameters.scopes] as? Array<String>
         }
         
-        let identityProvider = identityProviderConnector.getIdentityProvider(providerId: providerId)
+        let identityProvider = identityProviderConnector.getIdentityProviderWith(providerId: providerId)
         wrapper.register(identityProvider: identityProvider, scopes: scopes)
     }
     
@@ -132,22 +132,6 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
     }
     
     // private
-    func getIdentityProvider(providerId: String?) -> ONGIdentityProvider? {
-        let identityProviders = getIdentityProviders()
-        var identityProvider = identityProviders.first(where: { $0.identifier == providerId})
-        if let _providerId = providerId, identityProvider == nil {
-            identityProvider = ONGIdentityProvider()
-            identityProvider?.name = _providerId
-            identityProvider?.identifier = _providerId
-        }
-        
-        return identityProvider
-    }
-    
-    func getIdentityProviders() -> Array<ONGIdentityProvider> {
-        let identityProviders = Array(ONGUserClient.sharedInstance().identityProviders())
-        return identityProviders
-    }
 }
 
 extension NewRegistrationConnector: BrowserListener {
