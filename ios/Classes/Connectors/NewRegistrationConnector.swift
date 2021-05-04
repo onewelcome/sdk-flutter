@@ -86,7 +86,7 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
         createPinChallenge = nil
         pinConnector = nil
         
-        registrationCallback?(nil) // or should it send error?
+        registrationCallback?(nil) //FIXME: Need to check should it send error
         registrationCallback = nil
         
         result(nil)
@@ -102,8 +102,8 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
         var typeValue: Int?
         
         if let _arg = call.arguments as! [String: Any]? {
-            let urlPath = _arg["url"] as? String
-            typeValue = _arg["type"] as! Int?
+            let urlPath = _arg[Constants.Parameters.url] as? String
+            typeValue = _arg[Constants.Parameters.type] as! Int?
             
             if let urlPath = urlPath {
                 url = URL.init(string: urlPath)
@@ -169,8 +169,6 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
         registrationCallback?(FlutterError.configure(error: error))
         registrationCallback = nil
     }
-    
-    // private
 }
 
 //MARK: BrowserWrapperProtocol
@@ -352,7 +350,6 @@ class UserProfileWrapper: UserProfileWrapperProtocol {
     
     func getUserProfiles() -> Array<ONGUserProfile> {
         
-        // TODO: implement wrapper
         let profiles = Array(ONGUserClient.sharedInstance().userProfiles())
         return profiles
     }

@@ -105,6 +105,8 @@ struct Constants {
         static let status: String = "status"
         static let data: String = "data"
         
+        static let type: String = "type"
+        
         static let eventName: String = "eventName"
         static let eventValue: String = "eventValue"
 
