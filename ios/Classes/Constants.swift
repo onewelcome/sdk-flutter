@@ -100,6 +100,11 @@ struct Constants {
         static let authenticatorId: String = "authenticatorId"
         static let registeredAuthenticatorId: String = "registeredAuthenticatorId"
         
+        static let userProfile: String = "userProfile"
+        static let customInfo: String = "customInfo"
+        static let status: String = "status"
+        static let data: String = "data"
+        
         static let eventName: String = "eventName"
         static let eventValue: String = "eventValue"
 

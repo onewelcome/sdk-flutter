@@ -99,6 +99,9 @@ class OneginiConnector: NSObject, OneginiConnectorProtocol {
     
     var changePinConnector: ChangePinConnectorProtocol?
     
+    var browseWrapper: BrowserWrapperProtocol? = nil
+    var pinConnector: PinConnectorProtocol? = nil
+    
     init(flutterConnector: FlutterConnectorProtocol) {
         self.flutterConnector = flutterConnector
         
@@ -111,10 +114,16 @@ class OneginiConnector: NSObject, OneginiConnectorProtocol {
         pinAuthenticationRequest = PinRequestConnector()
         biometricRequest = BiometricRequestConnector()
         
+        // ***
+//        browseWrapper = nil
+        pinConnector = NewPinConnector()
+        // ***
         
         startAppConnector = StartAppConnector.init(startAppWrapper: StartAppWrapper(), userProfileConnector: userProfileConnector!)
 
-        registrationConnector = NewRegistrationConnector.init(registrationWrapper: RegistrationWrapper(), identityProvider: identityProviderConnector!, userProfile: userProfileConnector!, browserRegistrationRequest: browserRequest!, pinRegistrationRequest: pinRegistrationRequest!)
+        registrationConnector = NewRegistrationConnector.init(registrationWrapper: RegistrationWrapper(), identityProvider: identityProviderConnector!, browserWrapper: browseWrapper, pinConnector: pinConnector)
+        
+//        registrationConnector = NewRegistrationConnector.init(registrationWrapper: RegistrationWrapper(), identityProvider: identityProviderConnector!, userProfile: userProfileConnector!, browserRegistrationRequest: browserRequest!, pinRegistrationRequest: pinRegistrationRequest!)
         registrationConnector?.flutterConnector = flutterConnector
 
         authenticatorsConnector = AuthenticatorsConnector.init(authenticatorsWrapper: AuthenticatorsWrapper(), userProfileConnector: userProfileConnector!)
@@ -192,11 +201,12 @@ class OneginiConnector: NSObject, OneginiConnectorProtocol {
     }
     
     func acceptPinRegistrationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        pinRegistrationRequest?.acceptPin(call, result)
+        //TODO: Need add checkingfor attemps
+        pinConnector?.acceptPin(call, result)
     }
     
     func denyPinRegistrationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        pinRegistrationRequest?.denyPin(call, result)
+        pinConnector?.denyPin(call, result)
     }
     
     func acceptPinAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {

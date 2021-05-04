@@ -64,6 +64,7 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
 
     private func handleSuccessUrl(url: URL) {
         print("[\(type(of: self))] handleSuccessUrl url: \(url)")
+        //FIXME: 
         registerHandler.handleRedirectURL(url: url)
     }
 
