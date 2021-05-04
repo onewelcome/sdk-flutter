@@ -72,7 +72,12 @@ extension LoginHandler: ONGAuthenticationDelegate {
     func userClient(_: ONGUserClient, didReceive challenge: ONGPinChallenge) {
         pinChallenge = challenge
         let pinError = mapErrorFromPinChallenge(challenge)
-        
+
+        if let error = pinError, error.code == 9009, challenge.previousFailureCount < challenge.maxFailureCount {
+            pinHandler?.handleFlowUpdate(PinFlow.nextAuthenticationAttempt, pinError, receiver: self)
+            return
+        }
+
         pinHandler?.handleFlowUpdate(PinFlow.authentication, pinError, receiver: self)
 
         guard let _ = pinError else { return }
