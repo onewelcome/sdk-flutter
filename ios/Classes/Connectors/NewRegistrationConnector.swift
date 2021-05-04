@@ -133,13 +133,13 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
         
         //sendCustomRegistrationNotification(CustomRegistrationNotification.eventHandleRegisteredUrl, result)
 
-        flutterConnector?.sendBridgeEvent(eventName: .handleRegisteredUrl, data: String.stringify(json: data))
-        
-        return;
+//        flutterConnector?.sendBridgeEvent(eventName: .handleRegisteredUrl, data: String.stringify(json: data))
+//
+//        return;
         // TODO: remove this after finishing with new browser connector
-//        let browser = BrowserViewController(registerHandlerProtocol: self)
-//        //FIXME: Need to update according to the latest changes
-//        browser.handleUrl(url: challenge.getUrl(), webSignInType: .insideApp)
+        let browser = BrowserViewController(registerHandlerProtocol: self)
+        //FIXME: Need to update according to the latest changes
+        browser.handleUrl(url: challenge.getUrl(), webSignInType: .insideApp)
     }
     
     func onCreatePin(challenge: CreatePinChallengeProtocol) -> Void {
