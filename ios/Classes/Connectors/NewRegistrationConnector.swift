@@ -27,7 +27,7 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
     weak var browserWrapper: BrowserWrapperProtocol?
     weak var pinConnector: PinConnectorProtocol?
     var identityProviderConnector: IdentityProviderConnectorProtocol
-//    var userProfileWrapper: UserProfileWrapperProtocol
+
     
     // challanges
     var browserRegistrationChallenge: BrowserRegistrationChallengeProtocol?
@@ -38,14 +38,12 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
     
     init(registrationWrapper: RegistrationWrapperProtocol,
          identityProvider: IdentityProviderConnectorProtocol,
-//         userProfile: UserProfileWrapperProtocol,
          browserWrapper: BrowserWrapperProtocol?,
          pinConnector: PinConnectorProtocol?) {
         
         wrapper = registrationWrapper
         
         identityProviderConnector = identityProvider
-//        userProfileWrapper = userProfile
         
         self.browserWrapper = browserWrapper
         self.pinConnector = pinConnector
@@ -152,8 +150,6 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
     func onRegistrationSuccess(userProfile: ONGUserProfile, info: ONGCustomInfo?) -> Void {
         createPinChallenge = nil
         browserRegistrationChallenge = nil
-        
-//        userProfileWrapper.setAuthenticatedUser(authenticatedUser: userProfile)
         
         var result = Dictionary<String, Any?>()
         result[Constants.Parameters.userProfile] = [Constants.Parameters.profileId: userProfile.profileId]
