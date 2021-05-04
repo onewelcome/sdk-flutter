@@ -12,6 +12,7 @@ import OneginiSDKiOS
 protocol RegistrationConnectorProtocol: FlutterNotificationReceiverProtocol {
     func register(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     func cancel(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
+    func handleRegisteredProcessUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
 }
 
 class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
@@ -86,6 +87,38 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
         result(nil)
     }
     
+    func handleRegisteredProcessUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        guard let _ = registrationCallback else {
+            result(FlutterError.configure(customType: .newSomethingWentWrong))
+            return
+        }
+        
+        var url: URL?
+        var typeValue: Int?
+        
+        if let _arg = call.arguments as! [String: Any]? {
+            let urlPath = _arg["url"] as? String
+            typeValue = _arg["type"] as! Int?
+            
+            if let urlPath = urlPath {
+                url = URL.init(string: urlPath)
+            }
+        }
+        
+        var type: WebSignInType = .insideApp
+        if let typeValue = typeValue, let value = WebSignInType.init(rawValue: typeValue) {
+            type = value
+        }
+        
+        guard let regUrl = url else {
+            result(FlutterError.configure(customType: .invalidUrl))
+            return
+        }
+
+        let browser = BrowserViewController(registerHandlerProtocol: self)
+        browser.handleUrl(url: regUrl, webSignInType: type)
+    }
+    
     // callbacks
     func onBrowserRegistration(challenge: BrowserRegistrationChallengeProtocol) -> Void {
         browserRegistrationChallenge = challenge
@@ -94,15 +127,19 @@ class NewRegistrationConnector: NSObject, RegistrationConnectorProtocol {
         
         // return url back to flutter
         var data: [String: String] = [:]
-        data[Constants.Parameters.eventName] = Constants.Events.eventOpenUrl.rawValue
+        data[Constants.Parameters.eventName] = Constants.Events.eventHandleRegisteredUrl.rawValue
         data[Constants.Parameters.eventValue] = challenge.getUrl().absoluteString
 
-        flutterConnector?.sendBridgeEvent(eventName: .registrationNotification, data: String.stringify(json: data))
         
+        //sendCustomRegistrationNotification(CustomRegistrationNotification.eventHandleRegisteredUrl, result)
+
+        flutterConnector?.sendBridgeEvent(eventName: .handleRegisteredUrl, data: String.stringify(json: data))
+        
+        return;
         // TODO: remove this after finishing with new browser connector
-        let browser = BrowserViewController(registerHandlerProtocol: self)
-        //FIXME: Need to update according to the latest changes
-        browser.handleUrl(url: challenge.getUrl(), webSignInType: .insideApp)
+//        let browser = BrowserViewController(registerHandlerProtocol: self)
+//        //FIXME: Need to update according to the latest changes
+//        browser.handleUrl(url: challenge.getUrl(), webSignInType: .insideApp)
     }
     
     func onCreatePin(challenge: CreatePinChallengeProtocol) -> Void {

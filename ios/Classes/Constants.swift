@@ -66,7 +66,7 @@ struct Constants {
         case eventCloseAutorizePin = "eventClosePinAuth"
         
         // browser
-        case eventOpenUrl = "eventOpenUrl"
+        case eventHandleRegisteredUrl = "eventHandleRegisteredUrl"
         
         // fingerprint
         case eventOpenFingerprintAuth = "eventOpenFingerprintAuth"

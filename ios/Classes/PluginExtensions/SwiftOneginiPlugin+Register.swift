@@ -36,6 +36,7 @@ extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
         OneginiModuleSwift.sharedInstance.registerUser(_identifier, callback: result)
     }
     
+    // Handle reg url
     func handleRegisteredProcessUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         guard let _arg = call.arguments as! [String: Any]? else { return }
         let url = _arg["url"] as? String

@@ -14,6 +14,7 @@ protocol OneginiConnectorProtocol {
     // registration
     func registerUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     func cancelRegistration(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
+    func handleRegisteredProcessUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
     
     // authentication
     func authenticateUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
@@ -139,6 +140,10 @@ class OneginiConnector: NSObject, OneginiConnectorProtocol {
     
     func cancelRegistration(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         registrationConnector?.cancel(call, result)
+    }
+    
+    func handleRegisteredProcessUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        registrationConnector?.handleRegisteredProcessUrl(call, result)
     }
     
     func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {

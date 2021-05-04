@@ -197,7 +197,7 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
 extension RegistrationHandler: ONGRegistrationDelegate {
     func userClient(_: ONGUserClient, didReceive challenge: ONGBrowserRegistrationChallenge) {
         print("[\(type(of: self))] didReceive ONGBrowserRegistrationChallenge")
-        browserRegistrationChallenge = challenge
+        self.browserRegistrationChallenge = challenge
         debugPrint(challenge.url)
         //signUpCompletion?(challenge.url.absoluteString, nil)
         var result = Dictionary<String, Any?>()

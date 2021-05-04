@@ -14,6 +14,7 @@ enum OneginiBridgeEvents : String {
     case authWithOtpNotification = "ONEGINI_MOBILE_AUTH_OTP_NOTIFICATION"
     case otpOpen = "OPEN_OTP"
     case errorNotification = "eventError"
+    case handleRegisteredUrl = "eventHandleRegisteredUrl"
 }
 
 //MARK: -

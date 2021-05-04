@@ -53,7 +53,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         case Constants.Routes.deregisterUser: deregisterUser(call, result) // oneginiConnector.deregisterUser(call, result)
         
         //TODO: Need migrate to new approach
-        case Constants.Routes.handleRegisteredUserUrl: handleRegisteredProcessUrl(call, result)
+        case Constants.Routes.handleRegisteredUserUrl: oneginiConnector.handleRegisteredProcessUrl(call, result)//handleRegisteredProcessUrl(call, result)
             
         // authenticator
         case Constants.Routes.getIdentityProviders: getIdentityProviders(call, result) // oneginiConnector.getIdentityProviders(call, result)

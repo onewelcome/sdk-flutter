@@ -24,6 +24,7 @@ enum PluginCustomErrorType: Int {
     case ioException// = 8011
     case incorrentPin// = 8012
     case httpError// = 8013
+    case invalidUrl
     
     // default case
     case newSomethingWentWrong = 400
@@ -61,6 +62,8 @@ enum PluginCustomErrorType: Int {
             message = "Onegini: Incorrect Pin. Check the maxFailureCount and remainingFailureCount properties for details."
         case .httpError:
             message = "Onegini: Could not parse HTTP response to JSON."
+        case .invalidUrl:
+            message = "Onegini: Provided url is incorrect."
         default:
             message = "Onegini: Something went wrong."
         }

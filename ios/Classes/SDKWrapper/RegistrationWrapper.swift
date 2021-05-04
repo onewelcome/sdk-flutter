@@ -41,7 +41,6 @@ extension RegistrationWrapper: ONGRegistrationDelegate {
     
     func userClient(_ userClient: ONGUserClient, didReceive challenge: ONGBrowserRegistrationChallenge) {
         
-        // make a factory for challenges?
         browserRegistration?(BrowserRegistrationChallenge.init(challenge: challenge))
     }
     

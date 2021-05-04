@@ -42,9 +42,16 @@ class BrowserRequestConnector: BrowserRequestConnectorProtocol {
     
     func acceptUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         var url: String?
+        var typeValue: Int?
         
         if let arg = call.arguments as! [String: Any]? {
             url = arg[Constants.Parameters.url] as? String
+            typeValue = arg["type"] as! Int?
+        }
+        
+        var type: WebSignInType = .insideApp
+        if let _typeValue = typeValue, let value = WebSignInType.init(rawValue: _typeValue) {
+            type = value
         }
         
         guard let u = URL.init(string: url ?? "") else {
