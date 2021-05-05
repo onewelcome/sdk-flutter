@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:onegini/model/registration_response.dart';
 
 import 'constants/constants.dart';
 import 'model/onegini_list_response.dart';
@@ -11,36 +14,33 @@ class UserClient {
   ///
   /// If [identityProviderId] is null, starts standard browser registration.
   /// Use your [scopes] for registration. By default it is "read".
-  Future<String> registerUser(
+  Future<RegistrationResponse> registerUser(
     BuildContext context,
     String? identityProviderId,
-    String scopes,
+    List<String>? scopes,
   ) async {
     Onegini.instance.setEventContext(context);
     try {
-      var regUrl = await Onegini.instance.channel
-          .invokeMethod(Constants.registerUser, <String, String?>{
+      var response = await Onegini.instance.channel
+          .invokeMethod(Constants.registerUser, <String, dynamic>{
         'scopes': scopes,
         'identityProviderId': identityProviderId,
       });
-      return regUrl;
+      return registrationResponseFromJson(response);
     } on PlatformException catch (error) {
       throw error;
     }
   }
 
-  Future<String> handleRegisteredUserUrl(
-    BuildContext context,
-    String? url, {WebSignInType signInType = WebSignInType.insideApp }
-  ) async {
+  Future<void> handleRegisteredUserUrl(BuildContext context, String? url,
+      {WebSignInType signInType = WebSignInType.insideApp}) async {
     Onegini.instance.setEventContext(context);
     try {
-      var userId = await Onegini.instance.channel
+      await Onegini.instance.channel
           .invokeMethod(Constants.handleRegisteredUserUrl, <String, Object?>{
         'url': url,
         'type': signInType.value,
       });
-      return userId;
     } on PlatformException catch (error) {
       throw error;
     }
@@ -229,8 +229,28 @@ class UserClient {
       throw error;
     }
   }
-}
 
+  Future<String> getAccessToken(String pin) async {
+    try {
+      var accessToken =
+          await Onegini.instance.channel.invokeMethod(Constants.getAccessToken);
+      return accessToken;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  Future<UserProfile> getAuthenticatedUserProfile(String pin) async {
+    try {
+      var userProfile = await Onegini.instance.channel
+          .invokeMethod(Constants.getAuthenticatedUserProfile);
+
+      return UserProfile.fromJson(json.decode(userProfile));
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+}
 
 enum WebSignInType {
   insideApp,

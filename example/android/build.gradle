@@ -18,10 +18,6 @@ allprojects {
         jcenter()
         if (project.hasProperty('onegini_artifactory_user') && project.hasProperty('onegini_artifactory_password')) {
             maven {
-                /*
-                Before the release please change the url below to: https://repo.onegini.com/artifactory/onegini-sdk
-                Please change it back to https://repo.onegini.com/artifactory/public after the release
-                */
                 url "https://repo.onegini.com/artifactory/onegini-sdk"
                 credentials {
                     username "${onegini_artifactory_user}"

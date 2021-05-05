@@ -26,11 +26,11 @@
 		</data>
 		<key>Modules/onegini.swiftmodule/Project/x86_64-apple-ios-simulator.swiftsourceinfo</key>
 		<data>
-		463DsLGFFLCPU3Lvq7bR0UOS0AM=
+		Jhvjqs9IoJg7P2sDPkB07MaHdBs=
 		</data>
 		<key>Modules/onegini.swiftmodule/Project/x86_64.swiftsourceinfo</key>
 		<data>
-		463DsLGFFLCPU3Lvq7bR0UOS0AM=
+		Jhvjqs9IoJg7P2sDPkB07MaHdBs=
 		</data>
 		<key>Modules/onegini.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
 		<data>
@@ -38,7 +38,7 @@
 		</data>
 		<key>Modules/onegini.swiftmodule/x86_64-apple-ios-simulator.swiftmodule</key>
 		<data>
-		jzDqVXru3Vh895JLOP3cz/0SnH8=
+		vr2rgh3/2ZONijilkIi0SDUW51M=
 		</data>
 		<key>Modules/onegini.swiftmodule/x86_64.swiftdoc</key>
 		<data>
@@ -46,7 +46,7 @@
 		</data>
 		<key>Modules/onegini.swiftmodule/x86_64.swiftmodule</key>
 		<data>
-		jzDqVXru3Vh895JLOP3cz/0SnH8=
+		vr2rgh3/2ZONijilkIi0SDUW51M=
 		</data>
 	</dict>
 	<key>files2</key>
@@ -83,14 +83,14 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			+pDxdlXHMJyOeHbWwUYoiuCzib3EGbwYW1BxgLo9tcQ=
+			i8a33E4evyRvNnUHvOewEV2NwlAdiwxyemzSX3hQV9o=
 			</data>
 		</dict>
 		<key>Modules/onegini.swiftmodule/Project/x86_64.swiftsourceinfo</key>
 		<dict>
 			<key>hash2</key>
 			<data>
-			+pDxdlXHMJyOeHbWwUYoiuCzib3EGbwYW1BxgLo9tcQ=
+			i8a33E4evyRvNnUHvOewEV2NwlAdiwxyemzSX3hQV9o=
 			</data>
 		</dict>
 		<key>Modules/onegini.swiftmodule/x86_64-apple-ios-simulator.swiftdoc</key>
@@ -104,7 +104,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			oSqWBj8CUm0ToEQG79HuwxolRf1LmMckcFFK6Ac8v6I=
+			9bTlqD7VIZ0GC+OxNwO4Ou89PMGPopFBQy/ZoZLtMd0=
 			</data>
 		</dict>
 		<key>Modules/onegini.swiftmodule/x86_64.swiftdoc</key>
@@ -118,7 +118,7 @@
 		<dict>
 			<key>hash2</key>
 			<data>
-			oSqWBj8CUm0ToEQG79HuwxolRf1LmMckcFFK6Ac8v6I=
+			9bTlqD7VIZ0GC+OxNwO4Ou89PMGPopFBQy/ZoZLtMd0=
 			</data>
 		</dict>
 	</dict>

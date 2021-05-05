@@ -49,6 +49,9 @@ class PinConnector : BridgeToPinConnectorProtocol, PinNotificationReceiverProtoc
             case .showError:
                 sendEvent(data: String.stringify(json: ["eventName": PinNotification.showError.rawValue, "eventValue": error?.toJSON() as Any?]))
                 break
+            case .nextAuthenticationAttempt:
+                sendEvent(data: String.stringify(json: ["eventName": PinNotification.nextAuthenticationAttempt.rawValue, "eventValue": String.stringify(json: error?.info ?? [:]) as Any?]))
+                break
         }
     }
 
@@ -63,7 +66,8 @@ enum PinNotification : String {
          close = "eventClosePin",
          openAuth = "eventOpenPinAuth",
          closeAuth = "eventClosePinAuth",
-         showError = "eventError"
+         showError = "eventError",
+         nextAuthenticationAttempt = "eventNextAuthenticationAttempt"
 }
 
 enum PinAction : String {
@@ -74,5 +78,6 @@ enum PinAction : String {
 enum PinFlow : String {
     case create = "create",
          change = "change",
-         authentication = "authentication"
+         authentication = "authentication",
+         nextAuthenticationAttempt = "nextAuthenticationAttempt"
 }

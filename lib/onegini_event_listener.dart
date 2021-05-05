@@ -66,6 +66,9 @@ abstract class OneginiEventListener {
             if (_event.eventName == Constants.eventOpenAuthOTP) {
               openAuthOtp(_context, _event.eventValue!);
             }
+            if (_event.eventName == Constants.eventHandleRegisteredUrl) {
+              handleRegisteredUrl(_context, _event.eventValue!);
+            }
             if (_event.eventName ==
                 Constants.openCustomTwoStepRegistrationScreen) {
               openCustomTwoStepRegistrationScreen(_context, _event.eventValue!);
@@ -81,6 +84,9 @@ abstract class OneginiEventListener {
       eventError(_context, error);
     });
   }
+
+  ///Called to handle registration URL
+  void handleRegisteredUrl(BuildContext? buildContext, String url);
 
   /// Called to open OTP authentication.
   void openAuthOtp(BuildContext? buildContext, String message);

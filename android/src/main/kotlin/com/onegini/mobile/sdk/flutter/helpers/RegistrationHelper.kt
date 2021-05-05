@@ -85,7 +85,7 @@ object RegistrationHelper {
     fun deregisterUser(result: MethodChannel.Result, oneginiClient: OneginiClient) {
         val userProfile = oneginiClient.userClient.authenticatedUserProfile
         if (userProfile == null) {
-            result.error(OneginiWrapperErrors().userProfileIsNull.code, OneginiWrapperErrors().userProfileIsNull.message, null)
+            result.error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
             return
         }
         oneginiClient.userClient.deregisterUser(
