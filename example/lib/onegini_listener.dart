@@ -91,7 +91,7 @@ class OneginiListener extends OneginiEventListener {
             "failed attempts ${authenticationAttempt.failedAttempts} from ${authenticationAttempt.maxAttempts}",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
+        timeInSecForIosWeb: 2,
         backgroundColor: Colors.black38,
         textColor: Colors.white,
         fontSize: 16.0);
