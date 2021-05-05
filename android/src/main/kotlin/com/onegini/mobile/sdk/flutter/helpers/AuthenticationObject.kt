@@ -16,26 +16,6 @@ import io.flutter.plugin.common.MethodChannel
 
 object AuthenticationObject {
 
-    fun getNotRegisteredAuthenticators(result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        val gson = GsonBuilder().serializeNulls().create()
-        val authenticatedUserProfile = oneginiClient.userClient.authenticatedUserProfile
-        if (authenticatedUserProfile == null) {
-            result.error(OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
-            return
-        }
-        val notRegisteredAuthenticators = authenticatedUserProfile.let { oneginiClient.userClient.getNotRegisteredAuthenticators(it) }
-        val authenticators: ArrayList<Map<String, String>> = ArrayList()
-        if (notRegisteredAuthenticators != null) {
-            for (auth in notRegisteredAuthenticators) {
-                val map = mutableMapOf<String, String>()
-                map["id"] = auth.id
-                map["name"] = auth.name
-                authenticators.add(map)
-            }
-        }
-        result.success(gson.toJson(authenticators))
-    }
-
     fun setPreferredAuthenticator(authenticatorId: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         var authenticator: OneginiAuthenticator? = null
         val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
