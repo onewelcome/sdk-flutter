@@ -36,4 +36,8 @@ class OneginiMethodsWrapper {
     fun getUserProfiles(result: MethodChannel.Result,oneginiClient: OneginiClient){
         GetUserProfilesUseCase(oneginiClient)(result)
     }
+
+    fun getRegisteredAuthenticators(result: MethodChannel.Result,oneginiClient: OneginiClient){
+        GetRegisteredAuthenticatorsUseCase(oneginiClient)(result)
+    }
 }
