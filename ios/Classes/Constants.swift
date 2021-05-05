@@ -60,5 +60,6 @@ struct Constants {
         static let identityProviderId: String = "identityProviderId"
         static let scopes: String = "scopes"
         static let authenticatorId: String = "authenticatorId"
+        static let profileId: String = "profileId"
     }
 }

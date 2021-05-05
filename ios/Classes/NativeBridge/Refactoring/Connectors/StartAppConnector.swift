@@ -14,9 +14,8 @@ protocol StartAppConnectorProtocol: class {
     func startApp(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 }
 
-//FIXME: Refactoring
 class StartAppConnector: StartAppConnectorProtocol {
-    var startAppWrapper: StartAppWrapperProtocol?
+    var startAppWrapper: StartAppWrapperProtocol!
     
     init(wrapper: StartAppWrapperProtocol? = nil) {
         self.startAppWrapper = wrapper ?? StartAppWrapper()
@@ -31,29 +30,42 @@ class StartAppConnector: StartAppConnectorProtocol {
             connectionTimeout = arguments[Constants.Parameters.connectionTimeout] as! Int?
         }
         
+        let listIDs = startAppWrapper.splitInputCustomRegIDsValue(customIdentityProviderIds)
+        self.startAppWrapper.configureCustomRegistrationIDs(listIDs)
         
-        
-        let timeInterval = TimeInterval(connectionTimeout)
-        ONGClientBuilder().setHttpRequestTimeout(timeInterval)
-//        OneginiModuleSwift.sharedInstance.startOneginiModule(callback: result)
-        
-        startAppWrapper?.startApp(callback: { value,error in
-            result(String.stringify(json: [String]()))
+        self.startAppWrapper.startApp(timeInterval: connectionTimeout, callback: { [weak self] (success, error) in
+            
+            if let error = error {
+                result(PluginError.from(data: error))
+                return
+            }
+            
+            guard success else {
+                result(PluginError.from(customType: .newSomethingWentWrong))
+                return
+            }
+            
+            let data = self?.startAppWrapper.userProfilesData()
+            result(data)
         })
     }
 }
 
 protocol StartAppWrapperProtocol {
-    func startApp(timeInterval: Int? = nil, callback: @escaping (Bool, Error?) -> Void)
+    func startApp(timeInterval: Int?, callback: @escaping (Bool, Error?) -> Void)
     func configureCustomRegistrationIDs(_ list: [String])
     func splitInputCustomRegIDsValue(_ value: String?) -> [String]
-    func userProfiles()
+    func userProfilesData() -> String
 }
 
 class StartAppWrapper: StartAppWrapperProtocol {
     public var customRegistrationIDs = [String]()
     
-    func startApp(timeInterval: Int? = nil, callback: @escaping (Bool, Error?) -> Void) {
+    func startApp(timeInterval: Int?, callback: @escaping (Bool, Error?) -> Void) {
+        if let timeInterval = timeInterval {
+            ONGClientBuilder().setHttpRequestTimeout(TimeInterval(timeInterval))
+        }
+        
         ONGClientBuilder().build()
         ONGClient.sharedInstance().start { (value, error) in
             callback(value, error)
@@ -66,15 +78,20 @@ class StartAppWrapper: StartAppWrapperProtocol {
         guard customIdentityProviderIds.count > 0 else {
             return [String]()
         }
+        
         let ids = customIdentityProviderIds.split(separator: ",").map {$0.trimmingCharacters(in: .whitespacesAndNewlines)}
-            OneginiModuleSwift.sharedInstance.configureCustomRegIdentifiers(ids)
+        return ids
     }
     
     func configureCustomRegistrationIDs(_ list: [String]) {
         self.customRegistrationIDs = list
     }
     
-    func userProfiles() {
-        
+    func userProfilesData() -> String {
+        let profiles = ONGUserClient.sharedInstance().userProfiles()
+        let value: [[String: String?]] = profiles.compactMap({ [Constants.Parameters.profileId: $0.profileId] })
+
+        let data = String.stringify(json: value)
+        return data
     }
 }
