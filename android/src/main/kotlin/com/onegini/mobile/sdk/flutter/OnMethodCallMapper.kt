@@ -47,7 +47,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_DEREGISTER_USER -> oneginiMethodsWrapper.deregisterUser(result, OneginiSDK().getOneginiClient(context))
 
             // Authenticate
-            Constants.METHOD_AUTHENTICATE_USER -> AuthenticationObject.authenticateUser(call.argument<String>("registeredAuthenticatorId"), result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_AUTHENTICATE_USER -> oneginiMethodsWrapper.authenticateUser(call, result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_GET_REGISTERED_AUTHENTICATORS -> AuthenticationObject.getRegisteredAuthenticators(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS -> AuthenticationObject.getNotRegisteredAuthenticators(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_REGISTER_AUTHENTICATOR -> AuthenticationObject.registerAuthenticator(call.argument<String>("authenticatorId"), result, OneginiSDK().getOneginiClient(context))

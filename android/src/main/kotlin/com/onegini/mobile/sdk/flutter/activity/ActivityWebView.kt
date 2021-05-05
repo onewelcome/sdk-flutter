@@ -10,7 +10,6 @@ import com.onegini.mobile.sdk.flutter.OneginiMethodsWrapper
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.R
 import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
-import com.onegini.mobile.sdk.flutter.helpers.RegistrationHelper
 
 class ActivityWebView : Activity() {
 
