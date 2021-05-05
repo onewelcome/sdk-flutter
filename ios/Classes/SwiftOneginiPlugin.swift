@@ -2,6 +2,8 @@ import Flutter
 import UIKit
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
+    var mainAppConnector: MainAppConnector!
+    
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "onegini", binaryMessenger: registrar.messenger())
     let eventChannel = FlutterEventChannel(name: "onegini_events",
@@ -22,10 +24,12 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         }
     }
     
+    self.mainAppConnector = MainAppConnector()
+    
     switch call.method {
     
     // base
-    case Constants.Routes.startApp: startApp(call, result)
+    case Constants.Routes.startApp: self.mainAppConnector.startApp(call, result)
     
     // register
     case Constants.Routes.registerUser: registerUser(call, result)

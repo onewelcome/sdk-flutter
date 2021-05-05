@@ -53,4 +53,12 @@ struct Constants {
         static let changePin: String = "changePin";
         static let userProfiles: String = "userProfiles";
     }
+    
+    struct Parameters {
+        static let connectionTimeout: String = "connectionTimeout"
+        static let twoStepCustomIdentityProviderIds: String = "twoStepCustomIdentityProviderIds"
+        static let identityProviderId: String = "identityProviderId"
+        static let scopes: String = "scopes"
+        static let authenticatorId: String = "authenticatorId"
+    }
 }
