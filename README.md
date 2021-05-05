@@ -118,11 +118,16 @@ The user is able to run the example of SDK in the 'Example' section of the libra
     pod repo-art add onegini https://repo.onegini.com/artifactory/api/pods/cocoapods-public
     ```
 
-5. Add next to `ios/Podfile`(before app target):
+5. Add next to `ios/Podfile`:
     ```
-    plugin 'cocoapods-art', :sources => [
-    'onegini'
-    ]
+post_install do |installer|
+  installer.pods_project.targets.each do |target|
+    flutter_additional_ios_build_settings(target)
+    target.build_configurations.each do |config|
+      config.build_settings['ENABLE_BITCODE'] = 'NO'
+    end
+  end
+end
     ```
 
 6. Run `pod install`    
@@ -135,25 +140,3 @@ The user is able to run the example of SDK in the 'Example' section of the libra
 ### IOS >= 12.0
 
 `cd ios && pod install`
-
-#### Example
-
-Download manually SDK. Find `example` folder. Other steps are the same as for package integration, instead, you don't need to modify `pubspec.yaml`.
-
-
-# Functional scope
-## Done on the Android/iOS:
-### Milestone 1:
-    - Start
-    - Security Controls and Configuration of the SDK
-    - User registration
-       - Browser
-    - User deregistration
-### Milestone 2:
-    -  Secure resource access -  `user-id-decorated`, `devices`, `application-details`.
-### Milestone 3:
-    - User authentication with PIN
-    - Logout
-### Milestone 4:
-    - User registration
-        - Custom identity provider
