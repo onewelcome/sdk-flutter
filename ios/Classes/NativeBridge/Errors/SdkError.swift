@@ -6,12 +6,14 @@ class SdkError {
     var errorDescription: String
     var recoverySuggestion: String
     var code: Int
+    var info: [String: Any?] = [:]
 
-    init(title: String = "Error", errorDescription: String, recoverySuggestion: String = "Please try again.", code: Int = 400) {
+    init(title: String = "Error", errorDescription: String, recoverySuggestion: String = "Please try again.", code: Int = 400, info: [String: Any?] = [:]) {
         self.title = title
         self.errorDescription = errorDescription
         self.recoverySuggestion = recoverySuggestion
         self.code = code
+        self.info = info
     }
     
     init(customType: OneginiErrorCustomType, title: String = "Error", recoverySuggestion: String = "Please try again.") {

@@ -50,7 +50,7 @@ class PinConnector : BridgeToPinConnectorProtocol, PinNotificationReceiverProtoc
                 sendEvent(data: String.stringify(json: ["eventName": PinNotification.showError.rawValue, "eventValue": error?.toJSON() as Any?]))
                 break
             case .nextAuthenticationAttempt:
-                sendEvent(data: String.stringify(json: ["eventName": PinNotification.nextAuthenticationAttempt.rawValue, "eventValue": error?.toJSON() as Any?]))
+                sendEvent(data: String.stringify(json: ["eventName": PinNotification.nextAuthenticationAttempt.rawValue, "eventValue": String.stringify(json: error?.info ?? [:]) as Any?]))
                 break
         }
     }
