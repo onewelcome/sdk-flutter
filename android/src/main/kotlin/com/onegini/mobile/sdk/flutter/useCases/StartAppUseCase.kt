@@ -19,18 +19,14 @@ class StartAppUseCase(private val context: Context, private val oneginiSDK: Oneg
         val readTimeout = call.argument<Int>("readTimeout")
         val oneginiCustomIdentityProviderList = mutableListOf<OneginiCustomIdentityProvider>()
         twoStepCustomIdentityProviderIds?.forEach { oneginiCustomIdentityProviderList.add(CustomTwoStepIdentityProvider(it)) }
-        val oneginiClient: OneginiClient = oneginiSDK.initSDK(context, connectionTimeout?.toLong(), readTimeout?.toLong(), oneginiCustomIdentityProviderList)
+        val oneginiClient: OneginiClient = oneginiSDK.getOneginiClient(context, connectionTimeout?.toLong(), readTimeout?.toLong(), oneginiCustomIdentityProviderList)
+        start(oneginiClient, result)
+    }
+
+    private fun start(oneginiClient: OneginiClient, result: MethodChannel.Result) {
         oneginiClient.start(object : OneginiInitializationHandler {
             override fun onSuccess(removedUserProfiles: Set<UserProfile?>?) {
-                val removedUserProfileArray: ArrayList<Map<String, Any>> = ArrayList()
-                if (removedUserProfiles != null) {
-                    for (userProfile in removedUserProfiles) {
-                        val map = mutableMapOf<String, Any>()
-                        map["isDefault"] = userProfile?.isDefault ?: false
-                        map["profileId"] = userProfile?.profileId ?: ""
-                        removedUserProfileArray.add(map)
-                    }
-                }
+                val removedUserProfileArray = getRemovedUserProfileArray(removedUserProfiles)
                 result.success(Gson().toJson(removedUserProfileArray))
             }
 
@@ -38,5 +34,20 @@ class StartAppUseCase(private val context: Context, private val oneginiSDK: Oneg
                 result.error(error.errorType.toString(), error.message, null)
             }
         })
+    }
+
+    private fun getRemovedUserProfileArray(removedUserProfiles: Set<UserProfile?>?): ArrayList<Map<String, Any>> {
+        val removedUserProfileArray: ArrayList<Map<String, Any>> = ArrayList()
+        if (removedUserProfiles != null) {
+            for (userProfile in removedUserProfiles) {
+                if (userProfile != null && userProfile.profileId != null) {
+                    val map = mutableMapOf<String, Any>()
+                    map["isDefault"] = userProfile.isDefault
+                    map["profileId"] = userProfile.profileId
+                    removedUserProfileArray.add(map)
+                }
+            }
+        }
+        return removedUserProfileArray
     }
 }
