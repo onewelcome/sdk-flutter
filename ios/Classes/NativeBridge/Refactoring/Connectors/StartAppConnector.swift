@@ -16,6 +16,7 @@ protocol StartAppConnectorProtocol: class {
 
 class StartAppConnector: StartAppConnectorProtocol {
     var startAppWrapper: StartAppWrapperProtocol!
+    public var customRegistrationIDs = [String]()
     
     init(wrapper: StartAppWrapperProtocol? = nil) {
         self.startAppWrapper = wrapper ?? StartAppWrapper()
@@ -30,9 +31,6 @@ class StartAppConnector: StartAppConnectorProtocol {
             connectionTimeout = arguments[Constants.Parameters.connectionTimeout] as! Int?
         }
         
-        let listIDs = startAppWrapper.splitInputCustomRegIDsValue(customIdentityProviderIds)
-        self.startAppWrapper.configureCustomRegistrationIDs(listIDs)
-        
         self.startAppWrapper.startApp(timeInterval: connectionTimeout, callback: { [weak self] (success, error) in
             
             if let error = error {
@@ -45,22 +43,25 @@ class StartAppConnector: StartAppConnectorProtocol {
                 return
             }
             
-            let data = self?.startAppWrapper.userProfilesData()
+            let data = self?.convert(profiles: self!.startAppWrapper.userProfiles())
             result(data)
         })
+    }
+    
+    private func convert(profiles: [ONGUserProfile]) -> String {
+        let value: [[String: String?]] = profiles.compactMap({ [Constants.Parameters.profileId: $0.profileId] })
+
+        let data = String.stringify(json: value)
+        return data
     }
 }
 
 protocol StartAppWrapperProtocol {
     func startApp(timeInterval: Int?, callback: @escaping (Bool, Error?) -> Void)
-    func configureCustomRegistrationIDs(_ list: [String])
-    func splitInputCustomRegIDsValue(_ value: String?) -> [String]
-    func userProfilesData() -> String
+    func userProfiles() -> [ONGUserProfile]
 }
 
 class StartAppWrapper: StartAppWrapperProtocol {
-    public var customRegistrationIDs = [String]()
-    
     func startApp(timeInterval: Int?, callback: @escaping (Bool, Error?) -> Void) {
         if let timeInterval = timeInterval {
             ONGClientBuilder().setHttpRequestTimeout(TimeInterval(timeInterval))
@@ -72,26 +73,8 @@ class StartAppWrapper: StartAppWrapperProtocol {
         }
     }
     
-    func splitInputCustomRegIDsValue(_ value: String?) -> [String] {
-        let customIdentityProviderIds = value ?? ""
-        debugPrint("Providers: " + customIdentityProviderIds)
-        guard customIdentityProviderIds.count > 0 else {
-            return [String]()
-        }
-        
-        let ids = customIdentityProviderIds.split(separator: ",").map {$0.trimmingCharacters(in: .whitespacesAndNewlines)}
-        return ids
-    }
-    
-    func configureCustomRegistrationIDs(_ list: [String]) {
-        self.customRegistrationIDs = list
-    }
-    
-    func userProfilesData() -> String {
+    func userProfiles() -> [ONGUserProfile] {
         let profiles = ONGUserClient.sharedInstance().userProfiles()
-        let value: [[String: String?]] = profiles.compactMap({ [Constants.Parameters.profileId: $0.profileId] })
-
-        let data = String.stringify(json: value)
-        return data
+        return Array(profiles)
     }
 }
