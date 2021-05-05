@@ -6,8 +6,10 @@ import android.net.Uri
 import android.os.Bundle
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import com.onegini.mobile.sdk.flutter.OneginiMethodsWrapper
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.R
+import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.RegistrationHelper
 
 class ActivityWebView : Activity() {
@@ -25,14 +27,14 @@ class ActivityWebView : Activity() {
                 super.onLoadResource(view, url)
                 val uri = Uri.parse(url)
                 if (uri.scheme == redirectUri.scheme) {
-                    RegistrationHelper.handleRegistrationCallback(uri)
+                    RegistrationRequestHandler.handleRegistrationCallback(uri)
                     finish()
                 }
             }
         }
         val url = intent.getStringExtra("url")
         if (url == null || url.isEmpty()) {
-            RegistrationHelper.cancelRegistration()
+            OneginiMethodsWrapper().cancelRegistration()
             finish()
         } else {
             myWebView.loadUrl(url)
