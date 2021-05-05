@@ -1,8 +1,0 @@
-${PODS_ROOT}/Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests-frameworks.sh
-${BUILT_PRODUCTS_DIR}/MTBBarcodeScanner/MTBBarcodeScanner.framework
-${BUILT_PRODUCTS_DIR}/Toast/Toast.framework
-${BUILT_PRODUCTS_DIR}/fluttertoast/fluttertoast.framework
-${BUILT_PRODUCTS_DIR}/onegini/onegini.framework
-${BUILT_PRODUCTS_DIR}/qr_code_scanner/qr_code_scanner.framework
-${PODS_XCFRAMEWORKS_BUILD_DIR}/OneginiCrypto/OneginiCrypto.framework/OneginiCrypto
-${PODS_XCFRAMEWORKS_BUILD_DIR}/OneginiSDKiOS/OneginiSDKiOS.framework/OneginiSDKiOS
