@@ -6,11 +6,15 @@ import android.util.Patterns
 import androidx.annotation.NonNull
 import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onegini.mobile.sdk.android.handlers.*
-import com.onegini.mobile.sdk.android.handlers.error.*
+import com.onegini.mobile.sdk.android.handlers.OneginiAppToWebSingleSignOnHandler
+import com.onegini.mobile.sdk.android.handlers.OneginiChangePinHandler
+import com.onegini.mobile.sdk.android.handlers.OneginiLogoutHandler
+import com.onegini.mobile.sdk.android.handlers.OneginiPinValidationHandler
+import com.onegini.mobile.sdk.android.handlers.error.OneginiAppToWebSingleSignOnError
+import com.onegini.mobile.sdk.android.handlers.error.OneginiChangePinError
+import com.onegini.mobile.sdk.android.handlers.error.OneginiLogoutError
+import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
 import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
-import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
-import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.constants.Constants
 import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
@@ -18,9 +22,7 @@ import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.AuthenticationObject
 import com.onegini.mobile.sdk.flutter.helpers.MobileAuthenticationObject
-import com.onegini.mobile.sdk.flutter.helpers.RegistrationHelper
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
-import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepIdentityProvider
 import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationAction
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -42,7 +44,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_CANCEL_REGISTRATION -> oneginiMethodsWrapper.cancelRegistration()
             Constants.METHOD_ACCEPT_PIN_REGISTRATION_REQUEST -> PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
             Constants.METHOD_DENY_PIN_REGISTRATION_REQUEST -> PinRequestHandler.CALLBACK?.denyAuthenticationRequest()
-            Constants.METHOD_DEREGISTER_USER -> oneginiMethodsWrapper.deregisterUser(result,OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_DEREGISTER_USER -> oneginiMethodsWrapper.deregisterUser(result, OneginiSDK().getOneginiClient(context))
 
             // Authenticate
             Constants.METHOD_AUTHENTICATE_USER -> AuthenticationObject.authenticateUser(call.argument<String>("registeredAuthenticatorId"), result, OneginiSDK().getOneginiClient(context))
@@ -74,9 +76,9 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             // Other
             Constants.METHOD_CHANGE_PIN -> startChangePinFlow(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON -> getAppToWebSingleSignOn(call.argument<String>("url"), result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_GET_USER_PROFILES -> oneginiMethodsWrapper.getUserProfiles(result,OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_GET_ACCESS_TOKEN -> oneginiMethodsWrapper.getAccessToken(result,OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_GET_AUTHENTICATED_USER_PROFILE -> oneginiMethodsWrapper.getAuthenticatedUserProfile(result,OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_GET_USER_PROFILES -> oneginiMethodsWrapper.getUserProfiles(result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_GET_ACCESS_TOKEN -> oneginiMethodsWrapper.getAccessToken(result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_GET_AUTHENTICATED_USER_PROFILE -> oneginiMethodsWrapper.getAuthenticatedUserProfile(result, OneginiSDK().getOneginiClient(context))
 
             Constants.METHOD_VALIDATE_PIN_WITH_POLICY -> validatePinWithPolicy(call.argument<String>("pin")?.toCharArray(), result, OneginiSDK().getOneginiClient(context))
 
