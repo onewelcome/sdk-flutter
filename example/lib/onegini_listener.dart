@@ -171,6 +171,6 @@ class OneginiListener extends OneginiEventListener {
   @override
   void handleRegisteredUrl(BuildContext buildContext, String url) async {
      await Onegini.instance.userClient
-        .handleRegisteredUserUrl(buildContext, url, signInType: WebSignInType.safari);
+        .handleRegisteredUserUrl(buildContext, url, signInType: WebSignInType.insideApp);
   }
 }
