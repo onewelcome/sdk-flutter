@@ -16,18 +16,16 @@ protocol StartAppConnectorProtocol: class {
 
 class StartAppConnector: StartAppConnectorProtocol {
     var startAppWrapper: StartAppWrapperProtocol!
-    public var customRegistrationIDs = [String]()
     
     init(wrapper: StartAppWrapperProtocol? = nil) {
         self.startAppWrapper = wrapper ?? StartAppWrapper()
     }
     
     func startApp(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        var customIdentityProviderIds: String?
         var connectionTimeout: Int?
-        
+
         if let arguments = call.arguments as! [String: Any]? {
-            customIdentityProviderIds = arguments[Constants.Parameters.twoStepCustomIdentityProviderIds] as! String?
+        
             connectionTimeout = arguments[Constants.Parameters.connectionTimeout] as! Int?
         }
         

@@ -59,7 +59,7 @@ class _BodyWidgetState extends State<BodyWidget> {
     /// init Onegini sdk on native side
     var removedUserProfiles = await Onegini.instance
         .startApplication(OneginiListener(),
-            twoStepCustomIdentityProviderIds: ["2-way-otp-api"],
+            twoStepCustomIdentityProviderIds: ["2-way-otp-api", "3-way-otp-api", "4-way-otp-api"],
             connectionTimeout: 5,
             readTimeout: 25)
         .catchError((error) {
