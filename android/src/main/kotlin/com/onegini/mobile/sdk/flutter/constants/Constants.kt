@@ -22,7 +22,7 @@ interface Constants {
         const val EVENT_CLOSE_AUTH_OTP = "eventCloseAuthOtp"
 
         const val EVENT_OPEN_CUSTOM_TWO_STEP_REGISTRATION_SCREEN = "openCustomTwoStepRegistrationScreen"
-        
+
         const val EVENT_HANDLE_REGISTERED_URL = "eventHandleRegisteredUrl"
 
         /**
@@ -74,5 +74,7 @@ interface Constants {
         const val METHOD_DENY_OTP_AUTHENTICATION_REQUEST = "denyOtpAuthenticationRequest"
 
         const val METHOD_VALIDATE_PIN_WITH_POLICY = "validatePinWithPolicy"
+        const val METHOD_GET_ACCESS_TOKEN = "getAccessToken"
+        const val METHOD_GET_AUTHENTICATED_USER_PROFILE = "getAuthenticatedUserProfile"
     }
 }

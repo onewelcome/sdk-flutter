@@ -58,6 +58,10 @@ class PinHandler: NSObject {
         sendConnectorNotification(PinNotification.showError, flow, error)
     }
 
+    private func notifyNextAuthenticationAttempt(_ error: SdkError) {
+        sendConnectorNotification(PinNotification.nextAuthenticationAttempt, flow, error)
+    }
+
     private func sendConnectorNotification(_ event: PinNotification, _ flow: PinFlow?, _ error: SdkError?) {
         notificationReceiver?.sendNotification(event: event, flow: flow, error: error)
     }
@@ -72,7 +76,11 @@ extension PinHandler : PinConnectorToPinHandler {
         }
 
         if let _error = error {
-            notifyOnError(_error)
+            if flow == .nextAuthenticationAttempt {
+                notifyNextAuthenticationAttempt(_error)
+            } else {
+                notifyOnError(_error)
+            }
         } else {
             if(mode == nil) {
                 var notification = PinNotification.open;
@@ -85,6 +93,10 @@ extension PinHandler : PinConnectorToPinHandler {
                     case PinFlow.create:
                         mode = .registration
                         notification = PinNotification.open;
+                        break
+                    case PinFlow.nextAuthenticationAttempt:
+                        mode = .login
+                        notification = PinNotification.nextAuthenticationAttempt;
                         break
                     default:
                         mode = .registration
