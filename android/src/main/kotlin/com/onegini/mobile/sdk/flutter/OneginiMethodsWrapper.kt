@@ -36,4 +36,8 @@ class OneginiMethodsWrapper {
     fun getUserProfiles(result: MethodChannel.Result,oneginiClient: OneginiClient){
         GetUserProfilesUseCase(oneginiClient)(result)
     }
+
+    fun setPreferredAuthenticator(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient){
+        SetPreferredAuthenticatorUseCase(oneginiClient)(call, result)
+    }
 }
