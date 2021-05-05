@@ -39,7 +39,7 @@ class GetIdentityProvidersUseCaseTests {
     }
 
     @Test
-    fun `should return empty list when user doesn't have available identity providers`() {
+    fun `should return empty list when sdk return empty set`() {
         whenever(userClientMock.identityProviders).thenReturn(emptySet())
 
         GetIdentityProvidersUseCase(clientMock)(resultSpy)

@@ -9,13 +9,14 @@ class GetIdentityProvidersUseCase(private val oneginiClient: OneginiClient) {
         val gson = GsonBuilder().serializeNulls().create()
         val identityProviders = oneginiClient.userClient.identityProviders
         val providers: ArrayList<Map<String, String>> = ArrayList()
-        if (identityProviders != null)
+        if (identityProviders != null) {
             for (identityProvider in identityProviders) {
                 val map = mutableMapOf<String, String>()
                 map["id"] = identityProvider.id
                 map["name"] = identityProvider.name
                 providers.add(map)
             }
+        }
         result.success(gson.toJson(providers))
     }
 }

@@ -12,6 +12,5 @@ class GetAuthenticatedUserProfileUseCase(private val oneginiClient: OneginiClien
         } else {
             result.success(null)
         }
-
     }
 }

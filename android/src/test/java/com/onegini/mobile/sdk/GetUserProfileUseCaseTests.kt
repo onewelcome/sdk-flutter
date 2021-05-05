@@ -34,7 +34,7 @@ class GetUserProfileUseCaseTests {
     }
 
     @Test
-    fun `should return null UserProfile when SDK returns null`() {
+    fun `should return empty set when SDK returns empty set`() {
         whenever(userClientMock.userProfiles).thenReturn(emptySet())
 
         GetUserProfilesUseCase(clientMock)(resultSpy)
