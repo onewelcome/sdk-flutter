@@ -30,6 +30,7 @@
 .pub/
 build/
 **/example/build/
+**/example/.dart_tool/
 
 # Android related
 **/android/**/gradle-wrapper.jar
