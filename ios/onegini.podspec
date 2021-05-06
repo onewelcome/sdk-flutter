@@ -18,9 +18,9 @@ A flutter plugin project.
   s.platform = :ios, '12.0'
 
   # ***************************
-  # s.dependency 'OneginiSDKiOS', '~> 9.6'
-  # s.requires_arc  = true
-  s.vendored_frameworks = 'OneginiCrypto.xcframework', 'OneginiSDKiOS.xcframework'
+  s.dependency 'OneginiSDKiOS', '~> 9.6'
+  s.requires_arc  = true
+  # s.vendored_frameworks = 'OneginiCrypto.xcframework', 'OneginiSDKiOS.xcframework'
   # ***************************
 
   # Flutter.framework does not contain a i386 slice.

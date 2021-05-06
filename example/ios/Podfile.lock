@@ -6,6 +6,8 @@ PODS:
   - MTBBarcodeScanner (5.0.11)
   - onegini (0.2.0):
     - Flutter
+    - OneginiSDKiOS (~> 9.6)
+  - OneginiSDKiOS (9.8.0)
   - qr_code_scanner (0.2.0):
     - Flutter
     - MTBBarcodeScanner
@@ -18,6 +20,8 @@ DEPENDENCIES:
   - qr_code_scanner (from `.symlinks/plugins/qr_code_scanner/ios`)
 
 SPEC REPOS:
+  https://repo.onegini.com/artifactory/api/pods/cocoapods-public:
+    - OneginiSDKiOS
   trunk:
     - MTBBarcodeScanner
     - Toast
@@ -36,10 +40,11 @@ SPEC CHECKSUMS:
   Flutter: 434fef37c0980e73bb6479ef766c45957d4b510c
   fluttertoast: 6122fa75143e992b1d3470f61000f591a798cc58
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
-  onegini: 609350e9cf4e91b786404132d699240140e9da77
+  onegini: 3c74400c6186ee0f3720779c855d44178f4c8869
+  OneginiSDKiOS: 72df1b0d438ff69a0768a6cd9c37f72273af465d
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
 
-PODFILE CHECKSUM: ea19d228d1878d98b1833f07bd0802262fcd457c
+PODFILE CHECKSUM: b5f64e04d382560b08b617aff7a55ebd0ca56af5
 
 COCOAPODS: 1.10.1
