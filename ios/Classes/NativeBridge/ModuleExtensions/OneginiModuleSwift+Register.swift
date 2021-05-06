@@ -36,7 +36,8 @@ extension OneginiModuleSwift {
     }
     
     public func handleDeepLinkCallbackUrl(_ url: URL) -> Bool {
-        let schemeLibrary = URL.init(string: ONGClient.sharedInstance().configModel.redirectURL)!.scheme
+        print(ONGClient.sharedInstance().configModel.redirectURL)
+        let schemeLibrary = "oneginiexample"//URL.init(string: ONGClient.sharedInstance().configModel.redirectURL)!.scheme
         guard let scheme = url.scheme,
               scheme.localizedCaseInsensitiveCompare(schemeLibrary!) == .orderedSame else { return false }
         bridgeConnector.toRegistrationConnector.registrationHandler.handleRedirectURL(url: url)
