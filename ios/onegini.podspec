@@ -3,7 +3,7 @@
 # Run `pod lib lint onegini.podspec' to validate before publishing.
 #
 Pod::Spec.new do |s|
-  s.name             = 'onegini'
+  s.name             = 'oneginitest'
   s.version          = '0.2.0'
   s.summary          = 'Onegini Mobile Flutter plugin - iOS SDK'
   s.description      = <<-DESC
