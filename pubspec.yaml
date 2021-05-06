@@ -1,8 +1,7 @@
 name: onegini
 description: A new flutter plugin project.
 version: 0.0.1
-author: onegini.com
-homepage:
+homepage: https://www.onegini.com/
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
