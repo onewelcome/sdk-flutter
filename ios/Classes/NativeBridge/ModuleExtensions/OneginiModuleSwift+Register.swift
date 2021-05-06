@@ -39,7 +39,7 @@ extension OneginiModuleSwift {
         print(ONGClient.sharedInstance().configModel.redirectURL)
         let schemeLibrary = "oneginiexample"//URL.init(string: ONGClient.sharedInstance().configModel.redirectURL)!.scheme
         guard let scheme = url.scheme,
-              scheme.localizedCaseInsensitiveCompare(schemeLibrary!) == .orderedSame else { return false }
+              scheme.localizedCaseInsensitiveCompare(schemeLibrary) == .orderedSame else { return false }
         bridgeConnector.toRegistrationConnector.registrationHandler.handleRedirectURL(url: url)
         return true
     }
