@@ -83,6 +83,20 @@ class UserClient {
     }
   }
 
+  Future<List<OneginiListResponse>> getAllAuthenticators(
+      BuildContext context) async {
+    Onegini.instance.setEventContext(context);
+    try {
+      var authenticators = await Onegini.instance.channel
+          .invokeMethod(Constants.getAllAuthenticators);
+      return responseFromJson(authenticators);
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+
+
   /// Starts authentication flow.
   ///
   /// If [registeredAuthenticatorId] is null, starts authentication by default authenticator.
