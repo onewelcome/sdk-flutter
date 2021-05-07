@@ -73,8 +73,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   logOut(BuildContext context) async {
     Navigator.pop(context);
-    var isLogOut =
-        await Onegini.instance.userClient.logout().catchError((error) {
+    await Onegini.instance.userClient.logout().catchError((error) {
       if (error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,
@@ -86,12 +85,10 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
             fontSize: 16.0);
       }
     });
-    if (isLogOut) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => LoginScreen()),
-      );
-    }
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => LoginScreen()),
+    );
   }
 
   Future<void> getAuthenticators() async {
@@ -126,11 +123,10 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     setState(() {});
   }
 
-
-  bool isContainAuthenticator(String authenticatorId){
+  bool isContainAuthenticator(String authenticatorId) {
     var isContain = false;
     registeredAuthenticators.forEach((element) {
-       if(element.id == authenticatorId) isContain = true;
+      if (element.id == authenticatorId) isContain = true;
     });
     return isContain;
   }
@@ -248,7 +244,8 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
                           snapshot.data[index].name,
                         ),
                         leading: Switch(
-                          value: isContainAuthenticator(snapshot.data[index].id),
+                          value:
+                              isContainAuthenticator(snapshot.data[index].id),
                           onChanged: (value) {
                             value
                                 ? registerAuthenticator(snapshot.data[index].id)
