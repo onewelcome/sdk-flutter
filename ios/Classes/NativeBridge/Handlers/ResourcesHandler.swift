@@ -268,12 +268,18 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     
     func generateONGResourceRequest(from parameters: [String: Any]) -> ONGResourceRequest {
         let encoding = getEncodingByValue(parameters["encoding"] as! String)
+        let path = parameters["path"] as! String
+        let method = parameters["method"] as! String
+        let headers = parameters["headers"] as! [String : String]?
 
-        let request = ONGResourceRequest.init(path: parameters["path"] as! String,
-                                              method: parameters["method"] as! String,
-                                              parameters: parameters["parameters"] as? [String : Any],
-                                              encoding: encoding,
-                                              headers: parameters["headers"] as! [String : String]?)
+        var request: ONGResourceRequest!
+        
+        if let body = parameters["body"] as! String? {
+            let data = body.data(using: .utf8)
+            request = ONGResourceRequest.init(path: path, method: method, body: data, headers: headers)
+        } else {
+            request = ONGResourceRequest.init(path:path, method: method, parameters: parameters["parameters"] as? [String : Any], encoding: encoding, headers: headers)
+        }
         
         return request
     }
