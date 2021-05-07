@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/callbacks/onegini_pin_authentication_callback.dart';
 import 'package:onegini/callbacks/onegini_pin_registration_callback.dart';
+import 'package:onegini/onegini.dart';
 class PinRequestScreen extends StatefulWidget {
   final bool confirmation;
   final String previousCode;
@@ -46,7 +47,7 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
     }
   }
 
-  done() {
+  done() async {
     String pin = "";
     pinCode.forEach((element) {
       pin += element;
@@ -78,16 +79,30 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
             fontSize: 16.0);
       }
     } else {
-      Navigator.of(context)
-        ..pop()
-        ..push(
-          MaterialPageRoute(
-              builder: (context) => PinRequestScreen(
-                    confirmation: true,
-                    previousCode: pin,
-                    customAuthenticator: this.widget.customAuthenticator,
-                  )),
-        );
+     bool isSuccess = await Onegini.instance.userClient.validatePinWithPolicy(pin).catchError((error){
+       if (error is PlatformException) {
+         Fluttertoast.showToast(
+             msg: error.message,
+             toastLength: Toast.LENGTH_SHORT,
+             gravity: ToastGravity.BOTTOM,
+             timeInSecForIosWeb: 1,
+             backgroundColor: Colors.black38,
+             textColor: Colors.white,
+             fontSize: 16.0);
+       }
+     });
+     if(isSuccess){
+       Navigator.of(context)
+         ..pop()
+         ..push(
+           MaterialPageRoute(
+               builder: (context) => PinRequestScreen(
+                 confirmation: true,
+                 previousCode: pin,
+                 customAuthenticator: this.widget.customAuthenticator,
+               )),
+         );
+     }
     }
   }
 
