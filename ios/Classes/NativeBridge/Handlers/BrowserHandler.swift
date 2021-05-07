@@ -79,18 +79,8 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
 extension BrowserViewController: ASWebAuthenticationPresentationContextProviding {
     func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
         print("[\(type(of: self))] presentationAnchor for session")
-        var anchor: ASPresentationAnchor?;
-        let group = DispatchGroup()
-        group.enter()
-
-        DispatchQueue.global(qos: .default).async {
-            anchor = UIApplication.shared.keyWindow!
-            group.leave()
-        }
-
-        // wait ...
-        group.wait()
-
-        return anchor!
+        
+        let anchor: ASPresentationAnchor = UIApplication.shared.keyWindow ?? ASPresentationAnchor()
+        return anchor
     }
 }
