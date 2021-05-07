@@ -11,9 +11,9 @@ extension OneginiModuleSwift {
         }
     }
     
-    func registerUser(_ identityProviderId: String? = nil, callback: @escaping FlutterResult) -> Void {
+    func registerUser(_ identityProviderId: String? = nil, scopes: [String]? = nil, callback: @escaping FlutterResult) -> Void {
 
-        bridgeConnector.toRegistrationConnector.registrationHandler.signUp(identityProviderId) { (_, userProfile, userInfo, error) -> Void in
+        bridgeConnector.toRegistrationConnector.registrationHandler.signUp(identityProviderId, scopes: scopes) { (_, userProfile, userInfo, error) -> Void in
             
             if let _userProfile = userProfile {
                 var result = Dictionary<String, Any?>()
