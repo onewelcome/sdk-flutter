@@ -2,12 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:onegini/callbacks/onegini_pin_authentication_callback.dart';
-import 'package:onegini/callbacks/onegini_pin_registration_callback.dart';
 import 'package:onegini/callbacks/onegini_registration_callback.dart';
 import 'package:onegini/model/onegini_list_response.dart';
 import 'package:onegini/onegini.dart';
-import 'package:onegini/user_client.dart';
 import 'package:onegini_example/screens/user_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -17,7 +14,6 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
-  bool isRegistrationFlow = false;
 
   @override
   initState() {
@@ -26,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   openWeb() async {
     /// Start registration
-    setState(() => {isLoading = true, isRegistrationFlow = true});
+    setState(() => {isLoading = true});
     try {
       var registrationResponse = await Onegini.instance.userClient.registerUser(
         context,
@@ -58,7 +54,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   registrationWithIdentityProvider(String identityProviderId) async {
-    setState(() => {isLoading = true, isRegistrationFlow = true});
+    setState(() => {isLoading = true});
     try {
       var registrationResponse = await Onegini.instance.userClient.registerUser(
         context,
@@ -89,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   pinAuthentication() async {
-    setState(() => {isLoading = true, isRegistrationFlow = false});
+    setState(() => {isLoading = true});
     var userId = await Onegini.instance.userClient
         .authenticateUser(
       context,
@@ -120,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   authenticateWithRegisteredAuthenticators(
       String registeredAuthenticatorId) async {
-    setState(() => {isLoading = true, isRegistrationFlow = false});
+    setState(() => {isLoading = true});
     // var result = await Onegini.instance.userClient.setPreferredAuthenticator(context, registeredAuthenticatorId);
     // print(result);
 
@@ -152,43 +148,9 @@ class _LoginScreenState extends State<LoginScreen> {
   cancelRegistration() async {
     setState(() => isLoading = false);
 
-    await OneginiPinRegistrationCallback()
-        .denyAuthenticationRequest()
-        .catchError((error) {
-      if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      }
-    });
-
     await OneginiRegistrationCallback()
         .cancelRegistration()
         .catchError((error) {
-      if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      }
-    });
-  }
-
-  cancelAuth() async {
-    setState(() => isLoading = false);
-    OneginiPinAuthenticationCallback()
-        .denyAuthenticationRequest()
-        .catchError((error) {
-      setState(() => isLoading = false);
       if (error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,
@@ -228,7 +190,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      isRegistrationFlow ? cancelRegistration() : cancelAuth();
+                      cancelRegistration();
                     },
                     child: Text('Cancel'),
                   ),

@@ -143,7 +143,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             }
 
             override fun onError(error: OneginiChangePinError) {
-                result.error(error.errorType.toString(), error.message, "")
+                result.error(error.errorType.toString(), error.message, null)
             }
         })
     }
