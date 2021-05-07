@@ -9,6 +9,7 @@ import 'package:onegini/onegini.dart';
 import 'package:onegini_example/models/application_details.dart';
 import 'package:onegini_example/models/client_resource.dart';
 import 'package:onegini_example/screens/qr_scan_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../main.dart';
 import 'login_screen.dart';
@@ -96,12 +97,6 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
         .getNotRegisteredAuthenticators(context);
     registeredAuthenticators =
         await Onegini.instance.userClient.getRegisteredAuthenticators(context);
-  }
-
-  Future<List<OneginiListResponse>> getNotRegisteredAuthenticators() async {
-    var authenticators = await Onegini.instance.userClient
-        .getNotRegisteredAuthenticators(context);
-    return authenticators;
   }
 
   registerAuthenticator(String authenticatorId) async {
@@ -359,14 +354,10 @@ class Home extends StatelessWidget {
             fontSize: 16.0);
       }
     });
-    Fluttertoast.showToast(
-        msg: oneginiAppToWebSingleSignOn,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.black38,
-        textColor: Colors.white,
-        fontSize: 16.0);
+    await launch(
+      oneginiAppToWebSingleSignOn.redirectUrl,
+      enableDomStorage: true,
+    );
   }
 
   userProfiles(BuildContext context) async {
