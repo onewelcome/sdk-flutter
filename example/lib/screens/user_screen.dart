@@ -196,6 +196,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
   }
 
   changePin(BuildContext context) {
+    Navigator.pop(context);
     Onegini.instance.userClient.changePin(context).catchError((error) {
       if (error is PlatformException) {
         Fluttertoast.showToast(
@@ -207,8 +208,11 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
             textColor: Colors.white,
             fontSize: 16.0);
       }
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => LoginScreen()),
+      );
     });
-    Navigator.pop(context);
   }
 
   @override
