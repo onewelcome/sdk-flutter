@@ -17,6 +17,7 @@ class ResourcesMethods {
     String? method,
     String? encoding,
     String? body,
+     Map<String, dynamic>? parameters,
   }) async {
     try {
       var response;
@@ -27,7 +28,8 @@ class ResourcesMethods {
         'headers': headers,
         'method': method,
         'encoding': encoding,
-        'body': body
+        'body': body,
+        'parameters': parameters,
       });
 
       return response;
@@ -45,6 +47,7 @@ class ResourcesMethods {
     String? method,
     String? encoding,
     String? body,
+    Map<String, dynamic>? parameters,
   }) async {
     try {
       var response = await Onegini.instance.channel
@@ -53,7 +56,8 @@ class ResourcesMethods {
         'headers': headers,
         'method': method,
         'encoding': encoding,
-        'body': body
+        'body': body,
+        'parameters': parameters,
       });
       return response;
     } on PlatformException catch (error) {
@@ -71,6 +75,7 @@ class ResourcesMethods {
     String? method,
     String? encoding,
     String? body,
+    Map<String, dynamic>? parameters,
   }) async {
     try {
       var response;
@@ -82,7 +87,8 @@ class ResourcesMethods {
         'headers': headers,
         'method': method,
         'encoding': encoding,
-        'body': body
+        'body': body, 
+        'parameters': parameters,
       });
 
       return response;
@@ -97,6 +103,7 @@ class ResourcesMethods {
         String? method,
         String? encoding,
         String? body,
+         Map<String, dynamic>? parameters,
       }) async {
     try {
       var response = await Onegini.instance.channel
@@ -105,7 +112,8 @@ class ResourcesMethods {
         'headers': headers,
         'method': method,
         'encoding': encoding,
-        'body': body
+        'body': body,
+        'parameters': parameters,
       });
       return response;
     } on PlatformException catch (error) {
