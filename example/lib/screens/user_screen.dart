@@ -8,6 +8,7 @@ import 'package:onegini/model/onegini_list_response.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini_example/models/application_details.dart';
 import 'package:onegini_example/models/client_resource.dart';
+import 'package:onegini_example/onegini_listener.dart';
 import 'package:onegini_example/screens/qr_scan_screen.dart';
 
 import '../main.dart';
@@ -132,6 +133,25 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     Navigator.pop(context);
   }
 
+  setPreferredAuthenticator(String authenticatorId) async {
+    await Onegini.instance.userClient
+        .setPreferredAuthenticator(context, authenticatorId)
+        .catchError((error) {
+      if (error is PlatformException) {
+        Fluttertoast.showToast(
+            msg: error.message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black38,
+            textColor: Colors.white,
+            fontSize: 16.0);
+      }
+    });
+    Navigator.pop(context);
+  }
+
+
   deregister(BuildContext context) async {
     Navigator.pop(context);
     var isLogOut =
@@ -214,6 +234,27 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
                         })
                     : SizedBox.shrink();
               },
+            ),
+            FutureBuilder<List<OneginiListResponse>>(
+                future: Onegini.instance.userClient.getRegisteredAuthenticators(context),
+                builder: (BuildContext context,snapshot) {
+                  return  PopupMenuButton<String>(
+                      child: ListTile(
+                        title: Text("set preferred authenticator"),
+                        leading: Icon(Icons.add_to_home_screen),
+                      ),
+                      onSelected: (value) {
+                        setPreferredAuthenticator(value);
+                      },
+                      itemBuilder: (context) {
+                        return snapshot.data
+                            .map((e) => PopupMenuItem<String>(
+                          child: Text(e.name ?? ""),
+                          value: e.id,
+                        ))
+                            .toList();
+                      });
+                },
             ),
             ListTile(
               title: Text("Change pin"),

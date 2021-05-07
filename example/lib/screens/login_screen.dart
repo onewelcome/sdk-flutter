@@ -84,7 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  pinAuthentication() async {
+  preferredAuthentication() async {
     setState(() => {isLoading = true});
     var userId = await Onegini.instance.userClient
         .authenticateUser(
@@ -204,9 +204,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   ElevatedButton(
                     onPressed: () {
-                      pinAuthentication();
+                      preferredAuthentication();
                     },
-                    child: Text('Authenticate with PIN'),
+                    child: Text('Authenticate with preferred authenticator'),
                   ),
                   SizedBox(
                     height: 20,
