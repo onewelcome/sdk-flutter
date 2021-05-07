@@ -36,9 +36,26 @@ extension OneginiModuleSwift {
     }
     
     public func handleDeepLinkCallbackUrl(_ url: URL) -> Bool {
-        let schemeLibrary = URL.init(string: ONGClient.sharedInstance().configModel.redirectURL)!.scheme
+        //TODO: For testing
+        var errorParameters = [String: Any]()
+        errorParameters["eventName"] = "eventError"
+        
+        guard let schemeLibrary = URL.init(string: ONGClient.sharedInstance().configModel.redirectURL)?.scheme else {
+            //TODO: For testing
+            errorParameters["eventValue"] = "RedirectURL's scheme of configModel is empty: \(String(describing: ONGClient.sharedInstance().configModel.redirectURL))"
+            let data = String.stringify(json: errorParameters)
+            OneginiModuleSwift.sharedInstance.sendBridgeEvent(eventName: OneginiBridgeEvents.pinNotification, data: data)
+            return false
+        }
         guard let scheme = url.scheme,
-              scheme.localizedCaseInsensitiveCompare(schemeLibrary!) == .orderedSame else { return false }
+              scheme.compare(schemeLibrary, options: .caseInsensitive) == .orderedSame else {
+            //TODO: For testing
+            errorParameters["eventValue"] = "DeepLinkCallbackUrl: \(url.absoluteString)  RedirectURL's scheme of configModel: (\(schemeLibrary))  is not the same to  DeepLinkCallbackUrl's scheme: \(String(describing: url.scheme))"
+            let data = String.stringify(json: errorParameters)
+            OneginiModuleSwift.sharedInstance.sendBridgeEvent(eventName: OneginiBridgeEvents.pinNotification, data: data)
+            return false
+        }
+        
         bridgeConnector.toRegistrationConnector.registrationHandler.handleRedirectURL(url: url)
         return true
     }
