@@ -354,10 +354,12 @@ class Home extends StatelessWidget {
             fontSize: 16.0);
       }
     });
-    await launch(
-      oneginiAppToWebSingleSignOn.redirectUrl,
-      enableDomStorage: true,
-    );
+    if(oneginiAppToWebSingleSignOn != null){
+      await launch(
+        oneginiAppToWebSingleSignOn.redirectUrl,
+        enableDomStorage: true,
+      );
+    }
   }
 
   userProfiles(BuildContext context) async {
