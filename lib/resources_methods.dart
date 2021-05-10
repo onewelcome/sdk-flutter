@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/services.dart';
 
 import 'constants/constants.dart';
@@ -12,10 +10,10 @@ class ResourcesMethods {
   /// Method requires [path] parameter.
   Future<String> getResourceAnonymous(
     String path, {
-    List<String>? scopes,
     Map<String, String>? headers,
     String? method,
     String? encoding,
+    Map<String, String>? params,
     String? body,
   }) async {
     try {
@@ -23,10 +21,10 @@ class ResourcesMethods {
       response = await Onegini.instance.channel
           .invokeMethod(Constants.getResourceAnonymous, <String, dynamic>{
         'path': path,
-        'scope': scopes,
         'headers': headers,
         'method': method,
         'encoding': encoding,
+        'parameters': params,
         'body': body
       });
 
@@ -44,6 +42,7 @@ class ResourcesMethods {
     Map<String, String>? headers,
     String? method,
     String? encoding,
+    Map<String, String>? params,
     String? body,
   }) async {
     try {
@@ -53,6 +52,7 @@ class ResourcesMethods {
         'headers': headers,
         'method': method,
         'encoding': encoding,
+        'parameters': params,
         'body': body
       });
       return response;
@@ -66,10 +66,10 @@ class ResourcesMethods {
   /// Method requires [path] parameter.
   Future<String> getResourceImplicit(
     String path, {
-    String? scope,
     Map<String, String>? headers,
     String? method,
     String? encoding,
+    Map<String, String>? params,
     String? body,
   }) async {
     try {
@@ -78,10 +78,10 @@ class ResourcesMethods {
       response = await Onegini.instance.channel
           .invokeMethod(Constants.getImplicitResource, <String, dynamic>{
         'path': path,
-        'scope': scope,
         'headers': headers,
         'method': method,
         'encoding': encoding,
+        'parameters': params,
         'body': body
       });
 
@@ -92,12 +92,13 @@ class ResourcesMethods {
   }
 
   Future<String> getUnauthenticatedResource(
-      String path, {
-        Map<String, String>? headers,
-        String? method,
-        String? encoding,
-        String? body,
-      }) async {
+    String path, {
+    Map<String, String>? headers,
+    String? method,
+    String? encoding,
+    Map<String, String>? params,
+    String? body,
+  }) async {
     try {
       var response = await Onegini.instance.channel
           .invokeMethod(Constants.getUnauthenticatedResource, <String, dynamic>{
@@ -105,6 +106,7 @@ class ResourcesMethods {
         'headers': headers,
         'method': method,
         'encoding': encoding,
+        'parameters': params,
         'body': body
       });
       return response;

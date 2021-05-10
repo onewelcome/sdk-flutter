@@ -363,29 +363,37 @@ class Info extends StatefulWidget {
 
 class _InfoState extends State<Info> {
   Future<ApplicationDetails> getApplicationDetails() async {
-    var response = await Onegini.instance.resourcesMethods
-        .getResourceAnonymous(
-            "application-details", scopes : ["read", "write", "application-details"]);
+    var response = "";
+    var success = await Onegini.instance.userClient.authenticateDevice(["read", "write", "application-details"]);
+    if(success!=null && success){
+      response  = await Onegini.instance.resourcesMethods
+          .getResourceAnonymous("application-details");
+    }
     return applicationDetailsFromJson(response);
   }
 
   Future<ClientResource> getClientResource() async {
-    var response = await Onegini.instance.resourcesMethods
-        .getResource("devices");
+    var response =
+        await Onegini.instance.resourcesMethods.getResource("devices");
     return clientResourceFromJson(response);
   }
 
   Future<String> getImplicitUserDetails() async {
-    var response = await Onegini.instance.resourcesMethods
-        .getResourceImplicit(
-            "user-id-decorated", scope: "read");
-    Map<String, dynamic> responseAsJson = json.decode(response);
-    return responseAsJson["decorated_user_id"];
+    var returnString = "";
+    var user = await Onegini.instance.userClient.authenticateUserImplicitly(["read"]);
+    if(user!=null && user.profileId != null){
+      var response = await Onegini.instance.resourcesMethods
+          .getResourceImplicit("user-id-decorated");
+      Map<String, dynamic> responseAsJson = json.decode(response);
+      returnString = responseAsJson["decorated_user_id"];
+    }
+    return returnString;
   }
 
   Future<String> makeUnaunthenticatedRequest() async {
     var headers = {'Declareren-Appversion': 'CZ.app'};
-    var response = await Onegini.instance.resourcesMethods.getUnauthenticatedResource("devices", headers: headers, method: 'GET');
+    var response = await Onegini.instance.resourcesMethods
+        .getUnauthenticatedResource("devices", headers: headers, method: 'GET');
     return response;
   }
 
@@ -493,23 +501,23 @@ class _InfoState extends State<Info> {
                 height: 20,
               ),
               FutureBuilder<String>(
-                  //implicit
-                  future: makeUnaunthenticatedRequest(),
-                  builder: (context, snapshot) {
-                    return snapshot.hasData
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "UnaunthenticatedRequest - Users:",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                              Text(snapshot.data,
-                                  style: TextStyle(fontSize: 20)),
-                            ],
-                          )
-                        : SizedBox.shrink();
-                  },),
+                //implicit
+                future: makeUnaunthenticatedRequest(),
+                builder: (context, snapshot) {
+                  return snapshot.hasData
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "UnaunthenticatedRequest - Users:",
+                              style: TextStyle(fontSize: 20),
+                            ),
+                            Text(snapshot.data, style: TextStyle(fontSize: 20)),
+                          ],
+                        )
+                      : SizedBox.shrink();
+                },
+              ),
               Expanded(
                 child: FutureBuilder<ClientResource>(
                   future: getClientResource(),
