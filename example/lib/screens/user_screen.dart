@@ -307,8 +307,13 @@ class Home extends StatelessWidget {
 
   userProfiles(BuildContext context) async {
     var data = await Onegini.instance.userClient.fetchUserProfiles();
+    var msg = "";
+    data.forEach((element) {
+      msg = msg + element.profileId +", ";
+    });
+    msg = msg.substring(0,msg.length-2);
     Fluttertoast.showToast(
-        msg: data.fold("", (prev, element) => prev + "profileId => ${element.profileId} | "),
+        msg: msg,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
