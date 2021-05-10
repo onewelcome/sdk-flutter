@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
+import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.onegini.mobile.sdk.flutter.OneginiSDK
@@ -21,13 +23,17 @@ class ActivityWebView : Activity() {
         val myWebView: WebView = findViewById(R.id.webview)
         myWebView.settings.javaScriptEnabled = true
         myWebView.webViewClient = object : WebViewClient() {
-            override fun onLoadResource(view: WebView?, url: String?) {
-                super.onLoadResource(view, url)
-                val uri = Uri.parse(url)
-                if (uri.scheme == redirectUri.scheme) {
-                    RegistrationHelper.handleRegistrationCallback(uri)
-                    finish()
+            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                val url = request?.url
+                Log.e("URL", url.toString())
+                Log.e("SCHEME", redirectUri.scheme.toString())
+                if (url != null) {
+                    if (url.scheme == redirectUri.scheme) {
+                        RegistrationHelper.handleRegistrationCallback(url)
+                        finish()
+                    }
                 }
+                return super.shouldOverrideUrlLoading(view, request)
             }
         }
         val url = intent.getStringExtra("url")
