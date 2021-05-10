@@ -254,7 +254,7 @@ class Home extends StatelessWidget {
     );
     if (data != null) {
       var isSuccess = await Onegini.instance.userClient
-          .mobileAuthWithOtp(data)
+          .handleMobileAuthWithOtp(data)
           .catchError((error) {
         if (error is PlatformException) {
           Fluttertoast.showToast(
@@ -267,9 +267,9 @@ class Home extends StatelessWidget {
               fontSize: 16.0);
         }
       });
-      if (isSuccess != null && isSuccess.isNotEmpty)
+      if (isSuccess != null && isSuccess)
         Fluttertoast.showToast(
-            msg: isSuccess,
+            msg: "Success",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,

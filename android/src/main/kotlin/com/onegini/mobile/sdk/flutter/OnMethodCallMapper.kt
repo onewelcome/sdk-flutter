@@ -61,7 +61,8 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_FINGERPRINT_FALL_BACK_TO_PIN -> FingerprintAuthenticationRequestHandler.fingerprintCallback?.fallbackToPin()
 
             // OTP
-            Constants.METHOD_HANDLE_MOBILE_AUTH_WITH_OTP -> MobileAuthenticationObject.mobileAuthWithOtp(call.argument<String>("data"), result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_HANDLE_MOBILE_AUTH_WITH_OTP -> oneginiMethodsWrapper.handleMobileAuthWithOtp(call, result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_ENROLL_USER_FOR_MOBILE_AUTH -> oneginiMethodsWrapper.enrollUserForMobileAuth(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_ACCEPT_OTP_AUTHENTICATION_REQUEST -> MobileAuthOtpRequestHandler.CALLBACK?.acceptAuthenticationRequest()
             Constants.METHOD_DENY_OTP_AUTHENTICATION_REQUEST -> MobileAuthOtpRequestHandler.CALLBACK?.denyAuthenticationRequest()
 

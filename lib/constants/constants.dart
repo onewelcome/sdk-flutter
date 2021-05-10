@@ -74,6 +74,9 @@ class Constants {
   /// Handle mobile auth with OTP method name
   static const String handleMobileAuthWithOtp = "handleMobileAuthWithOtp";
 
+  ///Enroll user for mobile Auth
+  static const String enrollUserForMobileAuth = "enrollUserForMobileAuth";
+
   /// Accept OTP authentication request method name
   static const String acceptOtpAuthenticationRequest =
       "acceptOtpAuthenticationRequest";

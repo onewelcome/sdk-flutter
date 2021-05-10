@@ -70,6 +70,7 @@ interface Constants {
 
         // Otp
         const val METHOD_HANDLE_MOBILE_AUTH_WITH_OTP = "handleMobileAuthWithOtp"
+        const val METHOD_ENROLL_USER_FOR_MOBILE_AUTH = "enrollUserForMobileAuth"
         const val METHOD_ACCEPT_OTP_AUTHENTICATION_REQUEST = "acceptOtpAuthenticationRequest"
         const val METHOD_DENY_OTP_AUTHENTICATION_REQUEST = "denyOtpAuthenticationRequest"
 

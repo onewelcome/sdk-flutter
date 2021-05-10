@@ -43,4 +43,12 @@ class OneginiMethodsWrapper {
     fun startApp(call: MethodCall,result: MethodChannel.Result,context: Context){
         StartAppUseCase(context,OneginiSDK())(call,result)
     }
+
+    fun enrollUserForMobileAuth(result: MethodChannel.Result,oneginiClient: OneginiClient){
+        EnrollUserForMobileAuthUseCase(oneginiClient)(result)
+    }
+
+    fun handleMobileAuthWithOtp(call: MethodCall,result: MethodChannel.Result,oneginiClient: OneginiClient) {
+        HandleMobileAuthWithOtpUseCase(oneginiClient)(call, result)
+    }
 }

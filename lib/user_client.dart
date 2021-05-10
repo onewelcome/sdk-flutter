@@ -183,7 +183,7 @@ class UserClient {
   }
 
   /// Starts mobile authentication on web by OTP.
-  Future<String> mobileAuthWithOtp(String data) async {
+  Future<bool> handleMobileAuthWithOtp(String data) async {
     try {
       var isSuccess = await Onegini.instance.channel
           .invokeMethod(Constants.handleMobileAuthWithOtp, <String, dynamic>{
@@ -194,6 +194,16 @@ class UserClient {
       throw error;
     }
   }
+
+ Future<bool> enrollUserForMobileAuth() async {
+   try {
+     var isSuccess = await Onegini.instance.channel
+         .invokeMethod(Constants.handleMobileAuthWithOtp);
+     return isSuccess;
+   } on PlatformException catch (error) {
+     throw error;
+   }
+ }
 
   /// Single sign on the user web page.
   Future<String> getAppToWebSingleSignOn(String url) async {
