@@ -13,7 +13,7 @@ class GetAllAuthenticatorsUseCase(private var oneginiClient: OneginiClient) {
             result.error(OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
             return
         }
-        val allAuthenticators =  oneginiClient.userClient.getAllAuthenticators(authenticatedUserProfile)
+        val allAuthenticators = oneginiClient.userClient.getAllAuthenticators(authenticatedUserProfile)
         val authenticators: ArrayList<Map<String, String>> = ArrayList()
         if (allAuthenticators != null) {
             for (auth in allAuthenticators) {
