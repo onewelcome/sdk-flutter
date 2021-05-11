@@ -9,6 +9,7 @@ import 'package:onegini/onegini.dart';
 import 'package:onegini_example/models/application_details.dart';
 import 'package:onegini_example/models/client_resource.dart';
 import 'package:onegini_example/screens/qr_scan_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../main.dart';
 import 'login_screen.dart';
@@ -73,8 +74,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   logOut(BuildContext context) async {
     Navigator.pop(context);
-    var isLogOut =
-        await Onegini.instance.userClient.logout().catchError((error) {
+    await Onegini.instance.userClient.logout().catchError((error) {
       if (error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,
@@ -86,12 +86,10 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
             fontSize: 16.0);
       }
     });
-    if (isLogOut) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => LoginScreen()),
-      );
-    }
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => LoginScreen()),
+    );
   }
 
   Future<void> getAuthenticators() async {
@@ -99,12 +97,6 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
         .getNotRegisteredAuthenticators(context);
     registeredAuthenticators =
         await Onegini.instance.userClient.getRegisteredAuthenticators(context);
-  }
-
-  Future<List<OneginiListResponse>> getNotRegisteredAuthenticators() async {
-    var authenticators = await Onegini.instance.userClient
-        .getNotRegisteredAuthenticators(context);
-    return authenticators;
   }
 
   registerAuthenticator(String authenticatorId) async {
@@ -126,11 +118,10 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     setState(() {});
   }
 
-
-  bool isContainAuthenticator(String authenticatorId){
+  bool isContainAuthenticator(String authenticatorId) {
     var isContain = false;
     registeredAuthenticators.forEach((element) {
-       if(element.id == authenticatorId) isContain = true;
+      if (element.id == authenticatorId) isContain = true;
     });
     return isContain;
   }
@@ -248,7 +239,8 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
                           snapshot.data[index].name,
                         ),
                         leading: Switch(
-                          value: isContainAuthenticator(snapshot.data[index].id),
+                          value:
+                              isContainAuthenticator(snapshot.data[index].id),
                           onChanged: (value) {
                             value
                                 ? registerAuthenticator(snapshot.data[index].id)
@@ -362,14 +354,12 @@ class Home extends StatelessWidget {
             fontSize: 16.0);
       }
     });
-    Fluttertoast.showToast(
-        msg: oneginiAppToWebSingleSignOn,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.black38,
-        textColor: Colors.white,
-        fontSize: 16.0);
+    if(oneginiAppToWebSingleSignOn != null){
+      await launch(
+        oneginiAppToWebSingleSignOn.redirectUrl,
+        enableDomStorage: true,
+      );
+    }
   }
 
   userProfiles(BuildContext context) async {
@@ -440,7 +430,7 @@ class _InfoState extends State<Info> {
   Future<ApplicationDetails> getApplicationDetails() async {
     var response = await Onegini.instance.resourcesMethods.getResourceAnonymous(
         "application-details",
-        scopes: ["read", "write", "application-details"]);
+        ["read", "write", "application-details"]);
     return applicationDetailsFromJson(response);
   }
 
@@ -452,7 +442,7 @@ class _InfoState extends State<Info> {
 
   Future<String> getImplicitUserDetails() async {
     var response = await Onegini.instance.resourcesMethods
-        .getResourceImplicit("user-id-decorated", scope: "read");
+        .getResourceImplicit("user-id-decorated", ["read"]);
     Map<String, dynamic> responseAsJson = json.decode(response);
     return responseAsJson["decorated_user_id"];
   }
