@@ -230,7 +230,7 @@ class UserClient {
     }
   }
 
-  Future<String> getAccessToken(String pin) async {
+  Future<String> getAccessToken() async {
     try {
       var accessToken =
           await Onegini.instance.channel.invokeMethod(Constants.getAccessToken);
@@ -240,7 +240,17 @@ class UserClient {
     }
   }
 
-  Future<UserProfile> getAuthenticatedUserProfile(String pin) async {
+  Future<String> getRedirectUrl(String pin) async {
+    try {
+      var redirectUrl =
+      await Onegini.instance.channel.invokeMethod(Constants.getRedirectUrl);
+      return redirectUrl;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  Future<UserProfile> getAuthenticatedUserProfile() async {
     try {
       var userProfile = await Onegini.instance.channel
           .invokeMethod(Constants.getAuthenticatedUserProfile);

@@ -101,6 +101,7 @@ class Constants {
   /// Get app to web single sign on method name
   static const String getAppToWebSingleSignOn = "getAppToWebSingleSignOn";
   static const String getAccessToken = "getAccessToken";
+  static const String getRedirectUrl = "getRedirectUrl";
   static const String getAuthenticatedUserProfile = "getAuthenticatedUserProfile";
 
   /// Change pin method name
