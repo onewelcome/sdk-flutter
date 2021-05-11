@@ -126,11 +126,10 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     setState(() {});
   }
 
-
   bool isRegisteredAuthenticator(String authenticatorId){
-    registeredAuthenticators.forEach((element) {
-       if(element.id == authenticatorId) return true;
-    });
+    for(var authenticator in registeredAuthenticators){
+      if(authenticator.id == authenticatorId) return true;
+    }
     return false;
   }
 
