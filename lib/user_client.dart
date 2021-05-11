@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:onegini/model/registration_response.dart';
 
 import 'constants/constants.dart';
+import 'model/oneginiAppToWebSingleSignOn.dart';
 import 'model/onegini_list_response.dart';
 import 'onegini.dart';
 
@@ -82,6 +83,20 @@ class UserClient {
       throw error;
     }
   }
+
+  Future<List<OneginiListResponse>> getAllAuthenticators(
+      BuildContext context) async {
+    Onegini.instance.setEventContext(context);
+    try {
+      var authenticators = await Onegini.instance.channel
+          .invokeMethod(Constants.getAllAuthenticators);
+      return responseFromJson(authenticators);
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+
 
   /// Starts authentication flow.
   ///
@@ -196,14 +211,13 @@ class UserClient {
   }
 
   /// Single sign on the user web page.
-  Future<String> getAppToWebSingleSignOn(String url) async {
+  Future<OneginiAppToWebSingleSignOn> getAppToWebSingleSignOn(String url) async {
     try {
       var oneginiAppToWebSingleSignOn = await Onegini.instance.channel
           .invokeMethod(Constants.getAppToWebSingleSignOn, <String, String>{
         'url': url,
       });
-      print(oneginiAppToWebSingleSignOn);
-      return oneginiAppToWebSingleSignOn;
+      return oneginiAppToWebSingleSignOnFromJson(oneginiAppToWebSingleSignOn);
     } on PlatformException catch (error) {
       throw error;
     }
