@@ -1,16 +1,10 @@
 package com.onegini.mobile.sdk.flutter
 
 import android.content.Context
-import android.net.Uri
-import android.util.Patterns
 import androidx.annotation.NonNull
-import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onegini.mobile.sdk.android.handlers.*
-import com.onegini.mobile.sdk.android.handlers.error.*
-import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
-import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
-import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onegini.mobile.sdk.android.handlers.OneginiLogoutHandler
+import com.onegini.mobile.sdk.android.handlers.error.OneginiLogoutError
 import com.onegini.mobile.sdk.flutter.constants.Constants
 import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
@@ -20,7 +14,6 @@ import com.onegini.mobile.sdk.flutter.helpers.AuthenticationObject
 import com.onegini.mobile.sdk.flutter.helpers.MobileAuthenticationObject
 import com.onegini.mobile.sdk.flutter.helpers.RegistrationHelper
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
-import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepIdentityProvider
 import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationAction
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -72,56 +65,16 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_GET_UNAUTHENTICATED_RESOURCE -> ResourceHelper(call, result, OneginiSDK().getOneginiClient(context)).getUnauthenticatedResource()
 
             // Other
-            Constants.METHOD_CHANGE_PIN -> startChangePinFlow(result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON -> getAppToWebSingleSignOn(call.argument<String>("url"), result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_GET_USER_PROFILES -> oneginiMethodsWrapper.getUserProfiles(result,OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_GET_ACCESS_TOKEN -> oneginiMethodsWrapper.getAccessToken(result,OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_GET_AUTHENTICATED_USER_PROFILE -> oneginiMethodsWrapper.getAuthenticatedUserProfile(result,OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_CHANGE_PIN -> oneginiMethodsWrapper.changePin(result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON -> oneginiMethodsWrapper.getAppToWebSingleSignOn(call, result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_GET_USER_PROFILES -> oneginiMethodsWrapper.getUserProfiles(result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_GET_ACCESS_TOKEN -> oneginiMethodsWrapper.getAccessToken(result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_GET_AUTHENTICATED_USER_PROFILE -> oneginiMethodsWrapper.getAuthenticatedUserProfile(result, OneginiSDK().getOneginiClient(context))
 
-            Constants.METHOD_VALIDATE_PIN_WITH_POLICY -> validatePinWithPolicy(call.argument<String>("pin")?.toCharArray(), result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_VALIDATE_PIN_WITH_POLICY -> oneginiMethodsWrapper.validatePinWithPolicy(call, result, OneginiSDK().getOneginiClient(context))
 
             else -> result.error(OneginiWrapperErrors.METHOD_TO_CALL_NOT_FOUND.code, OneginiWrapperErrors.METHOD_TO_CALL_NOT_FOUND.message, null)
         }
-    }
-
-    // "https://login-mobile.test.onegini.com/personal/dashboard"
-    fun getAppToWebSingleSignOn(url: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        if (url == null) {
-            result.error(OneginiWrapperErrors.URL_CANT_BE_NULL.code, OneginiWrapperErrors.URL_CANT_BE_NULL.message, null)
-            return
-        }
-        if (!Patterns.WEB_URL.matcher(url).matches()) {
-            result.error(OneginiWrapperErrors.URL_IS_NOT_WEB_PATH.code, OneginiWrapperErrors.URL_IS_NOT_WEB_PATH.message, null)
-            return
-        }
-        val targetUri: Uri = Uri.parse(url)
-        oneginiClient.userClient.getAppToWebSingleSignOn(
-                targetUri,
-                object : OneginiAppToWebSingleSignOnHandler {
-                    override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {
-                        result.success(Gson().toJson(mapOf("token" to oneginiAppToWebSingleSignOn.token, "redirectUrl" to oneginiAppToWebSingleSignOn.redirectUrl.toString())))
-                    }
-
-                    override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
-                        result.error(oneginiSingleSignOnError.errorType.toString(), oneginiSingleSignOnError.message, null)
-                    }
-                }
-        )
-    }
-
-    private fun validatePinWithPolicy(pin: CharArray?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        oneginiClient.userClient.validatePinWithPolicy(
-                pin,
-                object : OneginiPinValidationHandler {
-                    override fun onSuccess() {
-                        result.success(true)
-                    }
-
-                    override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
-                        result.error(oneginiPinValidationError.errorType.toString(), oneginiPinValidationError.message, null)
-                    }
-                }
-        )
     }
 
     fun logout(result: MethodChannel.Result, oneginiClient: OneginiClient) {
@@ -136,15 +89,4 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
         })
     }
 
-    fun startChangePinFlow(result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        oneginiClient.userClient.changePin(object : OneginiChangePinHandler {
-            override fun onSuccess() {
-                result.success("Pin change successfully")
-            }
-
-            override fun onError(error: OneginiChangePinError) {
-                result.error(error.errorType.toString(), error.message, "")
-            }
-        })
-    }
 }

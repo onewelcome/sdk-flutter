@@ -43,4 +43,16 @@ class OneginiMethodsWrapper {
     fun startApp(call: MethodCall,result: MethodChannel.Result,context: Context){
         StartAppUseCase(context,OneginiSDK())(call,result)
     }
+
+    fun changePin(result: MethodChannel.Result,oneginiClient: OneginiClient) {
+        ChangePinUseCase(oneginiClient)(result)
+    }
+
+    fun getAppToWebSingleSignOn(call: MethodCall, result: MethodChannel.Result,oneginiClient: OneginiClient) {
+        GetAppToWebSingleSignOnUseCase(oneginiClient)(call, result)
+    }
+
+    fun validatePinWithPolicy(call: MethodCall, result: MethodChannel.Result,oneginiClient: OneginiClient) {
+        ValidatePinWithPolicyUseCase(oneginiClient)(call, result)
+    }
 }
