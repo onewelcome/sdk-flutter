@@ -2,6 +2,10 @@ package com.onegini.mobile.sdk.flutter
 
 import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
+import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiAcceptDenyCallback
+import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiCustomRegistrationCallback
+import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiFingerprintCallback
+import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallback
 import com.onegini.mobile.sdk.flutter.useCases.HandleRegisteredUrlUseCase
 import com.onegini.mobile.sdk.flutter.useCases.RegistrationUseCase
 import com.onegini.mobile.sdk.flutter.useCases.StartAppUseCase
@@ -42,5 +46,49 @@ class OneginiMethodsWrapper {
 
     fun startApp(call: MethodCall,result: MethodChannel.Result,context: Context){
         StartAppUseCase(context,OneginiSDK())(call,result)
+    }
+
+    fun customTwoStepRegistrationActionReturnSuccess(call: MethodCall,oneginiCustomRegistrationCallback: OneginiCustomRegistrationCallback?) {
+        CustomTwoStepRegistrationActionUseCase(oneginiCustomRegistrationCallback).returnSuccess(call)
+    }
+
+    fun customTwoStepRegistrationActionReturnError(call: MethodCall,oneginiCustomRegistrationCallback: OneginiCustomRegistrationCallback?) {
+        CustomTwoStepRegistrationActionUseCase(oneginiCustomRegistrationCallback).returnError(call)
+    }
+
+    fun pinRequestHandlerAcceptAuthenticationRequest(call: MethodCall,oneginiPinCallback: OneginiPinCallback?){
+        PinRequestHandlerUseCase(oneginiPinCallback).acceptAuthenticationRequest(call)
+    }
+
+    fun pinRequestHandlerDenyAuthenticationRequest(oneginiPinCallback: OneginiPinCallback?){
+        PinRequestHandlerUseCase(oneginiPinCallback).denyAuthenticationRequest()
+    }
+
+    fun pinAuthenticationRequestHandlerAcceptAuthenticationRequest(call: MethodCall,oneginiPinCallback: OneginiPinCallback?){
+        PinAuthenticationRequestHandlerUseCase(oneginiPinCallback).acceptAuthenticationRequest(call)
+    }
+
+    fun pinAuthenticationRequestHandlerDenyAuthenticationRequest(oneginiPinCallback: OneginiPinCallback?){
+        PinAuthenticationRequestHandlerUseCase(oneginiPinCallback).denyAuthenticationRequest()
+    }
+
+    fun fingerprintAuthenticationRequestHandlerAcceptAuthenticationRequest(oneginiFingerprintCallback: OneginiFingerprintCallback?) {
+        FingerprintAuthenticationRequestHandlerUseCase(oneginiFingerprintCallback).acceptAuthenticationRequest()
+    }
+
+    fun fingerprintAuthenticationRequestHandlerDenyAuthenticationRequest(oneginiFingerprintCallback: OneginiFingerprintCallback?) {
+        FingerprintAuthenticationRequestHandlerUseCase(oneginiFingerprintCallback).denyAuthenticationRequest()
+    }
+
+    fun fingerprintAuthenticationRequestHandlerFallbackToPin(oneginiFingerprintCallback: OneginiFingerprintCallback?) {
+        FingerprintAuthenticationRequestHandlerUseCase(oneginiFingerprintCallback).fallbackToPin()
+    }
+
+    fun mobileAuthOtpRequestHandlerAcceptAuthenticationRequest(oneginiAcceptDenyCallback: OneginiAcceptDenyCallback?) {
+        MobileAuthOtpRequestHandlerUseCase(oneginiAcceptDenyCallback).acceptAuthenticationRequest()
+    }
+
+    fun mobileAuthOtpRequestHandlerDenyAuthenticationRequest(oneginiAcceptDenyCallback: OneginiAcceptDenyCallback?) {
+        MobileAuthOtpRequestHandlerUseCase(oneginiAcceptDenyCallback).denyAuthenticationRequest()
     }
 }
