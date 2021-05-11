@@ -126,9 +126,9 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     setState(() {});
   }
 
-  bool isRegisteredAuthenticator(String authenticatorId){
-    for(var authenticator in registeredAuthenticators){
-      if(authenticator.id == authenticatorId) return true;
+  bool isRegisteredAuthenticator(String authenticatorId) {
+    for (var authenticator in registeredAuthenticators) {
+      if (authenticator.id == authenticatorId) return true;
     }
     return false;
   }
@@ -242,7 +242,8 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
                           snapshot.data[index].name,
                         ),
                         leading: Switch(
-                          value: isRegisteredAuthenticator(snapshot.data[index].id),
+                          value: isRegisteredAuthenticator(
+                              snapshot.data[index].id),
                           onChanged: (value) {
                             value
                                 ? registerAuthenticator(snapshot.data[index].id)
