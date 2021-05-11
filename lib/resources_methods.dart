@@ -9,7 +9,8 @@ class ResourcesMethods {
   ///
   /// Method requires [path] parameter.
   Future<String> getResourceAnonymous(
-    String path,  List<String> scopes,{
+    String path,
+    List<String> scopes, {
     Map<String, String>? headers,
     String? method,
     String? encoding,
@@ -62,7 +63,8 @@ class ResourcesMethods {
   ///
   /// Method requires [path] parameter.
   Future<String> getResourceImplicit(
-    String path, List<String> scope, {
+    String path,
+    List<String> scope, {
     Map<String, String>? headers,
     String? method,
     String? encoding,
@@ -88,12 +90,12 @@ class ResourcesMethods {
   }
 
   Future<String> getUnauthenticatedResource(
-      String path, {
-        Map<String, String>? headers,
-        String? method,
-        String? encoding,
-        String? body,
-      }) async {
+    String path, {
+    Map<String, String>? headers,
+    String? method,
+    String? encoding,
+    String? body,
+  }) async {
     try {
       var response = await Onegini.instance.channel
           .invokeMethod(Constants.getUnauthenticatedResource, <String, dynamic>{
