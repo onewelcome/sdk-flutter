@@ -119,5 +119,20 @@ extension OneginiModuleSwift {
         
         callback(String.stringify(json: authenticators))
     }
+    
+    func fetchAllAuthenticators(callback: @escaping FlutterResult) -> Void {
+        guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
+            callback(SdkError.convertToFlutter(SdkError(customType: .userAuthenticatedProfileIsNull)))
+            return
+        }
+        
+        // get all authenticators
+        let allAuthenticators = ONGUserClient.sharedInstance().allAuthenticators(forUser: profile)
+        
+        // convert list to list of objects with id and name
+        let authenticators: [[String: String]] = allAuthenticators.compactMap({ ["id" : $0.identifier, "name": $0.name] })
+        
+        callback(String.stringify(json: authenticators))
+    }
 }
 

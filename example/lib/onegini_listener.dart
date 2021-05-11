@@ -101,7 +101,9 @@ class OneginiListener extends OneginiEventListener {
   void closeFingerprintScreen(BuildContext buildContext) {
     print("close fingerprint");
     overlayEntry?.remove();
-    Navigator.of(buildContext).canPop();
+    if (Navigator.of(buildContext).canPop()) {
+      Navigator.of(buildContext).pop();
+    }
   }
 
   @override
