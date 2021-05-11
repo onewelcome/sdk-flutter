@@ -51,7 +51,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_REGISTER_AUTHENTICATOR -> AuthenticationObject.registerAuthenticator(call.argument<String>("authenticatorId"), result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_SET_PREFERRED_AUTHENTICATOR -> AuthenticationObject.setPreferredAuthenticator(call.argument<String>("authenticatorId"), result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_DEREGISTER_AUTHENTICATOR -> AuthenticationObject.deregisterAuthenticator(call.argument<String>("authenticatorId"), result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_LOGOUT -> logout(result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_LOGOUT -> oneginiMethodsWrapper.logout(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_ACCEPT_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
             Constants.METHOD_DENY_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.denyAuthenticationRequest()
 
@@ -122,18 +122,6 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
                     }
                 }
         )
-    }
-
-    fun logout(result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        oneginiClient.userClient.logout(object : OneginiLogoutHandler {
-            override fun onSuccess() {
-                result.success(true)
-            }
-
-            override fun onError(error: OneginiLogoutError) {
-                result.error(error.errorType.toString(), error.message, null)
-            }
-        })
     }
 
     fun startChangePinFlow(result: MethodChannel.Result, oneginiClient: OneginiClient) {
