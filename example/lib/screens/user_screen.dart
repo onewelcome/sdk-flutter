@@ -1,6 +1,7 @@
 // @dart = 2.10
 import 'dart:convert';
 
+import "package:collection/collection.dart";
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -99,6 +100,15 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
         .getNotRegisteredAuthenticators(context);
     registeredAuthenticators =
         await Onegini.instance.userClient.getRegisteredAuthenticators(context);
+  }
+
+  Future<List<OneginiListResponse>> getAllSortAuthenticators() async {
+    var allAuthenticators =
+        await Onegini.instance.userClient.getAllAuthenticators(context);
+    allAuthenticators.sort((a, b) {
+      return compareAsciiUpperCase(a.name, b.name);
+    });
+    return allAuthenticators;
   }
 
   Future<List<OneginiListResponse>> getNotRegisteredAuthenticators() async {
@@ -231,7 +241,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
               child: Container(),
             ),
             FutureBuilder<List<OneginiListResponse>>(
-              future: Onegini.instance.userClient.getAllAuthenticators(context),
+              future: getAllSortAuthenticators(),
               builder: (BuildContext context, snapshot) {
                 return ListView.builder(
                     shrinkWrap: true,
@@ -242,14 +252,19 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
                           snapshot.data[index].name,
                         ),
                         leading: Switch(
-                          value: isRegisteredAuthenticator(
-                              snapshot.data[index].id),
-                          onChanged: (value) {
-                            value
-                                ? registerAuthenticator(snapshot.data[index].id)
-                                : deregisterAuthenticator(
-                                    snapshot.data[index].id);
-                          },
+                          value: snapshot.data[index].name == "PIN"
+                              ? true
+                              : isRegisteredAuthenticator(
+                                  snapshot.data[index].id),
+                          onChanged: snapshot.data[index].name == "PIN"
+                              ? null
+                              : (value) {
+                                  value
+                                      ? registerAuthenticator(
+                                          snapshot.data[index].id)
+                                      : deregisterAuthenticator(
+                                          snapshot.data[index].id);
+                                },
                         ),
                       );
                     });
