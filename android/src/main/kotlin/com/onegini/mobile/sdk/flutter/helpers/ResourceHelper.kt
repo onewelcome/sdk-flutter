@@ -40,7 +40,7 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
         // "read"
         // user-id-decorated
         val request = getRequest()
-        val scope = call.argument<String>("scope")
+        val scope = call.argument<ArrayList<String>>("scope")
         getSecuredImplicitUserClient(scope, request)
     }
 
@@ -81,7 +81,7 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
         makeRequest(okHttpClient, request, result)
     }
 
-    private fun getSecuredImplicitUserClient(scope: String?, request: Request) {
+    private fun getSecuredImplicitUserClient(scope: ArrayList<String>?, request: Request) {
         val okHttpClient = oneginiClient.userClient.implicitResourceOkHttpClient
         val userProfile = oneginiClient.userClient.authenticatedUserProfile
         if (userProfile == null) {
@@ -89,7 +89,7 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
             return
         }
         oneginiClient.userClient.authenticateUserImplicitly(
-            userProfile, arrayOf(scope),
+            userProfile, scope?.toArray(arrayOfNulls<String>(scope.size)),
             object : OneginiImplicitAuthenticationHandler {
                 override fun onSuccess(profile: UserProfile) {
                     makeRequest(okHttpClient, request, result)
