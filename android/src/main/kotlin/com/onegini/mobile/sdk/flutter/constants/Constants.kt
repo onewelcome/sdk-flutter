@@ -61,6 +61,7 @@ interface Constants {
         const val METHOD_REGISTER_AUTHENTICATOR = "registerAuthenticator"
         const val METHOD_DEREGISTER_AUTHENTICATOR = "deregisterAuthenticator"
         const val METHOD_AUTHENTICATE_USER = "authenticateUser"
+        const val METHOD_IS_AUTHENTICATOR_REGISTERED = "isAuthenticatorRegistered"
         const val METHOD_LOGOUT = "logout"
 
         // Fingerprint
