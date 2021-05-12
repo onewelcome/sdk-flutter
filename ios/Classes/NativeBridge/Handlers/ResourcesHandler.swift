@@ -263,6 +263,10 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             newParameters["scope"] = scope
         }
         
+        if let parameters = buffer["parameters"] {
+            newParameters["parameters"] = parameters
+        }
+        
         return newParameters
     }
     
