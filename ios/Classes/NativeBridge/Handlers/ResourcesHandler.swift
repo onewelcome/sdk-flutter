@@ -78,7 +78,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         }
     }
 
-    private func simpleResourcesRequest(isAnonymousCall: Bool, parameters: [String: Any], _ completion: @escaping ([String: Any]?, SdkError?) -> Void) {
+    private func simpleResourcesRequest(isAnonymousCall: Bool, parameters: [String: Any], _ completion: @escaping (Any?, SdkError?) -> Void) {
         print("[\(type(of: self))] simpleResourcesRequest")
         
         let request = generateONGResourceRequest(from: parameters)
@@ -88,7 +88,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 completion(nil, SdkError(errorDescription: error.localizedDescription, code: error.code))
             } else {
                 if let data = response?.data {
-                    if let responseData = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    if let responseData = String.init(data: data, encoding: .utf8) {
                         completion(responseData, nil)
                     } else {
                         completion(nil, SdkError.init(customType: .failedParseData))
@@ -116,7 +116,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 completion(nil, SdkError(errorDescription: error.localizedDescription))
             } else {
                 if let data = response?.data {
-                    if let responseData = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+                    if let responseData = String(data: data, encoding: .utf8) {
                         completion(responseData, nil)
                     } else {
                         completion(nil, SdkError.init(customType: .failedParseData))
@@ -153,17 +153,12 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 return
             }
 
-            OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: false, parameters: newParameters) { (_data, error) in
+            OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: false, parameters: newParameters) { (data, error) in
                 if let _errorResource = error {
                     completion(_errorResource)
                     return
                 } else {
-                    if let data = _data, let convertedStringDatat = try? JSONSerialization.data(withJSONObject: data, options: .prettyPrinted) {
-                        let convertedString = String(data: convertedStringDatat, encoding: .utf8)
-                        completion(convertedString)
-                    } else {
-                        completion(data)
-                    }
+                    completion(data)
                 }
             }
         }
@@ -178,12 +173,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 completion(_errorResource)
                 return
             } else {
-                if let data = _data, let convertedStringDatat = try? JSONSerialization.data(withJSONObject: data, options: .prettyPrinted) {
-                    let convertedString = String(data: convertedStringDatat, encoding: .utf8)
-                    completion(convertedString)
-                } else {
-                    completion(_data)
-                }
+                completion(_data)
             }
         }
     }
@@ -200,9 +190,8 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         OneginiModuleSwift.sharedInstance.authenticateUserImplicitly(_profile.profileId) { (value, error) in
             if (error == nil) {
                 OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: value, parameters: newParameters) { (_data, error) in
-                    if let data = _data, let convertedStringDatat = try? JSONSerialization.data(withJSONObject: data, options: .prettyPrinted) {
-                        let convertedString = String(data: convertedStringDatat, encoding: .utf8)
-                        completion(convertedString)
+                    if let data = _data {
+                        completion(data)
                     } else {
                         completion(_data)
                     }
@@ -226,15 +215,10 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 return
             } else {
                 if let data = response?.data {
-                    if let responseData = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
-                        if let convertedStringData = try? JSONSerialization.data(withJSONObject: responseData, options: .prettyPrinted) {
-                            let convertedString = String(data: convertedStringData, encoding: .utf8)
-                            callback(convertedString)
-                        } else {
-                            callback(responseData)
-                        }
+                    if let convertedString = String(data: data, encoding: .utf8) {
+                        callback(convertedString)
                     } else {
-                        callback(SdkError.init(customType: .failedParseData).flutterError())
+                        callback(data)
                     }
                 } else {
                     callback(SdkError.init(customType: .responseIsNull))
