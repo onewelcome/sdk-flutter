@@ -194,14 +194,14 @@ extension PinHandler : PinHandlerToReceiverProtocol {
 //MARK: - ONGChangePinDelegate
 extension PinHandler: ONGChangePinDelegate {
     func userClient(_ userClient: ONGUserClient, didReceive challenge: ONGPinChallenge) {
-        print("[\(type(of: self))] didReceive ONGPinChallenge")
+        Logger.log("didReceive ONGPinChallenge", sender: self)
         pinChallenge = challenge
         let pinError = mapErrorFromPinChallenge(challenge)
         handleFlowUpdate(PinFlow.authentication, pinError, receiver: self)
     }
 
     func userClient(_: ONGUserClient, didReceive challenge: ONGCreatePinChallenge) {
-        print("[\(type(of: self))] didReceive ONGCreatePinChallenge")
+        Logger.log("didReceive ONGCreatePinChallenge", sender: self)
         pinChallenge = nil
         closeFlow()
         createPinChallenge = challenge
@@ -210,7 +210,7 @@ extension PinHandler: ONGChangePinDelegate {
     }
 
     func userClient(_: ONGUserClient, didFailToChangePinForUser _: ONGUserProfile, error: Error) {
-        print("[\(type(of: self))] didFailToChangePinForUser")
+        Logger.log("didFailToChangePinForUser", sender: self)
         pinChallenge = nil
         createPinChallenge = nil
         closeFlow()
@@ -227,7 +227,7 @@ extension PinHandler: ONGChangePinDelegate {
     }
 
     func userClient(_: ONGUserClient, didChangePinForUser _: ONGUserProfile) {
-        print("[\(type(of: self))] didChangePinForUser")
+        Logger.log("didChangePinForUser", sender: self)
         createPinChallenge = nil
         closeFlow()
         changePinCompletion?(true, nil)

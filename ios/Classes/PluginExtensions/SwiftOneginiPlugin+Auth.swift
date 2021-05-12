@@ -35,11 +35,11 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
         let _id = _arg["registeredAuthenticatorId"] as? String
         if (_id != nil) {
             // auth with provider
-            print("use provider for auth")
+            Logger.log("use provider for auth")
             OneginiModuleSwift.sharedInstance.authenticateWithRegisteredAuthentication(_id, callback: result)
         } else {
             // auth with pin
-            print("use pin for auth")
+            Logger.log("use pin for auth")
             OneginiModuleSwift.sharedInstance.authenticateUser(nil, callback: result)
         }
     }

@@ -24,7 +24,7 @@ class MobileAuthConnector : BridgeToMobileAuthConnectorProtocol, MobileAuthNotif
                 sendEvent(data: MobileAuthNotification.finishAuthentication.rawValue)
                 break;
         default:
-            print("MobileAuthNotification: ", event.rawValue)
+            debugPrint("MobileAuthNotification: ", event.rawValue)
         }
     }
 

@@ -21,8 +21,6 @@ class AppToWebHandler: AppToWebHandlerProtocol {
                 completion(["token": _token, "url": _url.absoluteString ], nil)
             } else if let _error = error {
                 // Handle error
-                debugPrint(_error)
-
                 let sdkError = SdkError(errorDescription: _error.localizedDescription)
                 completion(nil, sdkError)
             }
