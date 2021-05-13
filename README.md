@@ -12,12 +12,22 @@ dependencies:
 
         url: git@gitlab.com:develocraft/onegini-flutter-sdk-wrapper.git
 
+In the `pod` file has to be added at the beginning this part
+    source 'https://github.com/artsy/Specs.git'
+    source 'https://github.com/CocoaPods/Specs.git'
+    platform :ios, '12.0'
+
+    plugin 'cocoapods-art', :sources => [
+        'onegini'
+    ]
+
 `flutter clean`
 
 `flutter pub get`
 
 The first time running you have to fetch flutter packages.
 Onegini class - main class for comunication between flutter and Native platforms.
+
 The user is able to run the example of SDK in the 'Example' section of the library.
 
 ## SDK Configuration

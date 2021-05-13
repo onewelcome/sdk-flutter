@@ -5,7 +5,7 @@
 Pod::Spec.new do |s|
   s.name             = 'onegini'
   s.version          = '0.2.0'
-  s.summary          = 'Onegini Mobile Flutter plugin - iOS SDK'
+  s.summary          = 'Onegini Mobile Flutter plugin'
   s.description      = <<-DESC
 A flutter plugin project.
                        DESC
@@ -18,9 +18,7 @@ A flutter plugin project.
   s.platform = :ios, '12.0'
 
   # ***************************
-  # s.dependency 'OneginiSDKiOS', '~> 9.6'
-  # s.requires_arc  = true
-  s.vendored_frameworks = 'OneginiCrypto.xcframework', 'OneginiSDKiOS.xcframework'
+  s.dependency 'OneginiSDKiOS', '~> 10.0'
   # ***************************
 
   # Flutter.framework does not contain a i386 slice.

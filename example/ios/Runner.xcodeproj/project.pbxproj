@@ -268,7 +268,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5F07F1BC260DFCFC0073BA5E /* Build configuration list for PBXNativeTarget "OneginiTests" */;
 			buildPhases = (
-				C608E66960E2ABCD18E5056C /* [CP] Check Pods Manifest.lock */,
+				C368CA4FD06E556913F84F48 /* [CP] Check Pods Manifest.lock */,
 				5F07F1B1260DFCFC0073BA5E /* Sources */,
 				5F07F1B2260DFCFC0073BA5E /* Frameworks */,
 				5F07F1B3260DFCFC0073BA5E /* Resources */,
@@ -287,11 +287,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5F1ADDE326146EE30055B23D /* Build configuration list for PBXNativeTarget "OneginiUITests" */;
 			buildPhases = (
-				17AB9695E486E9ACDB999C7B /* [CP] Check Pods Manifest.lock */,
+				301E19348C05B45DE8D9DA23 /* [CP] Check Pods Manifest.lock */,
 				5F1ADDD826146EE30055B23D /* Sources */,
 				5F1ADDD926146EE30055B23D /* Frameworks */,
 				5F1ADDDA26146EE30055B23D /* Resources */,
-				C7DF47CD577E04AB3A20FB87 /* [CP] Embed Pods Frameworks */,
+				0BFEF77310DB25DAB886EEBD /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -307,14 +307,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 97C147051CF9000F007C117D /* Build configuration list for PBXNativeTarget "Runner" */;
 			buildPhases = (
-				AA7A0B654CC0C2B8DCF3CEC8 /* [CP] Check Pods Manifest.lock */,
+				8ABD0D8F2A3A6E4D7801B291 /* [CP] Check Pods Manifest.lock */,
 				9740EEB61CF901F6004384FC /* Run Script */,
 				97C146EA1CF9000F007C117D /* Sources */,
 				97C146EB1CF9000F007C117D /* Frameworks */,
 				97C146EC1CF9000F007C117D /* Resources */,
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
-				68BC11939CE7733B196DBB0A /* [CP] Embed Pods Frameworks */,
+				4851D8BEA69AEEB71B53D9E6 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -399,7 +399,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		17AB9695E486E9ACDB999C7B /* [CP] Check Pods Manifest.lock */ = {
+		0BFEF77310DB25DAB886EEBD /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		301E19348C05B45DE8D9DA23 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -435,7 +452,7 @@
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
 		};
-		68BC11939CE7733B196DBB0A /* [CP] Embed Pods Frameworks */ = {
+		4851D8BEA69AEEB71B53D9E6 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -452,21 +469,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner/Pods-Runner-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		9740EEB61CF901F6004384FC /* Run Script */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Run Script";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n";
-		};
-		AA7A0B654CC0C2B8DCF3CEC8 /* [CP] Check Pods Manifest.lock */ = {
+		8ABD0D8F2A3A6E4D7801B291 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -488,7 +491,21 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C608E66960E2ABCD18E5056C /* [CP] Check Pods Manifest.lock */ = {
+		9740EEB61CF901F6004384FC /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" build\n";
+		};
+		C368CA4FD06E556913F84F48 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -508,23 +525,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C7DF47CD577E04AB3A20FB87 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Runner-OneginiUITests/Pods-Runner-OneginiUITests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
