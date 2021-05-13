@@ -120,22 +120,38 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
         val method = call.argument<String>("method") ?: "GET"
         val encoding = call.argument<String>("encoding") ?: "application/json"
         val body = call.argument<String>("body")
-        return prepareRequest(headers, method, "$url$path", encoding, body)
+        val params = call.argument<HashMap<String, String>>("parameters")
+        return prepareRequest(headers, method, "$url$path", encoding, body, params)
     }
 
-    private fun prepareRequest(headers: HashMap<String, String>?, method: String, url: String, encoding: String, body: String?): Request {
+    private fun prepareRequest(headers: HashMap<String, String>?, method: String, url: String, encoding: String, body: String?, params: HashMap<String, String>?): Request {
         val request = Request.Builder()
         if (body != null && body.isNotEmpty() && method != "GET" && method != "get") {
             val createdBody = body.toRequestBody(encoding.toMediaTypeOrNull())
             request.method(method, createdBody)
         }
-        request.url(url)
+        val urlBuilder = HttpUrl.parse(url)?.newBuilder()
+
+        params?.forEach {
+            urlBuilder?.addQueryParameter(it.key, it.value)
+        }
+
+        val httpUrl = urlBuilder?.build()
+
+        if (httpUrl != null) {
+            request.url(httpUrl)
+        } else {
+            request.url(url)
+        }
+
+
         if (headers != null && headers.isNotEmpty()) {
             try {
                 request.headers(headers.toHeaders())
             } catch (error: Exception) {
             }
         }
+
 
         return request.build()
     }

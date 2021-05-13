@@ -18,7 +18,7 @@ protocol FetchResourcesHandlerProtocol: AnyObject {
 class ResourcesHandler: FetchResourcesHandlerProtocol {
     
     func authenticateDevice(_ scopes: [String], completion: @escaping (Bool, SdkError?) -> Void) {
-        print("[\(type(of: self))] authenticateDevice")
+        Logger.log("authenticateDevice", sender: self)
         ONGDeviceClient.sharedInstance().authenticateDevice(scopes) { success, error in
             if let error = error {
                 let mappedError = ErrorMapper().mapError(error)
@@ -30,14 +30,14 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     }
 
     func authenticateImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Bool, SdkError?) -> Void) {
-        print("[\(type(of: self))] authenticateImplicitly")
+        Logger.log("authenticateImplicitly", sender: self)
         if isProfileImplicitlyAuthenticated(profile) {
-            print("[\(type(of: self))] authenticateImplicitly - isProfileImplicitlyAuthenticated")
+            Logger.log("authenticateImplicitly - isProfileImplicitlyAuthenticated", sender: self)
             completion(true, nil)
         } else {
-            print("[\(type(of: self))] authenticateImplicitly - isProfileImplicitlyAuthenticated else")
+            Logger.log("authenticateImplicitly - isProfileImplicitlyAuthenticated else", sender: self)
             authenticateProfileImplicitly(profile, scopes: scopes) { success, error in
-                print("[\(type(of: self))] authenticateImplicitly - authenticateProfileImplicitly \(success) e: \((error?.errorDescription ?? "nil"))")
+                Logger.log("authenticateImplicitly - authenticateProfileImplicitly \(success) e: \((error?.errorDescription ?? "nil"))", sender: self)
                 if success {
                     completion(true, nil)
                 } else {
@@ -52,7 +52,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     }
 
     func resourceRequest(isImplicit: Bool, isAnonymousCall: Bool, parameters: [String: Any], completion: @escaping FlutterDataCallback) {
-        print("[\(type(of: self))] resourceRequest")
+        Logger.log("resourceRequest", sender: self)
         if(isImplicit == true){
             implicitResourcesRequest(parameters, completion)
         } else{
@@ -61,13 +61,13 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     }
 
     private func isProfileImplicitlyAuthenticated(_ profile: ONGUserProfile) -> Bool {
-        print("[\(type(of: self))] isProfileImplicitlyAuthenticated")
+        Logger.log("isProfileImplicitlyAuthenticated", sender: self)
         let implicitlyAuthenticatedProfile = ONGUserClient.sharedInstance().implicitlyAuthenticatedUserProfile()
         return implicitlyAuthenticatedProfile != nil && implicitlyAuthenticatedProfile == profile
     }
 
     private func authenticateProfileImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Bool, SdkError?) -> Void) {
-        print("[\(type(of: self))] authenticateProfileImplicitly")
+        Logger.log("authenticateProfileImplicitly", sender: self)
         ONGUserClient.sharedInstance().implicitlyAuthenticateUser(profile, scopes: scopes) { success, error in
             if !success {
                 let mappedError = ErrorMapper().mapError(error)
@@ -79,7 +79,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     }
 
     private func simpleResourcesRequest(isAnonymousCall: Bool, parameters: [String: Any], _ completion: @escaping ([String: Any]?, SdkError?) -> Void) {
-        print("[\(type(of: self))] simpleResourcesRequest")
+        Logger.log("simpleResourcesRequest", sender: self)
         
         let request = generateONGResourceRequest(from: parameters)
 
@@ -107,7 +107,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     }
 
     private func implicitResourcesRequest(_ parameters: [String: Any], _ completion: @escaping FlutterDataCallback) {
-        print("[\(type(of: self))] implicitResourcesRequest")
+        Logger.log("implicitResourcesRequest", sender: self)
 
         let request = generateONGResourceRequest(from: parameters)
 
@@ -129,7 +129,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     }
 
     private func getEncodingByValue(_ value: String) -> ONGParametersEncoding {
-        print("[\(type(of: self))] getEncodingByValue")
+        Logger.log("getEncodingByValue", sender: self)
         switch value {
         case "application/json":
             return ONGParametersEncoding.JSON
@@ -142,7 +142,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     
     //MARK: - Bridge
     func fetchAnonymousResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
-        print("[\(type(of: self))] fetchAnonymousResource")
+        Logger.log("fetchAnonymousResource", sender: self)
         
         let newParameters = generateParameters(from: parameters, path: path)
         let scopes = (newParameters["scope"] as? [String]) ?? [String]()
@@ -170,7 +170,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     }
     
     func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
-        print("[\(type(of: self))] fetchSimpleResources")
+        Logger.log("fetchSimpleResources", sender: self)
         let newParameters = generateParameters(from: parameters, path: path)
 
         OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: false, isAnonymousCall: false, parameters: newParameters) { (_data, error) in
@@ -189,7 +189,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     }
     
     func fetchResourceWithImplicitResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
-        print("[\(type(of: self))] fetchResourceWithImplicitResource")
+        Logger.log("fetchResourceWithImplicitResource", sender: self)
         guard let _profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
             completion(SdkError.init(customType: .userAuthenticatedProfileIsNull))
             return
@@ -215,7 +215,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     }
     
     func unauthenticatedRequest(_ path: String, parameters: [String: Any?], callback: @escaping FlutterResult) {
-        print("[\(type(of: self))] unauthenticatedRequest")
+        Logger.log("unauthenticatedRequest", sender: self)
         
         let newParameters = generateParameters(from: parameters, path: path)
 
@@ -249,7 +249,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         
         var newParameters = [String: Any]()
         newParameters["path"] = path
-        newParameters["encoding"] = buffer["encoding"] ?? "application/x-www-form-urlencoded"
+        newParameters["encoding"] = buffer["encoding"] ?? "application/json"
         newParameters["method"] = buffer["method"] ?? "GET"
 
         if let headers = buffer["headers"] {
@@ -264,13 +264,27 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             newParameters["scope"] = scope
         }
         
+        if let parameters = buffer["parameters"] {
+            newParameters["parameters"] = parameters
+        }
+        
         return newParameters
     }
     
     func generateONGResourceRequest(from parameters: [String: Any]) -> ONGResourceRequest {
         let encoding = getEncodingByValue(parameters["encoding"] as! String)
+        let path = parameters["path"] as! String
+        let method = parameters["method"] as! String
+        let headers = parameters["headers"] as? [String : String]
 
-        let request = ONGResourceRequest.init(path: parameters["path"] as! String, method: parameters["method"] as! String, parameters: parameters["parameters"] as? [String : Any], encoding: encoding, headers: parameters["headers"] as! [String : String]?)
+        var request: ONGResourceRequest!
+        
+        if let body = parameters["body"] as? String {
+            let data = body.data(using: .utf8)
+            request = ONGResourceRequest.init(path: path, method: method, body: data, headers: headers)
+        } else {
+            request = ONGResourceRequest.init(path:path, method: method, parameters: parameters["parameters"] as? [String : Any], encoding: encoding, headers: headers)
+        }
         
         return request
     }
