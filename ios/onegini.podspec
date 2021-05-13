@@ -5,7 +5,7 @@
 Pod::Spec.new do |s|
   s.name             = 'onegini'
   s.version          = '0.2.0'
-  s.summary          = 'Onegini Mobile Flutter plugin - iOS SDK'
+  s.summary          = 'Onegini Mobile Flutter plugin'
   s.description      = <<-DESC
 A flutter plugin project.
                        DESC
