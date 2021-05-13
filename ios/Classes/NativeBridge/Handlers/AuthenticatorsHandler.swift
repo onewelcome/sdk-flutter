@@ -46,14 +46,6 @@ class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
             customAuthChallenge.sender.cancel(customAuthChallenge, underlyingError: nil)
         }
     }
-
-    fileprivate func mapErrorFromPinChallenge(_ challenge: ONGPinChallenge) -> SdkError? {
-        if let error = challenge.error {
-            return ErrorMapper().mapError(error, pinChallenge: challenge)
-        } else {
-            return nil
-        }
-    }
     
     fileprivate func sortAuthenticatorsList(_ authenticators: Array<ONGAuthenticator>) -> Array<ONGAuthenticator> {
         return authenticators.sorted {
@@ -135,7 +127,13 @@ extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
         Logger.log("[AUTH] userClient didReceive ONGPinChallenge", sender: self)
         
         pinChallenge = challenge
-        let pinError = mapErrorFromPinChallenge(challenge)
+        let pinError = ErrorMapper().mapErrorFromPinChallenge(challenge)
+        
+        if let error = pinError, error.code == ONGAuthenticationError.invalidPin.rawValue, challenge.previousFailureCount < challenge.maxFailureCount { // 9009
+            BridgeConnector.shared?.toPinHandlerConnector.pinHandler.handleFlowUpdate(PinFlow.nextAuthenticationAttempt, error, receiver: self)
+            return
+        }
+        
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.handleFlowUpdate(PinFlow.authentication, pinError, receiver: self)
     }
 

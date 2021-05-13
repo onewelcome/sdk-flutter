@@ -2,7 +2,7 @@ import OneginiSDKiOS
 import OneginiCrypto
 
 protocol RegistrationConnectorToHandlerProtocol: RegistrationHandlerToPinHanlderProtocol {
-    func signUp(_ providerId: String?, completion: @escaping (Bool, ONGUserProfile?, ONGCustomInfo?, SdkError?) -> Void)
+    func signUp(_ providerId: String?, scopes: [String]?, completion: @escaping (Bool, ONGUserProfile?, ONGCustomInfo?, SdkError?) -> Void)
     func processRedirectURL(url: String, webSignInType: WebSignInType)
     func cancelRegistration()
     func logout(completion: @escaping (SdkError?) -> Void)
@@ -39,7 +39,6 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     var logoutUserHandler = LogoutHandler()
     var deregisterUserHandler = DisconnectHandler()
     var signUpCompletion: ((Bool, ONGUserProfile?, ONGCustomInfo?, SdkError?) -> Void)?
-    //var proccessUrlCompletion: ((Bool, ONGUserProfile?, SdkError?) -> Void)?
     
     unowned var pinHandler: PinConnectorToPinHandler?
     
@@ -133,8 +132,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
 
 //MARK:-
 extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
-    func signUp(_ providerId: String?, completion: @escaping (Bool, ONGUserProfile?, ONGCustomInfo?, SdkError?) -> Void) {
-//        proccessUrlCompletion = nil
+    func signUp(_ providerId: String?, scopes: [String]?, completion: @escaping (Bool, ONGUserProfile?, ONGCustomInfo?, SdkError?) -> Void) {
         signUpCompletion = completion
 
         var identityProvider = identityProviders().first(where: { $0.identifier == providerId})
@@ -144,7 +142,7 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
             identityProvider?.identifier = _providerId
         }
         
-        ONGUserClient.sharedInstance().registerUser(with: identityProvider, scopes: ["read"], delegate: self)
+        ONGUserClient.sharedInstance().registerUser(with: identityProvider, scopes: scopes, delegate: self)
     }
     
     func logout(completion: @escaping (SdkError?) -> Void) {
@@ -166,8 +164,6 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
             return
         }
         
-        //proccessUrlCompletion = completion
-        //signUpCompletion = nil
         presentBrowserUserRegistrationView(registrationUserURL: url, webSignInType: webSignInType)
     }
 
@@ -199,7 +195,7 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         Logger.log("didReceive ONGBrowserRegistrationChallenge", sender:  self)
         browserRegistrationChallenge = challenge
         debugPrint(challenge.url)
-        //signUpCompletion?(challenge.url.absoluteString, nil)
+
         var result = Dictionary<String, Any?>()
         result["eventValue"] = challenge.url.absoluteString
         

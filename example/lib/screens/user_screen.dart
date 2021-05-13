@@ -466,7 +466,7 @@ class _InfoState extends State<Info> {
 
   Future<String> getImplicitUserDetails() async {
     var response = await Onegini.instance.resourcesMethods
-        .getResourceImplicit("user-id-decorated", ["read"]);
+        .getResourceImplicit("user-id-decorated", ["read"], parameters: {"username": "foo@bax.com", "age": 15});
     Map<String, dynamic> responseAsJson = json.decode(response);
     return responseAsJson["decorated_user_id"];
   }

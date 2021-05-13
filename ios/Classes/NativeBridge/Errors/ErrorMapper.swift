@@ -83,5 +83,18 @@ class ErrorMapper {
         
         return SdkError(errorDescription: error.localizedDescription, code: error.code)
     }
+    
+    func mapErrorFromPinChallenge(_ challenge: ONGPinChallenge?) -> SdkError? {
+        if let error = challenge?.error, error.code != ONGAuthenticationError.touchIDAuthenticatorFailure.rawValue {
+            guard let maxAttempts = challenge?.maxFailureCount,
+                  let previousCount = challenge?.previousFailureCount,
+                  maxAttempts != previousCount else {
+                return ErrorMapper().mapError(error, pinChallenge: challenge)
+            }
+            return SdkError(errorDescription: "Failed attempts", code: error.code, info: ["failedAttempts": previousCount, "maxAttempts": maxAttempts])
+        } else {
+            return nil
+        }
+    }
 }
 
