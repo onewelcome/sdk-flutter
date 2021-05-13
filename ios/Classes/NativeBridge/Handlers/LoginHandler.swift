@@ -93,6 +93,7 @@ extension LoginHandler: ONGAuthenticationDelegate {
     }
     
     func userClient(_ userClient: ONGUserClient, didAuthenticateUser userProfile: ONGUserProfile, authenticator: ONGAuthenticator, info customAuthInfo: ONGCustomInfo?) {
+        Logger.log("didAuthenticateUser", sender: self)
         
         pinChallenge = nil
         customChallange = nil
@@ -102,6 +103,7 @@ extension LoginHandler: ONGAuthenticationDelegate {
     }
 
     func userClient(_ userClient: ONGUserClient, didFailToAuthenticateUser userProfile: ONGUserProfile, authenticator: ONGAuthenticator, error: Error) {
+        Logger.log("didFailToAuthenticateUser", sender: self)
         
         pinChallenge = nil
         customChallange = nil
