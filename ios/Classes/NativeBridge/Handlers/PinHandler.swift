@@ -174,14 +174,6 @@ extension PinHandler : PinHandlerToReceiverProtocol {
         }
     }
 
-    fileprivate func mapErrorFromPinChallenge(_ challenge: ONGPinChallenge) -> SdkError? {
-        if let error = challenge.error {
-            return ErrorMapper().mapError(error, pinChallenge: challenge)
-        } else {
-            return nil
-        }
-    }
-
     fileprivate func mapErrorFromCreatePinChallenge(_ challenge: ONGCreatePinChallenge) -> SdkError? {
         if let error = challenge.error {
             return ErrorMapper().mapError(error)
@@ -196,7 +188,13 @@ extension PinHandler: ONGChangePinDelegate {
     func userClient(_ userClient: ONGUserClient, didReceive challenge: ONGPinChallenge) {
         print("[\(type(of: self))] didReceive ONGPinChallenge")
         pinChallenge = challenge
-        let pinError = mapErrorFromPinChallenge(challenge)
+        let pinError = ErrorMapper().mapErrorFromPinChallenge(challenge)
+        
+        if let error = pinError, error.code == ONGAuthenticationError.invalidPin.rawValue, challenge.previousFailureCount < challenge.maxFailureCount { // 9009
+            handleFlowUpdate(PinFlow.nextAuthenticationAttempt, error, receiver: self)
+            return
+        }
+        
         handleFlowUpdate(PinFlow.authentication, pinError, receiver: self)
     }
 
