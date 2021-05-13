@@ -36,11 +36,29 @@ extension OneginiModuleSwift {
     }
     
     public func handleDeepLinkCallbackUrl(_ url: URL) -> Bool {
-        let schemeLibrary = URL.init(string: ONGClient.sharedInstance().configModel.redirectURL)!.scheme
+        guard let schemeLibrary = URL.init(string: ONGClient.sharedInstance().configModel.redirectURL)?.scheme else {
+            generateEventError(value: "RedirectURL's scheme of configModel is empty: \(String(describing: ONGClient.sharedInstance().configModel.redirectURL))")
+            return false
+        }
+        
         guard let scheme = url.scheme,
-              scheme.localizedCaseInsensitiveCompare(schemeLibrary!) == .orderedSame else { return false }
+              scheme.compare(schemeLibrary, options: .caseInsensitive) == .orderedSame else {
+            let value = ["url_scheme": url.scheme, "library_scheme": schemeLibrary, "url": url.absoluteString]
+            generateEventError(value: value)
+            return false
+        }
+        
         bridgeConnector.toRegistrationConnector.registrationHandler.handleRedirectURL(url: url)
         return true
+    }
+    
+    private func generateEventError(value: Any?) {
+        var errorParameters = [String: Any]()
+        errorParameters["eventName"] = "eventError"
+        errorParameters["eventValue"] = value
+        
+        let data = String.stringify(json: errorParameters)
+        OneginiModuleSwift.sharedInstance.sendBridgeEvent(eventName: OneginiBridgeEvents.pinNotification, data: data)
     }
     
     func handleTwoStepRegistration(_ data: String) {
