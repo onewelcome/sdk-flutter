@@ -79,7 +79,7 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
         });
       } else {
         Fluttertoast.showToast(
-            msg: "pins do not match, please try again",
+            msg: "pins don't match, please try again",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
@@ -158,7 +158,7 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
               NumPad(
                 enterNum: enterNum,
                 removeLast: removeLast,
-                done: pinCode.contains(null) ? null : null,
+                done: null,
               ),
               SizedBox(
                 height: 10,
