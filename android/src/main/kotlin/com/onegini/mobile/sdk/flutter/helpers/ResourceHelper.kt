@@ -13,6 +13,7 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import okhttp3.Headers.Companion.toHeaders
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -130,7 +131,7 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
             val createdBody = body.toRequestBody(encoding.toMediaTypeOrNull())
             request.method(method, createdBody)
         }
-        val urlBuilder = HttpUrl.parse(url)?.newBuilder()
+        val urlBuilder = url.toHttpUrlOrNull()?.newBuilder()
 
         params?.forEach {
             urlBuilder?.addQueryParameter(it.key, it.value)
