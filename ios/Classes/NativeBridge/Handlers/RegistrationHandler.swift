@@ -209,7 +209,7 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         pinHandler?.handleFlowUpdate(.create, pinError, receiver: self)
     }
 
-    func userClient(_: ONGUserClient, didRegisterUser userProfile: ONGUserProfile, info: ONGCustomInfo?) {
+    func userClient(_ userClient: ONGUserClient, didRegisterUser userProfile: ONGUserProfile, identityProvider: ONGIdentityProvider, info: ONGCustomInfo?) {
         Logger.log("didRegisterUser", sender: self)
         createPinChallenge = nil
         customRegistrationChallenge = nil
@@ -274,7 +274,7 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         }
     }
 
-    func userClient(_: ONGUserClient, didFailToRegisterWithError error: Error) {
+    func userClient(_ userClient: ONGUserClient, didFailToRegisterWith identityProvider: ONGIdentityProvider, error: Error) {
         Logger.log("didFailToRegisterWithError", sender: self)
         createPinChallenge = nil
         customRegistrationChallenge = nil
