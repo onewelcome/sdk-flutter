@@ -83,7 +83,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     }
 
     func handleRedirectURL(url: URL?) {
-        print("[\(type(of: self))] handleRedirectURL url: \(url)")
+        Logger.log("handleRedirectURL url: \(url?.absoluteString ?? "nil")", sender: self)
         guard let browserRegistrationChallenge = self.browserRegistrationChallenge else {
             signUpCompletion?(false, nil, nil, SdkError.init(customType: .somethingWentWrong))
             return
@@ -192,7 +192,7 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
 
 extension RegistrationHandler: ONGRegistrationDelegate {
     func userClient(_: ONGUserClient, didReceive challenge: ONGBrowserRegistrationChallenge) {
-        print("[\(type(of: self))] didReceive ONGBrowserRegistrationChallenge")
+        Logger.log("didReceive ONGBrowserRegistrationChallenge", sender:  self)
         browserRegistrationChallenge = challenge
         debugPrint(challenge.url)
 
@@ -203,23 +203,22 @@ extension RegistrationHandler: ONGRegistrationDelegate {
     }
 
     func userClient(_: ONGUserClient, didReceivePinRegistrationChallenge challenge: ONGCreatePinChallenge) {
-        print("[\(type(of: self))] didReceivePinRegistrationChallenge ONGCreatePinChallenge")
+        Logger.log("didReceivePinRegistrationChallenge ONGCreatePinChallenge", sender: self)
         createPinChallenge = challenge
         let pinError = mapErrorFromPinChallenge(challenge)
         pinHandler?.handleFlowUpdate(.create, pinError, receiver: self)
     }
 
     func userClient(_: ONGUserClient, didRegisterUser userProfile: ONGUserProfile, info: ONGCustomInfo?) {
-        print("[\(type(of: self))] didRegisterUser")
+        Logger.log("didRegisterUser", sender: self)
         createPinChallenge = nil
         customRegistrationChallenge = nil
         pinHandler?.closeFlow()
-        print()
         signUpCompletion?(true, userProfile, info, nil)
     }
 
     func userClient(_: ONGUserClient, didReceiveCustomRegistrationInitChallenge challenge: ONGCustomRegistrationChallenge) {
-        print("[\(type(of: self))] didReceiveCustomRegistrationInitChallenge ONGCustomRegistrationChallenge")
+        Logger.log("didReceiveCustomRegistrationInitChallenge ONGCustomRegistrationChallenge", sender: self)
         customRegistrationChallenge = challenge
 
         var result = Dictionary<String, Any?>()
@@ -233,7 +232,7 @@ extension RegistrationHandler: ONGRegistrationDelegate {
     }
 
     func userClient(_: ONGUserClient, didReceiveCustomRegistrationFinish challenge: ONGCustomRegistrationChallenge) {
-        print("[\(type(of: self))] didReceiveCustomRegistrationFinish ONGCustomRegistrationChallenge")
+        Logger.log("didReceiveCustomRegistrationFinish ONGCustomRegistrationChallenge", sender: self)
         customRegistrationChallenge = challenge
 
         var result = Dictionary<String, Any?>()
@@ -276,7 +275,7 @@ extension RegistrationHandler: ONGRegistrationDelegate {
     }
 
     func userClient(_: ONGUserClient, didFailToRegisterWithError error: Error) {
-        print("[\(type(of: self))] didFailToRegisterWithError")
+        Logger.log("didFailToRegisterWithError", sender: self)
         createPinChallenge = nil
         customRegistrationChallenge = nil
         pinHandler?.closeFlow()

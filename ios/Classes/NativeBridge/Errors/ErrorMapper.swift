@@ -79,7 +79,7 @@ enum OneginiErrorCustomType: Int {
 
 class ErrorMapper {
     func mapError(_ error: Error, pinChallenge: ONGPinChallenge? = nil, customInfo: ONGCustomInfo? = nil) -> SdkError {
-        print("Error domain: ", error.domain)
+        Logger.log("Error domain: \(error.domain)")
         
         return SdkError(errorDescription: error.localizedDescription, code: error.code)
     }

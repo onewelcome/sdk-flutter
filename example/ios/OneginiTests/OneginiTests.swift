@@ -94,7 +94,7 @@ class OneginiTests: XCTestCase {
             print ("[\(type(of: self))](testaAuthenticateUserWithPin) result type: \(type(of: result!))\n result description: \(result.debugDescription) ")
             
             if let error = result as? FlutterError {
-                print("[\(type(of: self))] error: \(error)")
+                Logger.log("error: \(error)", sender: self)
             }
             
             XCTAssert(!(result is FlutterError))
