@@ -12,7 +12,12 @@ import io.flutter.plugin.common.MethodChannel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import okhttp3.*
+import okhttp3.Headers.Companion.toHeaders
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
 
 class ResourceHelper(private var call: MethodCall, private var result: MethodChannel.Result, private var oneginiClient: OneginiClient) {
 
@@ -83,14 +88,15 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
             return
         }
         oneginiClient.userClient.authenticateUserImplicitly(
-            userProfile, scope?.toArray(arrayOfNulls<String>(scope.size)),
-            object : OneginiImplicitAuthenticationHandler {
-                override fun onSuccess(profile: UserProfile) {
-                    makeRequest(okHttpClient, request, result)
-                }
+                userProfile, scope?.toArray(arrayOfNulls<String>(scope.size)),
+                object : OneginiImplicitAuthenticationHandler {
+                    override fun onSuccess(profile: UserProfile) {
+                        makeRequest(okHttpClient, request, result)
+                    }
 
-                override fun onError(error: OneginiImplicitTokenRequestError) {
-                    result.error(error.errorType.toString(), error.message, error.cause.toString())
+                    override fun onError(error: OneginiImplicitTokenRequestError) {
+                        result.error(error.errorType.toString(), error.message, error.cause.toString())
+                    }
                 }
         )
     }
@@ -101,7 +107,7 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { data ->
-                            result.success(data?.body()?.string())
+                            result.success(data?.body?.string())
                         },
                         {
                             result.error("", it.message, it.stackTrace.toString())
@@ -122,10 +128,10 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
     private fun prepareRequest(headers: HashMap<String, String>?, method: String, url: String, encoding: String, body: String?, params: HashMap<String, String>?): Request {
         val request = Request.Builder()
         if (body != null && body.isNotEmpty() && method != "GET" && method != "get") {
-            val createdBody = RequestBody.create(MediaType.parse(encoding), body)
+            val createdBody = body.toRequestBody(encoding.toMediaTypeOrNull())
             request.method(method, createdBody)
         }
-        val urlBuilder = HttpUrl.parse(url)?.newBuilder()
+        val urlBuilder = url.toHttpUrlOrNull()?.newBuilder()
 
         params?.forEach {
             urlBuilder?.addQueryParameter(it.key, it.value)
@@ -142,7 +148,7 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
 
         if (headers != null && headers.isNotEmpty()) {
             try {
-                request.headers(Headers.of(headers))
+                request.headers(headers.toHeaders())
             } catch (error: Exception) {
             }
         }
