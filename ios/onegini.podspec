@@ -4,10 +4,10 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'onegini'
-  s.version          = '0.2.0'
+  s.version          = '1.0.0'
   s.summary          = 'Onegini Mobile Flutter plugin'
   s.description      = <<-DESC
-A flutter plugin project.
+  The Onegini Flutter Plugin is a plugin that allows you to utilize the Onegini Mobile SDKs in your Flutter applications.
                        DESC
   s.homepage         = 'https://www.onegini.com'
   s.license          = { :file => '../LICENSE' }
