@@ -70,7 +70,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         print("[\(type(of: self))] authenticateProfileImplicitly")
         ONGUserClient.sharedInstance().implicitlyAuthenticateUser(profile, scopes: scopes) { success, error in
             if !success {
-                let mappedError = ErrorMapper().mapError(error)
+                let mappedError = error != nil ? ErrorMapper().mapError(error!) : SdkError.init(customType: .somethingWentWrong)
                 completion(success, mappedError)
                 return
             }
