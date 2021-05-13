@@ -264,6 +264,10 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             newParameters["scope"] = scope
         }
         
+        if let parameters = buffer["parameters"] {
+            newParameters["parameters"] = parameters
+        }
+        
         return newParameters
     }
     
@@ -271,11 +275,11 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         let encoding = getEncodingByValue(parameters["encoding"] as! String)
         let path = parameters["path"] as! String
         let method = parameters["method"] as! String
-        let headers = parameters["headers"] as! [String : String]?
+        let headers = parameters["headers"] as? [String : String]
 
         var request: ONGResourceRequest!
         
-        if let body = parameters["body"] as! String? {
+        if let body = parameters["body"] as? String {
             let data = body.data(using: .utf8)
             request = ONGResourceRequest.init(path: path, method: method, body: data, headers: headers)
         } else {
