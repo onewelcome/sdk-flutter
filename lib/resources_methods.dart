@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/services.dart';
 
 import 'constants/constants.dart';
@@ -11,8 +9,8 @@ class ResourcesMethods {
   ///
   /// Method requires [path] parameter.
   Future<String> getResourceAnonymous(
-    String path, {
-    List<String>? scopes,
+    String path,
+    List<String> scopes, {
     Map<String, String>? headers,
     String? method,
     String? encoding,
@@ -69,8 +67,8 @@ class ResourcesMethods {
   ///
   /// Method requires [path] parameter.
   Future<String> getResourceImplicit(
-    String path, {
-    String? scope,
+    String path,
+    List<String> scope, {
     Map<String, String>? headers,
     String? method,
     String? encoding,

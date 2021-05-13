@@ -6,7 +6,7 @@ typealias FlutterDataCallback = (Any?, SdkError?) -> Void
 
 protocol FetchResourcesHandlerProtocol: AnyObject {
     func authenticateDevice(_ scopes: [String], completion: @escaping (Bool, SdkError?) -> Void)
-    func authenticateImplicitly(_ profile: ONGUserProfile, completion: @escaping (Bool, SdkError?) -> Void)
+    func authenticateImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Bool, SdkError?) -> Void)
     func resourceRequest(isImplicit: Bool, isAnonymousCall: Bool, parameters: [String: Any], completion: @escaping FlutterDataCallback)
     func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
     func fetchAnonymousResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
@@ -29,14 +29,14 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         }
     }
 
-    func authenticateImplicitly(_ profile: ONGUserProfile, completion: @escaping (Bool, SdkError?) -> Void) {
+    func authenticateImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Bool, SdkError?) -> Void) {
         print("[\(type(of: self))] authenticateImplicitly")
         if isProfileImplicitlyAuthenticated(profile) {
             print("[\(type(of: self))] authenticateImplicitly - isProfileImplicitlyAuthenticated")
             completion(true, nil)
         } else {
             print("[\(type(of: self))] authenticateImplicitly - isProfileImplicitlyAuthenticated else")
-            authenticateProfileImplicitly(profile) { success, error in
+            authenticateProfileImplicitly(profile, scopes: scopes) { success, error in
                 print("[\(type(of: self))] authenticateImplicitly - authenticateProfileImplicitly \(success) e: \((error?.errorDescription ?? "nil"))")
                 if success {
                     completion(true, nil)
@@ -66,9 +66,9 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         return implicitlyAuthenticatedProfile != nil && implicitlyAuthenticatedProfile == profile
     }
 
-    private func authenticateProfileImplicitly(_ profile: ONGUserProfile, completion: @escaping (Bool, SdkError?) -> Void) {
+    private func authenticateProfileImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Bool, SdkError?) -> Void) {
         print("[\(type(of: self))] authenticateProfileImplicitly")
-        ONGUserClient.sharedInstance().implicitlyAuthenticateUser(profile, scopes: nil) { success, error in
+        ONGUserClient.sharedInstance().implicitlyAuthenticateUser(profile, scopes: scopes) { success, error in
             if !success {
                 let mappedError = ErrorMapper().mapError(error)
                 completion(success, mappedError)
@@ -196,8 +196,9 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         }
         
         let newParameters = generateParameters(from: parameters, path: path)
+        let scopes = newParameters["scope"] as? [String]
         
-        OneginiModuleSwift.sharedInstance.authenticateUserImplicitly(_profile.profileId) { (value, error) in
+        OneginiModuleSwift.sharedInstance.authenticateUserImplicitly(_profile.profileId, scopes: scopes) { (value, error) in
             if (error == nil) {
                 OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: value, parameters: newParameters) { (_data, error) in
                     if let data = _data, let convertedStringDatat = try? JSONSerialization.data(withJSONObject: data, options: .prettyPrinted) {

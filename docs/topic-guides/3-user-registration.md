@@ -6,15 +6,15 @@ User registration is a fundamental part of the Onegini Mobile Security Platform.
 
 ## Register by default browser
 
-To start the user registration using WebView or browser you can `Onegini.instance.userClient.registerUser(BuildContext context, String? identityProviderId, String scopes)` method. Calling this method will launch a browser where you need to register. If registration is successful, the browser will return a link that can be caught. After the registration process is completed, the method will return the string value of `userId`. This will mean that the user has successfully registered. 
+To start the user registration using WebView or browser you can `Onegini.instance.userClient.registerUser(BuildContext context, String? identityProviderId, String scopes)` method. Calling this method will launch a browser where you need to register. If registration is successful, the browser will return a link that can be caught. After the registration process is completed, the method will return object of `RegistrationResponse`. This will mean that the user has successfully registered. 
 
-    var userId = await Onegini.instance.userClient
+    var registrationResponse = await Onegini.instance.userClient
         .registerUser(context, identityProviderId, "read")
         .catchError((error) {
             print("Registration failed: " + error.message);
         });
 
-    if (userId != null) {
+    if (registrationResponse.userProfile.profileId != null) {
         print("Registration success!");
     }
 
