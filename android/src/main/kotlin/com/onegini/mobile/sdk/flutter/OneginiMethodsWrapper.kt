@@ -43,8 +43,4 @@ class OneginiMethodsWrapper {
     fun startApp(call: MethodCall,result: MethodChannel.Result,context: Context){
         StartAppUseCase(context,OneginiSDK())(call,result)
     }
-
-    fun getAllAuthenticators(result: MethodChannel.Result,oneginiClient: OneginiClient){
-        GetAllAuthenticatorsUseCase(oneginiClient)(result)
-    }
 }

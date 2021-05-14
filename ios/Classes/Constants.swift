@@ -22,7 +22,6 @@ struct Constants {
         static let authenticateUser: String = "authenticateUser"
         static let getAllNotRegisteredAuthenticators: String = "getAllNotRegisteredAuthenticators"
         static let getRegisteredAuthenticators: String = "getRegisteredAuthenticators"
-        static let getAllAuthenticators: String = "getAllAuthenticators"
         static let registerAuthenticator: String = "registerAuthenticator";
         static let denyPinAuthenticationRequest: String = "denyPinAuthenticationRequest";
         static let acceptPinAuthenticationRequest: String = "acceptPinAuthenticationRequest";

@@ -36,6 +36,19 @@ class LoginHandler: NSObject, PinHandlerToReceiverProtocol {
             }
         }
     }
+
+    fileprivate func mapErrorFromPinChallenge(_ challenge: ONGPinChallenge) -> SdkError? {
+        if let error = challenge.error, error.code != ONGAuthenticationError.touchIDAuthenticatorFailure.rawValue {
+            guard let maxAttempts = pinChallenge?.maxFailureCount,
+                  let previousCount = pinChallenge?.previousFailureCount,
+                  maxAttempts != previousCount else {
+                return ErrorMapper().mapError(error, pinChallenge: challenge)
+            }
+            return SdkError(errorDescription: "Failed attempts", code: error.code, info: ["failedAttempts": previousCount, "maxAttempts": maxAttempts])
+        } else {
+            return nil
+        }
+    }
     
     fileprivate func mapErrorFromCustomAuthChallenge(_ challenge: ONGCustomAuthFinishAuthenticationChallenge) -> SdkError? {
         if let error = challenge.error, error.code != ONGAuthenticationError.customAuthenticatorFailure.rawValue {
@@ -58,9 +71,9 @@ extension LoginHandler : BridgeToLoginHandlerProtocol {
 extension LoginHandler: ONGAuthenticationDelegate {
     func userClient(_: ONGUserClient, didReceive challenge: ONGPinChallenge) {
         pinChallenge = challenge
-        let pinError = ErrorMapper().mapErrorFromPinChallenge(challenge)
+        let pinError = mapErrorFromPinChallenge(challenge)
 
-        if let error = pinError, error.code == ONGAuthenticationError.invalidPin.rawValue    , challenge.previousFailureCount < challenge.maxFailureCount { // 9009
+        if let error = pinError, error.code == 9009, challenge.previousFailureCount < challenge.maxFailureCount {
             pinHandler?.handleFlowUpdate(PinFlow.nextAuthenticationAttempt, error, receiver: self)
             return
         }
@@ -91,9 +104,8 @@ extension LoginHandler: ONGAuthenticationDelegate {
         pinHandler?.closeFlow()
         pinHandler?.onCancel()
     }
-    
-    func userClient(_ userClient: ONGUserClient, didAuthenticateUser userProfile: ONGUserProfile, authenticator: ONGAuthenticator, info customAuthInfo: ONGCustomInfo?) {
-        Logger.log("didAuthenticateUser", sender: self)
+
+    func userClient(_: ONGUserClient, didAuthenticateUser userProfile: ONGUserProfile, info _: ONGCustomInfo?) {
         
         pinChallenge = nil
         customChallange = nil
@@ -102,8 +114,7 @@ extension LoginHandler: ONGAuthenticationDelegate {
         pinHandler?.closeFlow()
     }
 
-    func userClient(_ userClient: ONGUserClient, didFailToAuthenticateUser userProfile: ONGUserProfile, authenticator: ONGAuthenticator, error: Error) {
-        Logger.log("didFailToAuthenticateUser", sender: self)
+    func userClient(_: ONGUserClient, didFailToAuthenticateUser profile: ONGUserProfile, error: Error) {
         
         pinChallenge = nil
         customChallange = nil

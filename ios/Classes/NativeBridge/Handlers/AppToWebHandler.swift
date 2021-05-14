@@ -18,9 +18,11 @@ class AppToWebHandler: AppToWebHandlerProtocol {
         ONGUserClient.sharedInstance()
             .appToWebSingleSignOn(withTargetUrl: _targetURL) { (url, token, error) in
             if let _url = url, let _token = token {
-                completion(["token": _token, "redirectUrl": _url.absoluteString ], nil)
+                completion(["token": _token, "url": _url.absoluteString ], nil)
             } else if let _error = error {
                 // Handle error
+                debugPrint(_error)
+
                 let sdkError = SdkError(errorDescription: _error.localizedDescription)
                 completion(nil, sdkError)
             }

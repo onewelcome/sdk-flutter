@@ -18,6 +18,8 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+    <key>FlutterDeepLinkingEnabled</key>
+    <true/>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -31,8 +33,6 @@
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
-	<key>FlutterDeepLinkingEnabled</key>
-	<true/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSBonjourServices</key>
@@ -42,9 +42,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Need to access your camera to scan QR code</string>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>Set to your desired customized permission dialog text.</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>Please provide access to your Face ID</string>
+	<string>set to your desired customized permission dialog text.</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
@@ -52,6 +50,8 @@
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationLandscapeLeft</string>
+		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>

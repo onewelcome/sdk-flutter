@@ -11,15 +11,15 @@ protocol OneginiPluginFingerprintProtocol {
 
 extension SwiftOneginiPlugin: OneginiPluginFingerprintProtocol {
     func acceptFingerprintAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        Logger.log("[NOT IMPLEMENTED] acceptFingerprintAuthenticationRequest")
+        print("[NOT IMPLEMENTED] acceptFingerprintAuthenticationRequest")
     }
     
     func denyFingerprintAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        Logger.log("[NOT IMPLEMENTED] denyFingerprintAuthenticationRequest")
+        print("[NOT IMPLEMENTED] denyFingerprintAuthenticationRequest")
     }
     
     func fingerprintFallbackToPin(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        Logger.log("[NOT IMPLEMENTED] fingerprintFallbackToPin")
+        print("[NOT IMPLEMENTED] fingerprintFallbackToPin")
     }
 }
 

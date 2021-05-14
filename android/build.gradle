@@ -43,7 +43,7 @@ android {
         main.java.srcDirs += 'src/main/kotlin'
     }
     defaultConfig {
-        minSdkVersion 23
+        minSdkVersion 21
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     testOptions {
@@ -66,7 +66,7 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    api('com.onegini.mobile.sdk.android:onegini-sdk:11.0.0@aar') {
+    api('com.onegini.mobile.sdk.android:onegini-sdk:10.2.1@aar') {
         transitive = true
     }
     // Rest Client
@@ -77,7 +77,6 @@ dependencies {
     implementation 'com.google.code.gson:gson:2.8.6'
 
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.10'
-    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
 
     // Required -- JUnit 4 framework
     testImplementation 'junit:junit:4.13'
