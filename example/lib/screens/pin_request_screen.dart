@@ -2,9 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:onegini/callbacks/onegini_pin_authentication_callback.dart';
 import 'package:onegini/callbacks/onegini_pin_registration_callback.dart';
-import 'package:onegini/onegini.dart';
-
 class PinRequestScreen extends StatefulWidget {
   final bool confirmation;
   final String previousCode;
@@ -32,15 +31,6 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
         break;
       }
     }
-    if (!pinCode.contains(null)) {
-      done();
-    }
-  }
-
-  clearAllDigits() {
-    for (var i = 0; i < pinCode.length; i++) {
-      setState(() => pinCode[i] = null);
-    }
   }
 
   removeLast() {
@@ -56,7 +46,7 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
     }
   }
 
-  done() async {
+  done() {
     String pin = "";
     pinCode.forEach((element) {
       pin += element;
@@ -79,50 +69,25 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
         });
       } else {
         Fluttertoast.showToast(
-            msg: "pins don't match, please try again",
+            msg: "pins does not match",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,
             backgroundColor: Colors.black38,
             textColor: Colors.white,
             fontSize: 16.0);
-        Navigator.of(context)
-          ..pop()
-          ..push(
-            MaterialPageRoute(
-                builder: (context) => PinRequestScreen(
-                      customAuthenticator: this.widget.customAuthenticator,
-                    )),
-          );
       }
     } else {
-      bool isSuccess = await Onegini.instance.userClient
-          .validatePinWithPolicy(pin)
-          .catchError((error) {
-        if (error is PlatformException) {
-          clearAllDigits();
-          Fluttertoast.showToast(
-              msg: error.message,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.black38,
-              textColor: Colors.white,
-              fontSize: 16.0);
-        }
-      });
-      if (isSuccess != null && isSuccess) {
-        Navigator.of(context)
-          ..pop()
-          ..push(
-            MaterialPageRoute(
-                builder: (context) => PinRequestScreen(
-                      confirmation: true,
-                      previousCode: pin,
-                      customAuthenticator: this.widget.customAuthenticator,
-                    )),
-          );
-      }
+      Navigator.of(context)
+        ..pop()
+        ..push(
+          MaterialPageRoute(
+              builder: (context) => PinRequestScreen(
+                    confirmation: true,
+                    previousCode: pin,
+                    customAuthenticator: this.widget.customAuthenticator,
+                  )),
+        );
     }
   }
 
@@ -130,8 +95,8 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        await OneginiPinRegistrationCallback().denyAuthenticationRequest();
-        return true;
+          await OneginiPinRegistrationCallback().denyAuthenticationRequest();
+          return true;
       },
       child: Scaffold(
         appBar: AppBar(
@@ -158,7 +123,7 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
               NumPad(
                 enterNum: enterNum,
                 removeLast: removeLast,
-                done: null,
+                done: pinCode.contains(null) ? null : done,
               ),
               SizedBox(
                 height: 10,

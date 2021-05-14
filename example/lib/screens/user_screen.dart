@@ -1,7 +1,6 @@
 // @dart = 2.10
 import 'dart:convert';
 
-import "package:collection/collection.dart";
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -10,7 +9,6 @@ import 'package:onegini/onegini.dart';
 import 'package:onegini_example/models/application_details.dart';
 import 'package:onegini_example/models/client_resource.dart';
 import 'package:onegini_example/screens/qr_scan_screen.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../main.dart';
 import 'login_screen.dart';
@@ -28,8 +26,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
   int _currentIndex = 0;
   List<Widget> _children;
   bool isContainNotRegisteredAuthenticators = true;
-  List<OneginiListResponse> registeredAuthenticators = [];
-  List<OneginiListResponse> notRegisteredAuthenticators = [];
+  List<OneginiListResponse> cachedAuthenticators = [];
 
   void onTabTapped(int index) {
     setState(() {
@@ -46,7 +43,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
       ),
     ];
     super.initState();
-    getAuthenticators();
+    getNotRegisteredAuthenticators();
 
     //testDeregisterAuthenticator();
   }
@@ -70,12 +67,13 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   @override
   void didPopNext() {
-    getAuthenticators();
+    getNotRegisteredAuthenticators();
   }
 
   logOut(BuildContext context) async {
     Navigator.pop(context);
-    await Onegini.instance.userClient.logout().catchError((error) {
+    var isLogOut =
+        await Onegini.instance.userClient.logout().catchError((error) {
       if (error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,
@@ -87,82 +85,38 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
             fontSize: 16.0);
       }
     });
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (_) => LoginScreen()),
-    );
+    if (isLogOut) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => LoginScreen()),
+      );
+    }
   }
 
-  Future<void> getAuthenticators() async {
-    notRegisteredAuthenticators = await Onegini.instance.userClient
-        .getNotRegisteredAuthenticators(context);
-    registeredAuthenticators =
-        await Onegini.instance.userClient.getRegisteredAuthenticators(context);
-  }
-
-  Future<List<OneginiListResponse>> getAllSortAuthenticators() async {
-    var allAuthenticators =
-        await Onegini.instance.userClient.getAllAuthenticators(context);
-    allAuthenticators.sort((a, b) {
-      return compareAsciiUpperCase(a.name, b.name);
-    });
-    return allAuthenticators;
+  updateNotRegisteredAuthenticators() {
+    getNotRegisteredAuthenticators();
   }
 
   Future<List<OneginiListResponse>> getNotRegisteredAuthenticators() async {
     var authenticators = await Onegini.instance.userClient
         .getNotRegisteredAuthenticators(context);
+    if (authenticators.isEmpty) {
+      setState(() {
+        isContainNotRegisteredAuthenticators = false;
+        cachedAuthenticators.clear();
+      });
+    } else {
+      setState(() {
+        isContainNotRegisteredAuthenticators = true;
+        cachedAuthenticators = authenticators;
+      });
+    }
     return authenticators;
   }
 
   registerAuthenticator(String authenticatorId) async {
     await Onegini.instance.userClient
         .registerAuthenticator(context, authenticatorId)
-        .catchError((error) {
-      if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      }
-    });
-    await getAuthenticators();
-    setState(() {});
-  }
-
-  bool isRegisteredAuthenticator(String authenticatorId) {
-    for (var authenticator in registeredAuthenticators) {
-      if (authenticator.id == authenticatorId) return true;
-    }
-    return false;
-  }
-
-  deregisterAuthenticator(String authenticatorId) async {
-    await Onegini.instance.userClient
-        .deregisterAuthenticator(context, authenticatorId)
-        .catchError((error) {
-      if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      }
-    });
-    await getAuthenticators();
-    setState(() {});
-  }
-
-  setPreferredAuthenticator(String authenticatorId) async {
-    await Onegini.instance.userClient
-        .setPreferredAuthenticator(context, authenticatorId)
         .catchError((error) {
       if (error is PlatformException) {
         Fluttertoast.showToast(
@@ -202,7 +156,6 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
   }
 
   changePin(BuildContext context) {
-    Navigator.pop(context);
     Onegini.instance.userClient.changePin(context).catchError((error) {
       if (error is PlatformException) {
         Fluttertoast.showToast(
@@ -214,11 +167,8 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
             textColor: Colors.white,
             fontSize: 16.0);
       }
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => LoginScreen()),
-      );
     });
+    Navigator.pop(context);
   }
 
   @override
@@ -242,56 +192,27 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
             DrawerHeader(
               child: Container(),
             ),
-            FutureBuilder<List<OneginiListResponse>>(
-              future: getAllSortAuthenticators(),
-              builder: (BuildContext context, snapshot) {
-                return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: snapshot.hasData ? snapshot.data.length : 0,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(
-                          snapshot.data[index].name,
+            Builder(
+              builder: (BuildContext context) {
+                return cachedAuthenticators.isNotEmpty &&
+                        isContainNotRegisteredAuthenticators
+                    ? PopupMenuButton<String>(
+                        child: ListTile(
+                          title: Text("register authenticator"),
+                          leading: Icon(Icons.fingerprint),
                         ),
-                        leading: Switch(
-                          value: snapshot.data[index].name == "PIN"
-                              ? true
-                              : isRegisteredAuthenticator(
-                                  snapshot.data[index].id),
-                          onChanged: snapshot.data[index].name == "PIN"
-                              ? null
-                              : (value) {
-                                  value
-                                      ? registerAuthenticator(
-                                          snapshot.data[index].id)
-                                      : deregisterAuthenticator(
-                                          snapshot.data[index].id);
-                                },
-                        ),
-                      );
-                    });
-              },
-            ),
-            FutureBuilder<List<OneginiListResponse>>(
-              future: Onegini.instance.userClient
-                  .getRegisteredAuthenticators(context),
-              builder: (BuildContext context, snapshot) {
-                return PopupMenuButton<String>(
-                    child: ListTile(
-                      title: Text("set preferred authenticator"),
-                      leading: Icon(Icons.add_to_home_screen),
-                    ),
-                    onSelected: (value) {
-                      setPreferredAuthenticator(value);
-                    },
-                    itemBuilder: (context) {
-                      return snapshot.data
-                          .map((e) => PopupMenuItem<String>(
-                                child: Text(e.name ?? ""),
-                                value: e.id,
-                              ))
-                          .toList();
-                    });
+                        onSelected: (value) {
+                          registerAuthenticator(value);
+                        },
+                        itemBuilder: (context) {
+                          return cachedAuthenticators
+                              .map((e) => PopupMenuItem<String>(
+                                    child: Text(e.name ?? ""),
+                                    value: e.id,
+                                  ))
+                              .toList();
+                        })
+                    : SizedBox.shrink();
               },
             ),
             ListTile(
@@ -374,29 +295,19 @@ class Home extends StatelessWidget {
             fontSize: 16.0);
       }
     });
-    if(oneginiAppToWebSingleSignOn != null){
-      await launch(
-        oneginiAppToWebSingleSignOn.redirectUrl,
-        enableDomStorage: true,
-      );
-    }
-  }
-
-  userProfiles(BuildContext context) async {
-    var data = await Onegini.instance.userClient.fetchUserProfiles();
-    var msg = "";
-    data.forEach((element) {
-      msg = msg + element.profileId +", ";
-    });
-    msg = msg.substring(0,msg.length-2);
     Fluttertoast.showToast(
-        msg: msg,
+        msg: oneginiAppToWebSingleSignOn,
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIosWeb: 1,
         backgroundColor: Colors.black38,
         textColor: Colors.white,
         fontSize: 16.0);
+  }
+
+  userProfiles(BuildContext context) async {
+    var data = await Onegini.instance.userClient.fetchUserProfiles();
+    print(data);
   }
 
   @override
@@ -452,29 +363,29 @@ class Info extends StatefulWidget {
 
 class _InfoState extends State<Info> {
   Future<ApplicationDetails> getApplicationDetails() async {
-    var response = await Onegini.instance.resourcesMethods.getResourceAnonymous(
-        "application-details",
-        ["read", "write", "application-details"]);
+    var response = await Onegini.instance.resourcesMethods
+        .getResourceAnonymous(
+            "application-details", scopes : ["read", "write", "application-details"]);
     return applicationDetailsFromJson(response);
   }
 
   Future<ClientResource> getClientResource() async {
-    var response =
-        await Onegini.instance.resourcesMethods.getResource("devices");
+    var response = await Onegini.instance.resourcesMethods
+        .getResource("devices");
     return clientResourceFromJson(response);
   }
 
   Future<String> getImplicitUserDetails() async {
     var response = await Onegini.instance.resourcesMethods
-        .getResourceImplicit("user-id-decorated", ["read"], parameters: {"username": "foo@bax.com", "age": 15});
+        .getResourceImplicit(
+            "user-id-decorated", scope: "read");
     Map<String, dynamic> responseAsJson = json.decode(response);
     return responseAsJson["decorated_user_id"];
   }
 
   Future<String> makeUnaunthenticatedRequest() async {
     var headers = {'Declareren-Appversion': 'CZ.app'};
-    var response = await Onegini.instance.resourcesMethods
-        .getUnauthenticatedResource("devices", headers: headers, method: 'GET');
+    var response = await Onegini.instance.resourcesMethods.getUnauthenticatedResource("devices", headers: headers, method: 'GET');
     return response;
   }
 
@@ -582,23 +493,23 @@ class _InfoState extends State<Info> {
                 height: 20,
               ),
               FutureBuilder<String>(
-                //implicit
-                future: makeUnaunthenticatedRequest(),
-                builder: (context, snapshot) {
-                  return snapshot.hasData
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "UnaunthenticatedRequest - Users:",
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            Text(snapshot.data, style: TextStyle(fontSize: 20)),
-                          ],
-                        )
-                      : SizedBox.shrink();
-                },
-              ),
+                  //implicit
+                  future: makeUnaunthenticatedRequest(),
+                  builder: (context, snapshot) {
+                    return snapshot.hasData
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                "UnaunthenticatedRequest - Users:",
+                                style: TextStyle(fontSize: 20),
+                              ),
+                              Text(snapshot.data,
+                                  style: TextStyle(fontSize: 20)),
+                            ],
+                          )
+                        : SizedBox.shrink();
+                  },),
               Expanded(
                 child: FutureBuilder<ClientResource>(
                   future: getClientResource(),

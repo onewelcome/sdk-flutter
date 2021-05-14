@@ -11,9 +11,9 @@ extension OneginiModuleSwift {
         }
     }
     
-    func registerUser(_ identityProviderId: String? = nil, scopes: [String]? = nil, callback: @escaping FlutterResult) -> Void {
+    func registerUser(_ identityProviderId: String? = nil, callback: @escaping FlutterResult) -> Void {
 
-        bridgeConnector.toRegistrationConnector.registrationHandler.signUp(identityProviderId, scopes: scopes) { (_, userProfile, userInfo, error) -> Void in
+        bridgeConnector.toRegistrationConnector.registrationHandler.signUp(identityProviderId) { (_, userProfile, userInfo, error) -> Void in
             
             if let _userProfile = userProfile {
                 var result = Dictionary<String, Any?>()
@@ -36,29 +36,11 @@ extension OneginiModuleSwift {
     }
     
     public func handleDeepLinkCallbackUrl(_ url: URL) -> Bool {
-        guard let schemeLibrary = URL.init(string: ONGClient.sharedInstance().configModel.redirectURL)?.scheme else {
-            generateEventError(value: "RedirectURL's scheme of configModel is empty: \(String(describing: ONGClient.sharedInstance().configModel.redirectURL))")
-            return false
-        }
-        
+        let schemeLibrary = URL.init(string: ONGClient.sharedInstance().configModel.redirectURL)!.scheme
         guard let scheme = url.scheme,
-              scheme.compare(schemeLibrary, options: .caseInsensitive) == .orderedSame else {
-            let value = ["url_scheme": url.scheme, "library_scheme": schemeLibrary, "url": url.absoluteString]
-            generateEventError(value: value)
-            return false
-        }
-        
+              scheme.localizedCaseInsensitiveCompare(schemeLibrary!) == .orderedSame else { return false }
         bridgeConnector.toRegistrationConnector.registrationHandler.handleRedirectURL(url: url)
         return true
-    }
-    
-    private func generateEventError(value: Any?) {
-        var errorParameters = [String: Any]()
-        errorParameters["eventName"] = "eventError"
-        errorParameters["eventValue"] = value
-        
-        let data = String.stringify(json: errorParameters)
-        OneginiModuleSwift.sharedInstance.sendBridgeEvent(eventName: OneginiBridgeEvents.pinNotification, data: data)
     }
     
     func handleTwoStepRegistration(_ data: String) {
@@ -134,21 +116,6 @@ extension OneginiModuleSwift {
         
         // convert list to list of objects with id and name
         let authenticators: [[String: String]] = notRegisteredAuthenticators.compactMap({ ["id" : $0.identifier, "name": $0.name] })
-        
-        callback(String.stringify(json: authenticators))
-    }
-    
-    func fetchAllAuthenticators(callback: @escaping FlutterResult) -> Void {
-        guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
-            callback(SdkError.convertToFlutter(SdkError(customType: .userAuthenticatedProfileIsNull)))
-            return
-        }
-        
-        // get all authenticators
-        let allAuthenticators = ONGUserClient.sharedInstance().allAuthenticators(forUser: profile)
-        
-        // convert list to list of objects with id and name
-        let authenticators: [[String: String]] = allAuthenticators.compactMap({ ["id" : $0.identifier, "name": $0.name] })
         
         callback(String.stringify(json: authenticators))
     }

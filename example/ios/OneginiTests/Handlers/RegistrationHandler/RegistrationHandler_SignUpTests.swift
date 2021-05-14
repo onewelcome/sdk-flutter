@@ -2,10 +2,6 @@ import XCTest
 @testable import onegini
 
 class RegistrationHandler_SignUpTests: XCTestCase, BrowserHandlerProtocol {
-    func handleUrl(url: URL, webSignInType: WebSignInType) {
-        <#code#>
-    }
-    
     var handler: RegistrationHandler?
     var urlHandlerCallback: ((_ url: URL?) -> ())?
     
@@ -43,7 +39,7 @@ class RegistrationHandler_SignUpTests: XCTestCase, BrowserHandlerProtocol {
         
         // TODO: handle sign up without browser or find better way
         let dummyProviderId = "Dummy-IDP"
-        handler?.signUp(dummyProviderId, scopes: ["read"], completion: { (success, userProfile, error)  in
+        handler?.signUp(dummyProviderId, completion: { (success, userProfile, error) in
             // check if method return any response
             print("[\(type(of: self))] sign up completion - \(success) ; e: \(error?.errorDescription)")
             expectation.fulfill()
@@ -70,7 +66,7 @@ class RegistrationHandler_SignUpTests: XCTestCase, BrowserHandlerProtocol {
         }
         
         let invalidProviderId = "some-invalid-provider-id"
-        handler?.signUp(invalidProviderId, scopes: ["read"] completion: { (success, userProfile, error) in
+        handler?.signUp(invalidProviderId, completion: { (success, userProfile, error) in
             
             print("[REGISTRATIONHANDLER] sign complete with invalid")
             print("[REGISTRATIONHANDLER] success: \(success) ; profile: \(userProfile.debugDescription) ; error: \(error!.errorDescription)")

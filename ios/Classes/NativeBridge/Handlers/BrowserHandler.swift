@@ -22,7 +22,7 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
     }
 
     func handleUrl(url: URL, webSignInType: WebSignInType) {
-        Logger.log("handleUrl url: \(url.absoluteString)", sender: self)
+        print("[\(type(of: self))] handleUrl url: \(url)")
         switch webSignInType {
         case .safari:
             openExternalBrowser(url: url)
@@ -35,19 +35,18 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
     
     private func openExternalBrowser(url: URL) {
         guard UIApplication.shared.canOpenURL(url) else {
-            Logger.log("can't open external browser url: \(url.absoluteString)", logType: .error)
             self.cancelButtonPressed()
             return
         }
         UIApplication.shared.open(url, options: [:]) { (value) in
-            Logger.log("opened external browser url: \(value)")
+            debugPrint("Opened external browser: \(value)")
         }
     }
     
     private func openInternalBrowser(url: URL) {
         let scheme = URL(string: ONGClient.sharedInstance().configModel.redirectURL)!.scheme
         webAuthSession = ASWebAuthenticationSession(url: url, callbackURLScheme: scheme, completionHandler: { callbackURL, error in
-            Logger.log("webAuthSession completionHandler", sender: self)
+            print("[\(type(of: self))] webAuthSession completionHandler")
             guard error == nil, let successURL = callbackURL else {
                 self.cancelButtonPressed()
                 return;
@@ -64,12 +63,12 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
     }
 
     private func handleSuccessUrl(url: URL) {
-        Logger.log("handleSuccessUrl url: \(url)", sender: self)
+        print("[\(type(of: self))] handleSuccessUrl url: \(url)")
         registerHandler.handleRedirectURL(url: url)
     }
 
     private func cancelButtonPressed() {
-        Logger.log("cancelButtonPressed", sender: self)
+        print("[\(type(of: self))] cancelButtonPressed")
         registerHandler.handleRedirectURL(url: nil)
     }
 
@@ -79,9 +78,19 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
 @available(iOS 12.0, *)
 extension BrowserViewController: ASWebAuthenticationPresentationContextProviding {
     func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
-        Logger.log("presentationAnchor for session", sender: self)
-        
-        let anchor: ASPresentationAnchor = UIApplication.shared.keyWindow ?? ASPresentationAnchor()
-        return anchor
+        print("[\(type(of: self))] presentationAnchor for session")
+        var anchor: ASPresentationAnchor?;
+        let group = DispatchGroup()
+        group.enter()
+
+        DispatchQueue.global(qos: .default).async {
+            anchor = UIApplication.shared.keyWindow!
+            group.leave()
+        }
+
+        // wait ...
+        group.wait()
+
+        return anchor!
     }
 }

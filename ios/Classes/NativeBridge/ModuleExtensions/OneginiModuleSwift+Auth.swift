@@ -5,14 +5,14 @@ import Flutter
 
 extension OneginiModuleSwift {
     
-    public func authenticateUserImplicitly(_ profileId: String, scopes: [String]?,
+    public func authenticateUserImplicitly(_ profileId: String,
                                            callback: @escaping (Bool, FlutterError?) -> Void) {
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first(where: { $0.profileId == profileId }) else {
             callback(false, SdkError.convertToFlutter(SdkError(customType: .userProfileIsNull)))
             return
         }
 
-        bridgeConnector.toResourceFetchHandler.authenticateImplicitly(profile, scopes: scopes) {
+        bridgeConnector.toResourceFetchHandler.authenticateImplicitly(profile) {
             (data, error) -> Void in
             error != nil ? callback(data, error?.flutterError()) : callback(data, nil)
         }

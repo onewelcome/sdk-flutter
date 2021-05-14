@@ -85,7 +85,7 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
     }
     
     func sendBridgeEvent(eventName: OneginiBridgeEvents, data: Any!) -> Void {
-        Logger.log("event.name: \(eventName)")
+       debugPrint(eventName)
        if eventName == OneginiBridgeEvents.otpOpen {
            eventSinkNativePart?(data)
            return;

@@ -1,4 +1,4 @@
-# Flutter 
+# Flutter (beta)
 
 ## Getting started
 
@@ -6,7 +6,11 @@ in pubspec.yaml add this:
 
 dependencies:
 
-    onegini: 1.0.0-dev.1
+  onegini:
+
+      git:
+
+        url: git@gitlab.com:develocraft/onegini-flutter-sdk-wrapper.git
 
 `flutter clean`
 
@@ -14,6 +18,7 @@ dependencies:
 
 The first time running you have to fetch flutter packages.
 Onegini class - main class for comunication between flutter and Native platforms.
+The user is able to run the example of SDK in the 'Example' section of the library.
 
 ## SDK Configuration
 
@@ -89,7 +94,7 @@ Onegini class - main class for comunication between flutter and Native platforms
 
 
 
-#### iOS (>= 12.0): 
+#### iOS: 
 
 1. The Onegini SDK is uploaded to the Onegini Artifactory repository. In order to let CocoaPods use an Artifactory repository you need to install a specific plugin.
     ```
@@ -113,18 +118,42 @@ Onegini class - main class for comunication between flutter and Native platforms
     pod repo-art add onegini https://repo.onegini.com/artifactory/api/pods/cocoapods-public
     ```
 
-5. In the `pod` file has to be added at the beginning this part `ios/Podfile`:
+5. Add next to `ios/Podfile`(before app target):
     ```
-    
-    source 'https://github.com/artsy/Specs.git'
-    source 'https://github.com/CocoaPods/Specs.git'
-    platform :ios, '12.0'
-
     plugin 'cocoapods-art', :sources => [
-        'onegini'
+    'onegini'
     ]
     ```
 
 6. Run `pod install`    
 
 7. Add `SecurityController.h` and `SecurityController.m` as described [HERE](https://docs.onegini.com/msp/stable/ios-sdk/reference/security-controls.html) to native's part of code.
+
+
+## Linking Native Code
+
+### IOS >= 12.0
+
+`cd ios && pod install`
+
+#### Example
+
+Download manually SDK. Find `example` folder. Other steps are the same as for package integration, instead, you don't need to modify `pubspec.yaml`.
+
+
+# Functional scope
+## Done on the Android/iOS:
+### Milestone 1:
+    - Start
+    - Security Controls and Configuration of the SDK
+    - User registration
+       - Browser
+    - User deregistration
+### Milestone 2:
+    -  Secure resource access -  `user-id-decorated`, `devices`, `application-details`.
+### Milestone 3:
+    - User authentication with PIN
+    - Logout
+### Milestone 4:
+    - User registration
+        - Custom identity provider

@@ -12,7 +12,7 @@
     return @{
              @"ONGAppIdentifier" : @"ExampleApp",
              @"ONGAppPlatform" : @"ios",
-             @"ONGAppVersion" : @"5.1.1",
+             @"ONGAppVersion" : @"5.1.0",
              @"ONGAppBaseURL" : @"https://token-mobile.test.onegini.com",
              @"ONGResourceBaseURL" : @"https://token-mobile.test.onegini.com/resources",
              @"ONGRedirectURL" : @"oneginiexample://loginsuccess",

@@ -50,20 +50,16 @@ class CustomInfo {
 
 class UserProfile {
   UserProfile({
-    this.isDefault,
     this.profileId,
   });
 
   String? profileId;
-  bool? isDefault;
 
   factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
     profileId: json["profileId"],
-    isDefault: json["isDefault"]
   );
 
   Map<String, dynamic> toJson() => {
     "profileId": profileId,
-    "isDefault": isDefault
   };
 }
