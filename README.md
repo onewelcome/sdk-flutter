@@ -1,4 +1,4 @@
-# Flutter (beta)
+# Flutter 
 
 ## Getting started
 
@@ -6,11 +6,7 @@ in pubspec.yaml add this:
 
 dependencies:
 
-  onegini:
-
-      git:
-
-        url: git@gitlab.com:develocraft/onegini-flutter-sdk-wrapper.git
+    onegini: 1.0.0-dev.1
 
 `flutter clean`
 
@@ -18,7 +14,6 @@ dependencies:
 
 The first time running you have to fetch flutter packages.
 Onegini class - main class for comunication between flutter and Native platforms.
-The user is able to run the example of SDK in the 'Example' section of the library.
 
 ## SDK Configuration
 
@@ -94,7 +89,7 @@ The user is able to run the example of SDK in the 'Example' section of the libra
 
 
 
-#### iOS: 
+#### iOS (>= 12.0): 
 
 1. The Onegini SDK is uploaded to the Onegini Artifactory repository. In order to let CocoaPods use an Artifactory repository you need to install a specific plugin.
     ```
@@ -118,25 +113,18 @@ The user is able to run the example of SDK in the 'Example' section of the libra
     pod repo-art add onegini https://repo.onegini.com/artifactory/api/pods/cocoapods-public
     ```
 
-5. Add next to `ios/Podfile`:
+5. In the `pod` file has to be added at the beginning this part `ios/Podfile`:
     ```
-post_install do |installer|
-  installer.pods_project.targets.each do |target|
-    flutter_additional_ios_build_settings(target)
-    target.build_configurations.each do |config|
-      config.build_settings['ENABLE_BITCODE'] = 'NO'
-    end
-  end
-end
+    
+    source 'https://github.com/artsy/Specs.git'
+    source 'https://github.com/CocoaPods/Specs.git'
+    platform :ios, '12.0'
+
+    plugin 'cocoapods-art', :sources => [
+        'onegini'
+    ]
     ```
 
 6. Run `pod install`    
 
 7. Add `SecurityController.h` and `SecurityController.m` as described [HERE](https://docs.onegini.com/msp/stable/ios-sdk/reference/security-controls.html) to native's part of code.
-
-
-## Linking Native Code
-
-### IOS >= 12.0
-
-`cd ios && pod install`

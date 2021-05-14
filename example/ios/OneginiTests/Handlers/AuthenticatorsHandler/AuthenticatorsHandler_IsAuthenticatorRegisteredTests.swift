@@ -40,7 +40,7 @@ class AuthenticatorsHandler_IsAuthenticatorRegisteredTests: XCTestCase, Authenti
 
         authHandlerCallback = {
             (event, requestMessage, error) in
-            print("auth handler callback")
+            Logger.log("auth handler callback")
             expectation.fulfill()
         }
 

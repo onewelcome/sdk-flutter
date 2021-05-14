@@ -2,6 +2,9 @@ package com.onegini.mobile.sdk.flutter
 
 import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
+import com.onegini.mobile.sdk.flutter.useCases.HandleRegisteredUrlUseCase
+import com.onegini.mobile.sdk.flutter.useCases.RegistrationUseCase
+import com.onegini.mobile.sdk.flutter.useCases.StartAppUseCase
 import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
 import com.onegini.mobile.sdk.flutter.useCases.*
 import io.flutter.plugin.common.MethodCall
@@ -35,5 +38,13 @@ class OneginiMethodsWrapper {
 
     fun getUserProfiles(result: MethodChannel.Result,oneginiClient: OneginiClient){
         GetUserProfilesUseCase(oneginiClient)(result)
+    }
+
+    fun startApp(call: MethodCall,result: MethodChannel.Result,context: Context){
+        StartAppUseCase(context,OneginiSDK())(call,result)
+    }
+
+    fun getAllAuthenticators(result: MethodChannel.Result,oneginiClient: OneginiClient){
+        GetAllAuthenticatorsUseCase(oneginiClient)(result)
     }
 }

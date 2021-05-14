@@ -30,7 +30,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         when (call.method) {
-            Constants.METHOD_START_APP -> startApp(call.argument<String>("twoStepCustomIdentityProviderIds"), call.argument<Int>("connectionTimeout"), call.argument<Int>("readTimeout"), result)
+            Constants.METHOD_START_APP -> oneginiMethodsWrapper.startApp(call, result, context)
             Constants.METHOD_CUSTOM_TWO_STEP_REGISTRATION_RETURN_SUCCESS -> CustomTwoStepRegistrationAction.CALLBACK?.returnSuccess(call.argument("data"))
             Constants.METHOD_CUSTOM_TWO_STEP_REGISTRATION_RETURN_ERROR -> CustomTwoStepRegistrationAction.CALLBACK?.returnError(Exception(call.argument<String>("error")))
 
@@ -48,6 +48,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_AUTHENTICATE_USER -> AuthenticationObject.authenticateUser(call.argument<String>("registeredAuthenticatorId"), result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_GET_REGISTERED_AUTHENTICATORS -> AuthenticationObject.getRegisteredAuthenticators(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS -> AuthenticationObject.getNotRegisteredAuthenticators(result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_GET_ALL_AUTHENTICATORS -> oneginiMethodsWrapper.getAllAuthenticators(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_REGISTER_AUTHENTICATOR -> AuthenticationObject.registerAuthenticator(call.argument<String>("authenticatorId"), result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_SET_PREFERRED_AUTHENTICATOR -> AuthenticationObject.setPreferredAuthenticator(call.argument<String>("authenticatorId"), result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_DEREGISTER_AUTHENTICATOR -> AuthenticationObject.deregisterAuthenticator(call.argument<String>("authenticatorId"), result, OneginiSDK().getOneginiClient(context))
@@ -82,31 +83,6 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
 
             else -> result.error(OneginiWrapperErrors.METHOD_TO_CALL_NOT_FOUND.code, OneginiWrapperErrors.METHOD_TO_CALL_NOT_FOUND.message, null)
         }
-    }
-
-    private fun startApp(twoStepCustomIdentityProviderIds: String?, connectionTimeout: Int?, readTimeout: Int?, result: MethodChannel.Result) {
-        val oneginiCustomIdentityProviderList = mutableListOf<OneginiCustomIdentityProvider>()
-        val identityProviderIds = twoStepCustomIdentityProviderIds?.split(",")?.map { it.trim() }
-        identityProviderIds?.forEach { oneginiCustomIdentityProviderList.add(CustomTwoStepIdentityProvider(it)) }
-        val oneginiClient: OneginiClient = OneginiSDK().initSDK(context, connectionTimeout?.toLong(), readTimeout?.toLong(), oneginiCustomIdentityProviderList)
-        oneginiClient.start(object : OneginiInitializationHandler {
-            override fun onSuccess(removedUserProfiles: Set<UserProfile?>?) {
-                val removedUserProfileArray: ArrayList<Map<String, Any>> = ArrayList()
-                if (removedUserProfiles != null) {
-                    for (userProfile in removedUserProfiles) {
-                        val map = mutableMapOf<String, Any>()
-                        map["isDefault"] = userProfile?.isDefault ?: false
-                        map["profileId"] = userProfile?.profileId ?: ""
-                        removedUserProfileArray.add(map)
-                    }
-                }
-                result.success(Gson().toJson(removedUserProfileArray))
-            }
-
-            override fun onError(error: OneginiInitializationError) {
-                result.error(error.errorType.toString(), error.message, null)
-            }
-        })
     }
 
     // "https://login-mobile.test.onegini.com/personal/dashboard"
@@ -168,7 +144,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             }
 
             override fun onError(error: OneginiChangePinError) {
-                result.error(error.errorType.toString(), error.message, "")
+                result.error(error.errorType.toString(), error.message, null)
             }
         })
     }
