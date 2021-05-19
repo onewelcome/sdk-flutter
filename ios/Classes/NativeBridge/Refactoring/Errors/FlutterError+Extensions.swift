@@ -1,23 +1,16 @@
-//
-//  PluginError.swift
-//  onegini
-//
-//  Created by Dream Store on 05.05.2021.
-//
-
 import Foundation
+import OneginiSDKiOS
 
-class PluginError: FlutterError {
+extension FlutterError {
     
-    class func from(data error: Error) -> FlutterError {
+    class func from(error: Error) -> FlutterError {
         let domain = (error as NSError).domain
         let code: Int = (error as NSError).code
         let userInfo: Dictionary<String, Any> = (error as NSError).userInfo
         let localizedDescription = error.localizedDescription
         let recoverySuggestion = (error as NSError).localizedRecoverySuggestion ?? ""
         
-        let details = ["title": "Error",
-                       "message": localizedDescription,
+        let details = ["message": localizedDescription,
                        "recoverySuggestion": recoverySuggestion,
                        "code": code,
                        "domain": domain,
@@ -29,7 +22,7 @@ class PluginError: FlutterError {
     }
 
     class func from(customType: PluginErrorType = .newSomethingWentWrong) -> FlutterError {
-        let flutterError = FlutterError(code: "\(customType.rawValue)", message: customType.message(), details: nil)
+        let flutterError = FlutterError(code: "\(customType.rawValue)", message: customType.errorDescription, details: nil)
 
         return flutterError
     }

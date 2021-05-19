@@ -2,16 +2,20 @@ import Flutter
 import UIKit
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
-    var mainAppConnector: MainAppConnector!
+    var mainAppConnector: MainAppConnector
     
-  public static func register(with registrar: FlutterPluginRegistrar) {
-    let channel = FlutterMethodChannel(name: "onegini", binaryMessenger: registrar.messenger())
-    let eventChannel = FlutterEventChannel(name: "onegini_events",
-                                              binaryMessenger: registrar.messenger())
-    let instance = SwiftOneginiPlugin()
-    registrar.addMethodCallDelegate(instance, channel: channel)
-    eventChannel.setStreamHandler(OneginiModuleSwift.sharedInstance)
-  }
+    public static func register(with registrar: FlutterPluginRegistrar) {
+        let channel = FlutterMethodChannel(name: "onegini", binaryMessenger: registrar.messenger())
+        let eventChannel = FlutterEventChannel(name: "onegini_events",
+                                                  binaryMessenger: registrar.messenger())
+        let instance = SwiftOneginiPlugin()
+        registrar.addMethodCallDelegate(instance, channel: channel)
+        eventChannel.setStreamHandler(OneginiModuleSwift.sharedInstance)
+    }
+    
+    public override init() {
+        self.mainAppConnector = MainAppConnector()
+    }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
     print("call.method: ", call.method)
@@ -24,7 +28,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         }
     }
     
-    self.mainAppConnector = MainAppConnector()
+    
     
     switch call.method {
     

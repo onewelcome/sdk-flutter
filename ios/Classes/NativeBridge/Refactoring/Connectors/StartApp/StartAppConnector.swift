@@ -10,12 +10,12 @@ import OneginiSDKiOS
 import OneginiCrypto
 import Flutter
 
-protocol StartAppConnectorProtocol: class {
+protocol StartAppConnectorProtocol {
     func startApp(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 }
 
 class StartAppConnector: StartAppConnectorProtocol {
-    var startAppWrapper: StartAppWrapperProtocol!
+    var startAppWrapper: StartAppWrapperProtocol
     
     init(wrapper: StartAppWrapperProtocol? = nil) {
         self.startAppWrapper = wrapper ?? StartAppWrapper()
@@ -25,23 +25,24 @@ class StartAppConnector: StartAppConnectorProtocol {
         var connectionTimeout: Int?
 
         if let arguments = call.arguments as! [String: Any]? {
-        
             connectionTimeout = arguments[Constants.Parameters.connectionTimeout] as! Int?
         }
         
         self.startAppWrapper.startApp(timeInterval: connectionTimeout, callback: { [weak self] (success, error) in
             
+            guard let weakSelf = self else { return } // In this case what has to be returned?
+            
             if let error = error {
-                result(PluginError.from(data: error))
+                result(FlutterError.from(error: error))
                 return
             }
             
             guard success else {
-                result(PluginError.from(customType: .newSomethingWentWrong))
+                result(FlutterError.from(customType: .newSomethingWentWrong))
                 return
             }
             
-            let data = self?.convert(profiles: self!.startAppWrapper.userProfiles())
+            let data = weakSelf.convert(profiles: weakSelf.startAppWrapper.userProfiles())
             result(data)
         })
     }
@@ -51,28 +52,5 @@ class StartAppConnector: StartAppConnectorProtocol {
 
         let data = String.stringify(json: value)
         return data
-    }
-}
-
-protocol StartAppWrapperProtocol {
-    func startApp(timeInterval: Int?, callback: @escaping (Bool, Error?) -> Void)
-    func userProfiles() -> [ONGUserProfile]
-}
-
-class StartAppWrapper: StartAppWrapperProtocol {
-    func startApp(timeInterval: Int?, callback: @escaping (Bool, Error?) -> Void) {
-        if let timeInterval = timeInterval {
-            ONGClientBuilder().setHttpRequestTimeout(TimeInterval(timeInterval))
-        }
-        
-        ONGClientBuilder().build()
-        ONGClient.sharedInstance().start { (value, error) in
-            callback(value, error)
-        }
-    }
-    
-    func userProfiles() -> [ONGUserProfile] {
-        let profiles = ONGUserClient.sharedInstance().userProfiles()
-        return Array(profiles)
     }
 }
