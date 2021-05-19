@@ -5,7 +5,7 @@ protocol MainAppConnectorFactoryInterface {
 }
 
 class DefaultMainConnectorFactory: MainAppConnectorFactoryInterface {
-    var startAppConnector: StartAppConnectorProtocol {
+    lazy var startAppConnector: StartAppConnectorProtocol = {
         return StartAppConnector()
-    }
+    }()
 }

@@ -10,4 +10,8 @@ class MainAppConnector {
     func startApp(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         self.factory.startAppConnector.startApp(call, result)
     }
+    
+    deinit {
+        print("aa")
+    }
 }

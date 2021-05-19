@@ -10,7 +10,7 @@ import OneginiSDKiOS
 import OneginiCrypto
 import Flutter
 
-protocol StartAppConnectorProtocol {
+protocol StartAppConnectorProtocol: AnyObject {
     func startApp(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 }
 
@@ -19,6 +19,10 @@ class StartAppConnector: StartAppConnectorProtocol {
     
     init(wrapper: StartAppWrapperProtocol? = nil) {
         self.startAppWrapper = wrapper ?? StartAppWrapper()
+    }
+    
+    deinit {
+        print("deinit")
     }
     
     func startApp(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
