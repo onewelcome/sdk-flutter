@@ -21,10 +21,6 @@ class StartAppConnector: StartAppConnectorProtocol {
         self.startAppWrapper = wrapper ?? StartAppWrapper()
     }
     
-    deinit {
-        print("deinit")
-    }
-    
     func startApp(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         var connectionTimeout: Int?
 
