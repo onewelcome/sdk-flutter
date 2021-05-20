@@ -27,7 +27,7 @@ extension OneginiModuleSwift {
             Logger.log("super path1 \(path)")
             Logger.log("super params1 \(parameters)")
             bridgeConnector.toResourceFetchHandler.fetchResourceWithImplicitResource(path, parameters: parameters, completion: callback)
-        case Constants.Routes.getResourceAnonymous:
+        case Constants.Routes.getAnonymousResource:
             Logger.log("super path2 \(path)")
             Logger.log("super params2 \(parameters)")
             bridgeConnector.toResourceFetchHandler.fetchAnonymousResource(path, parameters: parameters, completion: callback)
@@ -35,7 +35,7 @@ extension OneginiModuleSwift {
             Logger.log("super path3 \(path)")
             Logger.log("super params3 \(parameters)")
             bridgeConnector.toResourceFetchHandler.fetchSimpleResources(path, parameters: parameters, completion: callback)
-        case Constants.Routes.unauthenticatedRequest:
+        case Constants.Routes.getUnauthenticatedResource:
             Logger.log("super path4 \(path)")
             Logger.log("super params4 \(parameters)")
             bridgeConnector.toResourceFetchHandler.unauthenticatedRequest(path, parameters: parameters, callback: callback)

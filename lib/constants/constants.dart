@@ -94,6 +94,9 @@ class Constants {
   /// Get resource anonymous method name
   static const String getResourceAnonymous = "getResourceAnonymous";
 
+  /// Authenticate device for resource method name
+  static const String authenticateDeviceForResource = "authenticateDeviceForResource";
+
   /// Get implicit resource method name
   static const String getImplicitResource = "getImplicitResource";
 

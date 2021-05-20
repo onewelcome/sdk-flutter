@@ -42,10 +42,11 @@ struct Constants {
         static let denyOtpAuthenticationRequest: String = "denyOtpAuthenticationRequest";
 
         //resources
-        static let getResourceAnonymous: String = "getResourceAnonymous";
+        static let getAnonymousResource: String = "getResourceAnonymous";
         static let getResource: String = "getResource";
         static let getImplicitResource: String = "getImplicitResource";
-        static let unauthenticatedRequest: String = "getUnauthenticatedResource";
+        static let getUnauthenticatedResource: String = "getUnauthenticatedResource";
+        static let authenticateDeviceForResource: String = "authenticateDeviceForResource"
         
         static let eventHandleRegisteredUrl: String = "eventHandleRegisteredUrl"
 
@@ -53,5 +54,26 @@ struct Constants {
         static let getAppToWebSingleSignOn: String = "getAppToWebSingleSignOn";
         static let changePin: String = "changePin";
         static let userProfiles: String = "userProfiles";
+    }
+    
+    struct Parameters {
+        static let connectionTimeout: String = "connectionTimeout"
+        static let twoStepCustomIdentityProviderIds: String = "twoStepCustomIdentityProviderIds"
+        static let identityProviderId: String = "identityProviderId"
+        static let scope: String = "scope"
+        static let authenticatorId: String = "authenticatorId"
+        static let profileId: String = "profileId"
+        
+        static let path: String = "path"
+        static let encoding: String = "encoding"
+        static let method: String = "method"
+        static let headers: String = "headers"
+        static let body: String = "body"
+        static let parameters: String = "parameters"
+    }
+    
+    struct Encoding {
+        static let json: String = "application/json"
+        static let url: String = "application/x-www-form-urlencoded"
     }
 }

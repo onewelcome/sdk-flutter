@@ -374,7 +374,7 @@ class Home extends StatelessWidget {
             fontSize: 16.0);
       }
     });
-    if(oneginiAppToWebSingleSignOn != null){
+    if (oneginiAppToWebSingleSignOn != null) {
       await launch(
         oneginiAppToWebSingleSignOn.redirectUrl,
         enableDomStorage: true,
@@ -386,9 +386,9 @@ class Home extends StatelessWidget {
     var data = await Onegini.instance.userClient.fetchUserProfiles();
     var msg = "";
     data.forEach((element) {
-      msg = msg + element.profileId +", ";
+      msg = msg + element.profileId + ", ";
     });
-    msg = msg.substring(0,msg.length-2);
+    msg = msg.substring(0, msg.length - 2);
     Fluttertoast.showToast(
         msg: msg,
         toastLength: Toast.LENGTH_SHORT,
@@ -452,10 +452,17 @@ class Info extends StatefulWidget {
 
 class _InfoState extends State<Info> {
   Future<ApplicationDetails> getApplicationDetails() async {
-    var response = await Onegini.instance.resourcesMethods.getResourceAnonymous(
-        "application-details",
-        ["read", "write", "application-details"]);
+    var response = await Onegini.instance.resourcesMethods
+        .getResourceAnonymous("application-details");
     return applicationDetailsFromJson(response);
+  }
+
+  Future<bool> authenticateDeviceForResource() async {
+    var response =
+        await Onegini.instance.resourcesMethods.authenticateDeviceForResource(
+      ["read", "write", "application-details"],
+    );
+    return response;
   }
 
   Future<ClientResource> getClientResource() async {
@@ -465,8 +472,9 @@ class _InfoState extends State<Info> {
   }
 
   Future<String> getImplicitUserDetails() async {
-    var response = await Onegini.instance.resourcesMethods
-        .getResourceImplicit("user-id-decorated", ["read"], parameters: {"username": "foo@bax.com", "age": 15});
+    var response = await Onegini.instance.resourcesMethods.getResourceImplicit(
+        "user-id-decorated", ["read"],
+        parameters: {"username": "foo@bax.com", "age": 15});
     Map<String, dynamic> responseAsJson = json.decode(response);
     return responseAsJson["decorated_user_id"];
   }
@@ -501,24 +509,32 @@ class _InfoState extends State<Info> {
               SizedBox(
                 height: 20,
               ),
-              FutureBuilder<String>(
-                  //implicit
-                  future: getImplicitUserDetails(),
-                  builder: (context, snapshot) {
-                    return snapshot.hasData
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Decorated profile id:",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                              Text(snapshot.data,
-                                  style: TextStyle(fontSize: 20)),
-                            ],
-                          )
-                        : SizedBox.shrink();
-                  }),
+              FutureBuilder<bool>(
+                future: authenticateDeviceForResource(),
+                builder: (context, snapshot) {
+                  return !(snapshot.hasData && snapshot.data)
+                      ? Text("")
+                      : FutureBuilder<String>(
+                          //implicit
+                          future: getImplicitUserDetails(),
+                          builder: (context, snapshot) {
+                            return snapshot.hasData
+                                ? Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        "Decorated profile id:",
+                                        style: TextStyle(fontSize: 20),
+                                      ),
+                                      Text(snapshot.data,
+                                          style: TextStyle(fontSize: 20)),
+                                    ],
+                                  )
+                                : SizedBox.shrink();
+                          });
+                },
+              ),
               SizedBox(
                 height: 20,
               ),
