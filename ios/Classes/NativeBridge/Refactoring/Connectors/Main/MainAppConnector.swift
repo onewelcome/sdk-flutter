@@ -14,4 +14,12 @@ class MainAppConnector {
     func fetchResources(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         self.factory.resourcesConnector.fetchResources(call, result)
     }
+    
+    func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.factory.disconnectConnector.deregisterUser(call, result)
+    }
+    
+    func logoutUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.factory.disconnectConnector.logoutUser(call, result)
+    }
 }

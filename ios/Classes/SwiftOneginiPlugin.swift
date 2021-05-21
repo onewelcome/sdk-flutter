@@ -48,7 +48,8 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         case Constants.Routes.customTwoStepRegistrationReturnSuccess: customTwoStepRegistrationReturnSuccess(call, result)
         case Constants.Routes.customTwoStepRegistrationReturnError: customTwoStepRegistrationReturnError(call, result)
             
-        case Constants.Routes.deregisterUser: deregisterUser(call, result)
+        case Constants.Routes.deregisterUser:
+            self.mainAppConnector.deregisterUser(call, result)
             
         // auth
         case Constants.Routes.registerAuthenticator: registerAuthenticator(call, result)
@@ -63,7 +64,8 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         case Constants.Routes.acceptPinAuthenticationRequest: acceptPinAuthenticationRequest(call, result)
         case Constants.Routes.denyPinAuthenticationRequest: denyPinAuthenticationRequest(call, result)
 
-        case Constants.Routes.logout: logout(call, result)
+        case Constants.Routes.logout:
+            self.mainAppConnector.logoutUser(call, result)
             
         case Constants.Routes.validatePinWithPolicy:
             validatePinWithPolicy(call, result)
