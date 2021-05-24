@@ -31,15 +31,16 @@ extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
     }
     
     func registerUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        guard let _arg = call.arguments as! [String: Any]? else { return; }
-        let _identifier = _arg["identityProviderId"] as? String
-        OneginiModuleSwift.sharedInstance.registerUser(_identifier, callback: result)
+        guard let arg = call.arguments as? [String: Any] else { return; }
+        let identifier = arg["identityProviderId"] as? String
+        let scopes = arg["scopes"] as? [String]
+        OneginiModuleSwift.sharedInstance.registerUser(identifier, scopes: scopes, callback: result)
     }
     
     func handleRegisteredProcessUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        guard let _arg = call.arguments as! [String: Any]? else { return }
-        let url = _arg["url"] as? String
-        let typeValue = _arg["type"] as! Int?
+        guard let arg = call.arguments as? [String: Any] else { return }
+        let url = arg["url"] as? String
+        let typeValue = arg["type"] as? Int
         
         var type: WebSignInType = .insideApp
         if let _typeValue = typeValue, let value = WebSignInType.init(rawValue: _typeValue) {
