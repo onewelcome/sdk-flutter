@@ -132,7 +132,7 @@ extension MobileAuthHandler: ONGMobileAuthRequestDelegate {
         //@todo will need this for PUSH Custom
     }
 
-    func userClient(_: ONGUserClient, didFailToHandle _: ONGMobileAuthRequest, error: Error) {
+    func userClient(_ userClient: ONGUserClient, didFailToHandle request: ONGMobileAuthRequest, authenticator: ONGAuthenticator?, error: Error) {
         if error.code == ONGGenericError.actionCancelled.rawValue {
             mobileAuthCompletion?(false, SdkError(customType: .authenticationCancelled))
         } else {
@@ -141,7 +141,7 @@ extension MobileAuthHandler: ONGMobileAuthRequestDelegate {
         }
     }
 
-    func userClient(_: ONGUserClient, didHandle _: ONGMobileAuthRequest, info _: ONGCustomInfo?) {
+    func userClient(_ userClient: ONGUserClient, didHandle request: ONGMobileAuthRequest, authenticator: ONGAuthenticator?, info customAuthenticatorInfo: ONGCustomInfo?) {
         mobileAuthCompletion?(message, nil)
     }
 }

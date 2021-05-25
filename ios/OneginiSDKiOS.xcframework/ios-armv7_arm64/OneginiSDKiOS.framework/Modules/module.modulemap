@@ -1,6 +1,0 @@
-framework module OneginiSDKiOS {
-  umbrella header "OneginiSDKiOS.h"
-
-  export *
-  module * { export * }
-}

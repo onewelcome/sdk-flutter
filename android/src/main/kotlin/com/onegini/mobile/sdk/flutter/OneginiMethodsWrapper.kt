@@ -44,6 +44,10 @@ class OneginiMethodsWrapper {
         StartAppUseCase(context,OneginiSDK())(call,result)
     }
 
+    fun getAllAuthenticators(result: MethodChannel.Result,oneginiClient: OneginiClient){
+        GetAllAuthenticatorsUseCase(oneginiClient)(result)
+    }
+
     fun getRedirectUrl(result: MethodChannel.Result,oneginiClient: OneginiClient) {
         GetRedirectUrlUseCase(oneginiClient)(result)
     }
