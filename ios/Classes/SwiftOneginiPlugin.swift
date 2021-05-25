@@ -12,13 +12,13 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    print("call.method: ", call.method)
+    Logger.log("call.method: \(call.method)", sender: self, logType: .log)
     let _arg = call.arguments as! [String: Any]?
     if ((_arg) != nil) {
         for key in _arg!.keys {
-            print("key: " + key)
+            Logger.log("key: " + key)
             let val = _arg?[key]
-            print("value: " + String(describing: val))
+            Logger.log("value: " + String(describing: val))
         }
     }
     
@@ -50,6 +50,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     
     case Constants.Routes.getRegisteredAuthenticators: getRegisteredAuthenticators(call, result)
     case Constants.Routes.getAllNotRegisteredAuthenticators: getAllNotRegisteredAuthenticators(call, result)
+    case Constants.Routes.getAllAuthenticators: getAllAuthenticators(call, result)
     case Constants.Routes.deregisterAuthenticator:
         deregisterAuthenticator(call, result)
     
@@ -81,7 +82,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     case Constants.Routes.userProfiles: fetchUserProfiles(result)
     
     default: do {
-        print("Method wasn't handled: " + call.method)
+        Logger.log("Method wasn't handled: " + call.method)
         result(FlutterMethodNotImplemented)
     }
     }

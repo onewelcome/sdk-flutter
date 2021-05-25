@@ -34,23 +34,29 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Image.asset(
-            "assets/logo_onegini.png",
-            width: 200,
-            height: 50,
+    return WillPopScope(
+      onWillPop: () async {
+        await OneginiFingerprintCallback().denyAuthenticationRequest();
+        return true;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Image.asset(
+              "assets/logo_onegini.png",
+              width: 200,
+              height: 50,
+            ),
           ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: Container(
-        child: Center(
-          child: Icon(
-            Icons.fingerprint,
-            size: 200,
+        body: Container(
+          child: Center(
+            child: Icon(
+              Icons.fingerprint,
+              size: 200,
+            ),
           ),
         ),
       ),

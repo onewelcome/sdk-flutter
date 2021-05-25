@@ -59,6 +59,7 @@ interface Constants {
         const val METHOD_DENY_PIN_AUTHENTICATION_REQUEST = "denyPinAuthenticationRequest"
         const val METHOD_GET_REGISTERED_AUTHENTICATORS = "getRegisteredAuthenticators"
         const val METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS = "getAllNotRegisteredAuthenticators"
+        const val METHOD_GET_ALL_AUTHENTICATORS = "getAllAuthenticators"
         const val METHOD_SET_PREFERRED_AUTHENTICATOR = "setPreferredAuthenticator"
         const val METHOD_REGISTER_AUTHENTICATOR = "registerAuthenticator"
         const val METHOD_DEREGISTER_AUTHENTICATOR = "deregisterAuthenticator"

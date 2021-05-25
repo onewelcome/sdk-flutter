@@ -45,6 +45,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_AUTHENTICATE_USER -> AuthenticationObject.authenticateUser(call.argument<String>("registeredAuthenticatorId"), result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_GET_REGISTERED_AUTHENTICATORS -> AuthenticationObject.getRegisteredAuthenticators(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS -> AuthenticationObject.getNotRegisteredAuthenticators(result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_GET_ALL_AUTHENTICATORS -> oneginiMethodsWrapper.getAllAuthenticators(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_REGISTER_AUTHENTICATOR -> AuthenticationObject.registerAuthenticator(call.argument<String>("authenticatorId"), result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_SET_PREFERRED_AUTHENTICATOR -> AuthenticationObject.setPreferredAuthenticator(call.argument<String>("authenticatorId"), result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_DEREGISTER_AUTHENTICATOR -> AuthenticationObject.deregisterAuthenticator(call.argument<String>("authenticatorId"), result, OneginiSDK().getOneginiClient(context))
@@ -142,7 +143,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             }
 
             override fun onError(error: OneginiChangePinError) {
-                result.error(error.errorType.toString(), error.message, "")
+                result.error(error.errorType.toString(), error.message, null)
             }
         })
     }
