@@ -37,7 +37,8 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         case Constants.Routes.registerUser: registerUser(call, result)
         case Constants.Routes.handleRegisteredUserUrl: handleRegisteredProcessUrl(call, result)
 
-        case Constants.Routes.getIdentityProviders: getIdentityProviders(call, result)
+        case Constants.Routes.getIdentityProviders:
+            self.mainAppConnector.getIdentityProviders(call, result)
         case Constants.Routes.cancelRegistration: cancelRegistration(call, result)
         case Constants.Routes.setPreferredAuthenticator:
             setPreferredAuthenticator(call, result)

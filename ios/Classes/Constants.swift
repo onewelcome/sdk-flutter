@@ -70,6 +70,9 @@ struct Constants {
         static let headers: String = "headers"
         static let body: String = "body"
         static let parameters: String = "parameters"
+        
+        static let id: String = "id"
+        static let name: String = "name"
     }
     
     struct Encoding {

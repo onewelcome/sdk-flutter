@@ -3,7 +3,7 @@ import OneginiSDKiOS
 
 typealias StartAppCallbackResult = (Bool, Error?) -> Void
 
-protocol StartAppWrapperProtocol {
+protocol StartAppWrapperProtocol: class {
     func startApp(timeInterval: Int?, callback: @escaping StartAppCallbackResult)
     func userProfiles() -> [ONGUserProfile]
 }

@@ -22,4 +22,8 @@ class MainAppConnector {
     func logoutUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         self.factory.disconnectConnector.logoutUser(call, result)
     }
+    
+    func getIdentityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.factory.identityProviderConnector.getIdentityProviders(call, result)
+    }
 }
