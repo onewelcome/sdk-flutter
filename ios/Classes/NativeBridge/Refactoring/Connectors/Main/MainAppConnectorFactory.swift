@@ -6,6 +6,7 @@ protocol MainAppConnectorFactoryInterface {
     var disconnectConnector: DisconnectConnectorProtocol { get set}
     var identityProviderConnector: IdentityProviderConnectorProtocol { get}
     var userProfilesConnector: UserProfilesConnectorProtocol { get}
+    var appToWebSingleSignOnConnector: AppToWebSingleSignOnConnectorProtocol { get}
 }
 
 class DefaultMainConnectorFactory: MainAppConnectorFactoryInterface {
@@ -27,5 +28,9 @@ class DefaultMainConnectorFactory: MainAppConnectorFactoryInterface {
     
     var userProfilesConnector: UserProfilesConnectorProtocol {
         return UserProfilesConnector()
+    }
+    
+    var appToWebSingleSignOnConnector: AppToWebSingleSignOnConnectorProtocol {
+        return AppToWebSingleSignOnConnector()
     }
 }

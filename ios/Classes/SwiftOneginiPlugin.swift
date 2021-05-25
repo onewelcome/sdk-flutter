@@ -91,7 +91,8 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
             
         // other
         case Constants.Routes.changePin: changePin(call, result)
-        case Constants.Routes.getAppToWebSingleSignOn: getAppToWebSingleSignOn(call, result)
+        case Constants.Routes.getAppToWebSingleSignOn:
+            self.mainAppConnector.singleSignOn(call, result)
         case Constants.Routes.userProfiles:
             self.mainAppConnector.getUserProfiles(call, result)
 

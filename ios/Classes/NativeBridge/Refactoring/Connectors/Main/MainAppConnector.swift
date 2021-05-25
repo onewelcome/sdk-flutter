@@ -28,6 +28,10 @@ class MainAppConnector {
     }
     
     func getUserProfiles(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        self.factory.userProfilesConnector.fetchUserProfiles(result)
+        self.factory.userProfilesConnector.fetchUserProfiles(call, result)
+    }
+    
+    func singleSignOn(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.factory.appToWebSingleSignOnConnector.appToWebSingleSignOn(call, result)
     }
 }

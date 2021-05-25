@@ -73,6 +73,9 @@ struct Constants {
         
         static let id: String = "id"
         static let name: String = "name"
+        static let url: String = "url"
+        static let redirectUrl: String = "redirectUrl"
+        static let token: String = "token"
     }
     
     struct Encoding {
