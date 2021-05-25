@@ -6,6 +6,7 @@ protocol AuthenticatorWrapperProtocol {
     func allAuthenticators(for userProfile: ONGUserProfile) -> Array<ONGAuthenticator>
     func registeredAuthenticators(for userProfile: ONGUserProfile) -> Array<ONGAuthenticator>
     func nonRegisteredAuthenticators(for userProfile: ONGUserProfile) -> Array<ONGAuthenticator>
+    func setPreffered(authenticator: ONGAuthenticator)
 }
 
 class AuthenticatorWrapper: AuthenticatorWrapperProtocol {
@@ -22,7 +23,11 @@ class AuthenticatorWrapper: AuthenticatorWrapperProtocol {
     }
     
     func nonRegisteredAuthenticators(for userProfile: ONGUserProfile) -> Array<ONGAuthenticator> {
-        return Array(ONGUserClient.sharedInstance().registeredAuthenticators(forUser: userProfile))
+        return Array(ONGUserClient.sharedInstance().nonRegisteredAuthenticators(forUser: userProfile))
+    }
+    
+    func setPreffered(authenticator: ONGAuthenticator) {
+        ONGUserClient.sharedInstance().preferredAuthenticator = authenticator
     }
 }
 

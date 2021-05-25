@@ -46,4 +46,8 @@ class MainAppConnector {
     func getNonRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         self.factory.authenticatorConnector.getNonRegisteredAuthenticators(call, result)
     }
+    
+    func setPreferredAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.factory.authenticatorConnector.setPreferredAuthenticator(call, result)
+    }
 }

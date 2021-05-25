@@ -41,7 +41,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
             self.mainAppConnector.getIdentityProviders(call, result)
         case Constants.Routes.cancelRegistration: cancelRegistration(call, result)
         case Constants.Routes.setPreferredAuthenticator:
-            setPreferredAuthenticator(call, result)
+            self.mainAppConnector.setPreferredAuthenticator(call, result)
 
         case Constants.Routes.acceptPinRegistrationRequest: acceptPinRegistrationRequest(call, result)
         case Constants.Routes.denyPinRegistrationRequest: denyPinRegistrationRequest(call, result)
