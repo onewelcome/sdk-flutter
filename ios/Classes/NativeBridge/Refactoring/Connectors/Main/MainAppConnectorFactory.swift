@@ -5,6 +5,7 @@ protocol MainAppConnectorFactoryInterface {
     var resourcesConnector: ResourcesConnectorProtocol { get set}
     var disconnectConnector: DisconnectConnectorProtocol { get set}
     var identityProviderConnector: IdentityProviderConnectorProtocol { get}
+    var userProfilesConnector: UserProfilesConnectorProtocol { get}
 }
 
 class DefaultMainConnectorFactory: MainAppConnectorFactoryInterface {
@@ -24,4 +25,7 @@ class DefaultMainConnectorFactory: MainAppConnectorFactoryInterface {
         return IdentityProviderConnector()
     }
     
+    var userProfilesConnector: UserProfilesConnectorProtocol {
+        return UserProfilesConnector()
+    }
 }

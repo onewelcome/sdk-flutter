@@ -26,4 +26,8 @@ class MainAppConnector {
     func getIdentityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         self.factory.identityProviderConnector.getIdentityProviders(call, result)
     }
+    
+    func getUserProfiles(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.factory.userProfilesConnector.fetchUserProfiles(result)
+    }
 }
