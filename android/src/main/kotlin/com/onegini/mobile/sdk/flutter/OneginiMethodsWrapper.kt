@@ -44,6 +44,10 @@ class OneginiMethodsWrapper {
         StartAppUseCase(context,OneginiSDK())(call,result)
     }
 
+    fun getAllAuthenticators(result: MethodChannel.Result,oneginiClient: OneginiClient){
+        GetAllAuthenticatorsUseCase(oneginiClient)(result)
+    }
+
     fun logout(result: MethodChannel.Result,oneginiClient: OneginiClient) {
         LogoutUseCase(oneginiClient)(result)
     }
