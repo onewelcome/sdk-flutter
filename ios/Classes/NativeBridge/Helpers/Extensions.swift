@@ -13,7 +13,7 @@ extension String {
             return string
           }
         } catch {
-          print(error)
+            Logger.log("String.stringify.error: \(error)")
         }
 
         return ""

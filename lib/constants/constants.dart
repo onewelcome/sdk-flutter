@@ -40,6 +40,10 @@ class Constants {
   static const String getRegisteredAuthenticators =
       "getRegisteredAuthenticators";
 
+  /// Get all authenticators method name
+  static const String getAllAuthenticators =
+      "getAllAuthenticators";
+
   /// Register authenticator method name
   static const String registerAuthenticator = "registerAuthenticator";
 
