@@ -47,8 +47,7 @@ class Onegini {
     try {
       String removedUserProfiles = await channel
           .invokeMethod(Constants.startAppMethod, <String, dynamic>{
-        'twoStepCustomIdentityProviderIds':
-            twoStepCustomIdentityProviderIds?.join(","),
+        'twoStepCustomIdentityProviderIds': twoStepCustomIdentityProviderIds,
         'connectionTimeout': connectionTimeout,
         'readTimeout': readTimeout
       });
