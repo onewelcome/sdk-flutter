@@ -34,4 +34,8 @@ class MainAppConnector {
     func singleSignOn(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         self.factory.appToWebSingleSignOnConnector.appToWebSingleSignOn(call, result)
     }
+    
+    func getAllAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.factory.authenticatorConnector.getAllAuthenticators(call, result)
+    }
 }

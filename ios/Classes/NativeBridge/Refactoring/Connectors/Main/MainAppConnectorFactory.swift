@@ -7,6 +7,7 @@ protocol MainAppConnectorFactoryInterface {
     var identityProviderConnector: IdentityProviderConnectorProtocol { get}
     var userProfilesConnector: UserProfilesConnectorProtocol { get}
     var appToWebSingleSignOnConnector: AppToWebSingleSignOnConnectorProtocol { get}
+    var authenticatorConnector: AuthenticatorConnectorProtocol { get}
 }
 
 class DefaultMainConnectorFactory: MainAppConnectorFactoryInterface {
@@ -32,5 +33,9 @@ class DefaultMainConnectorFactory: MainAppConnectorFactoryInterface {
     
     var appToWebSingleSignOnConnector: AppToWebSingleSignOnConnectorProtocol {
         return AppToWebSingleSignOnConnector()
+    }
+    
+    var authenticatorConnector: AuthenticatorConnectorProtocol {
+        return AuthenticatorConnector()
     }
 }
