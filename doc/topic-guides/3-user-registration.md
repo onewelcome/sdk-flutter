@@ -4,19 +4,40 @@
 
 User registration is a fundamental part of the Onegini Mobile Security Platform. As developer you have a couple options to handle this process:
 
-## Register by default browser
+## Register by browser
 
 To start the user registration using WebView or browser you can `Onegini.instance.userClient.registerUser(BuildContext context, String? identityProviderId, String scopes)` method. Calling this method will launch a browser where you need to register. If registration is successful, the browser will return a link that can be caught. After the registration process is completed, the method will return object of `RegistrationResponse`. This will mean that the user has successfully registered. 
 
-    var registrationResponse = await Onegini.instance.userClient
-        .registerUser(context, identityProviderId, "read")
-        .catchError((error) {
-            print("Registration failed: " + error.message);
-        });
+Example to let the user register using a simple WebView or browser:
 
-    if (registrationResponse.userProfile.profileId != null) {
-        print("Registration success!");
-    }
+```dart
+var registrationResponse = await Onegini.instance.userClient
+    .registerUser(context, identityProviderId, "read")
+    .catchError((error) {
+        print("Registration failed: " + error.message);
+    });
+
+if (registrationResponse.userProfile.profileId != null) {
+    print("Registration success!");
+}
+```
+
+## Change browser type.
+If you want change simple inApp WebView to external browser, change your `signInType` in `handleRegisteredUserUrl` method.
+
+the `signInType` parameter can have only 2 values: `WebSignInType.safari` - used to open the link in an external browser. `WebSignInType.insideApp` - used to open a link in the internal WebView
+
+Example: 
+```dart
+  @override
+  void handleRegisteredUrl(BuildContext buildContext, String url) async {
+     await Onegini.instance.userClient
+        .handleRegisteredUserUrl(buildContext, url, signInType: WebSignInType.safari);
+  }
+```
+
+
+
 
 ## Choosing an identity provider
 

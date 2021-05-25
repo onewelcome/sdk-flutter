@@ -1,5 +1,14 @@
 # User authentication with system biometric authenticators
 
+- [Introduction](#Introduction)
+- [Requirements](#Requirements)
+  - [FaceID](#FaceID)
+- [Differences between Android and iOS](#Differences between Android and iOS)
+- [Enabling system biometric authenticator authentication](#Enabling system biometric authenticator authentication)
+- [Authenticating a user with fingerprint](#Authenticating a user with fingerprint)
+
+
+
 ## Introduction
 
 The Onegini Flutter plugin allows you to authenticate users with the system biometric authenticators. These authenticators are provided by the device's operating system (iOS - Touch ID and Face ID, Android - fingerprint) if they are available on the device. System biometric authenticators can be used for both: regular and mobile authentication. Users will be able to retry system biometric authentication as many times as the OS allows them to. If the OS system's biometric authenticators API returns an error for any reason (for example in case of too many failed attempts), the Onegini Flutter plugin will revoke system biometric authenticator and will perform a fallback to PIN authentication.

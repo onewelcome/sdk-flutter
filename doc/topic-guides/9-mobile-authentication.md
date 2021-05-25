@@ -1,5 +1,11 @@
 # Mobile authentication
 
+- [Introduction](#Introduction)
+- [Setup and requirements](#Setup and requirements)
+- [Enrollment](#Enrollment)
+
+
+
 ## Introduction
 
 The Onegini Mobile Security Platform offers a mobile authentication mechanism in a user friendly and secure way. You can for instance take advantage of mobile authentication to add second factor authentication to your product, that can be used to improve the security of selected actions like logging into your website or accepting a transaction payment.
@@ -16,4 +22,16 @@ When the Token Server is configured, you can enroll and handle mobile authentica
 
 ## Enrollment
 
-The mobile authentication enrollment process is handled by the Onegini Flutter plugin whenever OTP would require it.
+The mobile authentication enrollment starts by `Onegini.instanse.enrollUserForMobileAuth()`
+
+
+
+**Example code user of start enroll:**
+
+```dart
+var success = await Onegini.instance.userClient.enrollUserForMobileAuth()
+```
+
+
+
+Successive invocations of enrollment for mobile authentication will re-enroll the device only if the mobile authentication override is enabled in The Token Server configuration. See the [Token Server mobile authentication configuration](https://docs.onegini.com/msp/stable/token-server/topics/mobile-apps/mobile-authentication/mobile-authentication.html) for more information on the server side configuration of mobile authentication.

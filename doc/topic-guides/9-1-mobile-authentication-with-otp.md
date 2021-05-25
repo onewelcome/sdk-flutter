@@ -10,14 +10,56 @@ An Example implementation could work like this: A web application fetches the OT
 
 Once you have retrieved an OTP in your application you need to hand it over to the Onegini Flutter Plugin in order to let our SDK process it. Use `Onegini.instance.userClient.mobileAuthWithOtp()` for passing OTP is SDK.
 
-    var isSuccess = await Onegini.instance.userClient
-        .mobileAuthWithOtp(data)
-        .catchError((error) {
-            print("OTP Mobile authentication request failed: " + error.message);
-        });
+```dart
+var isSuccess = await Onegini.instance.userClient
+    .mobileAuthWithOtp(data)
+    .catchError((error) {
+        print("OTP Mobile authentication request failed: " + error.message);
+    });
 
-    if (isSuccess != null && isSuccess.isNotEmpty) {
-        print("OTP Mobile authentication request success!");
-    }
+if (isSuccess != null && isSuccess.isNotEmpty) {
+    print("OTP Mobile authentication request success!");
+}
+```
 
-**note**: to confirm or deny use the `OneginiOtpAcceptDenyCallback()`.
+The `Onegini.instance.userClient.mobileAuthWithOtp()` method calls `openAuthOtp` in your `OneginiEventListener` implementation. 
+
+**Example code:**
+
+```dart
+ @override
+  void openAuthOtp(BuildContext buildContext, String message) {
+    **[YOUR CODE HERE]**
+  }
+```
+
+This event will give you the option to display your confirmation screen.
+
+In order to confirm the authentication request use `acceptAuthenticationRequest` in `OneginiOtpAcceptDenyCallback` class. 
+
+**Example code of confirm:**
+
+```dart
+OneginiOtpAcceptDenyCallback().acceptAuthenticationRequest(context)
+```
+
+if everything went well the `closeAuthOtp` event in  in your `OneginiEventListener` implementation will be triggered
+
+**Example code of event**
+
+```dart
+  @override
+  void closeAuthOtp(BuildContext buildContext) {
+   // just close screen or use your code.
+   // Navigator.of(buildContext).pop();
+  }
+```
+
+If you want deny authentication request use `denyAuthenticationRequest` in `OneginiOtpAcceptDenyCallback` class 
+
+**Example code of deny:**
+
+```dart
+OneginiOtpAcceptDenyCallback().denyAuthenticationRequest()
+```
+
