@@ -4,6 +4,8 @@ import Flutter
 
 protocol AuthenticatorConnectorProtocol {
     func getAllAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
+    func getRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
+    func getNonRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 }
 
 class AuthenticatorConnector: AuthenticatorConnectorProtocol {
@@ -20,6 +22,30 @@ class AuthenticatorConnector: AuthenticatorConnectorProtocol {
         }
         
         let authenticators = self.authenticatorWrapper.allAuthenticators(for: profile)
+        let data = String.stringify(json: authenticators.toDict())
+        
+        result(data)
+    }
+    
+    func getRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
+            result(FlutterError.from(customType: .noUserAuthenticated))
+            return
+        }
+        
+        let authenticators = self.authenticatorWrapper.registeredAuthenticators(for: profile)
+        let data = String.stringify(json: authenticators.toDict())
+        
+        result(data)
+    }
+    
+    func getNonRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
+            result(FlutterError.from(customType: .noUserAuthenticated))
+            return
+        }
+        
+        let authenticators = self.authenticatorWrapper.nonRegisteredAuthenticators(for: profile)
         let data = String.stringify(json: authenticators.toDict())
         
         result(data)

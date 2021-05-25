@@ -38,4 +38,12 @@ class MainAppConnector {
     func getAllAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         self.factory.authenticatorConnector.getAllAuthenticators(call, result)
     }
+    
+    func getRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.factory.authenticatorConnector.getRegisteredAuthenticators(call, result)
+    }
+    
+    func getNonRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.factory.authenticatorConnector.getNonRegisteredAuthenticators(call, result)
+    }
 }
