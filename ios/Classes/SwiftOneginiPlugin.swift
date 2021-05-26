@@ -65,7 +65,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         case Constants.Routes.getAllAuthenticators:
             self.mainAppConnector.getAllAuthenticators(call, result)
         case Constants.Routes.deregisterAuthenticator:
-            deregisterAuthenticator(call, result)
+            self.mainAppConnector.deregisterAuthenticator(call, result)
 
         case Constants.Routes.acceptPinAuthenticationRequest: acceptPinAuthenticationRequest(call, result)
         case Constants.Routes.denyPinAuthenticationRequest: denyPinAuthenticationRequest(call, result)

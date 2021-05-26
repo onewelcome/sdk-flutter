@@ -10,13 +10,16 @@ protocol AuthenticatorWrapperProtocol {
     func nonRegisteredAuthenticators(for userProfile: ONGUserProfile) -> Array<ONGAuthenticator>
     func setPreffered(authenticator: ONGAuthenticator)
     func register(authenticator: ONGAuthenticator, completion: @escaping AuthenticatorCallbackSuccess)
+    func deregister(authenticator: ONGAuthenticator, completion: @escaping AuthenticatorCallbackSuccess)
     
     var registrationCompletion: AuthenticatorCallbackSuccess? { get set}
+    var deregistrationCompletion: AuthenticatorCallbackSuccess? { get set}
 }
 
 class AuthenticatorWrapper: NSObject, AuthenticatorWrapperProtocol {
     //MARK: Properties
     var registrationCompletion: AuthenticatorCallbackSuccess?
+    var deregistrationCompletion: AuthenticatorCallbackSuccess?
     var pinChallenge: ONGPinChallenge?
     var customAuthChallenge: ONGCustomAuthFinishRegistrationChallenge?
     
@@ -44,6 +47,11 @@ class AuthenticatorWrapper: NSObject, AuthenticatorWrapperProtocol {
     func register(authenticator: ONGAuthenticator, completion: @escaping AuthenticatorCallbackSuccess) {
         self.registrationCompletion = completion
         ONGUserClient.sharedInstance().register(authenticator, delegate: self)
+    }
+    
+    func deregister(authenticator: ONGAuthenticator, completion: @escaping AuthenticatorCallbackSuccess) {
+        self.deregistrationCompletion = completion
+        ONGUserClient.sharedInstance().deregister(authenticator, delegate: self)
     }
 }
 
@@ -97,3 +105,23 @@ extension AuthenticatorWrapper: ONGAuthenticatorRegistrationDelegate {
     }
 }
 
+//MARK:- ONGAuthenticatorDeregistrationDelegate
+extension AuthenticatorWrapper: ONGAuthenticatorDeregistrationDelegate {
+    func userClient(_: ONGUserClient, didDeregister _: ONGAuthenticator, forUser _: ONGUserProfile) {
+        Logger.log("[AUTH] userClient didDeregister ONGAuthenticator", sender: self)
+        deregistrationCompletion?(true, nil)
+        deregistrationCompletion = nil
+    }
+
+    func userClient(_: ONGUserClient, didReceive challenge: ONGCustomAuthDeregistrationChallenge) {
+        Logger.log("[AUTH] userClient didReceive ONGCustomAuthDeregistrationChallenge", sender: self)
+        //TODO: Need to discuss this behaviour
+        challenge.sender.continue(with: challenge)
+    }
+
+    func userClient(_: ONGUserClient, didFailToDeregister authenticator: ONGAuthenticator, forUser _: ONGUserProfile, error: Error) {
+        Logger.log("[AUTH] userClient didFailToDeregister ONGAuthenticator", sender: self)
+        deregistrationCompletion?(false, error)
+        deregistrationCompletion = nil
+    }
+}

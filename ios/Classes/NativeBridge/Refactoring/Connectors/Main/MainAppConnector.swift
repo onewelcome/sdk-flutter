@@ -54,4 +54,8 @@ class MainAppConnector {
     func registerAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         self.factory.authenticatorConnector.registerAuthenticator(call, result)
     }
+    
+    func deregisterAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.factory.authenticatorConnector.deregisterAuthenticator(call, result)
+    }
 }
