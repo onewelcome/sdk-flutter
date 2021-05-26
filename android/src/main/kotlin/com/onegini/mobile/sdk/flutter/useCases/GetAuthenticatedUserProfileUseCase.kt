@@ -8,7 +8,8 @@ class GetAuthenticatedUserProfileUseCase(private val oneginiClient: OneginiClien
     operator fun invoke(result: MethodChannel.Result) {
         val authenticatedUserProfile = oneginiClient.userClient.authenticatedUserProfile
         if (authenticatedUserProfile != null) {
-            result.success(Gson().toJson(authenticatedUserProfile))
+            val json =  Gson().toJson(mapOf("profileId" to authenticatedUserProfile.profileId, "isDefault" to authenticatedUserProfile.isDefault))
+            result.success(json)
         } else {
             result.success(null)
         }
