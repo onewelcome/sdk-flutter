@@ -12,6 +12,7 @@ import Flutter
 
 protocol StartAppConnectorProtocol {
     func startApp(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
+    func getAccessToken(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 }
 
 class StartAppConnector: StartAppConnectorProtocol {
@@ -45,6 +46,11 @@ class StartAppConnector: StartAppConnectorProtocol {
             let data = weakSelf.convert(profiles: weakSelf.startAppWrapper.userProfiles())
             result(data)
         })
+    }
+    
+    func getAccessToken(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        let data = self.startAppWrapper.getAccessToken()
+        result(data)
     }
     
     private func convert(profiles: [ONGUserProfile]) -> String {

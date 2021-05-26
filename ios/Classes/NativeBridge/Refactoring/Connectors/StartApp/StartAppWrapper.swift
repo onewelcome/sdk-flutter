@@ -6,6 +6,7 @@ typealias StartAppCallbackResult = (Bool, Error?) -> Void
 protocol StartAppWrapperProtocol {
     func startApp(timeInterval: Int?, callback: @escaping StartAppCallbackResult)
     func userProfiles() -> [ONGUserProfile]
+    func getAccessToken() -> String?
 }
 
 class StartAppWrapper: StartAppWrapperProtocol {
@@ -22,5 +23,9 @@ class StartAppWrapper: StartAppWrapperProtocol {
     func userProfiles() -> [ONGUserProfile] {
         let profiles = ONGUserClient.sharedInstance().userProfiles()
         return Array(profiles)
+    }
+    
+    func getAccessToken() -> String? {
+        return ONGClient.sharedInstance().userClient.accessToken
     }
 }

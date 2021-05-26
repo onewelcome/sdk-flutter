@@ -11,6 +11,10 @@ class MainAppConnector {
         self.factory.startAppConnector.startApp(call, result)
     }
     
+    func getAccessToken(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.factory.startAppConnector.getAccessToken(call, result)
+    }
+    
     func fetchResources(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         self.factory.resourcesConnector.fetchResources(call, result)
     }
