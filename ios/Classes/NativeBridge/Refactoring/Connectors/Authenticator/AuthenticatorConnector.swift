@@ -123,7 +123,7 @@ class AuthenticatorConnector: AuthenticatorConnectorProtocol {
             return
         }
         
-        guard let authenticator = self.authenticatorWrapper.nonRegisteredAuthenticators(for: profile).first(where: {$0.identifier == authenticatorId }) else
+        guard let authenticator = self.authenticatorWrapper.registeredAuthenticators(for: profile).first(where: {$0.identifier == authenticatorId }) else
         {
             result(FlutterError.from(customType: .noSuchAuthenticator))
             return
