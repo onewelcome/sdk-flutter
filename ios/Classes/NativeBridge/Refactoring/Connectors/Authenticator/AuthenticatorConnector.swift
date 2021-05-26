@@ -9,6 +9,7 @@ protocol AuthenticatorConnectorProtocol {
     func setPreferredAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func registerAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func deregisterAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
+    func isAuthenticatorRegistered(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 }
 
 class AuthenticatorConnector: AuthenticatorConnectorProtocol {
@@ -137,6 +138,26 @@ class AuthenticatorConnector: AuthenticatorConnectorProtocol {
             
             result(FlutterError.from(error: error))
         }
+    }
+    
+    func isAuthenticatorRegistered(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        guard let arguments = call.arguments as? [String: Any],
+              let authenticatorId = arguments[Constants.Parameters.authenticatorId] as? String else
+        {
+            result(FlutterError.from(customType: .invalidArguments))
+            return
+        }
+        
+        guard let profile = self.authenticatorWrapper.authenticatedUserProfile() else
+        {
+            result(FlutterError.from(customType: .noUserAuthenticated))
+            return
+        }
+        
+        let authenticator = self.authenticatorWrapper.registeredAuthenticators(for: profile).first(where: {$0.identifier == authenticatorId })
+        let isRegistered = authenticator != nil ? true : false
+        
+        result(isRegistered)
     }
 }
 

@@ -58,4 +58,8 @@ class MainAppConnector {
     func deregisterAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         self.factory.authenticatorConnector.deregisterAuthenticator(call, result)
     }
+    
+    func isAuthenticatorRegistered(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.factory.authenticatorConnector.isAuthenticatorRegistered(call, result)
+    }
 }
