@@ -50,4 +50,8 @@ class MainAppConnector {
     func setPreferredAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         self.factory.authenticatorConnector.setPreferredAuthenticator(call, result)
     }
+    
+    func registerAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.factory.authenticatorConnector.registerAuthenticator(call, result)
+    }
 }

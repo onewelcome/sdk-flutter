@@ -53,7 +53,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
             self.mainAppConnector.deregisterUser(call, result)
             
         // auth
-        case Constants.Routes.registerAuthenticator: registerAuthenticator(call, result)
+        case Constants.Routes.registerAuthenticator:
+            registerAuthenticator(call, result)
+            //self.mainAppConnector.registerAuthenticator(call, result)
         case Constants.Routes.authenticateUser: authenticateUser(call, result)
 
         case Constants.Routes.getRegisteredAuthenticators:

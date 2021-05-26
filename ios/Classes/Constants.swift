@@ -76,6 +76,9 @@ struct Constants {
         static let url: String = "url"
         static let redirectUrl: String = "redirectUrl"
         static let token: String = "token"
+        
+        static let failedAttempts: String = "failedAttempts"
+        static let maxAttempts: String = "maxAttempts"
     }
     
     struct Encoding {

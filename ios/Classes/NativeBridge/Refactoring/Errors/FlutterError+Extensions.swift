@@ -26,4 +26,22 @@ extension FlutterError {
 
         return flutterError
     }
+    
+    class func fromPinChallenge(_ challenge: ONGPinChallenge?) -> Error? {
+        guard let challenge = challenge, var error = challenge.error, error.code != ONGAuthenticationError.touchIDAuthenticatorFailure.rawValue else {
+            return nil
+        }
+        
+        let maxAttempts = challenge.maxFailureCount
+        let previousCount = challenge.previousFailureCount
+        
+        guard maxAttempts != previousCount else {
+            return error
+        }
+        
+        error.userInfo = [Constants.Parameters.failedAttempts: previousCount, Constants.Parameters.maxAttempts: maxAttempts]
+        return error
+    }
 }
+
+
