@@ -62,4 +62,8 @@ class MainAppConnector {
     func isAuthenticatorRegistered(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         self.factory.authenticatorConnector.isAuthenticatorRegistered(call, result)
     }
+    
+    func getAuthenticatedUserProfile(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.factory.authenticatorConnector.getAuthenticatedUserProfile(call, result)
+    }
 }

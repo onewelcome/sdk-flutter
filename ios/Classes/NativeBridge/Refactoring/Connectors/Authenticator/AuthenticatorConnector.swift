@@ -10,6 +10,7 @@ protocol AuthenticatorConnectorProtocol {
     func registerAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func deregisterAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func isAuthenticatorRegistered(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
+    func getAuthenticatedUserProfile(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 }
 
 class AuthenticatorConnector: AuthenticatorConnectorProtocol {
@@ -158,6 +159,16 @@ class AuthenticatorConnector: AuthenticatorConnectorProtocol {
         let isRegistered = authenticator != nil ? true : false
         
         result(isRegistered)
+    }
+    
+    func getAuthenticatedUserProfile(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        guard let userProfile = self.authenticatorWrapper.authenticatedUserProfile() else {
+            result(nil)
+            return
+        }
+        
+        let jsonData = [Constants.Parameters.profileId: userProfile.profileId]
+        result(String.stringify(json: jsonData))
     }
 }
 

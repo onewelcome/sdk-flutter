@@ -31,6 +31,7 @@ struct Constants {
         static let setPreferredAuthenticator: String = "setPreferredAuthenticator";
         static let deregisterAuthenticator: String = "deregisterAuthenticator"
         static let isAuthenticatorRegistered: String = "isAuthenticatorRegistered"
+        static let getAuthenticatedUserProfile: String = "getAuthenticatedUserProfile"
 
         //fingerprint
         static let acceptFingerprintAuthenticationRequest: String = "acceptFingerprintAuthenticationRequest";
