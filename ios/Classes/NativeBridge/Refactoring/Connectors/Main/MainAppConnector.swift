@@ -15,6 +15,10 @@ class MainAppConnector {
         self.factory.startAppConnector.getAccessToken(call, result)
     }
     
+    func getRedirectUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.factory.startAppConnector.getRedirectUrl(call, result)
+    }
+    
     func fetchResources(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         self.factory.resourcesConnector.fetchResources(call, result)
     }

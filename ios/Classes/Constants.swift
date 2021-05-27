@@ -6,6 +6,7 @@ struct Constants {
         // onegini methods
         static let startApp: String = "startApp"
         static let getAccessToken: String = "getAccessToken"
+        static let getRedirectUrl: String = "getRedirectUrl"
 
         static let customTwoStepRegistrationReturnSuccess: String = "customTwoStepRegistrationReturnSuccess"
         static let customTwoStepRegistrationReturnError: String = "customTwoStepRegistrationReturnError"

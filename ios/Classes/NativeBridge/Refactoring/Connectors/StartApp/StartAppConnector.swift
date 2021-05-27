@@ -13,6 +13,7 @@ import Flutter
 protocol StartAppConnectorProtocol {
     func startApp(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func getAccessToken(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
+    func getRedirectUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 }
 
 class StartAppConnector: StartAppConnectorProtocol {
@@ -50,6 +51,11 @@ class StartAppConnector: StartAppConnectorProtocol {
     
     func getAccessToken(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         let data = self.startAppWrapper.getAccessToken()
+        result(data)
+    }
+    
+    func getRedirectUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        let data = self.startAppWrapper.getRedirectUrl()
         result(data)
     }
     

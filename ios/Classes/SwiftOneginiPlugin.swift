@@ -34,6 +34,8 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         case Constants.Routes.startApp: self.mainAppConnector.startApp(call, result)
         case Constants.Routes.getAccessToken:
             self.mainAppConnector.getAccessToken(call, result)
+        case Constants.Routes.getRedirectUrl:
+            self.mainAppConnector.getRedirectUrl(call, result)
 
         // register
         case Constants.Routes.registerUser: registerUser(call, result)

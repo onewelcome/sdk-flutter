@@ -7,6 +7,7 @@ protocol StartAppWrapperProtocol {
     func startApp(timeInterval: Int?, callback: @escaping StartAppCallbackResult)
     func userProfiles() -> [ONGUserProfile]
     func getAccessToken() -> String?
+    func getRedirectUrl() -> String?
 }
 
 class StartAppWrapper: StartAppWrapperProtocol {
@@ -27,5 +28,9 @@ class StartAppWrapper: StartAppWrapperProtocol {
     
     func getAccessToken() -> String? {
         return ONGClient.sharedInstance().userClient.accessToken
+    }
+    
+    func getRedirectUrl() -> String? {
+        return ONGClient.sharedInstance().configModel.redirectURL
     }
 }
