@@ -30,14 +30,12 @@ class AuthenticateUserUseCase(private val oneginiClient: OneginiClient) {
     private fun getAuthenticatorById(registeredAuthenticatorsId: String?, userProfile: UserProfile): OneginiAuthenticator? {
         if (registeredAuthenticatorsId == null) return null
         val registeredAuthenticators = oneginiClient.userClient.getRegisteredAuthenticators(userProfile)
-        var authenticator: OneginiAuthenticator? = null
         for (registeredAuthenticator in registeredAuthenticators) {
             if (registeredAuthenticator.id == registeredAuthenticatorsId) {
-                authenticator = registeredAuthenticator
-                break
+                return registeredAuthenticator
             }
         }
-        return authenticator
+        return null
     }
 
     private fun authenticate(userProfile: UserProfile, authenticator: OneginiAuthenticator?, result: MethodChannel.Result, oneginiClient: OneginiClient) {

@@ -115,5 +115,4 @@ class AuthenticateUserUseCaseTests {
         Mockito.verify(resultSpy).error(oneginiAuthenticationErrorMock.errorType.toString(), oneginiAuthenticationErrorMock.message, null)
     }
 
-
 }
