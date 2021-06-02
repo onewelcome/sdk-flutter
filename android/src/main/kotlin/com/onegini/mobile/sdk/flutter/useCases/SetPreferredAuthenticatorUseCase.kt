@@ -22,7 +22,6 @@ class SetPreferredAuthenticatorUseCase(private val oneginiClient: OneginiClient)
         }
         oneginiClient.userClient.setPreferredAuthenticator(authenticator)
         result.success(true)
-
     }
 
     private fun getAuthenticatorById(authenticatorId: String?, userProfile: UserProfile): OneginiAuthenticator? {
