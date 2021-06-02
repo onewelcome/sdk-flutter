@@ -15,13 +15,14 @@ class GetRegisteredAuthenticatorsUseCase(private val oneginiClient: OneginiClien
         }
         val registeredAuthenticators = oneginiClient.userClient.getRegisteredAuthenticators(userProfile)
         val authenticators: ArrayList<Map<String, String>> = ArrayList()
-        if (registeredAuthenticators != null)
+        if (registeredAuthenticators != null) {
             for (registeredAuthenticator in registeredAuthenticators) {
                 val map = mutableMapOf<String, String>()
                 map["id"] = registeredAuthenticator.id
                 map["name"] = registeredAuthenticator.name
                 authenticators.add(map)
             }
+        }
         result.success(gson.toJson(authenticators))
     }
 

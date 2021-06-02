@@ -47,7 +47,6 @@ class OneginiMethodsWrapper {
     fun getRegisteredAuthenticators(result: MethodChannel.Result,oneginiClient: OneginiClient){
         GetRegisteredAuthenticatorsUseCase(oneginiClient)(result)
     }
-}
 
     fun deregisterUser(result: MethodChannel.Result,oneginiClient: OneginiClient){
         DeregisterUserUseCase(oneginiClient)(result)
