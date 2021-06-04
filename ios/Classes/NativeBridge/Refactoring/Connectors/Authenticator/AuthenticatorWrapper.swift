@@ -57,25 +57,14 @@ class AuthenticatorWrapper: NSObject, AuthenticatorWrapperProtocol {
 
 //MARK:- ONGAuthenticatorRegistrationDelegate
 extension AuthenticatorWrapper: ONGAuthenticatorRegistrationDelegate {
-    private func isAuthenticationAttemptIssue(previousFailureCount: Int, maxFailureCount: Int, error: Error?) -> Bool {
-        guard let error = error,
-           error.code == ONGAuthenticationError.invalidPin.rawValue,
-           previousFailureCount < maxFailureCount else {
-            return false
-        }
-        
-        return true
-    }
     
     func userClient(_: ONGUserClient, didReceive challenge: ONGPinChallenge) {
         Logger.log("[AUTH] userClient didReceive ONGPinChallenge", sender: self)
         
         pinChallenge = challenge
-        let pinError = FlutterError.fromPinChallenge(challenge)
+        //let pinError = FlutterError.fromPinChallenge(challenge)
         
-        if isAuthenticationAttemptIssue(previousFailureCount: Int(challenge.previousFailureCount),
-                                        maxFailureCount: Int(challenge.maxFailureCount),
-                                        error: pinError)
+        if challenge.containsAuthenticationAttemptIssue()
         {
             //TODO: nextAuthenticationAttempt
             return

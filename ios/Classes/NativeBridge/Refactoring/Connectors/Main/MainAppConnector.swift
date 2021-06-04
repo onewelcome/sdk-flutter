@@ -2,9 +2,11 @@ import Foundation
 
 class MainAppConnector {
     private(set) var factory: MainAppConnectorFactoryInterface
+    private var pinConnector: PinConnectorProtocol
     
     init(factory: MainAppConnectorFactoryInterface? = nil) {
         self.factory = factory ?? DefaultMainConnectorFactory()
+        self.pinConnector = self.factory.pinConnector
     }
     
     func startApp(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
@@ -73,5 +75,9 @@ class MainAppConnector {
     
     func getAuthenticatedUserProfile(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         self.factory.authenticatorConnector.getAuthenticatedUserProfile(call, result)
+    }
+    
+    func changePin(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.pinConnector.changePin(call, result)
     }
 }
