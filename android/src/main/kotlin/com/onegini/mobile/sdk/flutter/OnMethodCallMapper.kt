@@ -42,7 +42,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_CANCEL_REGISTRATION -> oneginiMethodsWrapper.cancelRegistration()
             Constants.METHOD_ACCEPT_PIN_REGISTRATION_REQUEST -> PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
             Constants.METHOD_DENY_PIN_REGISTRATION_REQUEST -> PinRequestHandler.CALLBACK?.denyAuthenticationRequest()
-            Constants.METHOD_DEREGISTER_USER -> RegistrationHelper.deregisterUser(result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_DEREGISTER_USER -> RegistrationHelper.deregisterUser(call.argument<String>("profileId"),result, OneginiSDK().getOneginiClient(context))
 
             // Authenticate
             Constants.METHOD_AUTHENTICATE_USER -> AuthenticationObject.authenticateUser(call.argument<String>("registeredAuthenticatorId"), result, OneginiSDK().getOneginiClient(context))
