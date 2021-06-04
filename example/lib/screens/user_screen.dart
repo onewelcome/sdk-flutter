@@ -193,7 +193,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
             fontSize: 16.0);
       }
     });
-    if (isLogOut) {
+    if (isLogOut != null && isLogOut) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => LoginScreen()),

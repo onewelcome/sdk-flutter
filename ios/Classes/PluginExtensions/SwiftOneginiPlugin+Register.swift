@@ -75,7 +75,12 @@ extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
     }
     
     func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        OneginiModuleSwift.sharedInstance.deregisterUser(callback:result)
+        var profileId: String?
+        if let arguments = call.arguments as? [String: Any], let userProfileId = arguments["profileId"] as? String {
+            profileId = userProfileId
+        }
+        
+        OneginiModuleSwift.sharedInstance.deregisterUser(userProfileId: profileId,callback:result)
     }
 }
 
