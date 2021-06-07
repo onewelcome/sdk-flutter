@@ -4,4 +4,4 @@
 
 ## 1.0.0-dev.2, June 7, 2021
 
-* Is added required field `profileId` to `deregisterUser` API
+* Added a required param `profileId` to the `deregisterUser` method
