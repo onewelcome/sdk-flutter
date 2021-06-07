@@ -6,7 +6,7 @@ in pubspec.yaml add this:
 
 dependencies:
 
-    onegini: 1.0.0-dev.1
+    onegini: 1.0.0-dev.2
 
 `flutter clean`
 
@@ -124,6 +124,15 @@ Onegini class - main class for comunication between flutter and Native platforms
         'onegini'
     ]
     ```
+    post_install do |installer|
+        installer.pods_project.targets.each do |target|
+            flutter_additional_ios_build_settings(target)
+            target.build_configurations.each do |config|
+                config.build_settings['ENABLE_BITCODE'] = 'NO'
+                config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+            end
+        end
+    end
 
 6. Run `pod install`    
 
