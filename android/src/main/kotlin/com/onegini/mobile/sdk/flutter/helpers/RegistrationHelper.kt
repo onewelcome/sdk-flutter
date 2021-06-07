@@ -82,8 +82,19 @@ object RegistrationHelper {
         result.success(gson.toJson(providers))
     }
 
-    fun deregisterUser(result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        val userProfile = oneginiClient.userClient.authenticatedUserProfile
+    fun deregisterUser(userProfileId: String?,result: MethodChannel.Result, oneginiClient: OneginiClient) {
+        if(userProfileId == null) {
+            result.error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
+            return
+        }
+        var userProfile: UserProfile? = null
+        val userProfiles =  oneginiClient.userClient.userProfiles
+        for (profile in userProfiles){
+            if(profile.profileId == userProfileId){
+                userProfile = profile
+                break
+            }
+        }
         if (userProfile == null) {
             result.error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
             return
