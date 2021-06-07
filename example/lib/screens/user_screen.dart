@@ -180,8 +180,14 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   deregister(BuildContext context) async {
     Navigator.pop(context);
+    var profiles = await Onegini.instance.userClient.fetchUserProfiles();
+    var profileId = profiles.first?.profileId;
+    if (profileId == null) {
+      return;
+    }
+
     var isLogOut =
-        await Onegini.instance.userClient.deregisterUser().catchError((error) {
+        await Onegini.instance.userClient.deregisterUser(profileId).catchError((error) {
       if (error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,
