@@ -2,9 +2,6 @@ package com.onegini.mobile.sdk.flutter
 
 import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onegini.mobile.sdk.flutter.useCases.HandleRegisteredUrlUseCase
-import com.onegini.mobile.sdk.flutter.useCases.RegistrationUseCase
-import com.onegini.mobile.sdk.flutter.useCases.StartAppUseCase
 import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
 import com.onegini.mobile.sdk.flutter.useCases.*
 import io.flutter.plugin.common.MethodCall
@@ -20,28 +17,32 @@ class OneginiMethodsWrapper {
         HandleRegisteredUrlUseCase()(call, context)
     }
 
-    fun getIdentityProviders(result: MethodChannel.Result, oneginiClient: OneginiClient){
+    fun getIdentityProviders(result: MethodChannel.Result, oneginiClient: OneginiClient) {
         GetIdentityProvidersUseCase(oneginiClient)(result)
     }
 
-    fun getAccessToken(result: MethodChannel.Result,oneginiClient: OneginiClient){
+    fun getAccessToken(result: MethodChannel.Result, oneginiClient: OneginiClient) {
         GetAccessTokenUseCase(oneginiClient)(result)
     }
 
-    fun cancelRegistration(){
+    fun cancelRegistration() {
         RegistrationRequestHandler.onRegistrationCanceled()
     }
 
-    fun getAuthenticatedUserProfile(result: MethodChannel.Result,oneginiClient: OneginiClient){
+    fun getAuthenticatedUserProfile(result: MethodChannel.Result, oneginiClient: OneginiClient) {
         GetAuthenticatedUserProfileUseCase(oneginiClient)(result)
     }
 
-    fun getUserProfiles(result: MethodChannel.Result,oneginiClient: OneginiClient){
+    fun getUserProfiles(result: MethodChannel.Result, oneginiClient: OneginiClient) {
         GetUserProfilesUseCase(oneginiClient)(result)
     }
 
-    fun startApp(call: MethodCall,result: MethodChannel.Result,context: Context){
-        StartAppUseCase(context,OneginiSDK())(call,result)
+    fun startApp(call: MethodCall, result: MethodChannel.Result, context: Context) {
+        StartAppUseCase(context, OneginiSDK())(call, result)
+    }
+
+    fun getRegisteredAuthenticators(result: MethodChannel.Result,oneginiClient: OneginiClient){
+        GetRegisteredAuthenticatorsUseCase(oneginiClient)(result)
     }
 
     fun getNotRegisteredAuthenticators(result: MethodChannel.Result,oneginiClient: OneginiClient){
@@ -54,5 +55,9 @@ class OneginiMethodsWrapper {
 
     fun getAllAuthenticators(result: MethodChannel.Result,oneginiClient: OneginiClient){
         GetAllAuthenticatorsUseCase(oneginiClient)(result)
+    }
+
+    fun authenticateUser(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient) {
+        AuthenticateUserUseCase(oneginiClient)(call, result)
     }
 }
