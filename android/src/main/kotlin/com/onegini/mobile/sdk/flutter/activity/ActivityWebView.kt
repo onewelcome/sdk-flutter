@@ -11,6 +11,7 @@ import com.onegini.mobile.sdk.flutter.OneginiMethodsWrapper
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.R
 import com.onegini.mobile.sdk.flutter.helpers.RegistrationHelper
+import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
 
 class ActivityWebView : Activity() {
 
