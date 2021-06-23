@@ -85,9 +85,8 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
             self.mainAppConnector.validatePinWithPolicy(call, result)
 
         // fingerprint
-        case Constants.Routes.acceptFingerprintAuthenticationRequest: acceptFingerprintAuthenticationRequest(call, result)
-        case Constants.Routes.denyFingerprintAuthenticationRequest: denyFingerprintAuthenticationRequest(call, result)
-        case Constants.Routes.fingerprintFallbackToPin: fingerprintFallbackToPin(call, result)
+        case Constants.Routes.acceptFingerprintAuthenticationRequest,  Constants.Routes.denyFingerprintAuthenticationRequest, Constants.Routes.fingerprintFallbackToPin:
+            Logger.log("[NOT IMPLEMENTED] \(call.method)")
             
         // otp
         case Constants.Routes.handleMobileAuthWithOtp: handleMobileAuthWithOtp(call, result)
