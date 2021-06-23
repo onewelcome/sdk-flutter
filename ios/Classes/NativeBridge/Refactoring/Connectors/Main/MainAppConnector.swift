@@ -80,4 +80,8 @@ class MainAppConnector {
     func changePin(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         self.pinConnector.changePin(call, result)
     }
+    
+    func validatePinWithPolicy(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.pinConnector.validatePinWithPolicy(call, result)
+    }
 }

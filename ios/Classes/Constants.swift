@@ -83,6 +83,7 @@ struct Constants {
         
         static let failedAttempts: String = "failedAttempts"
         static let maxAttempts: String = "maxAttempts"
+        static let pin: String = "pin"
     }
     
     struct Encoding {

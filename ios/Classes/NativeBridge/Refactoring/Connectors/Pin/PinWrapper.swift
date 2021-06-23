@@ -6,6 +6,7 @@ typealias PinChangeCallbackSuccess = (Bool, Error?) -> Void
 protocol PinWrapperProtocol {
     var changePinCompletion: PinChangeCallbackSuccess? { get set}
     func changePin(completion: @escaping PinChangeCallbackSuccess)
+    func validatePinWithPolicy(pin: String, completion: @escaping PinChangeCallbackSuccess)
 }
 
 class PinWrapper: NSObject, PinWrapperProtocol {
@@ -16,6 +17,10 @@ class PinWrapper: NSObject, PinWrapperProtocol {
     func changePin(completion: @escaping PinChangeCallbackSuccess) {
         changePinCompletion = completion
         ONGUserClient.sharedInstance().changePin(self)
+    }
+    
+    func validatePinWithPolicy(pin: String, completion: @escaping PinChangeCallbackSuccess) {
+        ONGUserClient.sharedInstance().validatePin(withPolicy: pin, completion: completion)
     }
 }
 
