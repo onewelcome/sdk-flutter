@@ -15,6 +15,7 @@ class NewPinConnector: PinConnectorProtocol {
     }
     
     func changePin(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        Logger.log("changePin", sender: self)
         self.pinWrapper.changePin(completion: { (success, error) in
             guard let error = error else {
                 result(success)
@@ -26,6 +27,7 @@ class NewPinConnector: PinConnectorProtocol {
     }
     
     func validatePinWithPolicy(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        Logger.log("validatePinWithPolicy", sender: self)
         guard let arguments = call.arguments as? [String: Any],
               let pin = arguments[Constants.Parameters.pin] as? String else {
             result(FlutterError.from(customType: .invalidArguments))
