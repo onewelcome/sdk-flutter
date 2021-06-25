@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   preferredAuthentication() async {
     setState(() => {isLoading = true});
-    var userId = await Onegini.instance.userClient
+    var registrationResponse = await Onegini.instance.userClient
         .authenticateUser(
       context,
       null,
@@ -104,12 +104,12 @@ class _LoginScreenState extends State<LoginScreen> {
             fontSize: 16.0);
       }
     });
-    if (userId != null)
+    if (registrationResponse.userProfile?.profileId != null)
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
               builder: (context) => UserScreen(
-                    userProfileId: userId,
+                    userProfileId: registrationResponse.userProfile.profileId,
                   )),
           (Route<dynamic> route) => false);
   }
@@ -120,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // var result = await Onegini.instance.userClient.setPreferredAuthenticator(context, registeredAuthenticatorId);
     // print(result);
 
-    var userId = await Onegini.instance.userClient
+    var registrationResponse = await Onegini.instance.userClient
         .authenticateUser(context, registeredAuthenticatorId)
         .catchError((error) {
       setState(() => isLoading = false);
@@ -135,12 +135,12 @@ class _LoginScreenState extends State<LoginScreen> {
             fontSize: 16.0);
       }
     });
-    if (userId != null)
+    if (registrationResponse.userProfile?.profileId != null)
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
               builder: (context) => UserScreen(
-                    userProfileId: userId,
+                    userProfileId: registrationResponse.userProfile.profileId,
                   )),
           (Route<dynamic> route) => false);
   }
