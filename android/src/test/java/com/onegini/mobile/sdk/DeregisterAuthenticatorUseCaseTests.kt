@@ -49,7 +49,7 @@ class DeregisterAuthenticatorUseCaseTests {
     }
 
     @Test
-    fun `should return error when UserProfiles method return empty set `() {
+    fun `should return error when UserProfiles method returns empty set `() {
         whenever(userClientMock.userProfiles).thenReturn(emptySet())
 
         DeregisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
@@ -58,7 +58,7 @@ class DeregisterAuthenticatorUseCaseTests {
     }
 
     @Test
-    fun `should return error with authenticator id as a param when given authenticator id is null`() {
+    fun `should return error when given authenticator id is null`() {
         whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
         whenever(userClientMock.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(setOf(oneginiAuthenticatorMock))
         whenever(oneginiAuthenticatorMock.id).thenReturn("test")
@@ -69,7 +69,7 @@ class DeregisterAuthenticatorUseCaseTests {
     }
 
     @Test
-    fun `should return error with authenticator id as a param when getRegisteredAuthenticators method return empty set`() {
+    fun `should return error when getRegisteredAuthenticators method returns empty set`() {
         whenever(callMock.argument<String>("authenticatorId")).thenReturn("test")
         whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
         whenever(userClientMock.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(emptySet())
@@ -80,7 +80,7 @@ class DeregisterAuthenticatorUseCaseTests {
     }
 
     @Test
-    fun `should return success with authenticator id as a param when given authenticator id found in getRegisteredAuthenticators method`() {
+    fun `should return true when given authenticator id found in getRegisteredAuthenticators method`() {
         whenever(callMock.argument<String>("authenticatorId")).thenReturn("test")
         whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
         whenever(userClientMock.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(setOf(oneginiAuthenticatorMock))
@@ -95,7 +95,7 @@ class DeregisterAuthenticatorUseCaseTests {
     }
 
     @Test
-    fun `should return error when deregisterAuthenticator method return error`() {
+    fun `should return error when deregisterAuthenticator method returns error`() {
         whenever(callMock.argument<String>("authenticatorId")).thenReturn("test")
         whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
         whenever(userClientMock.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(setOf(oneginiAuthenticatorMock))
