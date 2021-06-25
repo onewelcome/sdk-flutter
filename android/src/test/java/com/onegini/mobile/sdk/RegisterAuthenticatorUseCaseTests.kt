@@ -59,7 +59,7 @@ class RegisterAuthenticatorUseCaseTests {
     }
 
     @Test
-    fun `should return error with authenticator id as a param when given authenticator id is null`() {
+    fun `should return error when given authenticator id is null`() {
         whenever(userClientMock.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
         whenever(userClientMock.getNotRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(setOf(oneginiAuthenticatorMock))
         whenever(oneginiAuthenticatorMock.id).thenReturn("test")
@@ -70,7 +70,7 @@ class RegisterAuthenticatorUseCaseTests {
     }
 
     @Test
-    fun `should return error with authenticator id as a param when getNotRegisteredAuthenticators method return empty set`() {
+    fun `should return error when getNotRegisteredAuthenticators method returns empty set`() {
         whenever(callMock.argument<String>("authenticatorId")).thenReturn("test")
         whenever(userClientMock.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
         whenever(userClientMock.getNotRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(emptySet())
@@ -81,7 +81,7 @@ class RegisterAuthenticatorUseCaseTests {
     }
 
     @Test
-    fun `should return success with authenticator id as a param when given authenticator id found in getNotRegisteredAuthenticators method`() {
+    fun `should return CustomInfo class with status and data as a params when given authenticator id found in getNotRegisteredAuthenticators method`() {
         whenever(callMock.argument<String>("authenticatorId")).thenReturn("test")
         whenever(userClientMock.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
         whenever(userClientMock.getNotRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(setOf(oneginiAuthenticatorMock))
@@ -96,7 +96,7 @@ class RegisterAuthenticatorUseCaseTests {
     }
 
     @Test
-    fun `should return error when registerAuthenticator method return error`() {
+    fun `should return error when registerAuthenticator method returns error`() {
         whenever(callMock.argument<String>("authenticatorId")).thenReturn("test")
         whenever(userClientMock.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
         whenever(userClientMock.getNotRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(setOf(oneginiAuthenticatorMock))
