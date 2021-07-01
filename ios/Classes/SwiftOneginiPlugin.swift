@@ -89,9 +89,15 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
             Logger.log("[NOT IMPLEMENTED] \(call.method)")
             
         // otp
-        case Constants.Routes.handleMobileAuthWithOtp: handleMobileAuthWithOtp(call, result)
-        case Constants.Routes.acceptOtpAuthenticationRequest: acceptOtpAuthenticationRequest(call, result)
-        case Constants.Routes.denyOtpAuthenticationRequest: denyOtpAuthenticationRequest(call, result)
+        case Constants.Routes.handleMobileAuthWithOtp:
+            //handleMobileAuthWithOtp(call, result)
+            self.mainAppConnector.handleMobileAuthWithOtp(call, result)
+        case Constants.Routes.acceptOtpAuthenticationRequest:
+            //acceptOtpAuthenticationRequest(call, result)
+            self.mainAppConnector.acceptOtpAuthenticationRequest(call, result)
+        case Constants.Routes.denyOtpAuthenticationRequest:
+            //denyOtpAuthenticationRequest(call, result)
+            self.mainAppConnector.denyOtpAuthenticationRequest(call, result)
             
         // resources
         case Constants.Routes.getAnonymousResource,

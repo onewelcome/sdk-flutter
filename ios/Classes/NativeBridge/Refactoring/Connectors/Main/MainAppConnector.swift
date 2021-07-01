@@ -3,10 +3,12 @@ import Foundation
 class MainAppConnector {
     private(set) var factory: MainAppConnectorFactoryInterface
     private var pinConnector: PinConnectorProtocol
+    private var otpConnector: OTPConnectorProtocol
     
     init(factory: MainAppConnectorFactoryInterface? = nil) {
         self.factory = factory ?? DefaultMainConnectorFactory()
         self.pinConnector = self.factory.pinConnector
+        self.otpConnector = self.factory.otpConnector
     }
     
     func startApp(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
@@ -86,14 +88,14 @@ class MainAppConnector {
     }
     
     func handleMobileAuthWithOtp(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        self.factory.otpConnector.handleMobileAuthWithOtp(call, result)
+        self.otpConnector.handleMobileAuthWithOtp(call, result)
     }
     
     func acceptOtpAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        self.factory.otpConnector.acceptOtpAuthenticationRequest(call, result)
+        self.otpConnector.acceptOtpAuthenticationRequest(call, result)
     }
     
     func denyOtpAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        self.factory.otpConnector.denyOtpAuthenticationRequest(call, result)
+        self.otpConnector.denyOtpAuthenticationRequest(call, result)
     }
 }
