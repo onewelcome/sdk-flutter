@@ -9,6 +9,7 @@ protocol MainAppConnectorFactoryInterface {
     var appToWebSingleSignOnConnector: AppToWebSingleSignOnConnectorProtocol { get}
     var authenticatorConnector: AuthenticatorConnectorProtocol { get}
     var pinConnector: PinConnectorProtocol { get}
+    var otpConnector: OTPConnectorProtocol { get}
 }
 
 class DefaultMainConnectorFactory: MainAppConnectorFactoryInterface {
@@ -42,5 +43,9 @@ class DefaultMainConnectorFactory: MainAppConnectorFactoryInterface {
     
     var pinConnector: PinConnectorProtocol {
         return NewPinConnector()
+    }
+    
+    var otpConnector: OTPConnectorProtocol {
+        return OTPConnector()
     }
 }

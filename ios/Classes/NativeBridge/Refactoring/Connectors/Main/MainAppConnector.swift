@@ -84,4 +84,16 @@ class MainAppConnector {
     func validatePinWithPolicy(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         self.pinConnector.validatePinWithPolicy(call, result)
     }
+    
+    func handleMobileAuthWithOtp(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.factory.otpConnector.handleMobileAuthWithOtp(call, result)
+    }
+    
+    func acceptOtpAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.factory.otpConnector.acceptOtpAuthenticationRequest(call, result)
+    }
+    
+    func denyOtpAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        self.factory.otpConnector.denyOtpAuthenticationRequest(call, result)
+    }
 }

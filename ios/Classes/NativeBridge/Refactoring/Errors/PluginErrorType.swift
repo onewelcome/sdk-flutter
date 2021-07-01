@@ -26,6 +26,7 @@ enum PluginErrorType: Int {
     case httpError// = 8013
     case incrorrectResourcesAccess = 8020// = 8020
     case failedParseData// = 8021
+    case cantHandleOTP
     
     // default case
     case newSomethingWentWrong = 400
@@ -66,6 +67,8 @@ enum PluginErrorType: Int {
                 message = "Onegini: Incorrect access to resources."
             case .failedParseData:
                 message = "Onegini: Failed to parse data."
+            case .cantHandleOTP:
+                message = "Onegini: Could not handle otp authentication request."
             default:
                 message = "Onegini: Something went wrong."
             }
