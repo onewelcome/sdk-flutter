@@ -61,5 +61,14 @@ struct Constants {
         static let scopes: String = "scopes"
         static let authenticatorId: String = "authenticatorId"
         static let profileId: String = "profileId"
+        static let url: String = "url"
+        static let pin: String = "pin"
+        
+        static let eventName: String = "eventName"
+        static let eventValue: String = "eventValue"
+    }
+    
+    struct Events {
+        
     }
 }
