@@ -4,7 +4,7 @@ protocol MainAppConnectorFactoryInterface {
     var startAppConnector: StartAppConnectorProtocol { get set}
     var resourcesConnector: ResourcesConnectorProtocol { get set}
     var disconnectConnector: DisconnectConnectorProtocol { get set}
-    var identityProviderConnector: IdentityProviderConnectorProtocol { get}
+    var identityProviderConnector: IdentityProviderConnectorProtocol { get }
 }
 
 class DefaultMainConnectorFactory: MainAppConnectorFactoryInterface {

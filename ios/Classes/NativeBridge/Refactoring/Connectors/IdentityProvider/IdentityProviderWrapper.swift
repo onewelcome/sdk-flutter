@@ -1,6 +1,6 @@
+import Flutter
 import Foundation
 import OneginiSDKiOS
-import Flutter
 
 protocol IdentityProviderWrapperProtocol {
     func identityProviders() -> Array<ONGIdentityProvider>
