@@ -1,11 +1,11 @@
 import Foundation
 
-protocol MainAppConnectorFactoryInterface {
+protocol MainAppConnectorFactoryProtocol {
     var startAppConnector: StartAppConnectorProtocol { get }
 }
 
-class DefaultMainConnectorFactory: MainAppConnectorFactoryInterface {
-    lazy var startAppConnector: StartAppConnectorProtocol = {
+class DefaultMainConnectorFactory: MainAppConnectorFactoryProtocol {
+    var startAppConnector: StartAppConnectorProtocol {
         return StartAppConnector()
-    }()
+    }
 }
