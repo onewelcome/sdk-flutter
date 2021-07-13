@@ -1,7 +1,7 @@
 import Foundation
 
 struct Constants {
-    struct Routes {
+    enum Routes {
         
         // onegini methods
         static let startApp: String = "startApp"
@@ -56,7 +56,7 @@ struct Constants {
         static let userProfiles: String = "userProfiles";
     }
     
-    struct Parameters {
+    enum Parameters {
         static let connectionTimeout: String = "connectionTimeout"
         static let twoStepCustomIdentityProviderIds: String = "twoStepCustomIdentityProviderIds"
         static let identityProviderId: String = "identityProviderId"
@@ -72,7 +72,7 @@ struct Constants {
         static let parameters: String = "parameters"
     }
     
-    struct Encoding {
+    enum Encoding {
         static let json: String = "application/json"
         static let url: String = "application/x-www-form-urlencoded"
     }

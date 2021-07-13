@@ -1,18 +1,22 @@
 import Foundation
 
 class MainAppConnector {
-    private(set) var factory: MainAppConnectorFactoryInterface
-    
-    init(factory: MainAppConnectorFactoryInterface? = nil) {
-        self.factory = factory ?? DefaultMainConnectorFactory()
+    private(set) var factory: MainAppConnectorFactoryProtocol
+    private var startAppConnector: StartAppConnectorProtocol
+    private var resourcesConnector: ResourcesConnectorProtocol
+
+    init(factory: MainAppConnectorFactoryProtocol = DefaultMainConnectorFactory()) {
+        self.factory = factory
+        startAppConnector = self.factory.startAppConnector
+        resourcesConnector = self.factory.resourcesConnector
     }
-    
+
     func startApp(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        self.factory.startAppConnector.startApp(call, result)
+        startAppConnector.startApp(call, result)
     }
-    
+
     func fetchResources(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        self.factory.resourcesConnector.fetchResources(call, result)
+        resourcesConnector.fetchResources(call, result)
     }
     
     func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {

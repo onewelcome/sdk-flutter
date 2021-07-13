@@ -14,11 +14,11 @@ class StartAppWrapper: StartAppWrapperProtocol {
         if let timeInterval = timeInterval {
             ONGClientBuilder().setHttpRequestTimeout(TimeInterval(timeInterval))
         }
-        
+
         ONGClientBuilder().build()
         ONGClient.sharedInstance().start(callback)
     }
-    
+
     func userProfiles() -> [ONGUserProfile] {
         let profiles = ONGUserClient.sharedInstance().userProfiles()
         return Array(profiles)
