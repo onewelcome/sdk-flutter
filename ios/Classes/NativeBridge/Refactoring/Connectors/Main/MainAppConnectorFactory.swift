@@ -1,16 +1,16 @@
 import Foundation
 
-protocol MainAppConnectorFactoryInterface {
-    var startAppConnector: StartAppConnectorProtocol { get set}
-    var resourcesConnector: ResourcesConnectorProtocol { get set}
+protocol MainAppConnectorFactoryProtocol {
+    var startAppConnector: StartAppConnectorProtocol { get }
+    var resourcesConnector: ResourcesConnectorProtocol { get }
 }
 
-class DefaultMainConnectorFactory: MainAppConnectorFactoryInterface {
-    lazy var startAppConnector: StartAppConnectorProtocol = {
+class DefaultMainConnectorFactory: MainAppConnectorFactoryProtocol {
+    var startAppConnector: StartAppConnectorProtocol {
         return StartAppConnector()
-    }()
-    
-    lazy var resourcesConnector: ResourcesConnectorProtocol = {
+    }
+
+    var resourcesConnector: ResourcesConnectorProtocol {
         return ResourcesConnector()
-    }()
+    }
 }
