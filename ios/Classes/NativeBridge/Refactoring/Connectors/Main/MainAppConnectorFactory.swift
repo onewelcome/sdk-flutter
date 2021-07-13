@@ -1,6 +1,6 @@
 import Foundation
 
-protocol MainAppConnectorFactoryInterface {
+protocol MainAppConnectorFactoryProtocol {
     var startAppConnector: StartAppConnectorProtocol { get }
     var resourcesConnector: ResourcesConnectorProtocol { get }
     var disconnectConnector: DisconnectConnectorProtocol { get }
@@ -13,9 +13,9 @@ class DefaultMainConnectorFactory: MainAppConnectorFactoryProtocol {
 
     var resourcesConnector: ResourcesConnectorProtocol {
         return ResourcesConnector()
-    }()
-    
-    var disconnectConnector: DisconnectConnectorProtocol = {
+    }
+
+    var disconnectConnector: DisconnectConnectorProtocol {
         return DisconnectConnector()
     }
 }

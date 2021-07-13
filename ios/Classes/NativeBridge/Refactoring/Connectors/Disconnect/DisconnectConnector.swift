@@ -1,6 +1,6 @@
+import Flutter
 import Foundation
 import OneginiSDKiOS
-import Flutter
 
 protocol DisconnectConnectorProtocol {
     func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
@@ -9,40 +9,46 @@ protocol DisconnectConnectorProtocol {
 
 class DisconnectConnector: DisconnectConnectorProtocol {
     private(set) var disconnectWrapper: DisconnectWrapperrProtocol
-    
-    init(wrapper: DisconnectWrapperrProtocol? = nil) {
-        self.disconnectWrapper = wrapper ?? DisconnectWrapper()
+
+    init(wrapper: DisconnectWrapperrProtocol = DisconnectWrapper()) {
+        disconnectWrapper = wrapper
     }
-    
+
     func logoutUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        
-        guard let _ = self.disconnectWrapper.authenticatedUserProfile() else {
+        Logger.log("logoutUser", sender: self)
+        guard disconnectWrapper.authenticatedUserProfile() != nil else {
             result(FlutterError.from(customType: .noUserAuthenticated))
             return
         }
-        
-        self.disconnectWrapper.logoutUser { (_, error) in
+
+        disconnectWrapper.logoutUser { _, error in
             guard let error = error else {
                 result(true)
                 return
             }
-            
+
             result(FlutterError.from(error: error))
         }
     }
-    
+
     func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        guard let authenticatedProfile = self.disconnectWrapper.authenticatedUserProfile() else {
+        Logger.log("deregisterUser", sender: self)
+        guard let arguments = call.arguments as? [String: Any], let userProfileId = arguments[Constants.Parameters.profileId] as? String else {
             result(FlutterError.from(customType: .noUserAuthenticated))
             return
         }
-        
-        self.disconnectWrapper.deregisterUser(authenticatedProfile) { (_, error) in
+
+        guard let userProfile = disconnectWrapper.userProfile(by: userProfileId) else {
+            result(FlutterError.from(customType: .noUserAuthenticated))
+            return
+        }
+
+        disconnectWrapper.deregisterUser(userProfile) { _, error in
             guard let error = error else {
                 result(true)
                 return
             }
-            
+
             result(FlutterError.from(error: error))
         }
     }
