@@ -7,10 +7,10 @@ import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 
 class OneginiConfigModel : OneginiClientConfigModel {
 
-    private val appIdentifier = "ExampleApp"
+    private val appIdentifier = "FlutterExampleApp"
     private val appPlatform = "android"
     private val redirectionUri = "oneginiexample://loginsuccess"
-    private val appVersion = "6.1.1"
+    private val appVersion = "1.0.0-dev.3"
     private val baseURL = "https://token-mobile.test.onegini.com"
     private val resourceBaseURL = "https://token-mobile.test.onegini.com/resources/"
     private val keystoreHash = "ebbcab87e2d16b9441559767a7c85fbaea9a3feef94451990423019a31e5bf1f"
