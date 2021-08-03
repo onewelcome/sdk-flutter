@@ -9,3 +9,7 @@
 ## 1.0.0, June 8, 2021
 
 * Release version.
+
+## 1.0.1, June 9, 2021
+
+* Resolved an obfuscation issue (android platform).
