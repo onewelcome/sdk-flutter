@@ -14,5 +14,5 @@
 
 * Resolved an obfuscation issue (android platform).
 
-## 1.0.2, August 3, 2021
+## 1.0.2, August 4, 2021
 * Updated OneginiSDK to version 11.3.0  (android platform).
