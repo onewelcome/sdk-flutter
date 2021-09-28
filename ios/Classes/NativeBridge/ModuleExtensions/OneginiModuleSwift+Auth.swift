@@ -47,10 +47,11 @@ extension OneginiModuleSwift {
         }
 
         bridgeConnector.toLoginHandler.authenticateUser(profile, authenticator: nil, completion: {
-            (userProfile, error) -> Void in
+            (userProfile, error, userInfo) -> Void in
 
             if let _userProfile = userProfile {
-                callback(_userProfile.profileId)
+                callback(String.userActionResult(data: [Constants.Keys.profileId: _userProfile.profileId], userInfo: userInfo))
+                //callback(_userProfile.profileId)
             } else {
                 callback(SdkError.convertToFlutter(error))
             }
@@ -90,9 +91,9 @@ extension OneginiModuleSwift {
             }
             
             self?.bridgeConnector.toLoginHandler.authenticateUser(profile, authenticator: registeredAuthenticator, completion: {
-                (userProfile, error) -> Void in
+                (userProfile, error, userInfo) -> Void in
                 if let _userProfile = userProfile {
-                    callback(_userProfile.profileId)
+                    callback(String.userActionResult(data: [Constants.Keys.profileId: _userProfile.profileId], userInfo: userInfo))
                 } else {
                     callback(SdkError.convertToFlutter(error))
                 }

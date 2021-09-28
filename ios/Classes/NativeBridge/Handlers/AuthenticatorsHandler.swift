@@ -4,7 +4,7 @@ import OneginiCrypto
 
 //MARK: -
 protocol BridgeToAuthenticatorsHandlerProtocol: AnyObject {
-    func registerAuthenticator(_ userProfile: ONGUserProfile,_ authenticator: ONGAuthenticator, _ completion: @escaping (Bool, SdkError?) -> Void)
+    func registerAuthenticator(_ userProfile: ONGUserProfile,_ authenticator: ONGAuthenticator, _ completion: @escaping (Bool, SdkError?, ONGCustomInfo?) -> Void)
     func deregisterAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Bool, SdkError?) -> Void)
     func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Bool, SdkError?) -> Void)
     func getAuthenticatorsListForUserProfile(_ userProfile: ONGUserProfile) -> Array<ONGAuthenticator>
@@ -12,7 +12,7 @@ protocol BridgeToAuthenticatorsHandlerProtocol: AnyObject {
     var notificationReceiver: AuthenticatorsNotificationReceiverProtocol? { get }
 }
 
-protocol AuthenticatorsNotificationReceiverProtocol: class {
+protocol AuthenticatorsNotificationReceiverProtocol: AnyObject {
     func sendNotification(event: MobileAuthNotification, requestMessage: String?, error: SdkError?)
 }
 
@@ -20,7 +20,7 @@ protocol AuthenticatorsNotificationReceiverProtocol: class {
 class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
     var pinChallenge: ONGPinChallenge?
     var customAuthChallenge: ONGCustomAuthFinishRegistrationChallenge?
-    var registrationCompletion: ((Bool, SdkError?) -> Void)?
+    var registrationCompletion: ((Bool, SdkError?, ONGCustomInfo?) -> Void)?
     var deregistrationCompletion: ((Bool, SdkError?) -> Void)?
 
     unowned var notificationReceiver: AuthenticatorsNotificationReceiverProtocol?
@@ -66,14 +66,14 @@ class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
 
 //MARK: - BridgeToAuthenticatorsHandlerProtocol
 extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
-    func registerAuthenticator(_ userProfile: ONGUserProfile, _ authenticator: ONGAuthenticator,_ completion: @escaping (Bool, SdkError?) -> Void) {
+    func registerAuthenticator(_ userProfile: ONGUserProfile, _ authenticator: ONGAuthenticator,_ completion: @escaping (Bool, SdkError?, ONGCustomInfo?) -> Void) {
         guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticator.identifier}) else {
-            completion(false, SdkError.init(customType: .authenticatorNotAvailable))
+            completion(false, SdkError.init(customType: .authenticatorNotAvailable), nil)
             return;
         }
         
         if(authenticator.isRegistered == true) {
-            completion(false, SdkError.init(customType: .authenticatorNotAvailable))
+            completion(false, SdkError.init(customType: .authenticatorNotAvailable), nil)
             return;
         }
         
@@ -141,7 +141,7 @@ extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
         Logger.log("[AUTH] userClient didReceive ONGCustomAuthFinishRegistrationChallenge", sender: self)
         // TODO: Will need to check it in the future
         
-        registrationCompletion!(true, nil)
+        registrationCompletion!(true, nil, nil)
         customAuthChallenge = challenge
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.handleFlowUpdate(PinFlow.create, nil, receiver: self)
     }
@@ -150,16 +150,16 @@ extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
         Logger.log("[AUTH] userClient didFailToRegister ONGAuthenticator", sender:self)
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            registrationCompletion!(false, SdkError(errorDescription: "Authenticator registration cancelled."))
+            registrationCompletion!(false, SdkError(errorDescription: "Authenticator registration cancelled."), nil)
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            registrationCompletion!(false, mappedError)
+            registrationCompletion!(false, mappedError, nil)
         }
     }
 
-    func userClient(_: ONGUserClient, didRegister authenticator: ONGAuthenticator, forUser _: ONGUserProfile, info _: ONGCustomInfo?) {
+    func userClient(_: ONGUserClient, didRegister authenticator: ONGAuthenticator, forUser _: ONGUserProfile, info _info: ONGCustomInfo?) {
         Logger.log("[AUTH] userClient didRegister ONGAuthenticator", sender: self)
-        registrationCompletion?(true, nil)
+        registrationCompletion?(true, nil, _info)
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
     }
 }
@@ -180,6 +180,7 @@ extension AuthenticatorsHandler: ONGAuthenticatorDeregistrationDelegate {
     func userClient(_: ONGUserClient, didFailToDeregister authenticator: ONGAuthenticator, forUser _: ONGUserProfile, error: Error) {
         Logger.log("[AUTH] userClient didFailToDeregister ONGAuthenticator", sender: self)
         //BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
+        
         if error.code == ONGGenericError.actionCancelled.rawValue {
             deregistrationCompletion?(false, SdkError.init(customType: .authenticatorDeregistrationCancelled))
         } else {
