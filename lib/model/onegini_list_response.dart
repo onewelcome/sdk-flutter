@@ -17,6 +17,7 @@ class OneginiListResponse {
   OneginiListResponse({
     this.id,
     this.name,
+    this.type,
   });
 
   /// Response list ic
@@ -25,14 +26,39 @@ class OneginiListResponse {
   /// Response list name
   String? name;
 
+  /// Response type value
+  ONGAuthenticatorType? type;
+
   factory OneginiListResponse.fromJson(Map<String, dynamic> json) =>
       OneginiListResponse(
         id: json["id"],
         name: json["name"],
+        type: ONGAuthenticatorTypeExtension.type(
+          json["type"],
+        ),
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
         "name": name,
       };
+}
+
+enum ONGAuthenticatorType { pin, biometric, custom }
+
+extension ONGAuthenticatorTypeExtension on ONGAuthenticatorType {
+  static ONGAuthenticatorType? type(int? value) {
+    if (value == null) {
+      return null;
+    }
+
+    switch (value) {
+      case 0:
+        return ONGAuthenticatorType.pin;
+      case 1:
+        return ONGAuthenticatorType.biometric;
+      default:
+        return ONGAuthenticatorType.custom;
+    }
+  }
 }

@@ -77,12 +77,6 @@ extension OneginiModuleSwift {
         bridgeConnector.toRegistrationConnector.registrationHandler.cancelCustomRegistration()
     }
     
-//    func handleRegistrationCallback(_ url: String) -> Void {
-//        guard let _url = URL(string: url) else { return }
-//        
-//        bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: _url)
-//    }
-    
     func registerAuthenticator(_ authenticatorId: String, callback: @escaping FlutterResult) {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first else {
             callback(SdkError.convertToFlutter(SdkError(customType: .userProfileIsNull)))
@@ -117,7 +111,7 @@ extension OneginiModuleSwift {
         
         let registeredAuthenticators = ONGUserClient.sharedInstance().registeredAuthenticators(forUser: profile)
         
-        let authenticators: [[String: String]] = registeredAuthenticators.compactMap({ ["id" : $0.identifier, "name": $0.name] })
+        let authenticators = registeredAuthenticators.compactMap({ $0.toJSON() })
         
         let data = String.stringify(json: authenticators)
         callback(data)
@@ -133,7 +127,7 @@ extension OneginiModuleSwift {
         let notRegisteredAuthenticators = ONGUserClient.sharedInstance().nonRegisteredAuthenticators(forUser: profile)
         
         // convert list to list of objects with id and name
-        let authenticators: [[String: String]] = notRegisteredAuthenticators.compactMap({ ["id" : $0.identifier, "name": $0.name] })
+        let authenticators = notRegisteredAuthenticators.compactMap({ $0.toJSON() })
         
         callback(String.stringify(json: authenticators))
     }
@@ -148,9 +142,29 @@ extension OneginiModuleSwift {
         let allAuthenticators = ONGUserClient.sharedInstance().allAuthenticators(forUser: profile)
         
         // convert list to list of objects with id and name
-        let authenticators: [[String: String]] = allAuthenticators.compactMap({ ["id" : $0.identifier, "name": $0.name] })
-        
+        let authenticators = allAuthenticators.compactMap({ $0.toJSON() })
         callback(String.stringify(json: authenticators))
     }
 }
 
+
+extension ONGAuthenticator {
+    func toJSON() -> [String: Any] {
+        return ["id" : self.identifier, "name": self.name, "type": self.type.typeValue()]
+    }
+}
+
+extension ONGAuthenticatorType {
+    func typeValue() -> Int {
+        switch self {
+        case .PIN:
+            return 0
+        case .biometric, .touchID:
+            return 1
+        case .custom:
+            return 2
+        @unknown default:
+            return 2
+        }
+    }
+}

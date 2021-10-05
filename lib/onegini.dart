@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/constants/constants.dart';
@@ -52,7 +53,7 @@ class Onegini {
         'readTimeout': readTimeout
       });
       eventListener.listen();
-      return removedUserProfileListFromJson(removedUserProfiles);
+      return compute(removedUserProfileListFromJson, removedUserProfiles);//removedUserProfileListFromJson(removedUserProfiles);
     } on PlatformException catch (error) {
       throw error;
     }
