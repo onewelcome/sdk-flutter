@@ -42,7 +42,7 @@ class RegistrationUseCase(private var oneginiClient: OneginiClient) {
             override fun onSuccess(userProfile: UserProfile, customInfo: CustomInfo?) {
                 val userProfileJson = mapOf("profileId" to userProfile.profileId,"isDefault" to userProfile.isDefault)
                 val customInfoJson = mapOf("data" to customInfo?.data,"status" to customInfo?.status)
-                val returnedResult = Gson().toJson(mapOf("userProfile" to userProfileJson, "customInfo" to customInfoJson))
+                val returnedResult = Gson().toJson(mapOf("data" to userProfileJson, "customInfo" to customInfoJson))
                 result.success(returnedResult)
             }
 
