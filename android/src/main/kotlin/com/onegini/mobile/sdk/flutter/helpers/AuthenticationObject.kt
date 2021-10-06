@@ -30,6 +30,7 @@ object AuthenticationObject {
                 val map = mutableMapOf<String, String>()
                 map["id"] = auth.id
                 map["name"] = auth.name
+                map["type"] = auth.type.toString()
                 authenticators.add(map)
             }
         }
@@ -141,6 +142,7 @@ object AuthenticationObject {
                 val map = mutableMapOf<String, String>()
                 map["id"] = registeredAuthenticator.id
                 map["name"] = registeredAuthenticator.name
+                map["type"] = registeredAuthenticator.type.toString()
                 authenticators.add(map)
             }
         result.success(gson.toJson(authenticators))

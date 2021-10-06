@@ -33,9 +33,9 @@ class OneginiListResponse {
       OneginiListResponse(
         id: json["id"],
         name: json["name"],
-        type: ONGAuthenticatorTypeExtension.type(
-          json["type"],
-        ),
+        type: json["type"] is String ? ONGAuthenticatorTypeExtension.type(
+          int.parse(json["type"].toString()) ,
+        ): null,
       );
 
   Map<String, dynamic> toJson() => {

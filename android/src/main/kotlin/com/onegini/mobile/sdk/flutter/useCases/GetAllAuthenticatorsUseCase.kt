@@ -19,6 +19,7 @@ class GetAllAuthenticatorsUseCase(private var oneginiClient: OneginiClient) {
             for (auth in allAuthenticators) {
                 val map = mutableMapOf<String, String>()
                 map["id"] = auth.id
+                map["type"] = auth.type.toString()
                 map["name"] = auth.name
                 authenticators.add(map)
             }
