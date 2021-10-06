@@ -17,7 +17,7 @@ class OneginiPinAuthenticationCallback {
   }
 
   /// Accepts pin authentication and sent [pin] to the OneginiSdk.
-  Future<void> acceptAuthenticationRequest(BuildContext context,
+  Future<void> acceptAuthenticationRequest(BuildContext? context,
       {String? pin}) async {
     Onegini.instance.setEventContext(context);
     try {
