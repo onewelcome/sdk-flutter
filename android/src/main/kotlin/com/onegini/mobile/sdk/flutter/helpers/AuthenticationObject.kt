@@ -1,5 +1,6 @@
 package com.onegini.mobile.sdk.flutter.helpers
 
+import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticationHandler
@@ -85,7 +86,8 @@ object AuthenticationObject {
             authenticator,
             object : OneginiAuthenticatorRegistrationHandler {
                 override fun onSuccess(customInfo: CustomInfo?) {
-                    result.success(customInfo?.data)
+                    val returnedResult = Gson().toJson(mapOf("data" to customInfo?.data,"status" to customInfo?.status))
+                    result.success(returnedResult)
                 }
 
                 override fun onError(oneginiAuthenticatorRegistrationError: OneginiAuthenticatorRegistrationError) {
@@ -173,8 +175,11 @@ object AuthenticationObject {
 
     private fun getOneginiAuthenticationHandler(result: MethodChannel.Result): OneginiAuthenticationHandler {
         return object : OneginiAuthenticationHandler {
-            override fun onSuccess(userProfile: UserProfile, p1: CustomInfo?) {
-                result.success(userProfile.profileId)
+            override fun onSuccess(userProfile: UserProfile, customInfo: CustomInfo?) {
+                val userProfileJson = mapOf("profileId" to userProfile.profileId,"isDefault" to userProfile.isDefault)
+                val customInfoJson = mapOf("data" to customInfo?.data,"status" to customInfo?.status)
+                val returnedResult = Gson().toJson(mapOf("data" to userProfileJson, "customInfo" to customInfoJson))
+                result.success(returnedResult)
             }
 
             override fun onError(error: OneginiAuthenticationError) {
