@@ -16,10 +16,8 @@ class UserClient {
   ///
   /// If [identityProviderId] is null, starts standard browser registration.
   /// Use your [scopes] for registration. By default it is "read".
-  Future<RegistrationResponse> registerUser(
-    BuildContext? context,
   Future<UserProfileResponse> registerUser(
-    BuildContext context,
+    BuildContext? context,
     String? identityProviderId,
     List<String>? scopes,
   ) async {
@@ -108,8 +106,6 @@ class UserClient {
   /// If [registeredAuthenticatorId] is null, starts authentication by default authenticator.
   /// Usually it is Pin authenticator.
   Future<UserProfileResponse> authenticateUser(
-    BuildContext context,
-  Future<String> authenticateUser(
     BuildContext? context,
     String? registeredAuthenticatorId,
   ) async {
@@ -150,8 +146,8 @@ class UserClient {
   }
 
   /// Registers authenticator from [getNotRegisteredAuthenticators] list.
-  Future<String> registerAuthenticator(
-      BuildContext context, String authenticatorId) async {
+  Future<ActionDataResponse> registerAuthenticator(
+      BuildContext? context, String authenticatorId) async {
     Onegini.instance.setEventContext(context);
     try {
       var data = await Onegini.instance.channel
