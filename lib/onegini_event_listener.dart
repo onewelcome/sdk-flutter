@@ -15,7 +15,7 @@ abstract class OneginiEventListener {
   BuildContext? _context;
 
   /// Saves the build context
-  set context(BuildContext context) {
+  set context(BuildContext? context) {
     _context = context;
   }
 
