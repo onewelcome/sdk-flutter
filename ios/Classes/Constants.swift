@@ -1,7 +1,7 @@
 import Foundation
 
-struct Constants {
-    struct Routes {
+enum Constants {
+    enum Routes {
         
         // onegini methods
         static let startApp: String = "startApp"
@@ -53,5 +53,12 @@ struct Constants {
         static let getAppToWebSingleSignOn: String = "getAppToWebSingleSignOn";
         static let changePin: String = "changePin";
         static let userProfiles: String = "userProfiles";
+    }
+    
+    enum Keys {
+        static let customInfo: String = "customInfo";
+        static let userProfile: String = "userProfile";
+        static let profileId: String = "profileId";
+        static let userData: String = "data";
     }
 }

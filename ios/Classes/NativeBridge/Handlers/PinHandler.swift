@@ -12,11 +12,11 @@ protocol PinConnectorToPinHandler: AnyObject {
     func validatePinWithPolicy(pin: String, completion: @escaping (Bool, SdkError?) -> Void)
 }
 
-protocol PinHandlerToReceiverProtocol: class {
+protocol PinHandlerToReceiverProtocol: AnyObject {
     func handlePin(pin: String?)
 }
 
-protocol PinNotificationReceiverProtocol: class {
+protocol PinNotificationReceiverProtocol: AnyObject {
     func sendNotification(event: PinNotification, flow: PinFlow?, error: SdkError?)
 }
 

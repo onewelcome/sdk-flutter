@@ -85,7 +85,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 
         let completionRequest: ((ONGResourceResponse?, Error?) -> Void)? = { response, error in
             if let error = error {
-                completion(nil, SdkError(errorDescription: error.localizedDescription, code: error.code))
+                completion(nil, SdkError(errorDescription: error.localizedDescription, code: error.code, info: error.userInfo))
             } else {
                 if let data = response?.data {
                     if let responseData = String.init(data: data, encoding: .utf8) {
@@ -113,7 +113,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 
         ONGUserClient.sharedInstance().fetchImplicitResource(request) { response, error in
             if let error = error {
-                completion(nil, SdkError(errorDescription: error.localizedDescription))
+                completion(nil, SdkError(errorDescription: error.localizedDescription, info: error.userInfo))
             } else {
                 if let data = response?.data {
                     if let responseData = String(data: data, encoding: .utf8) {

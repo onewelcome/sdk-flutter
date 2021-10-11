@@ -1,5 +1,6 @@
 package com.onegini.mobile.sdk.flutter.helpers
 
+import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiMobileAuthEnrollmentHandler
 import com.onegini.mobile.sdk.android.handlers.OneginiMobileAuthWithOtpHandler
@@ -33,9 +34,9 @@ object MobileAuthenticationObject {
             data,
             object : OneginiMobileAuthWithOtpHandler {
                 override fun onSuccess() {
-                    result.success("success auth with otp")
+                    val returnedResult = Gson().toJson(mapOf("data" to "", "customInfo" to ""))
+                    result.success(returnedResult)
                 }
-
                 override fun onError(p0: OneginiMobileAuthWithOtpError) {
                     result.error(p0.errorType.toString(), p0.message, null)
                 }

@@ -1,4 +1,5 @@
 import Foundation
+import OneginiSDKiOS
 
 extension String {
     static func stringify(json: Any, prettyPrinted: Bool = false) -> String {
@@ -24,5 +25,22 @@ extension String {
             return data.base64EncodedString()
         }
         return nil
+    }
+    
+    static func userActionResult(data: Any?, userInfo: ONGCustomInfo?) -> String {
+        var result = Dictionary<String, Any?>()
+        result[Constants.Keys.userData] = data
+        
+        if let userInfo = userInfo {
+            result[Constants.Keys.customInfo] = userInfo.toJson()
+        }
+        
+        return String.stringify(json: result)
+    }
+}
+
+extension ONGCustomInfo {
+    func toJson() -> Dictionary<String, Any?> {
+        return ["status": self.status, "data": self.data]
     }
 }

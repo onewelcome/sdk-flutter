@@ -16,14 +16,7 @@ extension OneginiModuleSwift {
         bridgeConnector.toRegistrationConnector.registrationHandler.signUp(identityProviderId, scopes: scopes) { (_, userProfile, userInfo, error) -> Void in
             
             if let _userProfile = userProfile {
-                var result = Dictionary<String, Any?>()
-                result["userProfile"] = ["profileId": _userProfile.profileId]
-                
-                if let userInfo = userInfo {
-                    result["customInfo"] = ["status": userInfo.status, "data": userInfo.data]
-                }
-                
-                callback(String.stringify(json: result))
+                callback(String.userActionResult(data: [Constants.Keys.profileId: _userProfile.profileId], userInfo: userInfo))
             } else {
                 callback(SdkError.convertToFlutter(error))
             }
@@ -37,7 +30,7 @@ extension OneginiModuleSwift {
     
     public func handleDeepLinkCallbackUrl(_ url: URL) -> Bool {
         guard let schemeLibrary = URL.init(string: ONGClient.sharedInstance().configModel.redirectURL)?.scheme else {
-            generateEventError(value: "RedirectURL's scheme of configModel is empty: \(String(describing: ONGClient.sharedInstance().configModel.redirectURL))")
+            generateEventError(value: "RedirectURL's scheme of configModel is empty: \(String(describing: ONGClient.sharedInstance().configModel.redirectURL ?? "<nil>"))")
             return false
         }
         
@@ -99,12 +92,12 @@ extension OneginiModuleSwift {
         }
         
         bridgeConnector.toAuthenticatorsHandler.registerAuthenticator(profile, authenticator!) {
-            (_ , error) -> Void in
+            (_ , error, userInfo) -> Void in
             
             if let _error = error {
                 callback(SdkError.convertToFlutter(_error))
             } else {
-                callback(nil)
+                callback(String.userActionResult(data: nil, userInfo: userInfo))
             }
         }
     }
