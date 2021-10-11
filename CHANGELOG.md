@@ -20,5 +20,5 @@
 
 ## 1.0.3, October 11, 2021
 
-* Added additional information for exceptions.
-* Added possibility pass `null` everywhere the `buildContext` is used in the API.
+* Introduced additional information for exceptions.
+* Modified `buildContext` to be `nullable` in all of the API calls.
