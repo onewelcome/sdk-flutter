@@ -2,7 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:onegini/model/registration_response.dart';
+import 'package:onegini/model/action_data_response.dart';
+import 'package:onegini/model/user_profile_response.dart';
 
 import 'constants/constants.dart';
 import 'model/oneginiAppToWebSingleSignOn.dart';
@@ -17,6 +18,8 @@ class UserClient {
   /// Use your [scopes] for registration. By default it is "read".
   Future<RegistrationResponse> registerUser(
     BuildContext? context,
+  Future<UserProfileResponse> registerUser(
+    BuildContext context,
     String? identityProviderId,
     List<String>? scopes,
   ) async {
@@ -27,7 +30,7 @@ class UserClient {
         'scopes': scopes,
         'identityProviderId': identityProviderId,
       });
-      return registrationResponseFromJson(response);
+      return userProfileResponseFromJson(response);
     } on PlatformException catch (error) {
       throw error;
     }
@@ -104,17 +107,19 @@ class UserClient {
   ///
   /// If [registeredAuthenticatorId] is null, starts authentication by default authenticator.
   /// Usually it is Pin authenticator.
+  Future<UserProfileResponse> authenticateUser(
+    BuildContext context,
   Future<String> authenticateUser(
     BuildContext? context,
     String? registeredAuthenticatorId,
   ) async {
     Onegini.instance.setEventContext(context);
     try {
-      var userId = await Onegini.instance.channel
+      var response = await Onegini.instance.channel
           .invokeMethod(Constants.authenticateUser, <String, String?>{
         'registeredAuthenticatorId': registeredAuthenticatorId,
       });
-      return userId;
+      return userProfileResponseFromJson(response);
     } on PlatformException catch (error) {
       throw error;
     }
@@ -146,14 +151,14 @@ class UserClient {
 
   /// Registers authenticator from [getNotRegisteredAuthenticators] list.
   Future<String> registerAuthenticator(
-      BuildContext? context, String authenticatorId) async {
+      BuildContext context, String authenticatorId) async {
     Onegini.instance.setEventContext(context);
     try {
       var data = await Onegini.instance.channel
           .invokeMethod(Constants.registerAuthenticator, <String, String>{
         'authenticatorId': authenticatorId,
       });
-      return data;
+      return actionDataResponseFromJson(data);
     } on PlatformException catch (error) {
       throw error;
     }
@@ -200,13 +205,13 @@ class UserClient {
   }
 
   /// Starts mobile authentication on web by OTP.
-  Future<String> mobileAuthWithOtp(String data) async {
+  Future<ActionDataResponse> mobileAuthWithOtp(String data) async {
     try {
       var isSuccess = await Onegini.instance.channel
           .invokeMethod(Constants.handleMobileAuthWithOtp, <String, dynamic>{
         'data': data,
       });
-      return isSuccess;
+      return actionDataResponseFromJson(isSuccess);
     } on PlatformException catch (error) {
       throw error;
     }

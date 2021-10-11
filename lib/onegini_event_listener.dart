@@ -127,7 +127,7 @@ abstract class OneginiEventListener {
 
   /// Called when two step registration want to open screen.
   void openCustomTwoStepRegistrationScreen(
-      BuildContext? buildContext, String data);
+      BuildContext? buildContext, String returnedResult);
 
   /// Called when error event was received.
   void eventError(BuildContext? buildContext, PlatformException error);

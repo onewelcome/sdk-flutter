@@ -158,21 +158,24 @@ class OneginiListener extends OneginiEventListener {
   }
 
   @override
-  void openCustomTwoStepRegistrationScreen(BuildContext buildContext, String data) {
-    var response = jsonDecode(data);
-    if(response["providerId"] == "2-way-otp-api")
-    Navigator.push(
-      buildContext,
-      MaterialPageRoute(
-          builder: (context) => OtpScreen(
-            password: response["data"],
-          )),
-    );
+  void openCustomTwoStepRegistrationScreen(BuildContext buildContext, String returnedResult) {
+    var response = jsonDecode(returnedResult);
+    var statusCode = response["statusCode"];
+    if(statusCode > 2001) {
+      if(response["providerId"] == "2-way-otp-api")
+        Navigator.push(
+          buildContext,
+          MaterialPageRoute(
+              builder: (context) => OtpScreen(
+                password: response["data"],
+              )),
+        );
+    }
   }
 
   @override
   void handleRegisteredUrl(BuildContext buildContext, String url) async {
      await Onegini.instance.userClient
-        .handleRegisteredUserUrl(buildContext, url, signInType: WebSignInType.insideApp);
+        .handleRegisteredUserUrl(buildContext, url, signInType: WebSignInType.safari);
   }
 }

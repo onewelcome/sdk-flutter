@@ -7,9 +7,9 @@ extension OneginiModuleSwift {
     public func otpResourceCodeConfirmation(code: String?, callback: @escaping FlutterResult) {
         
         bridgeConnector.toMobileAuthConnector.mobileAuthHandler.handleOTPMobileAuth(code ?? "", customRegistrationChallenge: bridgeConnector.toRegistrationConnector.registrationHandler.currentChallenge()) {
-            (_ , error) -> Void in
+            (_ , error, userInfo) -> Void in
 
-            error != nil ? callback(error?.flutterError()) : callback(nil)
+            error != nil ? callback(error?.flutterError()) : callback(String.userActionResult(data: nil, userInfo: userInfo))
         }
     }
     
@@ -36,13 +36,17 @@ extension OneginiModuleSwift {
         var handleMobileAuthConfirmation = false
         
         bridgeConnector.toMobileAuthConnector.mobileAuthHandler.handleQrOTPMobileAuth(code ?? "", customRegistrationChallenge: challenge) { [weak self]
-            (value, error) -> Void in
+            (value, error, userInfo) -> Void in
             
             if(error == nil && !handleMobileAuthConfirmation) {
                 handleMobileAuthConfirmation = true
                 self?.bridgeConnector.toMobileAuthConnector.mobileAuthHandler.handleMobileAuthConfirmation(cancelled: true)
             } else {
-                error != nil ? callback(error?.flutterError()) : callback(value)
+                if let error = error {
+                    callback(error.flutterError())
+                } else {
+                    callback(String.userActionResult(data: value, userInfo: userInfo))
+                }
             }
         }
     }

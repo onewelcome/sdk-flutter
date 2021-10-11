@@ -338,7 +338,7 @@ class Home extends StatelessWidget {
       MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
     );
     if (data != null) {
-      var isSuccess = await Onegini.instance.userClient
+      var result = await Onegini.instance.userClient
           .mobileAuthWithOtp(data)
           .catchError((error) {
         if (error is PlatformException) {
@@ -352,9 +352,10 @@ class Home extends StatelessWidget {
               fontSize: 16.0);
         }
       });
-      if (isSuccess != null && isSuccess.isNotEmpty)
+      final String code = result.data != null ? result.data as String : "";
+      if (code.isNotEmpty)
         Fluttertoast.showToast(
-            msg: isSuccess,
+            msg: code,
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             timeInSecForIosWeb: 1,

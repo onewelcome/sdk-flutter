@@ -54,7 +54,7 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
             }
             
             let profiles = ONGUserClient.sharedInstance().userProfiles()
-            let value: [[String: String?]] = profiles.compactMap({ ["profileId": $0.profileId] })
+            let value: [[String: String?]] = profiles.compactMap({ [Constants.Keys.profileId: $0.profileId] })
 
             let data = String.stringify(json: value)
             
@@ -64,7 +64,7 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
     
     func fetchUserProfiles(callback: @escaping FlutterResult) {
         let profiles = ONGUserClient.sharedInstance().userProfiles()
-        let value: [[String: String?]] = profiles.compactMap({ ["profileId": $0.profileId] })
+        let value: [[String: String?]] = profiles.compactMap({ [Constants.Keys.profileId: $0.profileId] })
 
         let data = String.stringify(json: value)
         

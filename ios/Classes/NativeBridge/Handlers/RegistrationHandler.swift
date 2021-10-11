@@ -15,15 +15,15 @@ protocol RegistrationConnectorToHandlerProtocol: RegistrationHandlerToPinHanlder
     func currentChallenge() -> ONGCustomRegistrationChallenge?
 }
 
-protocol RegistrationHandlerToPinHanlderProtocol: class {
+protocol RegistrationHandlerToPinHanlderProtocol: AnyObject {
     var pinHandler: PinConnectorToPinHandler? { get set }
 }
 
-protocol CustomRegistrationNotificationReceiverProtocol: class {
+protocol CustomRegistrationNotificationReceiverProtocol: AnyObject {
     func sendCustomRegistrationNotification(_ event: CustomRegistrationNotification,_ data: Dictionary<String, Any?>?)
 }
 
-protocol OtpRegistrationNotificationReceiverProtocol: class {
+protocol OtpRegistrationNotificationReceiverProtocol: AnyObject {
     func sendCustomOtpNotification(_ event: OneginiBridgeEvents,_ data: Dictionary<String, Any?>?)
 }
 

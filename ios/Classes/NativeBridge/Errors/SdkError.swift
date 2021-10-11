@@ -24,7 +24,7 @@ class SdkError {
     }
     
     func toJSON() -> Dictionary<String, Any?>? {
-        return ["title": title, "message": errorDescription, "recoverySuggestion": recoverySuggestion, "code": code]
+        return ["title": title, "message": errorDescription, "recoverySuggestion": recoverySuggestion, "code": code, "userInfo": info]
     }
     
     func flutterError() -> FlutterError {

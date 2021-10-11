@@ -81,7 +81,7 @@ class ErrorMapper {
     func mapError(_ error: Error, pinChallenge: ONGPinChallenge? = nil, customInfo: ONGCustomInfo? = nil) -> SdkError {
         Logger.log("Error domain: \(error.domain)")
         
-        return SdkError(errorDescription: error.localizedDescription, code: error.code)
+        return SdkError(errorDescription: error.localizedDescription, code: error.code, info: error.userInfo)
     }
     
     func mapErrorFromPinChallenge(_ challenge: ONGPinChallenge?) -> SdkError? {
