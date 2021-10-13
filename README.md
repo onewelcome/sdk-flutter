@@ -6,7 +6,7 @@ in pubspec.yaml add this:
 
 dependencies:
 
-    onegini: 1.0.0-dev.2
+    onegini: 1.0.0
 
 `flutter clean`
 
@@ -124,6 +124,8 @@ Onegini class - main class for comunication between flutter and Native platforms
         'onegini'
     ]
     ```
+
+    ```
     post_install do |installer|
         installer.pods_project.targets.each do |target|
             flutter_additional_ios_build_settings(target)
@@ -133,6 +135,7 @@ Onegini class - main class for comunication between flutter and Native platforms
             end
         end
     end
+    ```
 
 6. Run `pod install`    
 
