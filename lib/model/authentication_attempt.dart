@@ -13,10 +13,8 @@ String authenticationAttemptToJson(AuthenticationAttempt data) =>
     json.encode(data.toJson());
 
 class AuthenticationAttempt {
-  AuthenticationAttempt({
-    this.failedAttempts,
-    this.maxAttempts,
-  });
+  AuthenticationAttempt(
+      {this.failedAttempts, this.maxAttempts, this.remainingAttempts});
 
   /// Number of failed attempts
   int? failedAttempts;
@@ -24,14 +22,17 @@ class AuthenticationAttempt {
   /// Number of maximum attempts
   int? maxAttempts;
 
+  int? remainingAttempts;
+
   factory AuthenticationAttempt.fromJson(Map<String, dynamic> json) =>
       AuthenticationAttempt(
-        failedAttempts: json["failedAttempts"],
-        maxAttempts: json["maxAttempts"],
-      );
+          failedAttempts: json["failedAttempts"],
+          maxAttempts: json["maxAttempts"],
+          remainingAttempts: json["remainingAttempts"]);
 
   Map<String, dynamic> toJson() => {
         "failedAttempts": failedAttempts,
         "maxAttempts": maxAttempts,
+        "remainingAttempts": remainingAttempts
       };
 }
