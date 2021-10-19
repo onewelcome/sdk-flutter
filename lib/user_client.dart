@@ -104,17 +104,17 @@ class UserClient {
   ///
   /// If [registeredAuthenticatorId] is null, starts authentication by default authenticator.
   /// Usually it is Pin authenticator.
-  Future<String> authenticateUser(
+  Future<RegistrationResponse> authenticateUser(
     BuildContext context,
     String? registeredAuthenticatorId,
   ) async {
     Onegini.instance.setEventContext(context);
     try {
-      var userId = await Onegini.instance.channel
+      var response = await Onegini.instance.channel
           .invokeMethod(Constants.authenticateUser, <String, String?>{
         'registeredAuthenticatorId': registeredAuthenticatorId,
       });
-      return userId;
+     return registrationResponseFromJson(response);
     } on PlatformException catch (error) {
       throw error;
     }
