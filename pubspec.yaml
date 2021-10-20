@@ -1,6 +1,6 @@
 name: onegini
 description: Onegini Mobile Flutter plugin.
-version: 1.0.0-dev.1
+version: 1.0.2
 homepage: https://www.onegini.com
 
 environment:
@@ -10,7 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  mockito: ^4.1.4
 
 dev_dependencies:
   flutter_test:

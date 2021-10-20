@@ -6,7 +6,7 @@ protocol RegistrationConnectorToHandlerProtocol: RegistrationHandlerToPinHanlder
     func processRedirectURL(url: String, webSignInType: WebSignInType)
     func cancelRegistration()
     func logout(completion: @escaping (SdkError?) -> Void)
-    func deregister(completion: @escaping (SdkError?) -> Void)
+    func deregister(userProfileId: String?, completion: @escaping (SdkError?) -> Void)
     func identityProviders() -> Array<ONGIdentityProvider>
     func processOTPCode(code: String?)
     func cancelCustomRegistration()
@@ -149,8 +149,8 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
         logoutUserHandler.logout(completion: completion)
     }
     
-    func deregister(completion: @escaping (SdkError?) -> Void) {
-        deregisterUserHandler.disconnect(completion: completion)
+    func deregister(userProfileId: String?, completion: @escaping (SdkError?) -> Void) {
+        deregisterUserHandler.disconnect(userProfileId: userProfileId, completion: completion)
     }
 
     func processRedirectURL(url: String, webSignInType: WebSignInType) {
