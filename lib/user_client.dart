@@ -61,10 +61,12 @@ class UserClient {
   }
 
   /// Deletes the user.
-  Future<bool> deregisterUser() async {
+  Future<bool> deregisterUser(String profileId) async {
     try {
       var isSuccess = await Onegini.instance.channel
-          .invokeMethod(Constants.deregisterUserMethod);
+          .invokeMethod(Constants.deregisterUserMethod, <String, String?>{
+        'profileId': profileId,
+      });
       return isSuccess;
     } on PlatformException catch (error) {
       throw error;
