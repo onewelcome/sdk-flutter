@@ -49,7 +49,10 @@ class AuthenticateUserUseCase(private val oneginiClient: OneginiClient) {
     private fun getOneginiAuthenticationHandler(result: MethodChannel.Result): OneginiAuthenticationHandler {
         return object : OneginiAuthenticationHandler {
             override fun onSuccess(userProfile: UserProfile, customInfo: CustomInfo?) {
-                val returnedResult = Gson().toJson(mapOf("userProfile" to userProfile, "customInfo" to customInfo))
+                //todo check unit tests
+                val userProfileJson = mapOf("profileId" to userProfile.profileId,"isDefault" to userProfile.isDefault)
+                val customInfoJson = mapOf("data" to customInfo?.data,"status" to customInfo?.status)
+                val returnedResult = Gson().toJson(mapOf("userProfile" to userProfileJson, "customInfo" to customInfoJson))
                 result.success(returnedResult)
             }
 

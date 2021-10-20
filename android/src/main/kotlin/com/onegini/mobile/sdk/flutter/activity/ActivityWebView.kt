@@ -10,8 +10,8 @@ import android.webkit.WebViewClient
 import com.onegini.mobile.sdk.flutter.OneginiMethodsWrapper
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.R
-import com.onegini.mobile.sdk.flutter.helpers.RegistrationHelper
 import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
+
 
 class ActivityWebView : Activity() {
 
@@ -27,7 +27,7 @@ class ActivityWebView : Activity() {
             override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
                 val url = request?.url
                 if (url?.scheme == redirectUri.scheme) {
-                    RegistrationHelper.handleRegistrationCallback(url!!)
+                    RegistrationRequestHandler.handleRegistrationCallback(url!!)
                     finish()
                     return true
                 }
