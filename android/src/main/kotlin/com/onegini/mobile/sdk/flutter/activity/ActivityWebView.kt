@@ -12,6 +12,7 @@ import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.R
 import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
 
+
 class ActivityWebView : Activity() {
 
     @SuppressLint("SetJavaScriptEnabled")
