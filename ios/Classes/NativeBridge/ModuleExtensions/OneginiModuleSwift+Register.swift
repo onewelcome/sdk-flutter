@@ -5,8 +5,8 @@ import Flutter
 
 extension OneginiModuleSwift {
     
-    func deregisterUser(callback: @escaping FlutterResult) {
-        bridgeConnector.toDeregisterUserHandler.disconnect { (error) in
+    func deregisterUser(userProfileId: String?, callback: @escaping FlutterResult) {
+        bridgeConnector.toDeregisterUserHandler.disconnect(userProfileId: userProfileId) { (error) in
             error != nil ? callback(SdkError.convertToFlutter(error)) : callback(true)
         }
     }
