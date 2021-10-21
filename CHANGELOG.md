@@ -18,7 +18,7 @@
 
 * Updated OneginiSDK to version 11.3.0  (android platform).
 
-## 1.0.3, October 19, 2021
+## 1.0.3, October 21, 2021
 
 * Bump Android SDK to 11.4.0.
 * Modified `buildContext` to be `nullable` in all of the API calls.
