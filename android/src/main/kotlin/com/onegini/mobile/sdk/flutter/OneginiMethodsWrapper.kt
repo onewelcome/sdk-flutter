@@ -42,11 +42,11 @@ class OneginiMethodsWrapper {
         StartAppUseCase(context, OneginiSDK())(call, result)
     }
 
-    fun getRegisteredAuthenticators(result: MethodChannel.Result,oneginiClient: OneginiClient){
+    fun getRegisteredAuthenticators(result: MethodChannel.Result, oneginiClient: OneginiClient){
         GetRegisteredAuthenticatorsUseCase(oneginiClient)(result)
     }
 
-    fun getNotRegisteredAuthenticators(result: MethodChannel.Result,oneginiClient: OneginiClient){
+    fun getNotRegisteredAuthenticators(result: MethodChannel.Result, oneginiClient: OneginiClient){
         GetNotRegisteredAuthenticatorsUseCase(oneginiClient)(result)
     }
 
@@ -54,11 +54,11 @@ class OneginiMethodsWrapper {
         SetPreferredAuthenticatorUseCase(oneginiClient)(call, result)
     }
 
-    fun deregisterUser(call: MethodCall,result: MethodChannel.Result,oneginiClient: OneginiClient){
-        DeregisterUserUseCase(oneginiClient)(call,result)
+    fun deregisterUser(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient){
+        DeregisterUserUseCase(oneginiClient)(call, result)
     }
 
-    fun getAllAuthenticators(result: MethodChannel.Result,oneginiClient: OneginiClient){
+    fun getAllAuthenticators(result: MethodChannel.Result, oneginiClient: OneginiClient){
         GetAllAuthenticatorsUseCase(oneginiClient)(result)
     }
 
@@ -66,27 +66,27 @@ class OneginiMethodsWrapper {
         AuthenticateUserUseCase(oneginiClient)(call, result)
     }
 
-    fun authenticateDevice(call: MethodCall,result: MethodChannel.Result,oneginiClient: OneginiClient){
+    fun authenticateDevice(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient){
         AuthenticateDeviceUseCase(oneginiClient)(call, result)
     }
 
-    fun authenticateUserImplicitly(call: MethodCall,result: MethodChannel.Result,oneginiClient: OneginiClient){
+    fun authenticateUserImplicitly(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient){
         AuthenticateUserImplicitlyUseCase(oneginiClient)(call, result)
     }
 
-    fun getResourceAnonymous(call: MethodCall,result: MethodChannel.Result,oneginiClient: OneginiClient,resourceHelper: ResourceHelper){
-        GetResourceAnonymousUseCase(oneginiClient)(call, result,resourceHelper)
+    fun getResourceAnonymous(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient, resourceHelper: ResourceHelper){
+        GetResourceAnonymousUseCase(oneginiClient)(call, result, resourceHelper)
     }
 
-    fun getResource(call: MethodCall,result: MethodChannel.Result,oneginiClient: OneginiClient,resourceHelper: ResourceHelper){
-        GetResourceUseCase(oneginiClient)(call, result,resourceHelper)
+    fun getResource(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient, resourceHelper: ResourceHelper){
+        GetResourceUseCase(oneginiClient)(call, result, resourceHelper)
     }
 
-    fun getImplicitResource(call: MethodCall,result: MethodChannel.Result,oneginiClient: OneginiClient,resourceHelper: ResourceHelper){
-        GetImplicitResourceUseCase(oneginiClient)(call, result,resourceHelper)
+    fun getImplicitResource(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient, resourceHelper: ResourceHelper){
+        GetImplicitResourceUseCase(oneginiClient)(call, result, resourceHelper)
     }
 
-    fun getUnauthenticatedResource(call: MethodCall,result: MethodChannel.Result,oneginiClient: OneginiClient,resourceHelper: ResourceHelper){
-        GetUnauthenticatedResourceUseCase(oneginiClient)(call, result,resourceHelper)
+    fun getUnauthenticatedResource(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient, resourceHelper: ResourceHelper){
+        GetUnauthenticatedResourceUseCase(oneginiClient)(call, result, resourceHelper)
     }
 }

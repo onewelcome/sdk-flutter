@@ -42,7 +42,7 @@ class AuthenticateDeviceUseCaseTests {
     }
 
     @Test
-    fun `should return error when scopes is null`() {
+    fun `should return error when sdk returned authentication error`() {
         whenever(callMock.argument<ArrayList<String>>("scope")).thenReturn(null)
         whenever(oneginiDeviceAuthenticationErrorMock.errorType).thenReturn(OneginiDeviceAuthenticationError.GENERAL_ERROR)
         whenever(oneginiDeviceAuthenticationErrorMock.message).thenReturn("General error")
@@ -55,7 +55,7 @@ class AuthenticateDeviceUseCaseTests {
     }
 
     @Test
-    fun `should return success when scopes is correct`() {
+    fun `should return success when SDK returned authentication success`() {
         whenever(callMock.argument<ArrayList<String>>("scope")).thenReturn(arrayListOf("test"))
         whenever(deviceClientMock.authenticateDevice(eq(arrayOf("test")), any())).thenAnswer {
             it.getArgument<OneginiDeviceAuthenticationHandler>(1).onSuccess()

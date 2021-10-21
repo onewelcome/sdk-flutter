@@ -7,17 +7,22 @@ import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
 import okhttp3.*
+import okhttp3.Headers.Companion.toHeaders
+import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.*
 
 class ResourceHelper {
 
     fun callRequest(okHttpClient: OkHttpClient, request: Request, result: MethodChannel.Result) {
+        print(request)
         Observable.fromCallable { okHttpClient.newCall(request).execute() }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { data ->
-                            result.success(data?.body()?.string())
+                            result.success(data?.body?.string())
                         },
                         {
                             result.error(OneginiWrapperErrors.HTTP_REQUEST_ERROR.code, it.message, null)
@@ -45,19 +50,19 @@ class ResourceHelper {
 
     private fun prepareBodyForRequest(builder: Request.Builder, body: String?, method: String, encoding: String) {
         if (body != null && body.isNotEmpty() && method.toUpperCase(Locale.ROOT) != "GET") {
-            val createdBody = RequestBody.create(MediaType.parse(encoding), body)
+            val createdBody = body.toRequestBody(encoding.toMediaTypeOrNull())
             builder.method(method, createdBody)
         }
     }
 
     private fun prepareHeadersForRequest(builder: Request.Builder, headers: HashMap<String, String>?) {
         if (headers != null && headers.isNotEmpty()) {
-            builder.headers(Headers.of(headers))
+            builder.headers(headers.toHeaders())
         }
     }
 
     private fun prepareUrlForRequest(builder: Request.Builder, url: String, params: HashMap<String, String>?) {
-        val urlBuilder = HttpUrl.parse(url)?.newBuilder()
+        val urlBuilder = url.toHttpUrlOrNull()?.newBuilder()
 
         params?.forEach {
             urlBuilder?.addQueryParameter(it.key, it.value)

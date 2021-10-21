@@ -12,9 +12,9 @@ import io.flutter.plugin.common.MethodChannel
 class AuthenticateUserImplicitlyUseCase(private var oneginiClient: OneginiClient) {
     operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
         val scope = call.argument<ArrayList<String>>("scope")
-        val userProfile = oneginiClient.userClient.authenticatedUserProfile
+        val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
         if (userProfile == null) {
-            result.error(OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
+            result.error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
             return
         }
         oneginiClient.userClient.authenticateUserImplicitly(userProfile, scope?.toArray(arrayOfNulls<String>(scope.size)), object : OneginiImplicitAuthenticationHandler {

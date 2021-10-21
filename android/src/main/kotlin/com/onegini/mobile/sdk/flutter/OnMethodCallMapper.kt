@@ -69,12 +69,12 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_DENY_OTP_AUTHENTICATION_REQUEST -> MobileAuthOtpRequestHandler.CALLBACK?.denyAuthenticationRequest()
 
             // Resources
-            Constants.METHOD_AUTHENTICATE_USER_IMPLICITLY -> oneginiMethodsWrapper.authenticateUserImplicitly(call,result,OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_AUTHENTICATE_DEVICE -> oneginiMethodsWrapper.authenticateDevice(call,result,OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_GET_RESOURCE_ANONYMOUS -> oneginiMethodsWrapper.getResourceAnonymous(call, result, OneginiSDK().getOneginiClient(context),ResourceHelper())
-            Constants.METHOD_GET_RESOURCE -> oneginiMethodsWrapper.getResource(call, result, OneginiSDK().getOneginiClient(context),ResourceHelper())
+            Constants.METHOD_AUTHENTICATE_USER_IMPLICITLY -> oneginiMethodsWrapper.authenticateUserImplicitly(call, result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_AUTHENTICATE_DEVICE -> oneginiMethodsWrapper.authenticateDevice(call, result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_GET_RESOURCE_ANONYMOUS -> oneginiMethodsWrapper.getResourceAnonymous(call, result, OneginiSDK().getOneginiClient(context), ResourceHelper())
+            Constants.METHOD_GET_RESOURCE -> oneginiMethodsWrapper.getResource(call, result, OneginiSDK().getOneginiClient(context), ResourceHelper())
             Constants.METHOD_GET_IMPLICIT_RESOURCE -> oneginiMethodsWrapper.getImplicitResource(call, result, OneginiSDK().getOneginiClient(context), ResourceHelper())
-            Constants.METHOD_GET_UNAUTHENTICATED_RESOURCE -> oneginiMethodsWrapper.getUnauthenticatedResource(call, result, OneginiSDK().getOneginiClient(context),ResourceHelper())
+            Constants.METHOD_GET_UNAUTHENTICATED_RESOURCE -> oneginiMethodsWrapper.getUnauthenticatedResource(call, result, OneginiSDK().getOneginiClient(context), ResourceHelper())
 
             // Other
             Constants.METHOD_CHANGE_PIN -> startChangePinFlow(result, OneginiSDK().getOneginiClient(context))
