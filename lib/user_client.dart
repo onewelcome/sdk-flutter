@@ -16,7 +16,7 @@ class UserClient {
   /// If [identityProviderId] is null, starts standard browser registration.
   /// Use your [scopes] for registration. By default it is "read".
   Future<RegistrationResponse> registerUser(
-    BuildContext context,
+    BuildContext? context,
     String? identityProviderId,
     List<String>? scopes,
   ) async {
@@ -33,7 +33,7 @@ class UserClient {
     }
   }
 
-  Future<void> handleRegisteredUserUrl(BuildContext context, String? url,
+  Future<void> handleRegisteredUserUrl(BuildContext? context, String? url,
       {WebSignInType signInType = WebSignInType.insideApp}) async {
     Onegini.instance.setEventContext(context);
     try {
@@ -49,7 +49,7 @@ class UserClient {
 
   /// Returns a list of available identity providers.
   Future<List<OneginiListResponse>> getIdentityProviders(
-      BuildContext context) async {
+      BuildContext? context) async {
     Onegini.instance.setEventContext(context);
     try {
       var providers = await Onegini.instance.channel
@@ -75,7 +75,7 @@ class UserClient {
 
   /// Returns a list of authenticators registered and available to the user.
   Future<List<OneginiListResponse>> getRegisteredAuthenticators(
-      BuildContext context) async {
+      BuildContext? context) async {
     Onegini.instance.setEventContext(context);
     try {
       var authenticators = await Onegini.instance.channel
@@ -87,7 +87,7 @@ class UserClient {
   }
 
   Future<List<OneginiListResponse>> getAllAuthenticators(
-      BuildContext context) async {
+      BuildContext? context) async {
     Onegini.instance.setEventContext(context);
     try {
       var authenticators = await Onegini.instance.channel
@@ -122,7 +122,7 @@ class UserClient {
 
   /// Returns a list of authenticators available to the user, but not yet registered.
   Future<List<OneginiListResponse>> getNotRegisteredAuthenticators(
-      BuildContext context) async {
+      BuildContext? context) async {
     try {
       var authenticators = await Onegini.instance.channel
           .invokeMethod(Constants.getAllNotRegisteredAuthenticators);
@@ -134,7 +134,7 @@ class UserClient {
 
   /// Starts change pin flow.
   Future<void> changePin(
-    BuildContext context,
+    BuildContext? context,
   ) async {
     Onegini.instance.setEventContext(context);
     try {
@@ -146,7 +146,7 @@ class UserClient {
 
   /// Registers authenticator from [getNotRegisteredAuthenticators] list.
   Future<String> registerAuthenticator(
-      BuildContext context, String authenticatorId) async {
+      BuildContext? context, String authenticatorId) async {
     Onegini.instance.setEventContext(context);
     try {
       var data = await Onegini.instance.channel
@@ -161,7 +161,7 @@ class UserClient {
 
   ///Set preferred authenticator
   Future<bool> setPreferredAuthenticator(
-      BuildContext context, String authenticatorId) async {
+      BuildContext? context, String authenticatorId) async {
     Onegini.instance.setEventContext(context);
     try {
       var data = await Onegini.instance.channel
@@ -175,7 +175,7 @@ class UserClient {
   }
 
   Future<bool> deregisterAuthenticator(
-      BuildContext context, String authenticatorId) async {
+      BuildContext? context, String authenticatorId) async {
     Onegini.instance.setEventContext(context);
     try {
       var success = await Onegini.instance.channel
