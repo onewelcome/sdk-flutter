@@ -17,7 +17,7 @@ class OneginiOtpAcceptDenyCallback {
   }
 
   /// Accepts OTP authentication.
-  Future<void> acceptAuthenticationRequest(BuildContext context) async {
+  Future<void> acceptAuthenticationRequest(BuildContext? context) async {
     Onegini.instance.setEventContext(context);
     try {
       await Onegini.instance.channel
