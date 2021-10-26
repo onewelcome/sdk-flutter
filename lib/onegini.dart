@@ -32,7 +32,7 @@ class Onegini {
   UserClient userClient = UserClient();
 
   /// Use this method when you want change [BuildContext] in your [OneginiEventListener]
-  setEventContext(BuildContext context) {
+  setEventContext(BuildContext? context) {
     _eventListener?.context = context;
   }
 
