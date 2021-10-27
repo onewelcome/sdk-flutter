@@ -7,6 +7,7 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiDeregistrationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterUserUseCase
+import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.junit.Before
 import org.junit.Test
@@ -28,6 +29,9 @@ class DeregisterUserUseCaseTests {
     @Mock
     lateinit var oneginiDeregistrationErrorMock: OneginiDeregistrationError
 
+    @Mock
+    lateinit var callMock: MethodCall
+
     @Spy
     lateinit var resultSpy: MethodChannel.Result
 
@@ -38,35 +42,38 @@ class DeregisterUserUseCaseTests {
 
     @Test
     fun `should return error when user not authenticated`() {
-        whenever(userClientMock.authenticatedUserProfile).thenReturn(null)
+        whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
+        whenever(clientMock.userClient.userProfiles).thenReturn(setOf())
 
-        DeregisterUserUseCase(clientMock)(resultSpy)
+        DeregisterUserUseCase(clientMock)(callMock, resultSpy)
 
         verify(resultSpy).error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
     }
 
     @Test
     fun `should return true when user deregister`() {
-        whenever(userClientMock.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
+        whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
+        whenever(clientMock.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
         whenever(userClientMock.deregisterUser(eq(UserProfile("QWERTY")), any())).thenAnswer {
             it.getArgument<OneginiDeregisterUserProfileHandler>(1).onSuccess()
         }
 
-        DeregisterUserUseCase(clientMock)(resultSpy)
+        DeregisterUserUseCase(clientMock)(callMock, resultSpy)
 
         verify(resultSpy).success(true)
     }
 
     @Test
     fun `should return error when deregister method return error`() {
-        whenever(userClientMock.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
+        whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
+        whenever(clientMock.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
         whenever(userClientMock.deregisterUser(eq(UserProfile("QWERTY")), any())).thenAnswer {
             it.getArgument<OneginiDeregisterUserProfileHandler>(1).onError(oneginiDeregistrationErrorMock)
         }
         whenever(oneginiDeregistrationErrorMock.errorType).thenReturn(OneginiDeregistrationError.GENERAL_ERROR)
         whenever(oneginiDeregistrationErrorMock.message).thenReturn("General error")
 
-        DeregisterUserUseCase(clientMock)(resultSpy)
+        DeregisterUserUseCase(clientMock)(callMock, resultSpy)
 
         verify(resultSpy).error(oneginiDeregistrationErrorMock.errorType.toString(), oneginiDeregistrationErrorMock.message, null)
     }

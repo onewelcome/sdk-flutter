@@ -43,7 +43,7 @@ class StartAppUseCaseTests {
 
     @Test
     fun `should return UserProfile when start method returns single UserProfile`() {
-        whenever(oneginiSDKMock.getOneginiClient(eq(contextMock), isNull(), isNull(), eq(mutableListOf()))).thenReturn(clientMock)
+        whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(setOf(UserProfile("QWERTY")))
         }
@@ -57,7 +57,7 @@ class StartAppUseCaseTests {
 
     @Test
     fun `should return error when when start method returns error`() {
-        whenever(oneginiSDKMock.getOneginiClient(eq(contextMock), isNull(), isNull(), eq(mutableListOf()))).thenReturn(clientMock)
+        whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onError(oneginiInitializationError)
         }
@@ -71,7 +71,7 @@ class StartAppUseCaseTests {
 
     @Test
     fun `should return set of UserProfiles when start method returns set with UserProfiles`() {
-        whenever(oneginiSDKMock.getOneginiClient(eq(contextMock), isNull(), isNull(), eq(mutableListOf()))).thenReturn(clientMock)
+        whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(setOf(UserProfile("QWERTY"), UserProfile("ASDFGH")))
         }
@@ -85,7 +85,7 @@ class StartAppUseCaseTests {
 
     @Test
     fun `should return empty set when start method returns empty set`() {
-        whenever(oneginiSDKMock.getOneginiClient(eq(contextMock), isNull(), isNull(), eq(mutableListOf()))).thenReturn(clientMock)
+        whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
@@ -100,7 +100,7 @@ class StartAppUseCaseTests {
     @Test
     fun `should properly pass oneginiCustomIdentityProviderList param to the SDK when list contains two items`() {
         whenever(callMock.argument<ArrayList<String>>("twoStepCustomIdentityProviderIds")).thenReturn(arrayListOf("id1", "id2"))
-        whenever(oneginiSDKMock.getOneginiClient(eq(contextMock), isNull(), isNull(), any())).thenReturn(clientMock)
+        whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
@@ -108,7 +108,7 @@ class StartAppUseCaseTests {
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         argumentCaptor<List<OneginiCustomIdentityProvider>> {
-            verify(oneginiSDKMock).getOneginiClient(eq(contextMock), isNull(), isNull(), capture())
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), isNull(), isNull(), capture())
             assertThat(firstValue.size).isEqualTo(2)
             assertThat(firstValue[0].id).isEqualTo("id1")
             assertThat(firstValue[1].id).isEqualTo("id2")
@@ -118,7 +118,7 @@ class StartAppUseCaseTests {
     @Test
     fun `should properly pass oneginiCustomIdentityProviderList param to the SDK when list contains one item`() {
         whenever(callMock.argument<ArrayList<String>>("twoStepCustomIdentityProviderIds")).thenReturn(arrayListOf("id1"))
-        whenever(oneginiSDKMock.getOneginiClient(eq(contextMock), isNull(), isNull(), any())).thenReturn(clientMock)
+        whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
@@ -126,7 +126,7 @@ class StartAppUseCaseTests {
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         argumentCaptor<List<OneginiCustomIdentityProvider>> {
-            verify(oneginiSDKMock).getOneginiClient(eq(contextMock), isNull(), isNull(), capture())
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), isNull(), isNull(), capture())
             assertThat(firstValue.size).isEqualTo(1)
             assertThat(firstValue[0].id).isEqualTo("id1")
         }
@@ -137,7 +137,7 @@ class StartAppUseCaseTests {
     fun `should properly pass connectionTimeout and readTimeout params to the SDK when provided`() {
         whenever(callMock.argument<Int>("connectionTimeout")).thenReturn(5)
         whenever(callMock.argument<Int>("readTimeout")).thenReturn(20)
-        whenever(oneginiSDKMock.getOneginiClient(eq(contextMock), isNotNull(), isNotNull(), eq(mutableListOf()))).thenReturn(clientMock)
+        whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
@@ -145,7 +145,7 @@ class StartAppUseCaseTests {
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         argumentCaptor<Long> {
-            verify(oneginiSDKMock).getOneginiClient(eq(contextMock), capture(), capture(), eq(mutableListOf()))
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), capture(), eq(mutableListOf()))
             assertThat(firstValue).isEqualTo(5)
             assertThat(secondValue).isEqualTo(20)
         }
@@ -155,7 +155,7 @@ class StartAppUseCaseTests {
     fun `should properly pass connectionTimeout and readTimeout params with zero values to the SDK when provided`() {
         whenever(callMock.argument<Int>("connectionTimeout")).thenReturn(0)
         whenever(callMock.argument<Int>("readTimeout")).thenReturn(0)
-        whenever(oneginiSDKMock.getOneginiClient(eq(contextMock), isNotNull(), isNotNull(), eq(mutableListOf()))).thenReturn(clientMock)
+        whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
@@ -163,7 +163,7 @@ class StartAppUseCaseTests {
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         argumentCaptor<Long> {
-            verify(oneginiSDKMock).getOneginiClient(eq(contextMock), capture(), capture(), eq(mutableListOf()))
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), capture(), eq(mutableListOf()))
             assertThat(firstValue).isEqualTo(0)
             assertThat(secondValue).isEqualTo(0)
         }

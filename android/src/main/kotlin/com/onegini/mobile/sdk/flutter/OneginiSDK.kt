@@ -10,12 +10,15 @@ import java.util.concurrent.TimeUnit
 
 class OneginiSDK {
 
+    
+    private  lateinit var oneginiClient : OneginiClient
+    
     companion object {
         var oneginiClientConfigModel: OneginiClientConfigModel? = null
         var oneginiSecurityController: Class<*>? = null
     }
 
-    private fun buildSDK(context: Context, httpConnectionTimeout: Long?, httpReadTimeout: Long?, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>): OneginiClient {
+    fun buildSDK(context: Context, httpConnectionTimeout: Long?, httpReadTimeout: Long?, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>) {
         val applicationContext = context.applicationContext
         val registrationRequestHandler = RegistrationRequestHandler()
         val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
@@ -35,15 +38,12 @@ class OneginiSDK {
         if (httpReadTimeout != null) {
             clientBuilder.setHttpReadTimeout(TimeUnit.SECONDS.toMillis(httpReadTimeout).toInt())
         }
-        return clientBuilder.build()
+        oneginiClient = clientBuilder.build()
     }
 
-    fun getOneginiClient(context: Context, httpConnectionTimeout: Long? = null, httpReadTimeout: Long? = null, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider> = mutableListOf()): OneginiClient {
-        var oneginiClient = OneginiClient.getInstance()
-        if (oneginiClient == null) {
-            oneginiClient = buildSDK(context, httpConnectionTimeout, httpReadTimeout, oneginiCustomIdentityProviders)
-        }
-        return oneginiClient
+    fun getOneginiClient() : OneginiClient {
+        //todo should we use OneginiClient.getInstance or this var 
+        return OneginiClient.getInstance() ?: oneginiClient
     }
 
 }

@@ -19,8 +19,8 @@ class StartAppUseCase(private val context: Context, private val oneginiSDK: Oneg
         val readTimeout = call.argument<Int>("readTimeout")
         val oneginiCustomIdentityProviderList = mutableListOf<OneginiCustomIdentityProvider>()
         twoStepCustomIdentityProviderIds?.forEach { oneginiCustomIdentityProviderList.add(CustomTwoStepIdentityProvider(it)) }
-        val oneginiClient: OneginiClient = oneginiSDK.getOneginiClient(context, connectionTimeout?.toLong(), readTimeout?.toLong(), oneginiCustomIdentityProviderList)
-        start(oneginiClient, result)
+        oneginiSDK.buildSDK(context, connectionTimeout?.toLong(), readTimeout?.toLong(), oneginiCustomIdentityProviderList)
+        start(oneginiSDK.getOneginiClient(), result)
     }
 
     private fun start(oneginiClient: OneginiClient, result: MethodChannel.Result) {

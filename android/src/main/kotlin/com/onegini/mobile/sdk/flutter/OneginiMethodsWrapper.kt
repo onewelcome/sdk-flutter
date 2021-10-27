@@ -13,8 +13,8 @@ class OneginiMethodsWrapper {
         RegistrationUseCase(oneginiClient)(call, result)
     }
 
-    fun handleRegisteredUrl(call: MethodCall, context: Context) {
-        HandleRegisteredUrlUseCase()(call, context)
+    fun handleRegisteredUrl(call: MethodCall, context: Context, oneginiClient: OneginiClient) {
+        HandleRegisteredUrlUseCase()(call, context, oneginiClient)
     }
 
     fun getIdentityProviders(result: MethodChannel.Result, oneginiClient: OneginiClient) {

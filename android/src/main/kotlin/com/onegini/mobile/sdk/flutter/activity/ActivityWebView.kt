@@ -19,7 +19,7 @@ class ActivityWebView : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.layout_webview)
-        val redirectUrl = OneginiSDK().getOneginiClient(applicationContext).configModel.redirectUri
+        val redirectUrl = intent.getStringExtra("redirectUrl")
         val redirectUri = Uri.parse(redirectUrl)
         val myWebView: WebView = findViewById(R.id.webview)
         myWebView.settings.javaScriptEnabled = true
