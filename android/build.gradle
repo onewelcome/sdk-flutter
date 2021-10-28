@@ -66,7 +66,7 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    api('com.onegini.mobile.sdk.android:onegini-sdk:11.3.0@aar') {
+    api('com.onegini.mobile.sdk.android:onegini-sdk:11.4.0@aar') {
         transitive = true
     }
     // Rest Client
