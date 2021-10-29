@@ -57,6 +57,14 @@ class OneginiMethodsWrapper {
         DeregisterUserUseCase(oneginiClient)(call,result)
     }
 
+    fun deregisterAuthenticator(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient){
+        DeregisterAuthenticatorUseCase(oneginiClient)(call, result)
+    }
+
+    fun registerAuthenticator(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient) {
+        RegisterAuthenticatorUseCase(oneginiClient)(call, result)
+    }
+
     fun enrollUserForMobileAuth(result: MethodChannel.Result,oneginiClient: OneginiClient){
         EnrollUserForMobileAuthUseCase(oneginiClient)(result)
     }
