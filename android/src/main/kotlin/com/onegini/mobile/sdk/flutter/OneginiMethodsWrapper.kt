@@ -57,6 +57,10 @@ class OneginiMethodsWrapper {
         DeregisterUserUseCase(oneginiClient)(call,result)
     }
 
+    fun registerAuthenticator(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient) {
+        RegisterAuthenticatorUseCase(oneginiClient)(call, result)
+    }
+
     fun getAllAuthenticators(result: MethodChannel.Result,oneginiClient: OneginiClient){
         GetAllAuthenticatorsUseCase(oneginiClient)(result)
     }
