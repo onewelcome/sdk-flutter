@@ -32,7 +32,7 @@ class GetRedirectUrlUseCaseTests {
     }
 
     @Test
-    fun `should return empty string when redirectUrl is epmty string in SDK`() {
+    fun `should return empty string when redirectUrl is empty string in SDK`() {
         whenever(oneginiClientConfigModelMock.redirectUri).thenReturn("")
 
         GetRedirectUrlUseCase(clientMock)(resultSpy)
@@ -46,6 +46,6 @@ class GetRedirectUrlUseCaseTests {
 
         GetRedirectUrlUseCase(clientMock)(resultSpy)
 
-        Mockito.verify(resultSpy).success(eq("http://test.com"))
+        Mockito.verify(resultSpy).success("http://test.com")
     }
 }
