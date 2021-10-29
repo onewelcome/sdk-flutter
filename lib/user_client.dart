@@ -98,8 +98,6 @@ class UserClient {
     }
   }
 
-
-
   /// Starts authentication flow.
   ///
   /// If [registeredAuthenticatorId] is null, starts authentication by default authenticator.
@@ -114,7 +112,7 @@ class UserClient {
           .invokeMethod(Constants.authenticateUser, <String, String?>{
         'registeredAuthenticatorId': registeredAuthenticatorId,
       });
-     return registrationResponseFromJson(response);
+      return registrationResponseFromJson(response);
     } on PlatformException catch (error) {
       throw error;
     }
@@ -158,7 +156,6 @@ class UserClient {
       throw error;
     }
   }
-
 
   Future<bool> isAuthenticatorRegistered(String authenticatorId) async {
     try {
@@ -226,7 +223,8 @@ class UserClient {
   }
 
   /// Single sign on the user web page.
-  Future<OneginiAppToWebSingleSignOn> getAppToWebSingleSignOn(String url) async {
+  Future<OneginiAppToWebSingleSignOn> getAppToWebSingleSignOn(
+      String url) async {
     try {
       var oneginiAppToWebSingleSignOn = await Onegini.instance.channel
           .invokeMethod(Constants.getAppToWebSingleSignOn, <String, String>{

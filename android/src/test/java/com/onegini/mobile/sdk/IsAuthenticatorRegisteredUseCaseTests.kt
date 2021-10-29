@@ -66,7 +66,7 @@ class IsAuthenticatorRegisteredUseCaseTests {
     fun `should return error when authenticator id is not null but not found in SDK`() {
         whenever(userClientMock.authenticatedUserProfile).thenReturn(userProfile)
         whenever(callMock.argument<String>("authenticatorId")).thenReturn("testId")
-        whenever(userClientMock.getAllAuthenticators(eq(userProfile))).thenReturn(setOf(oneginiAuthenticator))
+        whenever(userClientMock.getAllAuthenticators(userProfile)).thenReturn(setOf(oneginiAuthenticator))
         whenever(oneginiAuthenticator.id).thenReturn("test")
 
         IsAuthenticatorRegisteredUseCase(clientMock)(callMock,resultSpy)
@@ -78,7 +78,7 @@ class IsAuthenticatorRegisteredUseCaseTests {
     fun `should return true when authenticator id is registered`() {
         whenever(userClientMock.authenticatedUserProfile).thenReturn(userProfile)
         whenever(callMock.argument<String>("authenticatorId")).thenReturn("testId")
-        whenever(userClientMock.getAllAuthenticators(eq(userProfile))).thenReturn(setOf(oneginiAuthenticator))
+        whenever(userClientMock.getAllAuthenticators(userProfile)).thenReturn(setOf(oneginiAuthenticator))
         whenever(oneginiAuthenticator.id).thenReturn("testId")
         whenever(oneginiAuthenticator.isRegistered).thenReturn(true)
 
@@ -91,7 +91,7 @@ class IsAuthenticatorRegisteredUseCaseTests {
     fun `should return false when authenticator id is not registered`() {
         whenever(userClientMock.authenticatedUserProfile).thenReturn(userProfile)
         whenever(callMock.argument<String>("authenticatorId")).thenReturn("testId")
-        whenever(userClientMock.getAllAuthenticators(eq(userProfile))).thenReturn(setOf(oneginiAuthenticator))
+        whenever(userClientMock.getAllAuthenticators(userProfile)).thenReturn(setOf(oneginiAuthenticator))
         whenever(oneginiAuthenticator.id).thenReturn("testId")
         whenever(oneginiAuthenticator.isRegistered).thenReturn(false)
 

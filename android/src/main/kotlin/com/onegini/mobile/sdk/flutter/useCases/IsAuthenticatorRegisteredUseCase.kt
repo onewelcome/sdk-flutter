@@ -21,7 +21,6 @@ class IsAuthenticatorRegisteredUseCase(private var oneginiClient: OneginiClient)
             return
         }
         result.success(authenticator.isRegistered)
-
     }
 
     private fun getAuthenticatorById(authenticatorId: String?, userProfile: UserProfile): OneginiAuthenticator? {
