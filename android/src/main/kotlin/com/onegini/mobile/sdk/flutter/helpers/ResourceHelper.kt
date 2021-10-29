@@ -16,7 +16,6 @@ import java.util.*
 class ResourceHelper {
 
     fun callRequest(okHttpClient: OkHttpClient, request: Request, result: MethodChannel.Result) {
-        print(request)
         Observable.fromCallable { okHttpClient.newCall(request).execute() }
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

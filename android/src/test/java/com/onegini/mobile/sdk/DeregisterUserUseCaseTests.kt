@@ -67,7 +67,7 @@ class DeregisterUserUseCaseTests {
     }
 
     @Test
-    fun `should return error when deregister method return error`() {
+    fun `should return error when deregister method returns error`() {
         whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
         whenever(clientMock.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
         whenever(userClientMock.deregisterUser(eq(UserProfile("QWERTY")), any())).thenAnswer {

@@ -289,9 +289,6 @@ class UserClient {
       throw error;
     }
   }
-
-
-
 }
 
 enum WebSignInType {

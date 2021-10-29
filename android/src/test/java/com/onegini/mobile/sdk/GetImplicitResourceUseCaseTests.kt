@@ -70,8 +70,7 @@ class GetImplicitResourceUseCaseTests {
     fun `should call getRequest with correct params`() {
         GetImplicitResourceUseCase(clientMock)(callMock, resultSpy, resourceHelper)
 
-        verify(resourceHelper).getRequest(eq(callMock), eq("https://token-mobile.test.onegini.com/resources/"))
-
+        verify(resourceHelper).getRequest(eq(callMock), "https://token-mobile.test.onegini.com/resources/")
     }
 
     @Test

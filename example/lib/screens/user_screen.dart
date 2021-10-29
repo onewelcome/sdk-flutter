@@ -461,7 +461,7 @@ class _InfoState extends State<Info> {
     var response = "";
     var success = await Onegini.instance.userClient.authenticateDevice(["read", "write", "application-details"]);
     if(success!=null && success){
-      response  = await Onegini.instance.resourcesMethods
+      response = await Onegini.instance.resourcesMethods
           .getResourceAnonymous("application-details");
     }
     return applicationDetailsFromJson(response);

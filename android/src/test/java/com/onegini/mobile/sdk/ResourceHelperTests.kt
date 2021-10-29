@@ -84,6 +84,4 @@ class ResourceHelperTests {
         Truth.assertThat(request.url.queryParameterValues("key1")).isEqualTo(listOf("value1"))
         Truth.assertThat(request.url.queryParameterValues("key2")).isEqualTo(listOf("value2"))
     }
-
-
 }
