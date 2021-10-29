@@ -22,15 +22,17 @@ class DeregisterAuthenticatorUseCase(private var oneginiClient: OneginiClient) {
             result.error(OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.message, null)
             return
         }
-        oneginiClient.userClient.deregisterAuthenticator(authenticator, object : OneginiAuthenticatorDeregistrationHandler {
-            override fun onSuccess() {
-                result.success(true)
-            }
+        oneginiClient.userClient.deregisterAuthenticator(
+            authenticator,
+            object : OneginiAuthenticatorDeregistrationHandler {
+                override fun onSuccess() {
+                    result.success(true)
+                }
 
-            override fun onError(oneginiAuthenticatorDeregistrationError: OneginiAuthenticatorDeregistrationError) {
-                result.error(oneginiAuthenticatorDeregistrationError.errorType.toString(), oneginiAuthenticatorDeregistrationError.message, null)
+                override fun onError(oneginiAuthenticatorDeregistrationError: OneginiAuthenticatorDeregistrationError) {
+                    result.error(oneginiAuthenticatorDeregistrationError.errorType.toString(), oneginiAuthenticatorDeregistrationError.message, null)
+                }
             }
-        }
         )
     }
 
@@ -44,5 +46,4 @@ class DeregisterAuthenticatorUseCase(private var oneginiClient: OneginiClient) {
         }
         return authenticator
     }
-
 }

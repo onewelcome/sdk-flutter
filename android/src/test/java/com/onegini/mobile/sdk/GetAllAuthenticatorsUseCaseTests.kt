@@ -14,7 +14,6 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -72,6 +71,4 @@ class GetAllAuthenticatorsUseCaseTests {
         val expectedResult = Gson().toJson(arrayOf(mapOf("id" to "test", "name" to "test")))
         verify(resultSpy).success(expectedResult)
     }
-
-
 }

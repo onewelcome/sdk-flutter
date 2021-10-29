@@ -20,7 +20,6 @@ import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestH
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
-import com.onegini.mobile.sdk.flutter.helpers.AuthenticationObject
 import com.onegini.mobile.sdk.flutter.helpers.MobileAuthenticationObject
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationAction
@@ -29,40 +28,30 @@ import io.flutter.plugin.common.MethodChannel
 
 class OnMethodCallMapper(private var context: Context, private val oneginiMethodsWrapper: OneginiMethodsWrapper, private val oneginiSDK: OneginiSDK) : MethodChannel.MethodCallHandler {
 
-
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         when (call.method) {
-            Constants.METHOD_START_APP -> oneginiMethodsWrapper.startApp(call, result, context)
+            Constants.METHOD_START_APP -> oneginiMethodsWrapper.startApp(call, oneginiSDK, result, context)
             Constants.METHOD_CUSTOM_TWO_STEP_REGISTRATION_RETURN_SUCCESS -> CustomTwoStepRegistrationAction.CALLBACK?.returnSuccess(call.argument("data"))
             Constants.METHOD_CUSTOM_TWO_STEP_REGISTRATION_RETURN_ERROR -> CustomTwoStepRegistrationAction.CALLBACK?.returnError(Exception(call.argument<String>("error")))
 
-
-            //Register
+            // Register
             Constants.METHOD_REGISTER_USER -> oneginiMethodsWrapper.registerUser(call, result, oneginiSDK.getOneginiClient())
             Constants.METHOD_HANDLE_REGISTERED_URL -> oneginiMethodsWrapper.handleRegisteredUrl(call, context, oneginiSDK.getOneginiClient())
             Constants.METHOD_GET_IDENTITY_PROVIDERS -> oneginiMethodsWrapper.getIdentityProviders(result, oneginiSDK.getOneginiClient())
             Constants.METHOD_CANCEL_REGISTRATION -> oneginiMethodsWrapper.cancelRegistration()
             Constants.METHOD_ACCEPT_PIN_REGISTRATION_REQUEST -> PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
             Constants.METHOD_DENY_PIN_REGISTRATION_REQUEST -> PinRequestHandler.CALLBACK?.denyAuthenticationRequest()
-            Constants.METHOD_DEREGISTER_USER -> oneginiMethodsWrapper.deregisterUser(call,result, oneginiSDK.getOneginiClient())
+            Constants.METHOD_DEREGISTER_USER -> oneginiMethodsWrapper.deregisterUser(call, result, oneginiSDK.getOneginiClient())
 
             // Authenticate
+            Constants.METHOD_REGISTER_AUTHENTICATOR -> oneginiMethodsWrapper.registerAuthenticator(call, result, oneginiSDK.getOneginiClient())
             Constants.METHOD_GET_REGISTERED_AUTHENTICATORS -> oneginiMethodsWrapper.getRegisteredAuthenticators(result, oneginiSDK.getOneginiClient())
             Constants.METHOD_AUTHENTICATE_USER -> oneginiMethodsWrapper.authenticateUser(call, result, oneginiSDK.getOneginiClient())
             Constants.METHOD_GET_ALL_AUTHENTICATORS -> oneginiMethodsWrapper.getAllAuthenticators(result, oneginiSDK.getOneginiClient())
             Constants.METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS -> oneginiMethodsWrapper.getNotRegisteredAuthenticators(result, oneginiSDK.getOneginiClient())
-            Constants.METHOD_REGISTER_AUTHENTICATOR -> AuthenticationObject.registerAuthenticator(call.argument<String>("authenticatorId"), result, oneginiSDK.getOneginiClient())
             Constants.METHOD_SET_PREFERRED_AUTHENTICATOR -> oneginiMethodsWrapper.setPreferredAuthenticator(call, result, oneginiSDK.getOneginiClient())
-            Constants.METHOD_DEREGISTER_AUTHENTICATOR -> AuthenticationObject.deregisterAuthenticator(call.argument<String>("authenticatorId"), result, oneginiSDK.getOneginiClient())
+            Constants.METHOD_DEREGISTER_AUTHENTICATOR -> oneginiMethodsWrapper.deregisterAuthenticator(call, result, oneginiSDK.getOneginiClient())
             Constants.METHOD_LOGOUT -> logout(result, oneginiSDK.getOneginiClient())
-            Constants.METHOD_REGISTER_AUTHENTICATOR -> oneginiMethodsWrapper.registerAuthenticator(call, result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_GET_REGISTERED_AUTHENTICATORS -> oneginiMethodsWrapper.getRegisteredAuthenticators(result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_AUTHENTICATE_USER -> oneginiMethodsWrapper.authenticateUser(call, result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_GET_ALL_AUTHENTICATORS -> oneginiMethodsWrapper.getAllAuthenticators(result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS -> oneginiMethodsWrapper.getNotRegisteredAuthenticators(result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_SET_PREFERRED_AUTHENTICATOR -> oneginiMethodsWrapper.setPreferredAuthenticator(call, result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_DEREGISTER_AUTHENTICATOR -> oneginiMethodsWrapper.deregisterAuthenticator(call, result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_LOGOUT -> logout(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_ACCEPT_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
             Constants.METHOD_DENY_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.denyAuthenticationRequest()
 
@@ -107,31 +96,31 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
         }
         val targetUri: Uri = Uri.parse(url)
         oneginiClient.userClient.getAppToWebSingleSignOn(
-                targetUri,
-                object : OneginiAppToWebSingleSignOnHandler {
-                    override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {
-                        result.success(Gson().toJson(mapOf("token" to oneginiAppToWebSingleSignOn.token, "redirectUrl" to oneginiAppToWebSingleSignOn.redirectUrl.toString())))
-                    }
-
-                    override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
-                        result.error(oneginiSingleSignOnError.errorType.toString(), oneginiSingleSignOnError.message, null)
-                    }
+            targetUri,
+            object : OneginiAppToWebSingleSignOnHandler {
+                override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {
+                    result.success(Gson().toJson(mapOf("token" to oneginiAppToWebSingleSignOn.token, "redirectUrl" to oneginiAppToWebSingleSignOn.redirectUrl.toString())))
                 }
+
+                override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
+                    result.error(oneginiSingleSignOnError.errorType.toString(), oneginiSingleSignOnError.message, null)
+                }
+            }
         )
     }
 
     private fun validatePinWithPolicy(pin: CharArray?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         oneginiClient.userClient.validatePinWithPolicy(
-                pin,
-                object : OneginiPinValidationHandler {
-                    override fun onSuccess() {
-                        result.success(true)
-                    }
-
-                    override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
-                        result.error(oneginiPinValidationError.errorType.toString(), oneginiPinValidationError.message, null)
-                    }
+            pin,
+            object : OneginiPinValidationHandler {
+                override fun onSuccess() {
+                    result.success(true)
                 }
+
+                override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
+                    result.error(oneginiPinValidationError.errorType.toString(), oneginiPinValidationError.message, null)
+                }
+            }
         )
     }
 

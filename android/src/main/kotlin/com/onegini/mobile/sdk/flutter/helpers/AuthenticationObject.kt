@@ -1,6 +1,5 @@
 package com.onegini.mobile.sdk.flutter.helpers
 
-import com.google.gson.GsonBuilder
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticationHandler
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticatorDeregistrationHandler

@@ -42,12 +42,11 @@ interface Constants {
         const val METHOD_GET_IMPLICIT_RESOURCE = "getImplicitResource"
         const val METHOD_GET_UNAUTHENTICATED_RESOURCE = "getUnauthenticatedResource"
 
-
-        //Registration
-        const val METHOD_REGISTER_USER ="registerUser"
-        const val METHOD_HANDLE_REGISTERED_URL="handleRegisteredUserUrl"
-        const val METHOD_CANCEL_REGISTRATION ="cancelRegistration"
-        const val METHOD_DENY_PIN_REGISTRATION_REQUEST  = "denyPinRegistrationRequest"
+        // Registration
+        const val METHOD_REGISTER_USER = "registerUser"
+        const val METHOD_HANDLE_REGISTERED_URL = "handleRegisteredUserUrl"
+        const val METHOD_CANCEL_REGISTRATION = "cancelRegistration"
+        const val METHOD_DENY_PIN_REGISTRATION_REQUEST = "denyPinRegistrationRequest"
         const val METHOD_ACCEPT_PIN_REGISTRATION_REQUEST = "acceptPinRegistrationRequest"
         const val METHOD_GET_IDENTITY_PROVIDERS = "getIdentityProviders"
         const val METHOD_DEREGISTER_USER = "deregisterUser"

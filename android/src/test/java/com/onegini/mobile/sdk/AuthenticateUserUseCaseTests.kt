@@ -43,7 +43,6 @@ class AuthenticateUserUseCaseTests {
     @Mock
     lateinit var oneginiAuthenticationErrorMock: OneginiAuthenticationError
 
-
     @Before
     fun attach() {
         whenever(clientMock.userClient).thenReturn(userClientMock)
@@ -114,5 +113,4 @@ class AuthenticateUserUseCaseTests {
 
         Mockito.verify(resultSpy).error(oneginiAuthenticationErrorMock.errorType.toString(), oneginiAuthenticationErrorMock.message, null)
     }
-
 }

@@ -10,9 +10,8 @@ import java.util.concurrent.TimeUnit
 
 class OneginiSDK {
 
-    
-    private  lateinit var oneginiClient : OneginiClient
-    
+    private lateinit var oneginiClient: OneginiClient
+
     companion object {
         var oneginiClientConfigModel: OneginiClientConfigModel? = null
         var oneginiSecurityController: Class<*>? = null
@@ -26,11 +25,11 @@ class OneginiSDK {
         val createPinRequestHandler = PinRequestHandler()
         val mobileAuthWithOtpRequestHandler = MobileAuthOtpRequestHandler()
         val clientBuilder = OneginiClientBuilder(applicationContext, createPinRequestHandler, pinAuthenticationRequestHandler) // handlers for optional functionalities
-                .setBrowserRegistrationRequestHandler(registrationRequestHandler)
-                .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler)
-                .setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
-                .setSecurityController(oneginiSecurityController)
-                .setConfigModel(oneginiClientConfigModel)
+            .setBrowserRegistrationRequestHandler(registrationRequestHandler)
+            .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler)
+            .setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
+            .setSecurityController(oneginiSecurityController)
+            .setConfigModel(oneginiClientConfigModel)
         oneginiCustomIdentityProviders.map { clientBuilder.addCustomIdentityProvider(it) }
         if (httpConnectionTimeout != null) {
             clientBuilder.setHttpConnectTimeout(TimeUnit.SECONDS.toMillis(httpConnectionTimeout).toInt())
@@ -41,9 +40,8 @@ class OneginiSDK {
         oneginiClient = clientBuilder.build()
     }
 
-    fun getOneginiClient() : OneginiClient {
-        //todo should we use OneginiClient.getInstance or this var 
+    fun getOneginiClient(): OneginiClient {
+        // todo should we use OneginiClient.getInstance or this var 
         return OneginiClient.getInstance() ?: oneginiClient
     }
-
 }
