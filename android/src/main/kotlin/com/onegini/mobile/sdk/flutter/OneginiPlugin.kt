@@ -17,16 +17,17 @@ class OneginiPlugin : FlutterPlugin {
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         val oneginiSDK = OneginiSDK()
+        val oneginiEventsSender = OneginiEventsSender()
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "onegini")
-        channel.setMethodCallHandler(OnMethodCallMapper(flutterPluginBinding.applicationContext, OneginiMethodsWrapper(), oneginiSDK))
+        channel.setMethodCallHandler(OnMethodCallMapper(flutterPluginBinding.applicationContext, OneginiMethodsWrapper(), oneginiSDK, oneginiEventsSender))
         eventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "onegini_events")
         eventChannel.setStreamHandler(object : EventChannel.StreamHandler {
             override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
-                OneginiEventsSender.setEventSink(events)
+                oneginiEventsSender.setEventSink(events)
             }
 
             override fun onCancel(arguments: Any?) {
-                OneginiEventsSender.setEventSink(null)
+                oneginiEventsSender.setEventSink(null)
             }
         })
     }

@@ -3,8 +3,9 @@ package com.onegini.mobile.sdk.flutter.providers
 import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomRegistrationAction
 import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomTwoStepRegistrationAction
 import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
+import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 
-class CustomTwoStepIdentityProvider(private val providerId: String) : OneginiCustomIdentityProvider {
+class CustomTwoStepIdentityProvider(private val providerId: String, oneginiEventsSender: OneginiEventsSender) : OneginiCustomIdentityProvider {
 
     private val registrationAction: OneginiCustomTwoStepRegistrationAction
     override fun getRegistrationAction(): OneginiCustomRegistrationAction {
@@ -16,6 +17,6 @@ class CustomTwoStepIdentityProvider(private val providerId: String) : OneginiCus
     }
 
     init {
-        registrationAction = CustomTwoStepRegistrationAction(providerId)
+        registrationAction = CustomTwoStepRegistrationAction(providerId, oneginiEventsSender)
     }
 }

@@ -34,7 +34,7 @@ class ActivityWebView : Activity() {
         }
         val url = intent.getStringExtra("url")
         if (url == null || url.isEmpty()) {
-            OneginiMethodsWrapper().cancelRegistration()
+            RegistrationRequestHandler.onRegistrationCanceled()
             finish()
         } else {
             myWebView.loadUrl(url)

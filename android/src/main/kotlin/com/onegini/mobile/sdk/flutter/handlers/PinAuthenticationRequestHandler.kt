@@ -9,22 +9,22 @@ import com.onegini.mobile.sdk.flutter.constants.Constants
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
 
-class PinAuthenticationRequestHandler : OneginiPinAuthenticationRequestHandler {
+class PinAuthenticationRequestHandler(private val oneginiEventsSender: OneginiEventsSender) : OneginiPinAuthenticationRequestHandler {
     companion object {
         var CALLBACK: OneginiPinCallback ? = null
     }
 
     override fun startAuthentication(userProfile: UserProfile, oneginiPinCallback: OneginiPinCallback, attemptCounter: AuthenticationAttemptCounter?) {
         CALLBACK = oneginiPinCallback
-        OneginiEventsSender.events?.success(Constants.EVENT_OPEN_PIN_AUTH)
+        oneginiEventsSender.events?.success(Constants.EVENT_OPEN_PIN_AUTH)
     }
 
     override fun onNextAuthenticationAttempt(attemptCounter: AuthenticationAttemptCounter) {
         val attemptCounterJson = Gson().toJson(mapOf("maxAttempts" to attemptCounter.maxAttempts, "failedAttempts" to attemptCounter.failedAttempts, "remainingAttempts" to attemptCounter.remainingAttempts))
-        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_NEXT_AUTHENTICATION_ATTEMPT, attemptCounterJson)))
+        oneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_NEXT_AUTHENTICATION_ATTEMPT, attemptCounterJson)))
     }
 
     override fun finishAuthentication() {
-        OneginiEventsSender.events?.success(Constants.EVENT_CLOSE_PIN_AUTH)
+        oneginiEventsSender.events?.success(Constants.EVENT_CLOSE_PIN_AUTH)
     }
 }

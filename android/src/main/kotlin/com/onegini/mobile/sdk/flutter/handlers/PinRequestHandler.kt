@@ -10,7 +10,7 @@ import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.models.Error
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
 
-class PinRequestHandler : OneginiCreatePinRequestHandler {
+class PinRequestHandler(private val oneginiEventsSender: OneginiEventsSender) : OneginiCreatePinRequestHandler {
 
     companion object {
         var CALLBACK: OneginiPinCallback? = null
@@ -18,14 +18,14 @@ class PinRequestHandler : OneginiCreatePinRequestHandler {
 
     override fun startPinCreation(userProfile: UserProfile?, oneginiPinCallback: OneginiPinCallback, p2: Int) {
         CALLBACK = oneginiPinCallback
-        OneginiEventsSender.events?.success(Constants.EVENT_OPEN_PIN)
+        oneginiEventsSender.events?.success(Constants.EVENT_OPEN_PIN)
     }
 
     override fun onNextPinCreationAttempt(oneginiPinValidationError: OneginiPinValidationError) {
-        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_ERROR, Gson().toJson(Error(oneginiPinValidationError.errorType.toString(), oneginiPinValidationError.message ?: "")).toString())))
+        oneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_ERROR, Gson().toJson(Error(oneginiPinValidationError.errorType.toString(), oneginiPinValidationError.message ?: "")).toString())))
     }
 
     override fun finishPinCreation() {
-        OneginiEventsSender.events?.success(Constants.EVENT_CLOSE_PIN)
+        oneginiEventsSender.events?.success(Constants.EVENT_CLOSE_PIN)
     }
 }

@@ -10,7 +10,7 @@ import com.onegini.mobile.sdk.flutter.models.CustomTwoStepRegistrationModel
 import com.onegini.mobile.sdk.flutter.models.Error
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
 
-class CustomTwoStepRegistrationAction(private val providerId: String) : OneginiCustomTwoStepRegistrationAction {
+class CustomTwoStepRegistrationAction(private val providerId: String, private val oneginiEventsSender: OneginiEventsSender) : OneginiCustomTwoStepRegistrationAction {
 
     override fun initRegistration(callback: OneginiCustomRegistrationCallback, customInfo: CustomInfo?) {
         callback.returnSuccess(null)
@@ -20,9 +20,9 @@ class CustomTwoStepRegistrationAction(private val providerId: String) : OneginiC
         CALLBACK = callback
         if (customInfo.status < 2001) {
             val data = Gson().toJson(CustomTwoStepRegistrationModel(customInfo.data, providerId))
-            OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_OPEN_CUSTOM_TWO_STEP_REGISTRATION_SCREEN, data)))
+            oneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_OPEN_CUSTOM_TWO_STEP_REGISTRATION_SCREEN, data)))
         } else {
-            OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_ERROR, Gson().toJson(Error(customInfo.status.toString(), customInfo.data)).toString())))
+            oneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_ERROR, Gson().toJson(Error(customInfo.status.toString(), customInfo.data)).toString())))
         }
     }
 

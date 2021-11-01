@@ -8,7 +8,7 @@ import com.onegini.mobile.sdk.flutter.constants.Constants
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
 
-class MobileAuthOtpRequestHandler : OneginiMobileAuthWithOtpRequestHandler {
+class MobileAuthOtpRequestHandler(private val oneginiEventsSender: OneginiEventsSender) : OneginiMobileAuthWithOtpRequestHandler {
     private var userProfileId: String? = null
     private var message: String? = null
     override fun startAuthentication(
@@ -19,11 +19,11 @@ class MobileAuthOtpRequestHandler : OneginiMobileAuthWithOtpRequestHandler {
         CALLBACK = oneginiAcceptDenyCallback
         userProfileId = oneginiMobileAuthenticationRequest.userProfile.profileId
         message = oneginiMobileAuthenticationRequest.message
-        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_OPEN_AUTH_OTP, message ?: "")))
+        oneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_OPEN_AUTH_OTP, message ?: "")))
     }
 
     override fun finishAuthentication() {
-        OneginiEventsSender.events?.success(Constants.EVENT_CLOSE_AUTH_OTP)
+        oneginiEventsSender.events?.success(Constants.EVENT_CLOSE_AUTH_OTP)
     }
     companion object {
         var CALLBACK: OneginiAcceptDenyCallback? = null

@@ -3,9 +3,11 @@ package com.onegini.mobile.sdk.flutter
 import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
+import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiBrowserRegistrationCallback
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 import com.onegini.mobile.sdk.flutter.handlers.*
+import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import java.util.concurrent.TimeUnit
 
 class OneginiSDK {
@@ -15,15 +17,16 @@ class OneginiSDK {
     companion object {
         var oneginiClientConfigModel: OneginiClientConfigModel? = null
         var oneginiSecurityController: Class<*>? = null
+        lateinit var registrationRequestHandler: RegistrationRequestHandler
     }
 
-    fun buildSDK(context: Context, httpConnectionTimeout: Long?, httpReadTimeout: Long?, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>) {
+    fun buildSDK(context: Context, httpConnectionTimeout: Long?, httpReadTimeout: Long?, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>, oneginiEventsSender: OneginiEventsSender) {
         val applicationContext = context.applicationContext
-        val registrationRequestHandler = RegistrationRequestHandler()
-        val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
-        val pinAuthenticationRequestHandler = PinAuthenticationRequestHandler()
-        val createPinRequestHandler = PinRequestHandler()
-        val mobileAuthWithOtpRequestHandler = MobileAuthOtpRequestHandler()
+        registrationRequestHandler = RegistrationRequestHandler(oneginiEventsSender)
+        val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(oneginiEventsSender)
+        val pinAuthenticationRequestHandler = PinAuthenticationRequestHandler(oneginiEventsSender)
+        val createPinRequestHandler = PinRequestHandler(oneginiEventsSender)
+        val mobileAuthWithOtpRequestHandler = MobileAuthOtpRequestHandler(oneginiEventsSender)
         val clientBuilder = OneginiClientBuilder(applicationContext, createPinRequestHandler, pinAuthenticationRequestHandler) // handlers for optional functionalities
             .setBrowserRegistrationRequestHandler(registrationRequestHandler)
             .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler)
@@ -43,5 +46,9 @@ class OneginiSDK {
     fun getOneginiClient(): OneginiClient {
         // todo should we use OneginiClient.getInstance or this var 
         return OneginiClient.getInstance() ?: oneginiClient
+    }
+    
+    fun getRegistrationRequestHandler() : RegistrationRequestHandler {
+        return  registrationRequestHandler
     }
 }

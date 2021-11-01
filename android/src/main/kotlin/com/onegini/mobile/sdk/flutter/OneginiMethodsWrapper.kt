@@ -2,7 +2,9 @@ package com.onegini.mobile.sdk.flutter
 
 import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
+import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiBrowserRegistrationCallback
 import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
+import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.useCases.*
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -25,8 +27,8 @@ class OneginiMethodsWrapper {
         GetAccessTokenUseCase(oneginiClient)(result)
     }
 
-    fun cancelRegistration() {
-        RegistrationRequestHandler.onRegistrationCanceled()
+    fun cancelRegistration(requestHandler: RegistrationRequestHandler, oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback?) {
+        requestHandler.onRegistrationCanceled(oneginiBrowserRegistrationCallback)
     }
 
     fun getAuthenticatedUserProfile(result: MethodChannel.Result, oneginiClient: OneginiClient) {
@@ -37,8 +39,8 @@ class OneginiMethodsWrapper {
         GetUserProfilesUseCase(oneginiClient)(result)
     }
 
-    fun startApp(call: MethodCall, oneginiSDK: OneginiSDK ,result: MethodChannel.Result, context: Context) {
-        StartAppUseCase(context, oneginiSDK)(call, result)
+    fun startApp(call: MethodCall, oneginiSDK: OneginiSDK ,result: MethodChannel.Result, oneginiEventsSender: OneginiEventsSender, context: Context) {
+        StartAppUseCase(context, oneginiSDK, oneginiEventsSender)(call, result)
     }
 
     fun getRegisteredAuthenticators(result: MethodChannel.Result, oneginiClient: OneginiClient) {
