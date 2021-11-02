@@ -59,6 +59,8 @@ class _BodyWidgetState extends State<BodyWidget> {
     /// init Onegini sdk on native side
     var removedUserProfiles = await Onegini.instance
         .startApplication(OneginiListener(),
+            securityControllerClassName: "com.onegini.mobile.onegini_example.SecurityController",
+            configModelClassName: "com.onegini.mobile.onegini_example.OneginiConfigModel",
             twoStepCustomIdentityProviderIds: ["2-way-otp-api"],
             connectionTimeout: 5,
             readTimeout: 25)

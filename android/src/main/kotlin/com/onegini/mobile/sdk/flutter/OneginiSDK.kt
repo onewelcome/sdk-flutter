@@ -3,24 +3,20 @@ package com.onegini.mobile.sdk.flutter
 import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
-import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiBrowserRegistrationCallback
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 import com.onegini.mobile.sdk.flutter.handlers.*
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
+import com.onegini.mobile.sdk.flutter.models.Config
+import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.TimeUnit
 
 class OneginiSDK {
 
     private lateinit var oneginiClient: OneginiClient
-
-    companion object {
-        var oneginiClientConfigModel: OneginiClientConfigModel? = null
-        var oneginiSecurityController: Class<*>? = null
-        lateinit var registrationRequestHandler: RegistrationRequestHandler
-    }
-
-    fun buildSDK(context: Context, httpConnectionTimeout: Long?, httpReadTimeout: Long?, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>, oneginiEventsSender: OneginiEventsSender) {
+    private lateinit var registrationRequestHandler: RegistrationRequestHandler
+    
+    fun buildSDK(context: Context, httpConnectionTimeout: Long?, httpReadTimeout: Long?, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>, config: Config, oneginiEventsSender: OneginiEventsSender) {
         val applicationContext = context.applicationContext
         registrationRequestHandler = RegistrationRequestHandler(oneginiEventsSender)
         val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(oneginiEventsSender)
@@ -31,8 +27,13 @@ class OneginiSDK {
             .setBrowserRegistrationRequestHandler(registrationRequestHandler)
             .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler)
             .setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
-            .setSecurityController(oneginiSecurityController)
-            .setConfigModel(oneginiClientConfigModel)
+
+        // Set config model
+        setConfigModel(clientBuilder, config)
+
+        // Set security controller
+        setSecurityController(clientBuilder, config)
+        
         oneginiCustomIdentityProviders.map { clientBuilder.addCustomIdentityProvider(it) }
         if (httpConnectionTimeout != null) {
             clientBuilder.setHttpConnectTimeout(TimeUnit.SECONDS.toMillis(httpConnectionTimeout).toInt())
@@ -50,5 +51,41 @@ class OneginiSDK {
     
     fun getRegistrationRequestHandler() : RegistrationRequestHandler {
         return  registrationRequestHandler
+    }
+
+    private fun setConfigModel(clientBuilder: OneginiClientBuilder, config: Config) {
+        if (config.configModelClassName == null) {
+            return
+        }
+        try {
+            val clazz = Class.forName(config.configModelClassName)
+            val ctor = clazz.getConstructor()
+            val `object` = ctor.newInstance()
+            if (`object` is OneginiClientConfigModel) {
+                clientBuilder.setConfigModel(`object`)
+            }
+        } catch (e: ClassNotFoundException) {
+            e.printStackTrace()
+        } catch (e: NoSuchMethodException) {
+            e.printStackTrace()
+        } catch (e: IllegalAccessException) {
+            e.printStackTrace()
+        } catch (e: InstantiationException) {
+            e.printStackTrace()
+        } catch (e: InvocationTargetException) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun setSecurityController(clientBuilder: OneginiClientBuilder, config: Config) {
+        if (config.securityControllerClassName == null) {
+            return
+        }
+        try {
+            val securityController = Class.forName(config.securityControllerClassName)
+            clientBuilder.setSecurityController(securityController)
+        } catch (e: ClassNotFoundException) {
+            e.printStackTrace()
+        }
     }
 }

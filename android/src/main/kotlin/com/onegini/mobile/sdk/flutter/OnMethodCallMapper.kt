@@ -1,6 +1,7 @@
 package com.onegini.mobile.sdk.flutter
 
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.util.Patterns
 import androidx.annotation.NonNull
@@ -23,8 +24,9 @@ import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationAction
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.common.PluginRegistry
 
-class OnMethodCallMapper(private var context: Context, private val oneginiMethodsWrapper: OneginiMethodsWrapper, private val oneginiSDK: OneginiSDK, private val oneginiEventSender: OneginiEventsSender) : MethodChannel.MethodCallHandler {
+class OnMethodCallMapper(private var context: Context, private val oneginiMethodsWrapper: OneginiMethodsWrapper, private val oneginiSDK: OneginiSDK, private val oneginiEventSender: OneginiEventsSender) : MethodChannel.MethodCallHandler{
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         when (call.method) {
