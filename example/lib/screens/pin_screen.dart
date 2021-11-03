@@ -61,8 +61,8 @@ class _PinScreenState extends State<PinScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-          await OneginiPinAuthenticationCallback().denyAuthenticationRequest();
-          return true;
+        await OneginiPinAuthenticationCallback().denyAuthenticationRequest();
+        return true;
       },
       child: Scaffold(
         appBar: AppBar(
@@ -119,8 +119,10 @@ class NumPad extends StatelessWidget {
   final Function(String) enterNum;
   final Function removeLast;
   final Function done;
+
   const NumPad({Key key, this.enterNum, this.removeLast, this.done})
       : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Container(

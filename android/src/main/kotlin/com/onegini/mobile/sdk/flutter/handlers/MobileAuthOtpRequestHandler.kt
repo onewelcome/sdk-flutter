@@ -12,19 +12,21 @@ class MobileAuthOtpRequestHandler : OneginiMobileAuthWithOtpRequestHandler {
     private var userProfileId: String? = null
     private var message: String? = null
     override fun startAuthentication(
-        oneginiMobileAuthenticationRequest: OneginiMobileAuthenticationRequest,
-        oneginiAcceptDenyCallback: OneginiAcceptDenyCallback
+            oneginiMobileAuthenticationRequest: OneginiMobileAuthenticationRequest,
+            oneginiAcceptDenyCallback: OneginiAcceptDenyCallback
     ) {
 
         CALLBACK = oneginiAcceptDenyCallback
         userProfileId = oneginiMobileAuthenticationRequest.userProfile.profileId
         message = oneginiMobileAuthenticationRequest.message
-        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_OPEN_AUTH_OTP, message ?: "")))
+        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_OPEN_AUTH_OTP, message
+                ?: "")))
     }
 
     override fun finishAuthentication() {
         OneginiEventsSender.events?.success(Constants.EVENT_CLOSE_AUTH_OTP)
     }
+
     companion object {
         var CALLBACK: OneginiAcceptDenyCallback? = null
     }
