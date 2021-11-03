@@ -19,12 +19,14 @@ class MobileAuthOtpRequestHandler(private val oneginiEventsSender: OneginiEvents
         CALLBACK = oneginiAcceptDenyCallback
         userProfileId = oneginiMobileAuthenticationRequest.userProfile.profileId
         message = oneginiMobileAuthenticationRequest.message
-        oneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_OPEN_AUTH_OTP, message ?: "")))
+        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_OPEN_AUTH_OTP, message
+                ?: "")))
     }
 
     override fun finishAuthentication() {
         oneginiEventsSender.events?.success(Constants.EVENT_CLOSE_AUTH_OTP)
     }
+
     companion object {
         var CALLBACK: OneginiAcceptDenyCallback? = null
     }

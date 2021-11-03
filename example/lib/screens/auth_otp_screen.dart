@@ -5,8 +5,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/callbacks/onegini_otp_accept_deny_callback.dart';
 import 'package:onegini/onegini.dart';
 
-
-
 class AuthOtpScreen extends StatefulWidget {
   final String message;
 
@@ -17,11 +15,12 @@ class AuthOtpScreen extends StatefulWidget {
 }
 
 class _AuthOtpScreenState extends State<AuthOtpScreen> {
-
   accept(BuildContext context) async {
     Onegini.instance.setEventContext(context);
-    OneginiOtpAcceptDenyCallback().acceptAuthenticationRequest(context).catchError((error){
-      if(error is PlatformException) {
+    OneginiOtpAcceptDenyCallback()
+        .acceptAuthenticationRequest(context)
+        .catchError((error) {
+      if (error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,
             toastLength: Toast.LENGTH_SHORT,
@@ -29,15 +28,16 @@ class _AuthOtpScreenState extends State<AuthOtpScreen> {
             timeInSecForIosWeb: 1,
             backgroundColor: Colors.black38,
             textColor: Colors.white,
-            fontSize: 16.0
-        );
+            fontSize: 16.0);
       }
     });
   }
 
   deny(BuildContext context) async {
-    OneginiOtpAcceptDenyCallback().denyAuthenticationRequest().catchError((error){
-      if(error is PlatformException) {
+    OneginiOtpAcceptDenyCallback()
+        .denyAuthenticationRequest()
+        .catchError((error) {
+      if (error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,
             toastLength: Toast.LENGTH_SHORT,
@@ -45,8 +45,7 @@ class _AuthOtpScreenState extends State<AuthOtpScreen> {
             timeInSecForIosWeb: 1,
             backgroundColor: Colors.black38,
             textColor: Colors.white,
-            fontSize: 16.0
-        );
+            fontSize: 16.0);
       }
     });
   }
@@ -70,21 +69,33 @@ class _AuthOtpScreenState extends State<AuthOtpScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 30,),
-            Text(widget.message,style: TextStyle(fontSize: 20),textAlign: TextAlign.center,),
-            SizedBox(height: 30,),
+            SizedBox(
+              height: 30,
+            ),
+            Text(
+              widget.message,
+              style: TextStyle(fontSize: 20),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(
+              height: 30,
+            ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(onPressed: () {
-                  deny(context);
-                }, child: Text("DENY"),
-
+                ElevatedButton(
+                  onPressed: () {
+                    deny(context);
+                  },
+                  child: Text("DENY"),
                 ),
-                ElevatedButton(onPressed: () {
-                  accept(context);
-                }, child: Text("ACCEPT")),
-              ],)
+                ElevatedButton(
+                    onPressed: () {
+                      accept(context);
+                    },
+                    child: Text("ACCEPT")),
+              ],
+            )
           ],
         ),
       ),

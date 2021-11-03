@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/model/authentication_attempt.dart';
-import 'package:onegini/model/onegini_event.dart';
 import 'package:onegini/model/onegini_error.dart';
+import 'package:onegini/model/onegini_event.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini/onegini_event_listener.dart';
 import 'package:onegini/user_client.dart';
@@ -41,14 +41,13 @@ class OneginiListener extends OneginiEventListener {
   @override
   void eventError(BuildContext buildContext, PlatformException error) {
     Fluttertoast.showToast(
-          msg: "${error.message}  Code: ${error.code}",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black38,
-          textColor: Colors.white,
-          fontSize: 16.0
-      );
+        msg: "${error.message}  Code: ${error.code}",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black38,
+        textColor: Colors.white,
+        fontSize: 16.0);
   }
 
   @override
@@ -158,21 +157,22 @@ class OneginiListener extends OneginiEventListener {
   }
 
   @override
-  void openCustomTwoStepRegistrationScreen(BuildContext buildContext, String data) {
+  void openCustomTwoStepRegistrationScreen(
+      BuildContext buildContext, String data) {
     var response = jsonDecode(data);
-    if(response["providerId"] == "2-way-otp-api")
-    Navigator.push(
-      buildContext,
-      MaterialPageRoute(
-          builder: (context) => OtpScreen(
-            password: response["data"],
-          )),
-    );
+    if (response["providerId"] == "2-way-otp-api")
+      Navigator.push(
+        buildContext,
+        MaterialPageRoute(
+            builder: (context) => OtpScreen(
+                  password: response["data"],
+                )),
+      );
   }
 
   @override
   void handleRegisteredUrl(BuildContext buildContext, String url) async {
-     await Onegini.instance.userClient
-        .handleRegisteredUserUrl(buildContext, url, signInType: WebSignInType.safari);
+    await Onegini.instance.userClient.handleRegisteredUserUrl(buildContext, url,
+        signInType: WebSignInType.insideApp);
   }
 }

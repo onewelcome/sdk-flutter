@@ -11,7 +11,7 @@ import com.onegini.mobile.sdk.flutter.models.OneginiEvent
 
 class PinAuthenticationRequestHandler(private val oneginiEventsSender: OneginiEventsSender) : OneginiPinAuthenticationRequestHandler {
     companion object {
-        var CALLBACK: OneginiPinCallback ? = null
+        var CALLBACK: OneginiPinCallback? = null
     }
 
     override fun startAuthentication(userProfile: UserProfile, oneginiPinCallback: OneginiPinCallback, attemptCounter: AuthenticationAttemptCounter?) {

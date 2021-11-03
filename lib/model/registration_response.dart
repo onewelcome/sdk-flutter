@@ -4,9 +4,11 @@
 
 import 'dart:convert';
 
-RegistrationResponse registrationResponseFromJson(String str) => RegistrationResponse.fromJson(json.decode(str));
+RegistrationResponse registrationResponseFromJson(String str) =>
+    RegistrationResponse.fromJson(json.decode(str));
 
-String registrationResponseToJson(RegistrationResponse data) => json.encode(data.toJson());
+String registrationResponseToJson(RegistrationResponse data) =>
+    json.encode(data.toJson());
 
 class RegistrationResponse {
   RegistrationResponse({
@@ -17,15 +19,16 @@ class RegistrationResponse {
   UserProfile? userProfile;
   CustomInfo? customInfo;
 
-  factory RegistrationResponse.fromJson(Map<String, dynamic> json) => RegistrationResponse(
-    userProfile: UserProfile.fromJson(json["userProfile"]),
-    customInfo: CustomInfo.fromJson(json["customInfo"]),
-  );
+  factory RegistrationResponse.fromJson(Map<String, dynamic> json) =>
+      RegistrationResponse(
+        userProfile: UserProfile.fromJson(json["userProfile"]),
+        customInfo: CustomInfo.fromJson(json["customInfo"]),
+      );
 
   Map<String, dynamic> toJson() => {
-    "userProfile": userProfile?.toJson(),
-    "customInfo": customInfo?.toJson(),
-  };
+        "userProfile": userProfile?.toJson(),
+        "customInfo": customInfo?.toJson(),
+      };
 }
 
 class CustomInfo {
@@ -38,14 +41,14 @@ class CustomInfo {
   String? data;
 
   factory CustomInfo.fromJson(Map<String, dynamic>? json) => CustomInfo(
-    status: json?["status"],
-    data: json?["data"],
-  );
+        status: json?["status"],
+        data: json?["data"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "status": status,
-    "data": data,
-  };
+        "status": status,
+        "data": data,
+      };
 }
 
 class UserProfile {
@@ -57,13 +60,9 @@ class UserProfile {
   String? profileId;
   bool? isDefault;
 
-  factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
-    profileId: json["profileId"],
-    isDefault: json["isDefault"]
-  );
+  factory UserProfile.fromJson(Map<String, dynamic> json) =>
+      UserProfile(profileId: json["profileId"], isDefault: json["isDefault"]);
 
-  Map<String, dynamic> toJson() => {
-    "profileId": profileId,
-    "isDefault": isDefault
-  };
+  Map<String, dynamic> toJson() =>
+      {"profileId": profileId, "isDefault": isDefault};
 }

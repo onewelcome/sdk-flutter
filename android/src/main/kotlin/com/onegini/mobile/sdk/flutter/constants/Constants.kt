@@ -42,7 +42,8 @@ interface Constants {
         const val METHOD_GET_IMPLICIT_RESOURCE = "getImplicitResource"
         const val METHOD_GET_UNAUTHENTICATED_RESOURCE = "getUnauthenticatedResource"
 
-        // Registration
+
+        //Registration
         const val METHOD_REGISTER_USER = "registerUser"
         const val METHOD_HANDLE_REGISTERED_URL = "handleRegisteredUserUrl"
         const val METHOD_CANCEL_REGISTRATION = "cancelRegistration"
