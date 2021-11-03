@@ -65,16 +65,15 @@ class OneginiMethodsWrapper {
         RegisterAuthenticatorUseCase(oneginiClient)(call, result)
     }
 
-    fun getAllAuthenticators(result: MethodChannel.Result, oneginiClient: OneginiClient) {
-    fun enrollUserForMobileAuth(result: MethodChannel.Result,oneginiClient: OneginiClient){
+    fun enrollUserForMobileAuth(result: MethodChannel.Result, oneginiClient: OneginiClient){
         EnrollUserForMobileAuthUseCase(oneginiClient)(result)
     }
 
-    fun handleMobileAuthWithOtp(call: MethodCall,result: MethodChannel.Result,oneginiClient: OneginiClient) {
+    fun handleMobileAuthWithOtp(call: MethodCall,result: MethodChannel.Result, oneginiClient: OneginiClient) {
         HandleMobileAuthWithOtpUseCase(oneginiClient)(call, result)
     }
 
-    fun getAllAuthenticators(result: MethodChannel.Result,oneginiClient: OneginiClient){
+    fun getAllAuthenticators(result: MethodChannel.Result, oneginiClient: OneginiClient){
         GetAllAuthenticatorsUseCase(oneginiClient)(result)
     }
 
