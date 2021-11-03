@@ -10,9 +10,9 @@ import java.util.concurrent.TimeUnit
 
 class OneginiSDK {
 
-    
-    private  lateinit var oneginiClient : OneginiClient
-    
+
+    private lateinit var oneginiClient: OneginiClient
+
     companion object {
         var oneginiClientConfigModel: OneginiClientConfigModel? = null
         var oneginiSecurityController: Class<*>? = null
@@ -41,7 +41,7 @@ class OneginiSDK {
         oneginiClient = clientBuilder.build()
     }
 
-    fun getOneginiClient() : OneginiClient {
+    fun getOneginiClient(): OneginiClient {
         //todo should we use OneginiClient.getInstance or this var 
         return OneginiClient.getInstance() ?: oneginiClient
     }

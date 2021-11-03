@@ -43,7 +43,7 @@ class StartAppUseCaseTests {
     lateinit var oneginiInitializationError: OneginiInitializationError
 
     @Before
-    fun attach(){
+    fun attach() {
         whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
     }
 
