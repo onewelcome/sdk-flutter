@@ -32,7 +32,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         when (call.method) {
-            Constants.METHOD_START_APP -> oneginiMethodsWrapper.startApp(call, result, context)
+            Constants.METHOD_START_APP -> oneginiMethodsWrapper.startApp(call, result, oneginiSDK, context)
             Constants.METHOD_CUSTOM_TWO_STEP_REGISTRATION_RETURN_SUCCESS -> CustomTwoStepRegistrationAction.CALLBACK?.returnSuccess(call.argument("data"))
             Constants.METHOD_CUSTOM_TWO_STEP_REGISTRATION_RETURN_ERROR -> CustomTwoStepRegistrationAction.CALLBACK?.returnError(Exception(call.argument<String>("error")))
 
@@ -47,22 +47,14 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_DEREGISTER_USER -> oneginiMethodsWrapper.deregisterUser(call,result, oneginiSDK.getOneginiClient())
 
             // Authenticate
+            Constants.METHOD_REGISTER_AUTHENTICATOR -> oneginiMethodsWrapper.registerAuthenticator(call, result, oneginiSDK.getOneginiClient())
             Constants.METHOD_GET_REGISTERED_AUTHENTICATORS -> oneginiMethodsWrapper.getRegisteredAuthenticators(result, oneginiSDK.getOneginiClient())
             Constants.METHOD_AUTHENTICATE_USER -> oneginiMethodsWrapper.authenticateUser(call, result, oneginiSDK.getOneginiClient())
             Constants.METHOD_GET_ALL_AUTHENTICATORS -> oneginiMethodsWrapper.getAllAuthenticators(result, oneginiSDK.getOneginiClient())
             Constants.METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS -> oneginiMethodsWrapper.getNotRegisteredAuthenticators(result, oneginiSDK.getOneginiClient())
-            Constants.METHOD_REGISTER_AUTHENTICATOR -> AuthenticationObject.registerAuthenticator(call.argument<String>("authenticatorId"), result, oneginiSDK.getOneginiClient())
             Constants.METHOD_SET_PREFERRED_AUTHENTICATOR -> oneginiMethodsWrapper.setPreferredAuthenticator(call, result, oneginiSDK.getOneginiClient())
-            Constants.METHOD_DEREGISTER_AUTHENTICATOR -> AuthenticationObject.deregisterAuthenticator(call.argument<String>("authenticatorId"), result, oneginiSDK.getOneginiClient())
+            Constants.METHOD_DEREGISTER_AUTHENTICATOR -> oneginiMethodsWrapper.deregisterAuthenticator(call, result, oneginiSDK.getOneginiClient())
             Constants.METHOD_LOGOUT -> logout(result, oneginiSDK.getOneginiClient())
-            Constants.METHOD_REGISTER_AUTHENTICATOR -> oneginiMethodsWrapper.registerAuthenticator(call, result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_GET_REGISTERED_AUTHENTICATORS -> oneginiMethodsWrapper.getRegisteredAuthenticators(result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_AUTHENTICATE_USER -> oneginiMethodsWrapper.authenticateUser(call, result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_GET_ALL_AUTHENTICATORS -> oneginiMethodsWrapper.getAllAuthenticators(result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS -> oneginiMethodsWrapper.getNotRegisteredAuthenticators(result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_SET_PREFERRED_AUTHENTICATOR -> oneginiMethodsWrapper.setPreferredAuthenticator(call, result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_DEREGISTER_AUTHENTICATOR -> oneginiMethodsWrapper.deregisterAuthenticator(call, result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_LOGOUT -> logout(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_ACCEPT_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
             Constants.METHOD_DENY_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.denyAuthenticationRequest()
 

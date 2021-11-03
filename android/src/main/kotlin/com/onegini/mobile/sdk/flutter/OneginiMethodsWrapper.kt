@@ -14,7 +14,7 @@ class OneginiMethodsWrapper {
     }
 
     fun handleRegisteredUrl(call: MethodCall, context: Context, oneginiClient: OneginiClient) {
-        HandleRegisteredUrlUseCase()(call, context, oneginiClient)
+        HandleRegisteredUrlUseCase(oneginiClient)(call, context)
     }
 
     fun getIdentityProviders(result: MethodChannel.Result, oneginiClient: OneginiClient) {
@@ -37,8 +37,8 @@ class OneginiMethodsWrapper {
         GetUserProfilesUseCase(oneginiClient)(result)
     }
 
-    fun startApp(call: MethodCall, result: MethodChannel.Result, context: Context) {
-        StartAppUseCase(context, OneginiSDK())(call, result)
+    fun startApp(call: MethodCall, result: MethodChannel.Result, oneginiSDK: OneginiSDK, context: Context) {
+        StartAppUseCase(context, oneginiSDK)(call, result)
     }
 
     fun getRegisteredAuthenticators(result: MethodChannel.Result,oneginiClient: OneginiClient){
