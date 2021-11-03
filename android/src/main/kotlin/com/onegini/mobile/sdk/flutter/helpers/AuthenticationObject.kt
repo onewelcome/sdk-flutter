@@ -62,16 +62,16 @@ object AuthenticationObject {
             return
         }
         oneginiClient.userClient.registerAuthenticator(
-            authenticator,
-            object : OneginiAuthenticatorRegistrationHandler {
-                override fun onSuccess(customInfo: CustomInfo?) {
-                    result.success(customInfo?.data)
-                }
+                authenticator,
+                object : OneginiAuthenticatorRegistrationHandler {
+                    override fun onSuccess(customInfo: CustomInfo?) {
+                        result.success(customInfo?.data)
+                    }
 
-                override fun onError(oneginiAuthenticatorRegistrationError: OneginiAuthenticatorRegistrationError) {
-                    result.error(oneginiAuthenticatorRegistrationError.errorType.toString(), oneginiAuthenticatorRegistrationError.message, null)
+                    override fun onError(oneginiAuthenticatorRegistrationError: OneginiAuthenticatorRegistrationError) {
+                        result.error(oneginiAuthenticatorRegistrationError.errorType.toString(), oneginiAuthenticatorRegistrationError.message, null)
+                    }
                 }
-            }
         )
     }
 
@@ -94,16 +94,17 @@ object AuthenticationObject {
             return
         }
         oneginiClient.userClient.deregisterAuthenticator(
-            authenticator,
-            object : OneginiAuthenticatorDeregistrationHandler {
-                override fun onSuccess() {
-                    result.success(true)
-                }
+                authenticator,
+                object : OneginiAuthenticatorDeregistrationHandler {
+                    override fun onSuccess() {
+                        result.success(true)
+                    }
 
-                override fun onError(oneginiAuthenticatorDeregistrationError: OneginiAuthenticatorDeregistrationError) {
-                    result.error(oneginiAuthenticatorDeregistrationError.errorType.toString(), oneginiAuthenticatorDeregistrationError.message ?: "", null)
+                    override fun onError(oneginiAuthenticatorDeregistrationError: OneginiAuthenticatorDeregistrationError) {
+                        result.error(oneginiAuthenticatorDeregistrationError.errorType.toString(), oneginiAuthenticatorDeregistrationError.message
+                                ?: "", null)
+                    }
                 }
-            }
         )
     }
 
