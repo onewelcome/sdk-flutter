@@ -21,6 +21,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
+
 @RunWith(MockitoJUnitRunner::class)
 class DeregisterAuthenticatorUseCaseTests {
 
@@ -109,4 +110,6 @@ class DeregisterAuthenticatorUseCaseTests {
 
         verify(resultSpy).error(oneginiAuthenticatorDeregistrationErrorMock.errorType.toString(), oneginiAuthenticatorDeregistrationErrorMock.message, null)
     }
+
+
 }

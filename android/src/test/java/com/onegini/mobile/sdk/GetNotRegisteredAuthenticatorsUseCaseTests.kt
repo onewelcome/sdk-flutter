@@ -18,6 +18,8 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
+
+
 @RunWith(MockitoJUnitRunner::class)
 class GetNotRegisteredAuthenticatorsUseCaseTests {
     @Mock
@@ -75,4 +77,5 @@ class GetNotRegisteredAuthenticatorsUseCaseTests {
         val expectedResult = Gson().toJson(expectedArray)
         verify(resultSpy).success(expectedResult)
     }
+
 }

@@ -12,13 +12,13 @@ import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.useCases.StartAppUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.*
+
 
 @RunWith(MockitoJUnitRunner::class)
 class StartAppUseCaseTests {
@@ -41,14 +41,9 @@ class StartAppUseCaseTests {
     @Mock
     lateinit var oneginiInitializationError: OneginiInitializationError
 
-
-    @Before
-    fun attach() {
-        whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
-    }
-
     @Test
     fun `should return UserProfile when start method returns single UserProfile`() {
+        whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(setOf(UserProfile("QWERTY")))
         }
@@ -62,6 +57,7 @@ class StartAppUseCaseTests {
 
     @Test
     fun `should return error when when start method returns error`() {
+        whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onError(oneginiInitializationError)
         }
@@ -75,6 +71,7 @@ class StartAppUseCaseTests {
 
     @Test
     fun `should return set of UserProfiles when start method returns set with UserProfiles`() {
+        whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(setOf(UserProfile("QWERTY"), UserProfile("ASDFGH")))
         }
@@ -88,6 +85,7 @@ class StartAppUseCaseTests {
 
     @Test
     fun `should return empty set when start method returns empty set`() {
+        whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
@@ -102,6 +100,7 @@ class StartAppUseCaseTests {
     @Test
     fun `should properly pass oneginiCustomIdentityProviderList param to the SDK when list contains two items`() {
         whenever(callMock.argument<ArrayList<String>>("twoStepCustomIdentityProviderIds")).thenReturn(arrayListOf("id1", "id2"))
+        whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
@@ -119,6 +118,7 @@ class StartAppUseCaseTests {
     @Test
     fun `should properly pass oneginiCustomIdentityProviderList param to the SDK when list contains one item`() {
         whenever(callMock.argument<ArrayList<String>>("twoStepCustomIdentityProviderIds")).thenReturn(arrayListOf("id1"))
+        whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
@@ -132,10 +132,12 @@ class StartAppUseCaseTests {
         }
     }
 
+
     @Test
     fun `should properly pass connectionTimeout and readTimeout params to the SDK when provided`() {
         whenever(callMock.argument<Int>("connectionTimeout")).thenReturn(5)
         whenever(callMock.argument<Int>("readTimeout")).thenReturn(20)
+        whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
@@ -153,6 +155,7 @@ class StartAppUseCaseTests {
     fun `should properly pass connectionTimeout and readTimeout params with zero values to the SDK when provided`() {
         whenever(callMock.argument<Int>("connectionTimeout")).thenReturn(0)
         whenever(callMock.argument<Int>("readTimeout")).thenReturn(0)
+        whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
@@ -165,4 +168,6 @@ class StartAppUseCaseTests {
             assertThat(secondValue).isEqualTo(0)
         }
     }
+
+
 }

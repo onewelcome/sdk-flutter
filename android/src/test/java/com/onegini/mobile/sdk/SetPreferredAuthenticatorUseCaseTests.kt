@@ -1,5 +1,6 @@
 package com.onegini.mobile.sdk
 
+
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator

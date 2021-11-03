@@ -24,17 +24,15 @@ class RegisterAuthenticatorUseCase(private var oneginiClient: OneginiClient) {
             result.error(OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.message, null)
             return
         }
-        oneginiClient.userClient.registerAuthenticator(
-            authenticator,
-            object : OneginiAuthenticatorRegistrationHandler {
-                override fun onSuccess(customInfo: CustomInfo?) {
-                    result.success(Gson().toJson(customInfo))
-                }
-
-                override fun onError(oneginiAuthenticatorRegistrationError: OneginiAuthenticatorRegistrationError) {
-                    result.error(oneginiAuthenticatorRegistrationError.errorType.toString(), oneginiAuthenticatorRegistrationError.message, null)
-                }
+        oneginiClient.userClient.registerAuthenticator(authenticator, object : OneginiAuthenticatorRegistrationHandler {
+            override fun onSuccess(customInfo: CustomInfo?) {
+                result.success(Gson().toJson(customInfo))
             }
+
+            override fun onError(oneginiAuthenticatorRegistrationError: OneginiAuthenticatorRegistrationError) {
+                result.error(oneginiAuthenticatorRegistrationError.errorType.toString(), oneginiAuthenticatorRegistrationError.message, null)
+            }
+        }
         )
     }
 
@@ -50,4 +48,5 @@ class RegisterAuthenticatorUseCase(private var oneginiClient: OneginiClient) {
         }
         return authenticator
     }
+
 }

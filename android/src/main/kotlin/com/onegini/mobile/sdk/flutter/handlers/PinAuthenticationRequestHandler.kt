@@ -20,8 +20,8 @@ class PinAuthenticationRequestHandler : OneginiPinAuthenticationRequestHandler {
     }
 
     override fun onNextAuthenticationAttempt(attemptCounter: AuthenticationAttemptCounter) {
-        val attemptCounterJson = Gson().toJson(mapOf("maxAttempts" to attemptCounter.maxAttempts, "failedAttempts" to attemptCounter.failedAttempts, "remainingAttempts" to attemptCounter.remainingAttempts))
-        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_NEXT_AUTHENTICATION_ATTEMPT, attemptCounterJson)))
+        val attemptCounterJson = Gson().toJson(mapOf("maxAttempts" to attemptCounter.maxAttempts, "failedAttempts" to attemptCounter.failedAttempts,"remainingAttempts" to attemptCounter.remainingAttempts))
+        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_NEXT_AUTHENTICATION_ATTEMPT,attemptCounterJson)))
     }
 
     override fun finishAuthentication() {
