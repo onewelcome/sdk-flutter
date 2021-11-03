@@ -22,7 +22,8 @@ class PinRequestHandler : OneginiCreatePinRequestHandler {
     }
 
     override fun onNextPinCreationAttempt(oneginiPinValidationError: OneginiPinValidationError) {
-        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_ERROR, Gson().toJson(Error(oneginiPinValidationError.errorType.toString(), oneginiPinValidationError.message ?: "")).toString())))
+        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_ERROR, Gson().toJson(Error(oneginiPinValidationError.errorType.toString(), oneginiPinValidationError.message
+                ?: "")).toString())))
     }
 
     override fun finishPinCreation() {
