@@ -8,6 +8,7 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import com.onegini.mobile.sdk.flutter.OneginiMethodsWrapper
+import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.R
 import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
 

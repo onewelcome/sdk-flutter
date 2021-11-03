@@ -10,6 +10,8 @@ import com.onegini.mobile.sdk.flutter.models.OneginiEvent
 
 class RegistrationRequestHandler(private val oneginiEventsSender: OneginiEventsSender) : OneginiBrowserRegistrationRequestHandler {
 
+    private var oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback? = null
+
     companion object {
          var CALLBACK: OneginiBrowserRegistrationCallback? = null
         /**
@@ -30,8 +32,15 @@ class RegistrationRequestHandler(private val oneginiEventsSender: OneginiEventsS
         }
     }
 
-    fun onRegistrationCanceled(oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback?) {
+    fun handleRegistrationCallback(uri: Uri) {
+        oneginiBrowserRegistrationCallback?.handleRegistrationCallback(uri)
+        this.oneginiBrowserRegistrationCallback = null
+        CALLBACK = null
+    }
+
+    fun onRegistrationCanceled() {
         oneginiBrowserRegistrationCallback?.denyRegistration()
+        this.oneginiBrowserRegistrationCallback = null
         CALLBACK = null
     }
 
@@ -42,6 +51,7 @@ class RegistrationRequestHandler(private val oneginiEventsSender: OneginiEventsS
 
     override fun startRegistration(uri: Uri, oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback) {
         CALLBACK = oneginiBrowserRegistrationCallback
+        this.oneginiBrowserRegistrationCallback = oneginiBrowserRegistrationCallback
         oneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_HANDLE_REGISTERED_URL, uri.toString())))
     }
 }

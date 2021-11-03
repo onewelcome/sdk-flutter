@@ -113,7 +113,7 @@ class StartAppUseCaseTests {
         StartAppUseCase(contextMock, oneginiSDKMock, oneginiEventsSenderMock)(callMock, resultSpy)
 
         argumentCaptor<List<OneginiCustomIdentityProvider>> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), isNull(), isNull(), capture(), eq(oneginiEventsSenderMock))
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), isNull(), isNull(), capture(), any(), eq(oneginiEventsSenderMock))
             assertThat(firstValue.size).isEqualTo(2)
             assertThat(firstValue[0].id).isEqualTo("id1")
             assertThat(firstValue[1].id).isEqualTo("id2")
@@ -130,7 +130,7 @@ class StartAppUseCaseTests {
         StartAppUseCase(contextMock, oneginiSDKMock, oneginiEventsSenderMock)(callMock, resultSpy)
 
         argumentCaptor<List<OneginiCustomIdentityProvider>> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), isNull(), isNull(), capture(), eq(oneginiEventsSenderMock))
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), isNull(), isNull(), capture(), any() ,eq(oneginiEventsSenderMock))
             assertThat(firstValue.size).isEqualTo(1)
             assertThat(firstValue[0].id).isEqualTo("id1")
         }
@@ -147,7 +147,7 @@ class StartAppUseCaseTests {
         StartAppUseCase(contextMock, oneginiSDKMock, oneginiEventsSenderMock)(callMock, resultSpy)
 
         argumentCaptor<Long> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), capture(), eq(mutableListOf()), eq(oneginiEventsSenderMock))
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), capture(), eq(mutableListOf()), any(), eq(oneginiEventsSenderMock))
             assertThat(firstValue).isEqualTo(5)
             assertThat(secondValue).isEqualTo(20)
         }
@@ -164,7 +164,7 @@ class StartAppUseCaseTests {
         StartAppUseCase(contextMock, oneginiSDKMock, oneginiEventsSenderMock)(callMock, resultSpy)
 
         argumentCaptor<Long> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), capture(), eq(mutableListOf()), eq(oneginiEventsSenderMock))
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), capture(), eq(mutableListOf()), any(), eq(oneginiEventsSenderMock))
             assertThat(firstValue).isEqualTo(0)
             assertThat(secondValue).isEqualTo(0)
         }

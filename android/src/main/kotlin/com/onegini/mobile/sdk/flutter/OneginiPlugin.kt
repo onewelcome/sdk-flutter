@@ -20,9 +20,9 @@ class OneginiPlugin : FlutterPlugin, ActivityAware,
     // / when the Flutter Engine is detached from the Activity
     private lateinit var channel: MethodChannel
     private lateinit var eventChannel: EventChannel
+    private val oneginiSDK: OneginiSDK = OneginiSDK()
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        val oneginiSDK = OneginiSDK()
         val oneginiEventsSender = OneginiEventsSender()
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "onegini")
         channel.setMethodCallHandler(OnMethodCallMapper(flutterPluginBinding.applicationContext, OneginiMethodsWrapper(), oneginiSDK, oneginiEventsSender))
@@ -40,7 +40,7 @@ class OneginiPlugin : FlutterPlugin, ActivityAware,
 
     private fun handleIntent(intent: Intent?) {
         if (intent?.data != null) {
-            RegistrationRequestHandler.handleRegistrationCallback(intent.data!!)
+            oneginiSDK.getRegistrationRequestHandler().handleRegistrationCallback(intent.data!!)
         }
     }
 
