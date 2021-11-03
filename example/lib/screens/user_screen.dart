@@ -186,8 +186,9 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
       return;
     }
 
-    var isLogOut =
-        await Onegini.instance.userClient.deregisterUser(profileId).catchError((error) {
+    var isLogOut = await Onegini.instance.userClient
+        .deregisterUser(profileId)
+        .catchError((error) {
       if (error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,
@@ -380,7 +381,7 @@ class Home extends StatelessWidget {
             fontSize: 16.0);
       }
     });
-    if(oneginiAppToWebSingleSignOn != null){
+    if (oneginiAppToWebSingleSignOn != null) {
       await launch(
         oneginiAppToWebSingleSignOn.redirectUrl,
         enableDomStorage: true,
@@ -392,9 +393,9 @@ class Home extends StatelessWidget {
     var data = await Onegini.instance.userClient.fetchUserProfiles();
     var msg = "";
     data.forEach((element) {
-      msg = msg + element.profileId +", ";
+      msg = msg + element.profileId + ", ";
     });
-    msg = msg.substring(0,msg.length-2);
+    msg = msg.substring(0, msg.length - 2);
     Fluttertoast.showToast(
         msg: msg,
         toastLength: Toast.LENGTH_SHORT,

@@ -41,8 +41,7 @@ class Constants {
       "getRegisteredAuthenticators";
 
   /// Get all authenticators method name
-  static const String getAllAuthenticators =
-      "getAllAuthenticators";
+  static const String getAllAuthenticators = "getAllAuthenticators";
 
   /// Register authenticator method name
   static const String registerAuthenticator = "registerAuthenticator";
@@ -109,7 +108,8 @@ class Constants {
   /// Get app to web single sign on method name
   static const String getAppToWebSingleSignOn = "getAppToWebSingleSignOn";
   static const String getAccessToken = "getAccessToken";
-  static const String getAuthenticatedUserProfile = "getAuthenticatedUserProfile";
+  static const String getAuthenticatedUserProfile =
+      "getAuthenticatedUserProfile";
 
   /// Change pin method name
   static const String changePin = "changePin";
@@ -190,5 +190,5 @@ class Constants {
   /// Error event name
   static const String eventError = "eventError";
 
-  //#endregion Onegini events
+//#endregion Onegini events
 }

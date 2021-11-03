@@ -1,8 +1,8 @@
 // @dart = 2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:onegini/callbacks/onegini_custom_two_step_registration_callback.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:onegini/callbacks/onegini_custom_two_step_registration_callback.dart';
 
 import 'login_screen.dart';
 
@@ -19,21 +19,23 @@ class _OtpScreenState extends State<OtpScreen> {
   final myController = TextEditingController();
 
   ok() async {
-    if(myController.text.isNotEmpty){
-      OneginiCustomTwoStepRegistrationCallback().returnSuccess(myController.text ?? " ").catchError((error) => {
-        if(error is PlatformException) {
-          Fluttertoast.showToast(
-              msg: error.message,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.black38,
-              textColor: Colors.white,
-              fontSize: 16.0
-          )
-        }
-      });
-    }else{
+    if (myController.text.isNotEmpty) {
+      OneginiCustomTwoStepRegistrationCallback()
+          .returnSuccess(myController.text ?? " ")
+          .catchError((error) => {
+                if (error is PlatformException)
+                  {
+                    Fluttertoast.showToast(
+                        msg: error.message,
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.black38,
+                        textColor: Colors.white,
+                        fontSize: 16.0)
+                  }
+              });
+    } else {
       Fluttertoast.showToast(
           msg: "Enter code",
           toastLength: Toast.LENGTH_SHORT,
@@ -41,14 +43,15 @@ class _OtpScreenState extends State<OtpScreen> {
           timeInSecForIosWeb: 1,
           backgroundColor: Colors.black38,
           textColor: Colors.white,
-          fontSize: 16.0
-      );
+          fontSize: 16.0);
     }
   }
 
   cancel() async {
-    OneginiCustomTwoStepRegistrationCallback().returnError("Registration canceled").catchError((error){
-      if(error is PlatformException) {
+    OneginiCustomTwoStepRegistrationCallback()
+        .returnError("Registration canceled")
+        .catchError((error) {
+      if (error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,
             toastLength: Toast.LENGTH_SHORT,
@@ -56,14 +59,12 @@ class _OtpScreenState extends State<OtpScreen> {
             timeInSecForIosWeb: 1,
             backgroundColor: Colors.black38,
             textColor: Colors.white,
-            fontSize: 16.0
-        );
+            fontSize: 16.0);
       }
     });
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-          builder: (context) => LoginScreen()),
+      MaterialPageRoute(builder: (context) => LoginScreen()),
     );
   }
 
@@ -91,10 +92,20 @@ class _OtpScreenState extends State<OtpScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text("Enter the Code",style: TextStyle(fontSize: 24),),
-              SizedBox(height: 30,),
-              Text(widget.password,style: TextStyle(fontSize: 30),),
-              SizedBox(height: 30,),
+              Text(
+                "Enter the Code",
+                style: TextStyle(fontSize: 24),
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Text(
+                widget.password,
+                style: TextStyle(fontSize: 30),
+              ),
+              SizedBox(
+                height: 30,
+              ),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50),
                 child: TextField(
@@ -103,19 +114,25 @@ class _OtpScreenState extends State<OtpScreen> {
                   textAlign: TextAlign.center,
                 ),
               ),
-              SizedBox(height: 30,),
+              SizedBox(
+                height: 30,
+              ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                ElevatedButton(onPressed: () {
-                  cancel();
-                }, child: Text("Cancel"),
-
-                ),
-                ElevatedButton(onPressed: () {
-                  ok();
-                }, child: Text("Ok")),
-              ],)
+                  ElevatedButton(
+                    onPressed: () {
+                      cancel();
+                    },
+                    child: Text("Cancel"),
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        ok();
+                      },
+                      child: Text("Ok")),
+                ],
+              )
             ],
           ),
         ),
