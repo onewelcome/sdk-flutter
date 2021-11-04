@@ -7,7 +7,7 @@ import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.flutter.activity.ActivityWebView
 import io.flutter.plugin.common.MethodCall
 
-class HandleRegisteredUrlUseCase(private val oneginiClient: OneginiClient) {
+class HandleRegisteredUrlUseCase(private var oneginiClient: OneginiClient) {
     operator fun invoke(call: MethodCall, context: Context) {
         val url = call.argument<String>("url") ?: ""
         val isInAppBrowser = call.argument<Int>("type")

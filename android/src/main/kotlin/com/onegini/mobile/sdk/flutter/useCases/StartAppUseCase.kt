@@ -23,8 +23,8 @@ class StartAppUseCase(private val context: Context, private val oneginiSDK: Oneg
         val configModelClassName = call.argument<String>("configModelClassName")
         val config = Config(configModelClassName, securityControllerClassName)
         val oneginiCustomIdentityProviderList = mutableListOf<OneginiCustomIdentityProvider>()
-        twoStepCustomIdentityProviderIds?.forEach { oneginiCustomIdentityProviderList.add(CustomTwoStepIdentityProvider(it, oneginiEventsSender)) }
-        oneginiSDK.buildSDK(context, connectionTimeout?.toLong(), readTimeout?.toLong(), oneginiCustomIdentityProviderList, config ,oneginiEventsSender,)
+        twoStepCustomIdentityProviderIds?.forEach { oneginiCustomIdentityProviderList.add(CustomTwoStepIdentityProvider(it)) }
+        oneginiSDK.buildSDK(context, connectionTimeout?.toLong(), readTimeout?.toLong(), oneginiCustomIdentityProviderList, config)
         start(oneginiSDK.getOneginiClient(), result)
     }
 

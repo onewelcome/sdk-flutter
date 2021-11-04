@@ -96,31 +96,31 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
         }
         val targetUri: Uri = Uri.parse(url)
         oneginiClient.userClient.getAppToWebSingleSignOn(
-            targetUri,
-            object : OneginiAppToWebSingleSignOnHandler {
-                override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {
-                    result.success(Gson().toJson(mapOf("token" to oneginiAppToWebSingleSignOn.token, "redirectUrl" to oneginiAppToWebSingleSignOn.redirectUrl.toString())))
-                }
+                targetUri,
+                object : OneginiAppToWebSingleSignOnHandler {
+                    override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {
+                        result.success(Gson().toJson(mapOf("token" to oneginiAppToWebSingleSignOn.token, "redirectUrl" to oneginiAppToWebSingleSignOn.redirectUrl.toString())))
+                    }
 
-                override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
-                    result.error(oneginiSingleSignOnError.errorType.toString(), oneginiSingleSignOnError.message, null)
+                    override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
+                        result.error(oneginiSingleSignOnError.errorType.toString(), oneginiSingleSignOnError.message, null)
+                    }
                 }
-            }
         )
     }
 
     private fun validatePinWithPolicy(pin: CharArray?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         oneginiClient.userClient.validatePinWithPolicy(
-            pin,
-            object : OneginiPinValidationHandler {
-                override fun onSuccess() {
-                    result.success(true)
-                }
+                pin,
+                object : OneginiPinValidationHandler {
+                    override fun onSuccess() {
+                        result.success(true)
+                    }
 
-                override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
-                    result.error(oneginiPinValidationError.errorType.toString(), oneginiPinValidationError.message, null)
+                    override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
+                        result.error(oneginiPinValidationError.errorType.toString(), oneginiPinValidationError.message, null)
+                    }
                 }
-            }
         )
     }
 

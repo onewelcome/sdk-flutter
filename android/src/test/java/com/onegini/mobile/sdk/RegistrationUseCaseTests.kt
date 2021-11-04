@@ -22,6 +22,7 @@ import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.*
 
+
 @RunWith(MockitoJUnitRunner::class)
 class RegistrationUseCaseTests {
 

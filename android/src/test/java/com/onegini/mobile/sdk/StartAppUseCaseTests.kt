@@ -10,6 +10,7 @@ import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
+import com.onegini.mobile.sdk.flutter.models.Config
 import com.onegini.mobile.sdk.flutter.useCases.StartAppUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -150,6 +151,23 @@ class StartAppUseCaseTests {
             verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), capture(), eq(mutableListOf()), any(), eq(oneginiEventsSenderMock))
             assertThat(firstValue).isEqualTo(5)
             assertThat(secondValue).isEqualTo(20)
+        }
+    }
+
+    @Test
+    fun `should properly pass securityControllerClassName and configModelClassName params to the SDK when provided`() {
+        whenever(callMock.argument<String>("securityControllerClassName")).thenReturn("com.onegini.mobile.onegini_example.SecurityController")
+        whenever(callMock.argument<String>("configModelClassName")).thenReturn("com.onegini.mobile.onegini_example.OneginiConfigModel")
+        whenever(clientMock.start(any())).thenAnswer {
+            it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
+        }
+
+        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
+
+        argumentCaptor<Config> {
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), isNull(), isNull(), eq(mutableListOf()), capture())
+            assertThat(firstValue.configModelClassName).isEqualTo("com.onegini.mobile.onegini_example.OneginiConfigModel")
+            assertThat(firstValue.securityControllerClassName).isEqualTo("com.onegini.mobile.onegini_example.SecurityController")
         }
     }
 

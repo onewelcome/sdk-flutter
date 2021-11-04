@@ -25,4 +25,5 @@ class GetRegisteredAuthenticatorsUseCase(private val oneginiClient: OneginiClien
         }
         result.success(gson.toJson(authenticators))
     }
+
 }

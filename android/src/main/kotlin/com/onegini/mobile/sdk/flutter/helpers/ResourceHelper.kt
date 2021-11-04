@@ -57,16 +57,16 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
     private fun getAnonymousClient(scope: ArrayList<String>?, request: Request) {
         val okHttpClient: OkHttpClient = oneginiClient.deviceClient.anonymousResourceOkHttpClient
         oneginiClient.deviceClient.authenticateDevice(
-            scope?.toArray(arrayOfNulls<String>(scope.size)),
-            object : OneginiDeviceAuthenticationHandler {
-                override fun onSuccess() {
-                    makeRequest(okHttpClient, request, result)
-                }
+                scope?.toArray(arrayOfNulls<String>(scope.size)),
+                object : OneginiDeviceAuthenticationHandler {
+                    override fun onSuccess() {
+                        makeRequest(okHttpClient, request, result)
+                    }
 
-                override fun onError(error: OneginiDeviceAuthenticationError) {
-                    result.error(error.errorType.toString(), error.message, null)
+                    override fun onError(error: OneginiDeviceAuthenticationError) {
+                        result.error(error.errorType.toString(), error.message, null)
+                    }
                 }
-            }
         )
     }
 
@@ -88,31 +88,31 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
             return
         }
         oneginiClient.userClient.authenticateUserImplicitly(
-            userProfile, scope?.toArray(arrayOfNulls<String>(scope.size)),
-            object : OneginiImplicitAuthenticationHandler {
-                override fun onSuccess(profile: UserProfile) {
-                    makeRequest(okHttpClient, request, result)
-                }
+                userProfile, scope?.toArray(arrayOfNulls<String>(scope.size)),
+                object : OneginiImplicitAuthenticationHandler {
+                    override fun onSuccess(profile: UserProfile) {
+                        makeRequest(okHttpClient, request, result)
+                    }
 
-                override fun onError(error: OneginiImplicitTokenRequestError) {
-                    result.error(error.errorType.toString(), error.message, error.cause.toString())
+                    override fun onError(error: OneginiImplicitTokenRequestError) {
+                        result.error(error.errorType.toString(), error.message, error.cause.toString())
+                    }
                 }
-            }
         )
     }
 
     private fun makeRequest(okHttpClient: OkHttpClient, request: Request, result: MethodChannel.Result) {
         Observable.fromCallable { okHttpClient.newCall(request).execute() }
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe(
-                { data ->
-                    result.success(data?.body?.string())
-                },
-                {
-                    result.error("", it.message, it.stackTrace.toString())
-                }
-            )
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(
+                        { data ->
+                            result.success(data?.body?.string())
+                        },
+                        {
+                            result.error("", it.message, it.stackTrace.toString())
+                        }
+                )
     }
 
     private fun getRequest(): Request {
@@ -145,12 +145,14 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
             request.url(url)
         }
 
+
         if (headers != null && headers.isNotEmpty()) {
             try {
                 request.headers(headers.toHeaders())
             } catch (error: Exception) {
             }
         }
+
 
         return request.build()
     }

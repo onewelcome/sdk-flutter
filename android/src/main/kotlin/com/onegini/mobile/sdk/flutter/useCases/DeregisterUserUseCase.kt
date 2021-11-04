@@ -27,17 +27,15 @@ class DeregisterUserUseCase(private val oneginiClient: OneginiClient) {
             result.error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
             return
         }
-        oneginiClient.userClient.deregisterUser(
-            userProfile,
-            object : OneginiDeregisterUserProfileHandler {
-                override fun onSuccess() {
-                    result.success(true)
-                }
-
-                override fun onError(oneginiDeregistrationError: OneginiDeregistrationError) {
-                    result.error(oneginiDeregistrationError.errorType.toString(), oneginiDeregistrationError.message, null)
-                }
+        oneginiClient.userClient.deregisterUser(userProfile, object : OneginiDeregisterUserProfileHandler {
+            override fun onSuccess() {
+                result.success(true)
             }
+
+            override fun onError(oneginiDeregistrationError: OneginiDeregistrationError) {
+                result.error(oneginiDeregistrationError.errorType.toString(), oneginiDeregistrationError.message, null)
+            }
+        }
         )
     }
 }
