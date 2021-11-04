@@ -49,6 +49,7 @@ class RegistrationUseCase(private var oneginiClient: OneginiClient) {
             override fun onError(oneginiRegistrationError: OneginiRegistrationError) {
                 result.error(oneginiRegistrationError.errorType.toString(), oneginiRegistrationError.message, null)
             }
+        }
         )
     }
 }

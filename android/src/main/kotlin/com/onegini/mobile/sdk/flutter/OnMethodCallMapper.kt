@@ -1,7 +1,6 @@
 package com.onegini.mobile.sdk.flutter
 
 import android.content.Context
-import android.content.Intent
 import android.net.Uri
 import android.util.Patterns
 import androidx.annotation.NonNull
@@ -17,16 +16,17 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiLogoutError
 import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
 import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
 import com.onegini.mobile.sdk.flutter.constants.Constants
-import com.onegini.mobile.sdk.flutter.handlers.*
+import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
+import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
+import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.MobileAuthenticationObject
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationAction
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.PluginRegistry
 
-class OnMethodCallMapper(private var context: Context, private val oneginiMethodsWrapper: OneginiMethodsWrapper, private val oneginiSDK: OneginiSDK, private val oneginiEventSender: OneginiEventsSender) : MethodChannel.MethodCallHandler{
+class OnMethodCallMapper(private var context: Context, private val oneginiMethodsWrapper: OneginiMethodsWrapper, private val oneginiSDK: OneginiSDK, private val oneginiEventSender: OneginiEventsSender) : MethodChannel.MethodCallHandler {
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         when (call.method) {
@@ -52,8 +52,8 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_SET_PREFERRED_AUTHENTICATOR -> oneginiMethodsWrapper.setPreferredAuthenticator(call, result, oneginiSDK.getOneginiClient())
             Constants.METHOD_DEREGISTER_AUTHENTICATOR -> oneginiMethodsWrapper.deregisterAuthenticator(call, result, oneginiSDK.getOneginiClient())
             Constants.METHOD_LOGOUT -> logout(result, oneginiSDK.getOneginiClient())
-            Constants.METHOD_ACCEPT_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
-            Constants.METHOD_DENY_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.denyAuthenticationRequest()
+            Constants.METHOD_ACCEPT_PIN_AUTHENTICATION_REQUEST -> oneginiMethodsWrapper.acceptAuthenticationRequest(oneginiSDK, call)
+            Constants.METHOD_DENY_PIN_AUTHENTICATION_REQUEST -> oneginiMethodsWrapper.denyAuthenticationRequest(oneginiSDK)
 
             // Fingerprint
             Constants.METHOD_ACCEPT_FINGERPRINT_AUTHENTICATION_REQUEST -> FingerprintAuthenticationRequestHandler.fingerprintCallback?.acceptAuthenticationRequest()

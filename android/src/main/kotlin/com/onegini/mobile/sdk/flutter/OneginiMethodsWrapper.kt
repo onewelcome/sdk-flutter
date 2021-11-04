@@ -74,4 +74,13 @@ class OneginiMethodsWrapper {
     fun authenticateUser(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         AuthenticateUserUseCase(oneginiClient)(call, result)
     }
+
+    fun acceptAuthenticationRequest(oneginiSDK: OneginiSDK, call: MethodCall) {
+       PinAuthenticationUseCase(oneginiSDK).acceptAuthenticationRequest(call)
+    }
+
+    fun denyAuthenticationRequest(oneginiSDK: OneginiSDK) {
+        PinAuthenticationUseCase(oneginiSDK).denyAuthenticationRequest()
+    }
+
 }
