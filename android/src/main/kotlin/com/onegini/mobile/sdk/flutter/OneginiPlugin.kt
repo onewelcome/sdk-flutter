@@ -2,7 +2,6 @@ package com.onegini.mobile.sdk.flutter
 
 import android.content.Intent
 import androidx.annotation.NonNull
-import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
