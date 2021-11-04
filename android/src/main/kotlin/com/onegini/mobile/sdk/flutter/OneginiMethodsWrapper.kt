@@ -27,8 +27,8 @@ class OneginiMethodsWrapper {
         GetAccessTokenUseCase(oneginiClient)(result)
     }
 
-    fun cancelRegistration(requestHandler: RegistrationRequestHandler, oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback?) {
-        requestHandler.onRegistrationCanceled(oneginiBrowserRegistrationCallback)
+    fun cancelRegistration(requestHandler: RegistrationRequestHandler) {
+        requestHandler.onRegistrationCanceled()
     }
 
     fun getAuthenticatedUserProfile(result: MethodChannel.Result, oneginiClient: OneginiClient) {

@@ -162,10 +162,10 @@ class StartAppUseCaseTests {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
 
-        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
+        StartAppUseCase(contextMock, oneginiSDKMock, oneginiEventsSenderMock)(callMock, resultSpy)
 
         argumentCaptor<Config> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), isNull(), isNull(), eq(mutableListOf()), capture())
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), isNull(), isNull(), eq(mutableListOf()), capture(), eq(oneginiEventsSenderMock))
             assertThat(firstValue.configModelClassName).isEqualTo("com.onegini.mobile.onegini_example.OneginiConfigModel")
             assertThat(firstValue.securityControllerClassName).isEqualTo("com.onegini.mobile.onegini_example.SecurityController")
         }
