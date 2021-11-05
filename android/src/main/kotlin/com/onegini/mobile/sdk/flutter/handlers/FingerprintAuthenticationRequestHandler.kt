@@ -9,6 +9,8 @@ import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 
 class FingerprintAuthenticationRequestHandler(private val oneginiEventsSender: OneginiEventsSender) : OneginiFingerprintAuthenticationRequestHandler {
 
+    var fingerprintCallback: OneginiFingerprintCallback? = null
+
     override fun startAuthentication(userProfile: UserProfile, oneginiFingerprintCallback: OneginiFingerprintCallback) {
         fingerprintCallback = oneginiFingerprintCallback
         oneginiEventsSender.events?.success(Constants.EVENT_OPEN_FINGERPRINT_AUTH)
@@ -26,7 +28,4 @@ class FingerprintAuthenticationRequestHandler(private val oneginiEventsSender: O
         oneginiEventsSender.events?.success(Constants.EVENT_CLOSE_FINGERPRINT_AUTH)
     }
 
-    companion object {
-        var fingerprintCallback: OneginiFingerprintCallback? = null
-    }
 }

@@ -16,7 +16,6 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiLogoutError
 import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
 import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
 import com.onegini.mobile.sdk.flutter.constants.Constants
-import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.MobileAuthenticationObject
@@ -56,9 +55,9 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_DENY_PIN_AUTHENTICATION_REQUEST -> oneginiMethodsWrapper.denyAuthenticationRequest(oneginiSDK)
 
             // Fingerprint
-            Constants.METHOD_ACCEPT_FINGERPRINT_AUTHENTICATION_REQUEST -> FingerprintAuthenticationRequestHandler.fingerprintCallback?.acceptAuthenticationRequest()
-            Constants.METHOD_DENY_FINGERPRINT_AUTHENTICATION_REQUEST -> FingerprintAuthenticationRequestHandler.fingerprintCallback?.denyAuthenticationRequest()
-            Constants.METHOD_FINGERPRINT_FALL_BACK_TO_PIN -> FingerprintAuthenticationRequestHandler.fingerprintCallback?.fallbackToPin()
+            Constants.METHOD_ACCEPT_FINGERPRINT_AUTHENTICATION_REQUEST -> oneginiMethodsWrapper.acceptFingerprintAuthenticationRequest(oneginiSDK)
+            Constants.METHOD_DENY_FINGERPRINT_AUTHENTICATION_REQUEST -> oneginiMethodsWrapper.denyFingerprintAuthenticationRequest(oneginiSDK)
+            Constants.METHOD_FINGERPRINT_FALL_BACK_TO_PIN -> oneginiMethodsWrapper.fallbackToPin(oneginiSDK)
 
             // OTP
             Constants.METHOD_HANDLE_MOBILE_AUTH_WITH_OTP -> MobileAuthenticationObject.mobileAuthWithOtp(call.argument<String>("data"), result, oneginiSDK.getOneginiClient())

@@ -83,4 +83,15 @@ class OneginiMethodsWrapper {
         PinAuthenticationUseCase(oneginiSDK).denyAuthenticationRequest()
     }
 
+    fun acceptFingerprintAuthenticationRequest(oneginiSDK: OneginiSDK) {
+        FingerprintAuthenticationUseCase(oneginiSDK).acceptAuthenticationRequest()
+    }
+    
+    fun denyFingerprintAuthenticationRequest(oneginiSDK: OneginiSDK) {
+        FingerprintAuthenticationUseCase(oneginiSDK).denyAuthenticationRequest()
+    }
+
+    fun fallbackToPin(oneginiSDK: OneginiSDK) {
+        FingerprintAuthenticationUseCase(oneginiSDK).fallbackToPin()
+    }
 }
