@@ -35,6 +35,7 @@ interface Constants {
         const val METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON = "getAppToWebSingleSignOn"
         const val METHOD_CHANGE_PIN = "changePin"
         const val METHOD_GET_USER_PROFILES = "userProfiles"
+        const val METHOD_GET_REDIRECT_URL = "getRedirectUrl"
 
         // Resources
         const val METHOD_GET_RESOURCE_ANONYMOUS = "getResourceAnonymous"
@@ -44,10 +45,10 @@ interface Constants {
 
 
         //Registration
-        const val METHOD_REGISTER_USER ="registerUser"
-        const val METHOD_HANDLE_REGISTERED_URL="handleRegisteredUserUrl"
-        const val METHOD_CANCEL_REGISTRATION ="cancelRegistration"
-        const val METHOD_DENY_PIN_REGISTRATION_REQUEST  = "denyPinRegistrationRequest"
+        const val METHOD_REGISTER_USER = "registerUser"
+        const val METHOD_HANDLE_REGISTERED_URL = "handleRegisteredUserUrl"
+        const val METHOD_CANCEL_REGISTRATION = "cancelRegistration"
+        const val METHOD_DENY_PIN_REGISTRATION_REQUEST = "denyPinRegistrationRequest"
         const val METHOD_ACCEPT_PIN_REGISTRATION_REQUEST = "acceptPinRegistrationRequest"
         const val METHOD_GET_IDENTITY_PROVIDERS = "getIdentityProviders"
         const val METHOD_DEREGISTER_USER = "deregisterUser"
@@ -62,6 +63,7 @@ interface Constants {
         const val METHOD_REGISTER_AUTHENTICATOR = "registerAuthenticator"
         const val METHOD_DEREGISTER_AUTHENTICATOR = "deregisterAuthenticator"
         const val METHOD_AUTHENTICATE_USER = "authenticateUser"
+        const val METHOD_IS_AUTHENTICATOR_REGISTERED = "isAuthenticatorRegistered"
         const val METHOD_LOGOUT = "logout"
 
         // Fingerprint

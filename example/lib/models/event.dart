@@ -1,5 +1,3 @@
-
-
 import 'dart:convert';
 
 Event eventFromJson(String str) => Event.fromJson(json.decode(str));
@@ -16,12 +14,12 @@ class Event {
   String eventValue;
 
   factory Event.fromJson(Map<String, dynamic> json) => Event(
-    eventName: json["eventName"],
-    eventValue: json["eventValue"],
-  );
+        eventName: json["eventName"],
+        eventValue: json["eventValue"],
+      );
 
   Map<String, dynamic> toJson() => {
-    "eventName": eventName,
-    "eventValue": eventValue,
-  };
+        "eventName": eventName,
+        "eventValue": eventValue,
+      };
 }

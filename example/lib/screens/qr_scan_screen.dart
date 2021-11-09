@@ -1,5 +1,6 @@
 // @dart = 2.10
 import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
@@ -28,7 +29,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
   void onQRViewCreated(QRViewController controllerr) {
     setState(() => controller = controllerr);
     controller.scannedDataStream.listen((scanData) {
-      if(counter >= 1) {
+      if (counter >= 1) {
         return;
       }
       sendDataBack(scanData.code);
@@ -38,7 +39,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
   sendDataBack(String data) async {
     counter++;
     await controller.pauseCamera();
-    if(counter >= 1) {
+    if (counter >= 1) {
       controller.stopCamera();
       Navigator.of(context)..pop(data);
     }
@@ -70,7 +71,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
       appBar: AppBar(
         title: Text("QR Code"),
         centerTitle: true,
-        ),
+      ),
       body: Column(
         children: <Widget>[
           Expanded(flex: 4, child: _buildQr(context)),
