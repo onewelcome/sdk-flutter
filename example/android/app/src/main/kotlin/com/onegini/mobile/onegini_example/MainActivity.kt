@@ -13,11 +13,4 @@ class MainActivity : FlutterActivity() {
         super.onCreate(savedInstanceState)
     }
 
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        if (intent.data != null) {
-            RegistrationRequestHandler.handleRegistrationCallback(intent.data!!)
-        }
-    }
 }
