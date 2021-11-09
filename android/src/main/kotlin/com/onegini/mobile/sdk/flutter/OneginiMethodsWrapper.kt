@@ -76,4 +76,8 @@ class OneginiMethodsWrapper {
     fun authenticateUser(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         AuthenticateUserUseCase(oneginiClient)(call, result)
     }
+
+    fun isAuthenticatorRegistered(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient) {
+        IsAuthenticatorRegisteredUseCase(oneginiClient)(call, result)
+    }
 }
