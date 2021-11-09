@@ -9,6 +9,7 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.models.Config
 import com.onegini.mobile.sdk.flutter.useCases.StartAppUseCase
 import io.flutter.plugin.common.MethodCall
@@ -20,7 +21,6 @@ import org.mockito.Mock
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.*
-
 
 @RunWith(MockitoJUnitRunner::class)
 class StartAppUseCaseTests {
@@ -43,6 +43,10 @@ class StartAppUseCaseTests {
     @Mock
     lateinit var oneginiInitializationError: OneginiInitializationError
 
+    @Mock
+    lateinit var oneginiEventsSenderMock: OneginiEventsSender
+
+
     @Before
     fun attach() {
         whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
@@ -54,7 +58,7 @@ class StartAppUseCaseTests {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(setOf(UserProfile("QWERTY")))
         }
 
-        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
+        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy, oneginiEventsSenderMock)
 
         val expectedList = setOf(mapOf("isDefault" to false, "profileId" to "QWERTY"))
         val expectedResult = Gson().toJson(expectedList)
@@ -69,7 +73,7 @@ class StartAppUseCaseTests {
         whenever(oneginiInitializationError.errorType).thenReturn(OneginiInitializationError.GENERAL_ERROR)
         whenever(oneginiInitializationError.message).thenReturn("General error")
 
-        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
+        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy, oneginiEventsSenderMock)
 
         verify(resultSpy).error(oneginiInitializationError.errorType.toString(), oneginiInitializationError.message, null)
     }
@@ -80,7 +84,7 @@ class StartAppUseCaseTests {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(setOf(UserProfile("QWERTY"), UserProfile("ASDFGH")))
         }
 
-        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
+        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy, oneginiEventsSenderMock)
 
         val expectedList = setOf(mapOf("isDefault" to false, "profileId" to "QWERTY"), mapOf("isDefault" to false, "profileId" to "ASDFGH"))
         val expectedResult = Gson().toJson(expectedList)
@@ -93,7 +97,7 @@ class StartAppUseCaseTests {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
 
-        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
+        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy, oneginiEventsSenderMock)
 
         val expectedList = emptySet<UserProfile>()
         val expectedResult = Gson().toJson(expectedList)
@@ -107,10 +111,10 @@ class StartAppUseCaseTests {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
 
-        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
+        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy, oneginiEventsSenderMock)
 
         argumentCaptor<List<OneginiCustomIdentityProvider>> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), isNull(), isNull(), capture(), any())
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), isNull(), isNull(), capture(), any(), eq(oneginiEventsSenderMock))
             assertThat(firstValue.size).isEqualTo(2)
             assertThat(firstValue[0].id).isEqualTo("id1")
             assertThat(firstValue[1].id).isEqualTo("id2")
@@ -124,15 +128,14 @@ class StartAppUseCaseTests {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
 
-        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
+        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy, oneginiEventsSenderMock)
 
         argumentCaptor<List<OneginiCustomIdentityProvider>> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), isNull(), isNull(), capture(), any())
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), isNull(), isNull(), capture(), any() ,eq(oneginiEventsSenderMock))
             assertThat(firstValue.size).isEqualTo(1)
             assertThat(firstValue[0].id).isEqualTo("id1")
         }
     }
-
 
     @Test
     fun `should properly pass connectionTimeout and readTimeout params to the SDK when provided`() {
@@ -142,10 +145,10 @@ class StartAppUseCaseTests {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
 
-        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
+        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy, oneginiEventsSenderMock)
 
         argumentCaptor<Long> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), capture(), eq(mutableListOf()), any())
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), capture(), eq(mutableListOf()), any(), eq(oneginiEventsSenderMock))
             assertThat(firstValue).isEqualTo(5)
             assertThat(secondValue).isEqualTo(20)
         }
@@ -159,10 +162,10 @@ class StartAppUseCaseTests {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
 
-        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
+        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy, oneginiEventsSenderMock)
 
         argumentCaptor<Config> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), isNull(), isNull(), eq(mutableListOf()), capture())
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), isNull(), isNull(), eq(mutableListOf()), capture(), eq(oneginiEventsSenderMock))
             assertThat(firstValue.configModelClassName).isEqualTo("com.onegini.mobile.onegini_example.OneginiConfigModel")
             assertThat(firstValue.securityControllerClassName).isEqualTo("com.onegini.mobile.onegini_example.SecurityController")
         }
@@ -176,14 +179,12 @@ class StartAppUseCaseTests {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
 
-        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
+        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy,  oneginiEventsSenderMock)
 
         argumentCaptor<Long> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), capture(), eq(mutableListOf()), any())
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), capture(), eq(mutableListOf()), any(), eq(oneginiEventsSenderMock))
             assertThat(firstValue).isEqualTo(0)
             assertThat(secondValue).isEqualTo(0)
         }
     }
-
-
 }

@@ -8,7 +8,9 @@ import com.onegini.mobile.sdk.flutter.constants.Constants
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
 
-class RegistrationRequestHandler : OneginiBrowserRegistrationRequestHandler {
+class RegistrationRequestHandler(private val oneginiEventsSender: OneginiEventsSender) : OneginiBrowserRegistrationRequestHandler {
+
+    private var oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback? = null
 
     companion object {
         private var CALLBACK: OneginiBrowserRegistrationCallback? = null
@@ -34,8 +36,22 @@ class RegistrationRequestHandler : OneginiBrowserRegistrationRequestHandler {
         }
     }
 
+    fun handleRegistrationCallback(uri: Uri) {
+        oneginiBrowserRegistrationCallback?.handleRegistrationCallback(uri)
+        this.oneginiBrowserRegistrationCallback = null
+        CALLBACK = null
+    }
+
+    fun onRegistrationCanceled() {
+        oneginiBrowserRegistrationCallback?.denyRegistration()
+        this.oneginiBrowserRegistrationCallback = null
+        CALLBACK = null
+    }
+
+
     override fun startRegistration(uri: Uri, oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback) {
         CALLBACK = oneginiBrowserRegistrationCallback
-        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_HANDLE_REGISTERED_URL, uri.toString())))
+        this.oneginiBrowserRegistrationCallback = oneginiBrowserRegistrationCallback
+        oneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_HANDLE_REGISTERED_URL, uri.toString())))
     }
 }

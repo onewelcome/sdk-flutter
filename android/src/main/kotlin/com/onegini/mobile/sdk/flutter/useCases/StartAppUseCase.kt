@@ -8,13 +8,14 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.models.Config
 import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepIdentityProvider
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
 class StartAppUseCase(private val context: Context, private val oneginiSDK: OneginiSDK) {
-    operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
+    operator fun invoke(call: MethodCall, result: MethodChannel.Result, oneginiEventsSender: OneginiEventsSender) {
         val twoStepCustomIdentityProviderIds = call.argument<ArrayList<String>>("twoStepCustomIdentityProviderIds")
         val connectionTimeout = call.argument<Int>("connectionTimeout")
         val readTimeout = call.argument<Int>("readTimeout")
@@ -23,7 +24,7 @@ class StartAppUseCase(private val context: Context, private val oneginiSDK: Oneg
         val config = Config(configModelClassName, securityControllerClassName)
         val oneginiCustomIdentityProviderList = mutableListOf<OneginiCustomIdentityProvider>()
         twoStepCustomIdentityProviderIds?.forEach { oneginiCustomIdentityProviderList.add(CustomTwoStepIdentityProvider(it)) }
-        oneginiSDK.buildSDK(context, connectionTimeout?.toLong(), readTimeout?.toLong(), oneginiCustomIdentityProviderList, config)
+        oneginiSDK.buildSDK(context, connectionTimeout?.toLong(), readTimeout?.toLong(), oneginiCustomIdentityProviderList, config, oneginiEventsSender)
         start(oneginiSDK.getOneginiClient(), result)
     }
 

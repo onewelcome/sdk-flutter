@@ -11,4 +11,11 @@ class OneginiEventsSender {
                 events = eventSink
         }
     }
+
+    var events: EventChannel.EventSink? = null
+
+    fun setEventSink(eventSink: EventChannel.EventSink?) {
+        if (eventSink != null)
+            events = eventSink
+    }
 }

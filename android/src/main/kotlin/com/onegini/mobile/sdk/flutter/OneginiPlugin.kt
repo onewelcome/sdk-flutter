@@ -23,25 +23,28 @@ class OneginiPlugin : FlutterPlugin, ActivityAware,
     private lateinit var channel: MethodChannel
     private lateinit var eventChannel: EventChannel
     private val oneginiSDK: OneginiSDK = OneginiSDK()
+    private val oneginiEventsSender: OneginiEventsSender = OneginiEventsSender()
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "onegini")
-        channel.setMethodCallHandler(OnMethodCallMapper(flutterPluginBinding.applicationContext, OneginiMethodsWrapper(), oneginiSDK))
+        channel.setMethodCallHandler(OnMethodCallMapper(flutterPluginBinding.applicationContext, OneginiMethodsWrapper(), oneginiSDK, oneginiEventsSender))
         eventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "onegini_events")
         eventChannel.setStreamHandler(object : EventChannel.StreamHandler {
             override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
                 OneginiEventsSender.setEventSink(events)
+                oneginiEventsSender.setEventSink(events)
             }
 
             override fun onCancel(arguments: Any?) {
                 OneginiEventsSender.setEventSink(null)
+                oneginiEventsSender.setEventSink(null)
             }
         })
     }
 
     private fun handleIntent(intent: Intent?) {
         if (intent?.data != null) {
-            RegistrationRequestHandler.handleRegistrationCallback(intent.data!!)
+            oneginiSDK.getRegistrationRequestHandler().handleRegistrationCallback(intent.data!!)
         }
     }
 

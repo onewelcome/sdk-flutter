@@ -6,6 +6,7 @@ import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 import com.onegini.mobile.sdk.flutter.handlers.*
+import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.models.Config
 import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.TimeUnit
@@ -13,10 +14,11 @@ import java.util.concurrent.TimeUnit
 class OneginiSDK {
 
     private lateinit var oneginiClient: OneginiClient
+    private lateinit var registrationRequestHandler: RegistrationRequestHandler
 
-    fun buildSDK(context: Context, httpConnectionTimeout: Long?, httpReadTimeout: Long?, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>, config: Config) {
+    fun buildSDK(context: Context, httpConnectionTimeout: Long?, httpReadTimeout: Long?, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>, config: Config, oneginiEventsSender: OneginiEventsSender) {
         val applicationContext = context.applicationContext
-        val registrationRequestHandler = RegistrationRequestHandler()
+        registrationRequestHandler = RegistrationRequestHandler(oneginiEventsSender)
         val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
         val pinAuthenticationRequestHandler = PinAuthenticationRequestHandler()
         val createPinRequestHandler = PinRequestHandler()
@@ -47,6 +49,10 @@ class OneginiSDK {
         }
 
         oneginiClient = clientBuilder.build()
+    }
+
+    fun getRegistrationRequestHandler(): RegistrationRequestHandler {
+      return  registrationRequestHandler
     }
 
     fun getOneginiClient(): OneginiClient {
