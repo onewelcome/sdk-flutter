@@ -65,7 +65,7 @@ class GetUnauthenticatedResourceUseCaseTests {
     fun `should call getRequest with correct params`() {
         GetUnauthenticatedResourceUseCase(clientMock)(callMock, resultSpy, resourceHelper)
 
-        verify(resourceHelper).getRequest(eq(callMock), "https://token-mobile.test.onegini.com/resources/")
+        verify(resourceHelper).getRequest(callMock, "https://token-mobile.test.onegini.com/resources/")
 
     }
 
