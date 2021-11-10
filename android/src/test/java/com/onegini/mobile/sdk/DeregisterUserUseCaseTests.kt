@@ -42,8 +42,6 @@ class DeregisterUserUseCaseTests {
 
     @Test
     fun `should return error when user not authenticated`() {
-        whenever(userClientMock.userProfiles).thenReturn(setOf())
-
         DeregisterUserUseCase(clientMock)(callMock, resultSpy)
 
         verify(resultSpy).error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
