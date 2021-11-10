@@ -30,10 +30,10 @@ class DeregisterUserUseCaseTests {
     lateinit var userClientMock: UserClient
 
     @Mock
-    lateinit var callMock: MethodCall
+    lateinit var oneginiDeregistrationErrorMock: OneginiDeregistrationError
 
     @Mock
-    lateinit var oneginiDeregistrationErrorMock: OneginiDeregistrationError
+    lateinit var callMock: MethodCall
 
     @Spy
     lateinit var resultSpy: MethodChannel.Result
@@ -45,8 +45,7 @@ class DeregisterUserUseCaseTests {
 
     @Test
     fun `should return error when user not authenticated`() {
-        whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
-        whenever(clientMock.userClient.userProfiles).thenReturn(setOf())
+        whenever(userClientMock.userProfiles).thenReturn(setOf())
 
         DeregisterUserUseCase(clientMock)(callMock, resultSpy)
 
@@ -56,7 +55,8 @@ class DeregisterUserUseCaseTests {
     @Test
     fun `should return true when user deregister`() {
         whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
-        whenever(clientMock.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
+        whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
+
         whenever(userClientMock.deregisterUser(eq(UserProfile("QWERTY")), any())).thenAnswer {
             it.getArgument<OneginiDeregisterUserProfileHandler>(1).onSuccess()
         }
@@ -67,9 +67,9 @@ class DeregisterUserUseCaseTests {
     }
 
     @Test
-    fun `should return error when deregister method returns error`() {
+    fun `should return error when deregister method return error`() {
         whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
-        whenever(clientMock.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
+        whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
         whenever(userClientMock.deregisterUser(eq(UserProfile("QWERTY")), any())).thenAnswer {
             it.getArgument<OneginiDeregisterUserProfileHandler>(1).onError(oneginiDeregistrationErrorMock)
         }

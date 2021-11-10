@@ -56,7 +56,10 @@ class RegistrationUseCaseTests {
 
         RegistrationUseCase(clientMock)(callMock, resultSpy)
 
-        val expectedResult = Gson().toJson(mapOf("userProfile" to UserProfile("QWERTY"), "customInfo" to CustomInfo(0, "")))
+        val userProfileJson = mapOf("profileId" to "QWERTY", "isDefault" to false)
+        val customInfoJson = mapOf("data" to "", "status" to 0)
+        val expectedResult = Gson().toJson(mapOf("userProfile" to userProfileJson, "customInfo" to customInfoJson))
+       
         verify(resultSpy).success(expectedResult)
     }
 
@@ -105,7 +108,9 @@ class RegistrationUseCaseTests {
 
         RegistrationUseCase(clientMock)(callMock, resultSpy)
 
-        val expectedResult = Gson().toJson(mapOf("userProfile" to UserProfile("QWERTY"), "customInfo" to CustomInfo(0, "")))
+        val userProfileJson = mapOf("profileId" to "QWERTY", "isDefault" to false)
+        val customInfoJson = mapOf("data" to "", "status" to 0)
+        val expectedResult = Gson().toJson(mapOf("userProfile" to userProfileJson, "customInfo" to customInfoJson))
         verify(resultSpy).success(expectedResult)
     }
 
