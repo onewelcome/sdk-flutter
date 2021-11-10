@@ -49,7 +49,8 @@ class GetAuthenticatedUserProfileUseCaseTests {
 
         GetAuthenticatedUserProfileUseCase(clientMock)(resultSpy)
 
-        val expectedResult = Gson().toJson(UserProfile("QWERTY"))
+        val expectedResult = Gson().toJson(mapOf("profileId" to "QWERTY", "isDefault" to false))
+        
         Mockito.verify(resultSpy).success(eq(expectedResult))
     }
 }

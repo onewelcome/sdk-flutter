@@ -48,7 +48,7 @@ class GetUserProfileUseCaseTests {
 
         GetUserProfilesUseCase(clientMock)(resultSpy)
 
-        val expectedResult = Gson().toJson(setOf(UserProfile("QWERTY")))
+        val expectedResult = Gson().toJson(setOf(mapOf( "isDefault" to false, "profileId" to "QWERTY")))
         Mockito.verify(resultSpy).success(eq(expectedResult))
     }
 
@@ -58,7 +58,7 @@ class GetUserProfileUseCaseTests {
 
         GetUserProfilesUseCase(clientMock)(resultSpy)
 
-        val expectedResult = Gson().toJson(setOf(UserProfile("QWERTY"), UserProfile("ASDFGH")))
+        val expectedResult = Gson().toJson(setOf(mapOf("isDefault" to false, "profileId" to "QWERTY"),mapOf("isDefault" to false, "profileId" to "ASDFGH")))
         Mockito.verify(resultSpy).success(eq(expectedResult))
     }
 }
