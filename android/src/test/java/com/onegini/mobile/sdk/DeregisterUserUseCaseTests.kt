@@ -42,9 +42,6 @@ class DeregisterUserUseCaseTests {
 
     @Test
     fun `should return error when user not authenticated`() {
-        whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
-        whenever(clientMock.userClient.userProfiles).thenReturn(setOf())
-
         DeregisterUserUseCase(clientMock)(callMock, resultSpy)
 
         verify(resultSpy).error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
@@ -53,7 +50,8 @@ class DeregisterUserUseCaseTests {
     @Test
     fun `should return true when user deregister`() {
         whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
-        whenever(clientMock.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
+        whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
+
         whenever(userClientMock.deregisterUser(eq(UserProfile("QWERTY")), any())).thenAnswer {
             it.getArgument<OneginiDeregisterUserProfileHandler>(1).onSuccess()
         }
@@ -66,7 +64,7 @@ class DeregisterUserUseCaseTests {
     @Test
     fun `should return error when deregister method return error`() {
         whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
-        whenever(clientMock.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
+        whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
         whenever(userClientMock.deregisterUser(eq(UserProfile("QWERTY")), any())).thenAnswer {
             it.getArgument<OneginiDeregisterUserProfileHandler>(1).onError(oneginiDeregistrationErrorMock)
         }
