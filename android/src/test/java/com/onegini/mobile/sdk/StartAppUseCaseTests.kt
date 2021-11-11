@@ -41,6 +41,9 @@ class StartAppUseCaseTests {
     lateinit var contextMock: Context
 
     @Mock
+    lateinit var configMock: Config
+
+    @Mock
     lateinit var oneginiInitializationError: OneginiInitializationError
 
     @Before
@@ -110,7 +113,7 @@ class StartAppUseCaseTests {
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         argumentCaptor<List<OneginiCustomIdentityProvider>> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), any(), resultSpy)
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), any(), eq(resultSpy))
             assertThat(firstValue.size).isEqualTo(2)
             assertThat(firstValue[0].id).isEqualTo("id1")
             assertThat(firstValue[1].id).isEqualTo("id2")
@@ -127,7 +130,7 @@ class StartAppUseCaseTests {
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         argumentCaptor<List<OneginiCustomIdentityProvider>> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), any(), resultSpy)
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), any(), eq(resultSpy))
             assertThat(firstValue.size).isEqualTo(1)
             assertThat(firstValue[0].id).isEqualTo("id1")
         }
@@ -145,7 +148,7 @@ class StartAppUseCaseTests {
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         argumentCaptor<Config> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), eq(mutableListOf()), capture(), resultSpy)
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), eq(mutableListOf()), capture(), eq(resultSpy))
             assertThat(firstValue.httpConnectionTimeout).isEqualTo(5)
             assertThat(firstValue.httpReadTimeout).isEqualTo(20)
         }
@@ -162,7 +165,7 @@ class StartAppUseCaseTests {
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         argumentCaptor<Config> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), eq(mutableListOf()), capture(), resultSpy)
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), eq(mutableListOf()), capture(), eq(resultSpy))
             assertThat(firstValue.configModelClassName).isEqualTo("com.onegini.mobile.onegini_example.OneginiConfigModel")
             assertThat(firstValue.securityControllerClassName).isEqualTo("com.onegini.mobile.onegini_example.SecurityController")
         }
@@ -179,7 +182,7 @@ class StartAppUseCaseTests {
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         argumentCaptor<Config> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), eq(mutableListOf()), capture(), resultSpy)
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), eq(mutableListOf()), capture(), eq(resultSpy))
             assertThat(firstValue.httpConnectionTimeout).isEqualTo(0)
             assertThat(firstValue.httpReadTimeout).isEqualTo(0)
         }
