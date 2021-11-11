@@ -186,8 +186,9 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
       return;
     }
 
-    var isLogOut =
-        await Onegini.instance.userClient.deregisterUser(profileId).catchError((error) {
+    var isLogOut = await Onegini.instance.userClient
+        .deregisterUser(profileId)
+        .catchError((error) {
       if (error is PlatformException) {
         Fluttertoast.showToast(
             msg: error.message,
@@ -380,7 +381,7 @@ class Home extends StatelessWidget {
             fontSize: 16.0);
       }
     });
-    if(oneginiAppToWebSingleSignOn != null){
+    if (oneginiAppToWebSingleSignOn != null) {
       await launch(
         oneginiAppToWebSingleSignOn.redirectUrl,
         enableDomStorage: true,
@@ -392,9 +393,9 @@ class Home extends StatelessWidget {
     var data = await Onegini.instance.userClient.fetchUserProfiles();
     var msg = "";
     data.forEach((element) {
-      msg = msg + element.profileId +", ";
+      msg = msg + element.profileId + ", ";
     });
-    msg = msg.substring(0,msg.length-2);
+    msg = msg.substring(0, msg.length - 2);
     Fluttertoast.showToast(
         msg: msg,
         toastLength: Toast.LENGTH_SHORT,
@@ -459,8 +460,7 @@ class Info extends StatefulWidget {
 class _InfoState extends State<Info> {
   Future<ApplicationDetails> getApplicationDetails() async {
     var response = await Onegini.instance.resourcesMethods.getResourceAnonymous(
-        "application-details",
-        ["read", "write", "application-details"]);
+        "application-details", ["read", "write", "application-details"]);
     return applicationDetailsFromJson(response);
   }
 
@@ -471,8 +471,9 @@ class _InfoState extends State<Info> {
   }
 
   Future<String> getImplicitUserDetails() async {
-    var response = await Onegini.instance.resourcesMethods
-        .getResourceImplicit("user-id-decorated", ["read"], parameters: {"username": "foo@bax.com", "age": 15});
+    var response = await Onegini.instance.resourcesMethods.getResourceImplicit(
+        "user-id-decorated", ["read"],
+        parameters: {"username": "foo@bax.com", "age": 15});
     Map<String, dynamic> responseAsJson = json.decode(response);
     return responseAsJson["decorated_user_id"];
   }
