@@ -71,6 +71,10 @@ class OneginiMethodsWrapper {
         GetAllAuthenticatorsUseCase(oneginiClient)(result)
     }
 
+    fun getRedirectUrl(result: MethodChannel.Result,oneginiClient: OneginiClient) {
+        GetRedirectUrlUseCase(oneginiClient)(result)
+    }
+
     fun authenticateUser(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         AuthenticateUserUseCase(oneginiClient)(call, result)
     }
@@ -83,4 +87,8 @@ class OneginiMethodsWrapper {
         PinAuthenticationUseCase(oneginiSDK).denyAuthenticationRequest()
     }
 
+
+    fun isAuthenticatorRegistered(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient) {
+        IsAuthenticatorRegisteredUseCase(oneginiClient)(call, result)
+    }
 }
