@@ -53,6 +53,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_LOGOUT -> logout(result, oneginiSDK.getOneginiClient())
             Constants.METHOD_ACCEPT_PIN_AUTHENTICATION_REQUEST -> oneginiMethodsWrapper.acceptAuthenticationRequest(oneginiSDK, call)
             Constants.METHOD_DENY_PIN_AUTHENTICATION_REQUEST -> oneginiMethodsWrapper.denyAuthenticationRequest(oneginiSDK)
+            Constants.METHOD_IS_AUTHENTICATOR_REGISTERED -> oneginiMethodsWrapper.isAuthenticatorRegistered(call, result, oneginiSDK.getOneginiClient())
 
             // Fingerprint
             Constants.METHOD_ACCEPT_FINGERPRINT_AUTHENTICATION_REQUEST -> oneginiMethodsWrapper.acceptFingerprintAuthenticationRequest(oneginiSDK)
@@ -76,6 +77,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_GET_USER_PROFILES -> oneginiMethodsWrapper.getUserProfiles(result, oneginiSDK.getOneginiClient())
             Constants.METHOD_GET_ACCESS_TOKEN -> oneginiMethodsWrapper.getAccessToken(result, oneginiSDK.getOneginiClient())
             Constants.METHOD_GET_AUTHENTICATED_USER_PROFILE -> oneginiMethodsWrapper.getAuthenticatedUserProfile(result, oneginiSDK.getOneginiClient())
+            Constants.METHOD_GET_REDIRECT_URL -> oneginiMethodsWrapper.getRedirectUrl(result, oneginiSDK.getOneginiClient())
 
             Constants.METHOD_VALIDATE_PIN_WITH_POLICY -> validatePinWithPolicy(call.argument<String>("pin")?.toCharArray(), result, oneginiSDK.getOneginiClient())
 

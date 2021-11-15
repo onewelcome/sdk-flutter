@@ -84,13 +84,16 @@ class OneginiMethodsWrapper {
     }
 
     fun acceptAuthenticationRequest(oneginiSDK: OneginiSDK, call: MethodCall) {
-       PinAuthenticationUseCase(oneginiSDK).acceptAuthenticationRequest(call)
+       AcceptPinAuthenticationUseCase(oneginiSDK)(call)
     }
 
     fun denyAuthenticationRequest(oneginiSDK: OneginiSDK) {
-        PinAuthenticationUseCase(oneginiSDK).denyAuthenticationRequest()
+        DenyPinAuthenticationUseCase(oneginiSDK)()
     }
 
+
+    fun isAuthenticatorRegistered(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient) {
+        IsAuthenticatorRegisteredUseCase(oneginiClient)(call, result)
     fun acceptFingerprintAuthenticationRequest(oneginiSDK: OneginiSDK) {
         FingerprintAcceptAuthenticationUseCase(oneginiSDK)
     }
