@@ -15,8 +15,7 @@ class OneginiSDK {
 
     private lateinit var oneginiClient: OneginiClient
     private lateinit var registrationRequestHandler: RegistrationRequestHandler
-    private lateinit var pinAuthenticationRequestHandler: PinAuthenticationRequestHandler
-    private lateinit var fingerprintRequestHandler: FingerprintAuthenticationRequestHandler
+    private var fingerprintRequestHandler: FingerprintAuthenticationRequestHandler? = null
     private var pinAuthenticationRequestHandler: PinAuthenticationRequestHandler? = null
 
 
@@ -29,7 +28,7 @@ class OneginiSDK {
         val mobileAuthWithOtpRequestHandler = MobileAuthOtpRequestHandler(oneginiEventsSender)
         val clientBuilder = OneginiClientBuilder(applicationContext, createPinRequestHandler, pinAuthenticationRequestHandler!!) // handlers for optional functionalities
             .setBrowserRegistrationRequestHandler(registrationRequestHandler)
-            .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler)
+            .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler!!)
             .setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
 
         // Set config model
@@ -61,7 +60,7 @@ class OneginiSDK {
         return pinAuthenticationRequestHandler
     }
 
-    fun getFingerprintAuthenticationRequestHandler() : FingerprintAuthenticationRequestHandler {
+    fun getFingerprintAuthenticationRequestHandler() : FingerprintAuthenticationRequestHandler? {
         return fingerprintRequestHandler
     }
 
