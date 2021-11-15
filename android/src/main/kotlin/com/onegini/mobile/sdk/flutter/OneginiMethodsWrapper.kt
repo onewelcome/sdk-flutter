@@ -80,11 +80,11 @@ class OneginiMethodsWrapper {
     }
 
     fun acceptAuthenticationRequest(oneginiSDK: OneginiSDK, call: MethodCall) {
-       PinAuthenticationUseCase(oneginiSDK).acceptAuthenticationRequest(call)
+       AcceptPinAuthenticationUseCase(oneginiSDK)(call)
     }
 
     fun denyAuthenticationRequest(oneginiSDK: OneginiSDK) {
-        PinAuthenticationUseCase(oneginiSDK).denyAuthenticationRequest()
+        DenyPinAuthenticationUseCase(oneginiSDK)()
     }
 
 

@@ -9,7 +9,8 @@ import com.onegini.mobile.sdk.flutter.constants.Constants
 import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
-import com.onegini.mobile.sdk.flutter.useCases.PinAuthenticationUseCase
+import com.onegini.mobile.sdk.flutter.useCases.AcceptPinAuthenticationUseCase
+
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import org.junit.Before
@@ -23,7 +24,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
-class PinAuthenticationUseCaseTests {
+class AcceptPinAuthenticationUseCaseTests {
 
     @Mock
     lateinit var callMock: MethodCall
@@ -84,7 +85,7 @@ class PinAuthenticationUseCaseTests {
         whenever(oneginiSDKMock.getPinAuthenticationRequestHandler()).thenReturn(pinAuthenticationRequestHandlerMock)
         whenever(callMock.argument<String>("pin")).thenReturn("123456")
 
-        PinAuthenticationUseCase(oneginiSDKMock).acceptAuthenticationRequest(callMock)
+        AcceptPinAuthenticationUseCase(oneginiSDKMock)(callMock)
 
         verify(oneginiPinCallbackMock).acceptAuthenticationRequest(eq("123456".toCharArray()))
     }

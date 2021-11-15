@@ -15,7 +15,7 @@ class OneginiSDK {
 
     private lateinit var oneginiClient: OneginiClient
     private lateinit var registrationRequestHandler: RegistrationRequestHandler
-    private lateinit var pinAuthenticationRequestHandler: PinAuthenticationRequestHandler
+    private var pinAuthenticationRequestHandler: PinAuthenticationRequestHandler? = null
 
 
     fun buildSDK(context: Context, httpConnectionTimeout: Long?, httpReadTimeout: Long?, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>, config: Config, oneginiEventsSender: OneginiEventsSender) {
@@ -25,7 +25,7 @@ class OneginiSDK {
         pinAuthenticationRequestHandler = PinAuthenticationRequestHandler(oneginiEventsSender)
         val createPinRequestHandler = PinRequestHandler(oneginiEventsSender)
         val mobileAuthWithOtpRequestHandler = MobileAuthOtpRequestHandler(oneginiEventsSender)
-        val clientBuilder = OneginiClientBuilder(applicationContext, createPinRequestHandler, pinAuthenticationRequestHandler) // handlers for optional functionalities
+        val clientBuilder = OneginiClientBuilder(applicationContext, createPinRequestHandler, pinAuthenticationRequestHandler!!) // handlers for optional functionalities
             .setBrowserRegistrationRequestHandler(registrationRequestHandler)
             .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler)
             .setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
@@ -55,7 +55,7 @@ class OneginiSDK {
         return  registrationRequestHandler
     }
 
-    fun getPinAuthenticationRequestHandler() : PinAuthenticationRequestHandler {
+    fun getPinAuthenticationRequestHandler() : PinAuthenticationRequestHandler? {
         return pinAuthenticationRequestHandler
     }
 
