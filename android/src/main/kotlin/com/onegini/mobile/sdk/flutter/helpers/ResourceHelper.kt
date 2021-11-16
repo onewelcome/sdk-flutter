@@ -109,10 +109,13 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
                 .subscribe(
                         { data ->
                             run {
-                                if (data != null) {
-                                    val response = Gson().toJson(mapOf("statusCode" to data.code, "body" to data.body?.string(), "headers" to data.headers))
+                                val response = Gson().toJson(mapOf("response" to mapOf("statusCode" to data.code, "body" to data.body?.string(), "headers" to data.headers)))
+                                if (data.code >= 400) {
+                                    result.error(data.code.toString(), response, null)
+                                } else {
                                     result.success(response)
                                 }
+
                             }
                         },
                         {

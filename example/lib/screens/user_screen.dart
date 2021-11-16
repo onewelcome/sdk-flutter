@@ -461,15 +461,15 @@ class _InfoState extends State<Info> {
   Future<ApplicationDetails> getApplicationDetails() async {
     var response = await Onegini.instance.resourcesMethods.getResourceAnonymous(
         "application-details", ["read", "write", "application-details"]);
-
-    return applicationDetailsFromJson(json.decode(response)["body"]);
+    var res = json.decode(response)["response"];
+    return applicationDetailsFromJson(res["body"]);
   }
 
   Future<ClientResource> getClientResource() async {
     var response =
-        await Onegini.instance.resourcesMethods.getResource("devices");
-
-    return clientResourceFromJson(json.decode(response)["body"]);
+    await Onegini.instance.resourcesMethods.getResource("devices");
+    var res = json.decode(response)["response"];
+    return clientResourceFromJson(res["body"]);
   }
 
   Future<String> getImplicitUserDetails() async {
@@ -477,7 +477,8 @@ class _InfoState extends State<Info> {
         "user-id-decorated", ["read"],
         parameters: {"username": "foo@bax.com", "age": "15"});
     Map<String, dynamic> responseAsJson = json.decode(response);
-    var body =  responseAsJson["body"];
+    var res = responseAsJson["response"];
+    var body =  res["body"];
     return json.decode(body)["decorated_user_id"];
   }
 
@@ -487,7 +488,8 @@ class _InfoState extends State<Info> {
         .getUnauthenticatedResource("devices", headers: headers, method: 'GET').catchError((onError) {
           debugPrint(onError);
         });
-    return json.decode(response)["body"];
+    var res = json.decode(response)["response"];
+    return res["body"];
   }
 
   @override
