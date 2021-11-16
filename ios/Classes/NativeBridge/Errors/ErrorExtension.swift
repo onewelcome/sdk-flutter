@@ -8,6 +8,6 @@ extension Error {
 
 extension ONGResourceResponse {
     func toJSON() -> Dictionary<String, Any?> {
-        return ["code": statusCode, "headers": allHeaderFields]
+        return ["statusCode": statusCode, "headers": allHeaderFields]
     }
 }

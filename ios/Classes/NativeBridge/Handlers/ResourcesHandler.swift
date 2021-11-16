@@ -87,9 +87,12 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             if let error = error {
                 completion(nil, SdkError(errorDescription: error.localizedDescription, code: error.code, response: response))
             } else {
-                if let data = response?.data {
-                    if let responseData = String.init(data: data, encoding: .utf8) {
-                        completion(responseData, nil)
+                if let response = response, let data = response.data {
+                    if let responseData = String(data: data, encoding: .utf8) {
+                        let result = ONGResponseData(body: responseData,
+                                                     statusCode: response.statusCode,
+                                                     headers: response.allHeaderFields)
+                        completion(result.toString(), nil)
                     } else {
                         completion(nil, SdkError.init(customType: .failedParseData))
                     }
@@ -115,9 +118,12 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             if let error = error {
                 completion(nil, SdkError(errorDescription: error.localizedDescription, code: error.code, response: response))
             } else {
-                if let data = response?.data {
+                if let response = response, let data = response.data {
                     if let responseData = String(data: data, encoding: .utf8) {
-                        completion(responseData, nil)
+                        let result = ONGResponseData(body: responseData,
+                                                     statusCode: response.statusCode,
+                                                     headers: response.allHeaderFields)
+                        completion(result.toString(), nil)
                     } else {
                         completion(nil, SdkError.init(customType: .failedParseData))
                     }
@@ -215,9 +221,12 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 callback(SdkError.convertToFlutter(SdkError.init(errorDescription: _errorResource.localizedDescription, code: _errorResource.code, response: response)))
                 return
             } else {
-                if let data = response?.data {
+                if let response = response, let data = response.data {
                     if let convertedString = String(data: data, encoding: .utf8) {
-                        callback(convertedString)
+                        let result = ONGResponseData(body: convertedString,
+                                                     statusCode: response.statusCode,
+                                                     headers: response.allHeaderFields)
+                        callback(result.toString())
                     } else {
                         callback(data)
                     }
@@ -271,5 +280,20 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         }
         
         return request
+    }
+}
+
+
+private struct ONGResponseData {
+    var body: String
+    var statusCode: Int
+    var headers: [AnyHashable : Any]
+    
+    func toJSON() -> Dictionary<String, Any?> {
+        return ["response": ["statusCode": statusCode, "headers": headers, "body": body]]
+    }
+    
+    func toString() -> String {
+        return String.stringify(json: self.toJSON())
     }
 }
