@@ -87,15 +87,8 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             if let error = error {
                 completion(nil, SdkError(errorDescription: error.localizedDescription, code: error.code, response: response))
             } else {
-                if let response = response, let data = response.data {
-                    if let responseData = String(data: data, encoding: .utf8) {
-                        let result = ONGResponseData(body: responseData,
-                                                     statusCode: response.statusCode,
-                                                     headers: response.allHeaderFields)
-                        completion(result.toString(), nil)
-                    } else {
-                        completion(nil, SdkError.init(customType: .failedParseData))
-                    }
+                if let response = response, let _ = response.data {
+                    completion(response.toString(), nil)
                 } else {
                     completion(nil, SdkError.init(customType: .responseIsNull))
                 }
@@ -118,15 +111,8 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             if let error = error {
                 completion(nil, SdkError(errorDescription: error.localizedDescription, code: error.code, response: response))
             } else {
-                if let response = response, let data = response.data {
-                    if let responseData = String(data: data, encoding: .utf8) {
-                        let result = ONGResponseData(body: responseData,
-                                                     statusCode: response.statusCode,
-                                                     headers: response.allHeaderFields)
-                        completion(result.toString(), nil)
-                    } else {
-                        completion(nil, SdkError.init(customType: .failedParseData))
-                    }
+                if let response = response, let _ = response.data {
+                    completion(response.toString(), nil)
                 } else {
                     completion(nil, SdkError.init(customType: .responseIsNull))
                 }
@@ -200,7 +186,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                     if let data = _data {
                         completion(data)
                     } else {
-                        completion(_data)
+                        completion(error)
                     }
                 }
             } else {
@@ -222,11 +208,8 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 return
             } else {
                 if let response = response, let data = response.data {
-                    if let convertedString = String(data: data, encoding: .utf8) {
-                        let result = ONGResponseData(body: convertedString,
-                                                     statusCode: response.statusCode,
-                                                     headers: response.allHeaderFields)
-                        callback(result.toString())
+                    if let _ = String(data: data, encoding: .utf8) {
+                        callback(response.toString())
                     } else {
                         callback(data)
                     }
@@ -283,14 +266,13 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     }
 }
 
-
-private struct ONGResponseData {
-    var body: String
-    var statusCode: Int
-    var headers: [AnyHashable : Any]
-    
+extension ONGResourceResponse {
     func toJSON() -> Dictionary<String, Any?> {
-        return ["response": ["statusCode": statusCode, "headers": headers, "body": body]]
+        return ["statusCode": statusCode,
+                "headers": allHeaderFields,
+                "url": rawResponse.url?.absoluteString,
+                "body": data != nil ? String(data: data!, encoding: .utf8) : nil
+        ]
     }
     
     func toString() -> String {

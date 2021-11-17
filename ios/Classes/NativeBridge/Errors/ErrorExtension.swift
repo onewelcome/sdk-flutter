@@ -6,8 +6,3 @@ extension Error {
     var userInfo: Dictionary<String, Any> { return (self as NSError).userInfo }
 }
 
-extension ONGResourceResponse {
-    func toJSON() -> Dictionary<String, Any?> {
-        return ["statusCode": statusCode, "headers": allHeaderFields]
-    }
-}
