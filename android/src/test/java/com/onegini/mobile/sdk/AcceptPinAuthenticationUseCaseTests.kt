@@ -81,7 +81,7 @@ class AcceptPinAuthenticationUseCaseTests {
 
     @Test
     fun `should call acceptAuthenticationRequest with pin as same as given`() {
-        whenever(pinAuthenticationRequestHandlerMock.oneginiPinCallback).thenReturn(oneginiPinCallbackMock)
+        whenever(pinAuthenticationRequestHandlerMock.getCallback()).thenReturn(oneginiPinCallbackMock)
         whenever(oneginiSDKMock.getPinAuthenticationRequestHandler()).thenReturn(pinAuthenticationRequestHandlerMock)
         whenever(callMock.argument<String>("pin")).thenReturn("123456")
 
