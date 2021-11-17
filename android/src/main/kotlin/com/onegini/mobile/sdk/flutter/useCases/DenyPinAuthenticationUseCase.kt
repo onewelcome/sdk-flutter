@@ -4,6 +4,6 @@ import com.onegini.mobile.sdk.flutter.OneginiSDK
 
 class DenyPinAuthenticationUseCase(private val oneginiSDK: OneginiSDK) {
     operator fun invoke() {
-        oneginiSDK.getPinAuthenticationRequestHandler()?.oneginiPinCallback?.denyAuthenticationRequest()
+        oneginiSDK.getPinAuthenticationRequestHandler()?.getCallback()?.denyAuthenticationRequest()
     }
 }
