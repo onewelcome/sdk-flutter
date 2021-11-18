@@ -12,12 +12,10 @@ import com.onegini.mobile.sdk.flutter.models.OneginiEvent
 
 class PinRequestHandler(private val oneginiEventsSender: OneginiEventsSender) : OneginiCreatePinRequestHandler {
 
-    companion object {
-        var CALLBACK: OneginiPinCallback? = null
-    }
+    private var callback: OneginiPinCallback? = null
 
     override fun startPinCreation(userProfile: UserProfile?, oneginiPinCallback: OneginiPinCallback, p2: Int) {
-        CALLBACK = oneginiPinCallback
+        callback = oneginiPinCallback
         oneginiEventsSender.events?.success(Constants.EVENT_OPEN_PIN)
     }
 
@@ -27,5 +25,9 @@ class PinRequestHandler(private val oneginiEventsSender: OneginiEventsSender) : 
 
     override fun finishPinCreation() {
         oneginiEventsSender.events?.success(Constants.EVENT_CLOSE_PIN)
+    }
+
+    fun getCallback(): OneginiPinCallback? {
+        return callback
     }
 }

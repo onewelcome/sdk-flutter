@@ -91,6 +91,14 @@ class OneginiMethodsWrapper {
         DenyPinAuthenticationUseCase(oneginiSDK)()
     }
 
+    fun acceptPinRegistrationRequest(oneginiSDK: OneginiSDK, call: MethodCall) {
+        AcceptPinRegistrationUseCase(oneginiSDK)(call)
+    }
+
+    fun denyPinRegistrationRequest(oneginiSDK: OneginiSDK) {
+        DenyPinRegistrationUseCase(oneginiSDK)()
+    }
+
     fun acceptFingerprintAuthenticationRequest(oneginiSDK: OneginiSDK) {
         FingerprintAcceptAuthenticationUseCase(oneginiSDK)
     }

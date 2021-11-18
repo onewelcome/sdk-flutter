@@ -17,6 +17,7 @@ class OneginiSDK {
     private lateinit var registrationRequestHandler: RegistrationRequestHandler
     private var fingerprintRequestHandler: FingerprintAuthenticationRequestHandler? = null
     private var pinAuthenticationRequestHandler: PinAuthenticationRequestHandler? = null
+    private var pinRequestHandler: PinRequestHandler? = null
 
 
     fun buildSDK(context: Context, httpConnectionTimeout: Long?, httpReadTimeout: Long?, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>, config: Config, oneginiEventsSender: OneginiEventsSender) {
@@ -24,9 +25,9 @@ class OneginiSDK {
         registrationRequestHandler = RegistrationRequestHandler(oneginiEventsSender)
         fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(oneginiEventsSender)
         pinAuthenticationRequestHandler = PinAuthenticationRequestHandler(oneginiEventsSender)
-        val createPinRequestHandler = PinRequestHandler(oneginiEventsSender)
+        pinRequestHandler = PinRequestHandler(oneginiEventsSender)
         val mobileAuthWithOtpRequestHandler = MobileAuthOtpRequestHandler(oneginiEventsSender)
-        val clientBuilder = OneginiClientBuilder(applicationContext, createPinRequestHandler, pinAuthenticationRequestHandler!!) // handlers for optional functionalities
+        val clientBuilder = OneginiClientBuilder(applicationContext, pinRequestHandler!!, pinAuthenticationRequestHandler!!) // handlers for optional functionalities
             .setBrowserRegistrationRequestHandler(registrationRequestHandler)
             .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler!!)
             .setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
@@ -62,6 +63,10 @@ class OneginiSDK {
 
     fun getFingerprintAuthenticationRequestHandler() : FingerprintAuthenticationRequestHandler? {
         return fingerprintRequestHandler
+    }
+
+    fun getPinRequestHandler() : PinRequestHandler? {
+        return pinRequestHandler
     }
 
     private fun setConfigModel(clientBuilder: OneginiClientBuilder, config: Config) {
