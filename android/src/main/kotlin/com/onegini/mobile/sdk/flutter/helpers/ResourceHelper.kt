@@ -108,14 +108,11 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { data ->
-                            run {
-                                val response = Gson().toJson(mapOf("response" to mapOf("statusCode" to data.code, "body" to data.body?.string(), "headers" to data.headers)))
-                                if (data.code >= 400) {
-                                    result.error(data.code.toString(), response, null)
-                                } else {
-                                    result.success(response)
-                                }
-
+                            val response = Gson().toJson(mapOf("statusCode" to data.code, "body" to data.body?.string(), "headers" to data.headers, "url" to data.request.url.toString()))
+                            if (data.code >= 400) {
+                                result.error(data.code.toString(), response, null)
+                            } else {
+                                result.success(response)
                             }
                         },
                         {
