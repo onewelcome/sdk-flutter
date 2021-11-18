@@ -31,16 +31,11 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
 
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
-        when (call.method) {
-            Constants.METHOD_START_APP -> oneginiMethodsWrapper.startApp(call, result, oneginiSDK, context, oneginiEventsSender)
-            Constants.METHOD_CUSTOM_TWO_STEP_REGISTRATION_RETURN_SUCCESS -> CustomTwoStepRegistrationAction.CALLBACK?.returnSuccess(call.argument("data"))
-            Constants.METHOD_CUSTOM_TWO_STEP_REGISTRATION_RETURN_ERROR -> CustomTwoStepRegistrationAction.CALLBACK?.returnError(Exception(call.argument<String>("error")))
         val client = oneginiSDK.getOneginiClient()
-        if(call.method == Constants.METHOD_START_APP) {
-            oneginiMethodsWrapper.startApp(call, result, oneginiSDK, context)
-        }
-        else {
-            if(client == null) {
+        if (call.method == Constants.METHOD_START_APP) {
+            oneginiMethodsWrapper.startApp(call, result, oneginiSDK, context, oneginiEventsSender)
+        } else {
+            if (client == null) {
                 result.error(OneginiWrapperErrors.ONEGINI_SDK_NOT_INITIALIZED.code, OneginiWrapperErrors.ONEGINI_SDK_NOT_INITIALIZED.message, null)
             } else {
                 when (call.method) {
@@ -96,8 +91,8 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
                     Constants.METHOD_VALIDATE_PIN_WITH_POLICY -> validatePinWithPolicy(call.argument<String>("pin")?.toCharArray(), result, client)
 
                     else -> result.error(OneginiWrapperErrors.METHOD_TO_CALL_NOT_FOUND.code, OneginiWrapperErrors.METHOD_TO_CALL_NOT_FOUND.message, null)
+                }
             }
-        }
 
         }
     }

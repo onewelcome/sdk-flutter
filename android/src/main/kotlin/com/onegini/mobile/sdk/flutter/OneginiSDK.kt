@@ -9,17 +9,14 @@ import com.onegini.mobile.sdk.flutter.handlers.*
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.models.Config
 import io.flutter.plugin.common.MethodChannel
-import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.TimeUnit
 
 class OneginiSDK {
 
-    private lateinit var oneginiClient: OneginiClient
     private lateinit var registrationRequestHandler: RegistrationRequestHandler
     private var oneginiClient: OneginiClient? = null
 
-    fun buildSDK(context: Context, httpConnectionTimeout: Long?, httpReadTimeout: Long?, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>, config: Config, oneginiEventsSender: OneginiEventsSender) {
-    fun buildSDK(context: Context, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>, config: Config, result: MethodChannel.Result) {
+    fun buildSDK(context: Context, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>, config: Config, oneginiEventsSender: OneginiEventsSender, result: MethodChannel.Result) {
         val applicationContext = context.applicationContext
         registrationRequestHandler = RegistrationRequestHandler(oneginiEventsSender)
         val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
@@ -52,12 +49,9 @@ class OneginiSDK {
     }
 
     fun getRegistrationRequestHandler(): RegistrationRequestHandler {
-      return  registrationRequestHandler
+        return registrationRequestHandler
     }
 
-    fun getOneginiClient(): OneginiClient {
-        //todo should we use OneginiClient.getInstance or this var 
-        return OneginiClient.getInstance() ?: oneginiClient
     fun getOneginiClient(): OneginiClient? {
         return oneginiClient
     }
@@ -74,7 +68,7 @@ class OneginiSDK {
                 clientBuilder.setConfigModel(`object`)
             }
         } catch (e: Exception) {
-           result.error("10000",e.message, null)
+            result.error("10000", e.message, null)
         }
     }
 
@@ -86,7 +80,7 @@ class OneginiSDK {
             val securityController = Class.forName(config.securityControllerClassName)
             clientBuilder.setSecurityController(securityController)
         } catch (e: ClassNotFoundException) {
-            result.error("10000",e.message, null)
+            result.error("10000", e.message, null)
         }
     }
 }
