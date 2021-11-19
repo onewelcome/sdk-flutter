@@ -16,26 +16,6 @@ import io.flutter.plugin.common.MethodChannel
 
 object AuthenticationObject {
 
-    fun getNotRegisteredAuthenticators(result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        val gson = GsonBuilder().serializeNulls().create()
-        val authenticatedUserProfile = oneginiClient.userClient.authenticatedUserProfile
-        if (authenticatedUserProfile == null) {
-            result.error(OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
-            return
-        }
-        val notRegisteredAuthenticators = authenticatedUserProfile.let { oneginiClient.userClient.getNotRegisteredAuthenticators(it) }
-        val authenticators: ArrayList<Map<String, String>> = ArrayList()
-        if (notRegisteredAuthenticators != null) {
-            for (auth in notRegisteredAuthenticators) {
-                val map = mutableMapOf<String, String>()
-                map["id"] = auth.id
-                map["name"] = auth.name
-                authenticators.add(map)
-            }
-        }
-        result.success(gson.toJson(authenticators))
-    }
-
     fun setPreferredAuthenticator(authenticatorId: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         var authenticator: OneginiAuthenticator? = null
         val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
@@ -82,16 +62,16 @@ object AuthenticationObject {
             return
         }
         oneginiClient.userClient.registerAuthenticator(
-            authenticator,
-            object : OneginiAuthenticatorRegistrationHandler {
-                override fun onSuccess(customInfo: CustomInfo?) {
-                    result.success(customInfo?.data)
-                }
+                authenticator,
+                object : OneginiAuthenticatorRegistrationHandler {
+                    override fun onSuccess(customInfo: CustomInfo?) {
+                        result.success(customInfo?.data)
+                    }
 
-                override fun onError(oneginiAuthenticatorRegistrationError: OneginiAuthenticatorRegistrationError) {
-                    result.error(oneginiAuthenticatorRegistrationError.errorType.toString(), oneginiAuthenticatorRegistrationError.message, null)
+                    override fun onError(oneginiAuthenticatorRegistrationError: OneginiAuthenticatorRegistrationError) {
+                        result.error(oneginiAuthenticatorRegistrationError.errorType.toString(), oneginiAuthenticatorRegistrationError.message, null)
+                    }
                 }
-            }
         )
     }
 
@@ -114,36 +94,18 @@ object AuthenticationObject {
             return
         }
         oneginiClient.userClient.deregisterAuthenticator(
-            authenticator,
-            object : OneginiAuthenticatorDeregistrationHandler {
-                override fun onSuccess() {
-                    result.success(true)
-                }
+                authenticator,
+                object : OneginiAuthenticatorDeregistrationHandler {
+                    override fun onSuccess() {
+                        result.success(true)
+                    }
 
-                override fun onError(oneginiAuthenticatorDeregistrationError: OneginiAuthenticatorDeregistrationError) {
-                    result.error(oneginiAuthenticatorDeregistrationError.errorType.toString(), oneginiAuthenticatorDeregistrationError.message ?: "", null)
+                    override fun onError(oneginiAuthenticatorDeregistrationError: OneginiAuthenticatorDeregistrationError) {
+                        result.error(oneginiAuthenticatorDeregistrationError.errorType.toString(), oneginiAuthenticatorDeregistrationError.message
+                                ?: "", null)
+                    }
                 }
-            }
         )
-    }
-
-    fun getRegisteredAuthenticators(result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        val gson = GsonBuilder().serializeNulls().create()
-        val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
-        if (userProfile == null) {
-            result.error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
-            return
-        }
-        val registeredAuthenticators = userProfile.let { oneginiClient.userClient.getRegisteredAuthenticators(it) }
-        val authenticators: ArrayList<Map<String, String>> = ArrayList()
-        if (registeredAuthenticators != null)
-            for (registeredAuthenticator in registeredAuthenticators) {
-                val map = mutableMapOf<String, String>()
-                map["id"] = registeredAuthenticator.id
-                map["name"] = registeredAuthenticator.name
-                authenticators.add(map)
-            }
-        result.success(gson.toJson(authenticators))
     }
 
     fun authenticateUser(registeredAuthenticatorsId: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {

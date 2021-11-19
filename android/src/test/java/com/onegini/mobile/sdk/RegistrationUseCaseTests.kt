@@ -56,7 +56,10 @@ class RegistrationUseCaseTests {
 
         RegistrationUseCase(clientMock)(callMock, resultSpy)
 
-        val expectedResult = Gson().toJson(mapOf("userProfile" to UserProfile("QWERTY"), "customInfo" to CustomInfo(0, "")))
+        val userProfileJson = mapOf("profileId" to "QWERTY", "isDefault" to false)
+        val customInfoJson = mapOf("data" to "", "status" to 0)
+        val expectedResult = Gson().toJson(mapOf("userProfile" to userProfileJson, "customInfo" to customInfoJson))
+       
         verify(resultSpy).success(expectedResult)
     }
 
@@ -88,7 +91,7 @@ class RegistrationUseCaseTests {
 
         RegistrationUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(eq(OneginiWrapperErrors.IDENTITY_PROVIDER_NOT_FOUND.code),eq(OneginiWrapperErrors.IDENTITY_PROVIDER_NOT_FOUND.message), isNull())
+        verify(resultSpy).error(eq(OneginiWrapperErrors.IDENTITY_PROVIDER_NOT_FOUND.code), eq(OneginiWrapperErrors.IDENTITY_PROVIDER_NOT_FOUND.message), isNull())
     }
 
     @Test
@@ -105,7 +108,9 @@ class RegistrationUseCaseTests {
 
         RegistrationUseCase(clientMock)(callMock, resultSpy)
 
-        val expectedResult = Gson().toJson(mapOf("userProfile" to UserProfile("QWERTY"), "customInfo" to CustomInfo(0, "")))
+        val userProfileJson = mapOf("profileId" to "QWERTY", "isDefault" to false)
+        val customInfoJson = mapOf("data" to "", "status" to 0)
+        val expectedResult = Gson().toJson(mapOf("userProfile" to userProfileJson, "customInfo" to customInfoJson))
         verify(resultSpy).success(expectedResult)
     }
 
@@ -133,7 +138,7 @@ class RegistrationUseCaseTests {
     }
 
     @Test
-    fun `should scopes param be array of zero lengths when given scopes is null`(){
+    fun `should scopes param be array of zero lengths when given scopes is null`() {
         whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(null)
 
         RegistrationUseCase(clientMock)(callMock, resultSpy)

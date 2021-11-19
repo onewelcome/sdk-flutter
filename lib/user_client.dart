@@ -98,23 +98,21 @@ class UserClient {
     }
   }
 
-
-
   /// Starts authentication flow.
   ///
   /// If [registeredAuthenticatorId] is null, starts authentication by default authenticator.
   /// Usually it is Pin authenticator.
-  Future<String> authenticateUser(
-    BuildContext? context,
+  Future<RegistrationResponse> authenticateUser(
+    BuildContext context,
     String? registeredAuthenticatorId,
   ) async {
     Onegini.instance.setEventContext(context);
     try {
-      var userId = await Onegini.instance.channel
+      var response = await Onegini.instance.channel
           .invokeMethod(Constants.authenticateUser, <String, String?>{
         'registeredAuthenticatorId': registeredAuthenticatorId,
       });
-      return userId;
+      return registrationResponseFromJson(response);
     } on PlatformException catch (error) {
       throw error;
     }
@@ -154,6 +152,18 @@ class UserClient {
         'authenticatorId': authenticatorId,
       });
       return data;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  Future<bool> isAuthenticatorRegistered(String authenticatorId) async {
+    try {
+      var isAuthenticatorRegistered = await Onegini.instance.channel
+          .invokeMethod(Constants.isAuthenticatorRegistered, <String, String>{
+        'authenticatorId': authenticatorId,
+      });
+      return isAuthenticatorRegistered;
     } on PlatformException catch (error) {
       throw error;
     }
@@ -213,7 +223,8 @@ class UserClient {
   }
 
   /// Single sign on the user web page.
-  Future<OneginiAppToWebSingleSignOn> getAppToWebSingleSignOn(String url) async {
+  Future<OneginiAppToWebSingleSignOn> getAppToWebSingleSignOn(
+      String url) async {
     try {
       var oneginiAppToWebSingleSignOn = await Onegini.instance.channel
           .invokeMethod(Constants.getAppToWebSingleSignOn, <String, String>{
@@ -247,7 +258,7 @@ class UserClient {
     }
   }
 
-  Future<String> getAccessToken(String pin) async {
+  Future<String> getAccessToken() async {
     try {
       var accessToken =
           await Onegini.instance.channel.invokeMethod(Constants.getAccessToken);
@@ -257,7 +268,17 @@ class UserClient {
     }
   }
 
-  Future<UserProfile> getAuthenticatedUserProfile(String pin) async {
+  Future<String> getRedirectUrl(String pin) async {
+    try {
+      var redirectUrl =
+          await Onegini.instance.channel.invokeMethod(Constants.getRedirectUrl);
+      return redirectUrl;
+    } on PlatformException catch (error) {
+      throw error;
+    }
+  }
+
+  Future<UserProfile> getAuthenticatedUserProfile() async {
     try {
       var userProfile = await Onegini.instance.channel
           .invokeMethod(Constants.getAuthenticatedUserProfile);

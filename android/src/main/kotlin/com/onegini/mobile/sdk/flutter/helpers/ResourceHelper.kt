@@ -1,5 +1,6 @@
 package com.onegini.mobile.sdk.flutter.helpers
 
+import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiDeviceAuthenticationHandler
 import com.onegini.mobile.sdk.android.handlers.OneginiImplicitAuthenticationHandler
@@ -107,7 +108,12 @@ class ResourceHelper(private var call: MethodCall, private var result: MethodCha
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { data ->
-                            result.success(data?.body?.string())
+                            val response = Gson().toJson(mapOf("statusCode" to data.code, "body" to data.body?.string(), "headers" to data.headers, "url" to data.request.url.toString()))
+                            if (data.code >= 400) {
+                                result.error(data.code.toString(), response, null)
+                            } else {
+                                result.success(response)
+                            }
                         },
                         {
                             result.error("", it.message, it.stackTrace.toString())

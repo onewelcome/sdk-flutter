@@ -1,5 +1,6 @@
 import Flutter
 import Foundation
+import OneginiSDKiOS
 
 class SdkError {
     var title: String
@@ -7,13 +8,15 @@ class SdkError {
     var recoverySuggestion: String
     var code: Int
     var info: [String: Any?] = [:]
+    var ongResponse: ONGResourceResponse? = nil
 
-    init(title: String = "Error", errorDescription: String, recoverySuggestion: String = "Please try again.", code: Int = 400, info: [String: Any?] = [:]) {
+    init(title: String = "Error", errorDescription: String, recoverySuggestion: String = "Please try again.", code: Int = 400, info: [String: Any?] = [:], response: ONGResourceResponse? = nil) {
         self.title = title
         self.errorDescription = errorDescription
         self.recoverySuggestion = recoverySuggestion
         self.code = code
         self.info = info
+        self.ongResponse = response
     }
     
     init(customType: OneginiErrorCustomType, title: String = "Error", recoverySuggestion: String = "Please try again.") {
@@ -24,7 +27,7 @@ class SdkError {
     }
     
     func toJSON() -> Dictionary<String, Any?>? {
-        return ["title": title, "message": errorDescription, "recoverySuggestion": recoverySuggestion, "code": code]
+        return ["title": title, "message": errorDescription, "recoverySuggestion": recoverySuggestion, "code": code, "userInfo": info, "response": ongResponse?.toJSON()]
     }
     
     func flutterError() -> FlutterError {
