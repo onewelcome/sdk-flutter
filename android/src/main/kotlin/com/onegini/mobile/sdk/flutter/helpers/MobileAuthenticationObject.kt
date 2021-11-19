@@ -30,16 +30,16 @@ object MobileAuthenticationObject {
 
     private fun handleMobileAuthWithOtp(data: String, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         oneginiClient.userClient.handleMobileAuthWithOtp(
-            data,
-            object : OneginiMobileAuthWithOtpHandler {
-                override fun onSuccess() {
-                    result.success("success auth with otp")
-                }
+                data,
+                object : OneginiMobileAuthWithOtpHandler {
+                    override fun onSuccess() {
+                        result.success("success auth with otp")
+                    }
 
-                override fun onError(p0: OneginiMobileAuthWithOtpError) {
-                    result.error(p0.errorType.toString(), p0.message, null)
+                    override fun onError(p0: OneginiMobileAuthWithOtpError) {
+                        result.error(p0.errorType.toString(), p0.message, null)
+                    }
                 }
-            }
         )
     }
 

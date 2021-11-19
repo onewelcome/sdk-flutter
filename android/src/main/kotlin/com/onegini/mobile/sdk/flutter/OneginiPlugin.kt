@@ -18,7 +18,7 @@ class OneginiPlugin : FlutterPlugin {
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "onegini")
-        channel.setMethodCallHandler(OnMethodCallMapper(flutterPluginBinding.applicationContext,OneginiMethodsWrapper()))
+        channel.setMethodCallHandler(OnMethodCallMapper(flutterPluginBinding.applicationContext, OneginiMethodsWrapper()))
         eventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "onegini_events")
         eventChannel.setStreamHandler(object : EventChannel.StreamHandler {
             override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
