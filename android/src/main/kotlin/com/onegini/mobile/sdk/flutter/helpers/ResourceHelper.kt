@@ -1,5 +1,12 @@
 package com.onegini.mobile.sdk.flutter.helpers
 
+import com.google.gson.Gson
+import com.onegini.mobile.sdk.android.client.OneginiClient
+import com.onegini.mobile.sdk.android.handlers.OneginiDeviceAuthenticationHandler
+import com.onegini.mobile.sdk.android.handlers.OneginiImplicitAuthenticationHandler
+import com.onegini.mobile.sdk.android.handlers.error.OneginiDeviceAuthenticationError
+import com.onegini.mobile.sdk.android.handlers.error.OneginiImplicitTokenRequestError
+import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -21,7 +28,12 @@ class ResourceHelper {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { data ->
-                            result.success(data?.body?.string())
+                            val response = Gson().toJson(mapOf("statusCode" to data.code, "body" to data.body?.string(), "headers" to data.headers, "url" to data.request.url.toString()))
+                            if (data.code >= 400) {
+                                result.error(data.code.toString(), response, null)
+                            } else {
+                                result.success(response)
+                            }
                         },
                         {
                             result.error(OneginiWrapperErrors.HTTP_REQUEST_ERROR.code, it.message, null)

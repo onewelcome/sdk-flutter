@@ -50,7 +50,10 @@ extension OneginiModuleSwift {
             (userProfile, error) -> Void in
 
             if let _userProfile = userProfile {
-                callback(_userProfile.profileId)
+                var result = Dictionary<String, Any?>()
+                result["userProfile"] = ["profileId": _userProfile.profileId]
+                
+                callback(String.stringify(json: result))
             } else {
                 callback(SdkError.convertToFlutter(error))
             }
