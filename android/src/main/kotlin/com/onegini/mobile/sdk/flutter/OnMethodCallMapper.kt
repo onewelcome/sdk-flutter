@@ -3,6 +3,13 @@ package com.onegini.mobile.sdk.flutter
 import android.content.Context
 import androidx.annotation.NonNull
 import com.onegini.mobile.sdk.android.client.OneginiClient
+import com.onegini.mobile.sdk.android.handlers.OneginiAppToWebSingleSignOnHandler
+import com.onegini.mobile.sdk.android.handlers.OneginiChangePinHandler
+import com.onegini.mobile.sdk.android.handlers.OneginiPinValidationHandler
+import com.onegini.mobile.sdk.android.handlers.error.OneginiAppToWebSingleSignOnError
+import com.onegini.mobile.sdk.android.handlers.error.OneginiChangePinError
+import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
+import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
 import com.onegini.mobile.sdk.android.handlers.OneginiLogoutHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiLogoutError
 import com.onegini.mobile.sdk.flutter.constants.Constants
@@ -42,8 +49,8 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_GET_ALL_AUTHENTICATORS -> oneginiMethodsWrapper.getAllAuthenticators(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS -> oneginiMethodsWrapper.getNotRegisteredAuthenticators(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_SET_PREFERRED_AUTHENTICATOR -> oneginiMethodsWrapper.setPreferredAuthenticator(call, result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_LOGOUT -> oneginiMethodsWrapper.logout(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_DEREGISTER_AUTHENTICATOR -> oneginiMethodsWrapper.deregisterAuthenticator(call, result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_LOGOUT -> logout(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_ACCEPT_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
             Constants.METHOD_DENY_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.denyAuthenticationRequest()
             Constants.METHOD_IS_AUTHENTICATOR_REGISTERED -> oneginiMethodsWrapper.isAuthenticatorRegistered(call, result, OneginiSDK().getOneginiClient(context))
@@ -90,4 +97,55 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
         })
     }
 
+    // "https://login-mobile.test.onegini.com/personal/dashboard"
+    fun getAppToWebSingleSignOn(url: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
+        if (url == null) {
+            result.error(OneginiWrapperErrors.URL_CANT_BE_NULL.code, OneginiWrapperErrors.URL_CANT_BE_NULL.message, null)
+            return
+        }
+        if (!Patterns.WEB_URL.matcher(url).matches()) {
+            result.error(OneginiWrapperErrors.URL_IS_NOT_WEB_PATH.code, OneginiWrapperErrors.URL_IS_NOT_WEB_PATH.message, null)
+            return
+        }
+        val targetUri: Uri = Uri.parse(url)
+        oneginiClient.userClient.getAppToWebSingleSignOn(
+                targetUri,
+                object : OneginiAppToWebSingleSignOnHandler {
+                    override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {
+                        result.success(Gson().toJson(mapOf("token" to oneginiAppToWebSingleSignOn.token, "redirectUrl" to oneginiAppToWebSingleSignOn.redirectUrl.toString())))
+                    }
+
+                    override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
+                        result.error(oneginiSingleSignOnError.errorType.toString(), oneginiSingleSignOnError.message, null)
+                    }
+                }
+        )
+    }
+
+    private fun validatePinWithPolicy(pin: CharArray?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
+        oneginiClient.userClient.validatePinWithPolicy(
+                pin,
+                object : OneginiPinValidationHandler {
+                    override fun onSuccess() {
+                        result.success(true)
+                    }
+
+                    override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
+                        result.error(oneginiPinValidationError.errorType.toString(), oneginiPinValidationError.message, null)
+                    }
+                }
+        )
+    }
+
+    fun startChangePinFlow(result: MethodChannel.Result, oneginiClient: OneginiClient) {
+        oneginiClient.userClient.changePin(object : OneginiChangePinHandler {
+            override fun onSuccess() {
+                result.success("Pin change successfully")
+            }
+
+            override fun onError(error: OneginiChangePinError) {
+                result.error(error.errorType.toString(), error.message, null)
+            }
+        })
+    }
 }
