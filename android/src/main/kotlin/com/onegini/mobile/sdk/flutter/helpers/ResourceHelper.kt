@@ -7,12 +7,14 @@ import io.flutter.plugin.common.MethodChannel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
-import okhttp3.*
 import okhttp3.Headers.Companion.toHeaders
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.util.*
+import java.util.Locale
+import kotlin.collections.HashMap
 
 class ResourceHelper {
 

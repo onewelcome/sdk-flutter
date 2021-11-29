@@ -17,7 +17,6 @@ import org.mockito.Mock
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.whenever
-import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
 class ResourceHelperTests {

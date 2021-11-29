@@ -6,14 +6,11 @@ import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.useCases.GetResourceAnonymousUseCase
-import com.onegini.mobile.sdk.flutter.useCases.GetUnauthenticatedResourceUseCase
 import com.onegini.mobile.sdk.utils.RxSchedulerRule
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import okhttp3.*
-import okhttp3.Headers.Companion.toHeaders
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
-import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -26,7 +23,6 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.util.*
 
 @RunWith(MockitoJUnitRunner::class)
 class GetResourceAnonymousUseCaseTests {
@@ -70,7 +66,6 @@ class GetResourceAnonymousUseCaseTests {
         GetResourceAnonymousUseCase(clientMock)(callMock, resultSpy, resourceHelper)
 
         verify(resourceHelper).getRequest(callMock, "https://token-mobile.test.onegini.com/resources/")
-
     }
 
     @Test

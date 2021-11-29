@@ -67,7 +67,6 @@ class GetResourceUseCaseTests {
         GetResourceUseCase(clientMock)(callMock, resultSpy, resourceHelper)
 
         verify(resourceHelper).getRequest(callMock, "https://token-mobile.test.onegini.com/resources/")
-
     }
 
     @Test

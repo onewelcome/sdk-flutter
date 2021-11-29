@@ -19,7 +19,12 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.*
+import org.mockito.kotlin.any
+import org.mockito.kotlin.isNull
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
+import org.mockito.kotlin.eq
+import org.mockito.kotlin.argumentCaptor
 
 @RunWith(MockitoJUnitRunner::class)
 class AuthenticateUserImplicitlyUseCaseTests {
