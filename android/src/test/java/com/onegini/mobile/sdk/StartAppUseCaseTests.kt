@@ -41,9 +41,6 @@ class StartAppUseCaseTests {
     lateinit var contextMock: Context
 
     @Mock
-    lateinit var configMock: Config
-
-    @Mock
     lateinit var oneginiInitializationError: OneginiInitializationError
 
     @Before
@@ -135,8 +132,7 @@ class StartAppUseCaseTests {
             assertThat(firstValue[0].id).isEqualTo("id1")
         }
     }
-
-
+    
     @Test
     fun `should properly pass connectionTimeout and readTimeout params to the SDK when provided`() {
         whenever(callMock.argument<Int>("connectionTimeout")).thenReturn(5)
@@ -187,6 +183,4 @@ class StartAppUseCaseTests {
             assertThat(firstValue.httpReadTimeout).isEqualTo(0)
         }
     }
-
-
 }
