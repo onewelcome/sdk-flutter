@@ -51,7 +51,7 @@ extension OneginiModuleSwift {
 
             if let _userProfile = userProfile {
                 var result = Dictionary<String, Any?>()
-                result["userProfile"] = ["profileId": _userProfile.profileId]
+                result[Constants.Keys.userProfile] = [Constants.Keys.profileId: _userProfile.profileId]
                 
                 callback(String.stringify(json: result))
             } else {
@@ -95,7 +95,10 @@ extension OneginiModuleSwift {
             self?.bridgeConnector.toLoginHandler.authenticateUser(profile, authenticator: registeredAuthenticator, completion: {
                 (userProfile, error) -> Void in
                 if let _userProfile = userProfile {
-                    callback(_userProfile.profileId)
+                    var result = Dictionary<String, Any?>()
+                    result[Constants.Keys.userProfile] = [Constants.Keys.profileId: _userProfile.profileId]
+                    
+                    callback(String.stringify(json: result))
                 } else {
                     callback(SdkError.convertToFlutter(error))
                 }
