@@ -8,11 +8,9 @@ import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiAppToWebSingleSignOnHandler
 import com.onegini.mobile.sdk.android.handlers.OneginiChangePinHandler
-import com.onegini.mobile.sdk.android.handlers.OneginiLogoutHandler
 import com.onegini.mobile.sdk.android.handlers.OneginiPinValidationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAppToWebSingleSignOnError
 import com.onegini.mobile.sdk.android.handlers.error.OneginiChangePinError
-import com.onegini.mobile.sdk.android.handlers.error.OneginiLogoutError
 import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
 import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
 import com.onegini.mobile.sdk.flutter.constants.Constants
@@ -20,7 +18,6 @@ import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestH
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
-import com.onegini.mobile.sdk.flutter.helpers.AuthenticationObject
 import com.onegini.mobile.sdk.flutter.helpers.MobileAuthenticationObject
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationAction
@@ -53,8 +50,8 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_GET_ALL_AUTHENTICATORS -> oneginiMethodsWrapper.getAllAuthenticators(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS -> oneginiMethodsWrapper.getNotRegisteredAuthenticators(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_SET_PREFERRED_AUTHENTICATOR -> oneginiMethodsWrapper.setPreferredAuthenticator(call, result, OneginiSDK().getOneginiClient(context))
+            Constants.METHOD_LOGOUT -> oneginiMethodsWrapper.logout(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_DEREGISTER_AUTHENTICATOR -> oneginiMethodsWrapper.deregisterAuthenticator(call, result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_LOGOUT -> logout(result, OneginiSDK().getOneginiClient(context))
             Constants.METHOD_ACCEPT_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
             Constants.METHOD_DENY_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.denyAuthenticationRequest()
             Constants.METHOD_IS_AUTHENTICATOR_REGISTERED -> oneginiMethodsWrapper.isAuthenticatorRegistered(call, result, OneginiSDK().getOneginiClient(context))
@@ -127,18 +124,6 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
                     }
                 }
         )
-    }
-
-    fun logout(result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        oneginiClient.userClient.logout(object : OneginiLogoutHandler {
-            override fun onSuccess() {
-                result.success(true)
-            }
-
-            override fun onError(error: OneginiLogoutError) {
-                result.error(error.errorType.toString(), error.message, null)
-            }
-        })
     }
 
     fun startChangePinFlow(result: MethodChannel.Result, oneginiClient: OneginiClient) {
