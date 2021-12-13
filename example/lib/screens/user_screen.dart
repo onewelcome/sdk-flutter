@@ -459,8 +459,12 @@ class Info extends StatefulWidget {
 
 class _InfoState extends State<Info> {
   Future<ApplicationDetails> getApplicationDetails() async {
-    var response = await Onegini.instance.resourcesMethods.getResourceAnonymous(
-        "application-details", ["read", "write", "application-details"]);
+    var response = "";
+    var success = await Onegini.instance.userClient.authenticateDevice(["read", "write", "application-details"]);
+    if(success!=null && success){
+      response = await Onegini.instance.resourcesMethods
+          .getResourceAnonymous("application-details");
+    }
     var res = json.decode(response);
     return applicationDetailsFromJson(res["body"]);
   }
@@ -473,11 +477,15 @@ class _InfoState extends State<Info> {
   }
 
   Future<String> getImplicitUserDetails() async {
-    var response = await Onegini.instance.resourcesMethods.getResourceImplicit(
-        "user-id-decorated", ["read"],
-        parameters: {"username": "foo@bax.com", "age": "15"});
-    var res = json.decode(response);
-    return json.decode(res["body"])["decorated_user_id"];
+    var returnString = "";
+    var user = await Onegini.instance.userClient.authenticateUserImplicitly(["read"]);
+    if(user!=null && user.profileId != null){
+      var response = await Onegini.instance.resourcesMethods
+          .getResourceImplicit("user-id-decorated");
+      var res = json.decode(response);
+      returnString = json.decode(res["body"])["decorated_user_id"];
+    }
+    return returnString;
   }
 
   Future<String> makeUnaunthenticatedRequest() async {
