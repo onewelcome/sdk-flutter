@@ -30,7 +30,7 @@ class StartAppUseCase(private val context: Context, private val oneginiSDK: Oneg
     }
 
     private fun start(oneginiClient: OneginiClient?, result: MethodChannel.Result) {
-        if(oneginiClient == null) {
+        if (oneginiClient == null) {
             result.error(OneginiWrapperErrors.ONEGINI_SDK_NOT_INITIALIZED.code, OneginiWrapperErrors.ONEGINI_SDK_NOT_INITIALIZED.message, null)
         } else {
             oneginiClient.start(object : OneginiInitializationHandler {
