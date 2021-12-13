@@ -459,30 +459,43 @@ class Info extends StatefulWidget {
 
 class _InfoState extends State<Info> {
   Future<ApplicationDetails> getApplicationDetails() async {
-    var response = await Onegini.instance.resourcesMethods.getResourceAnonymous(
-        "application-details", ["read", "write", "application-details"]);
-    return applicationDetailsFromJson(response);
+    var response = "";
+    var success = await Onegini.instance.userClient.authenticateDevice(["read", "write", "application-details"]);
+    if(success!=null && success){
+      response = await Onegini.instance.resourcesMethods
+          .getResourceAnonymous("application-details");
+    }
+    var res = json.decode(response);
+    return applicationDetailsFromJson(res["body"]);
   }
 
   Future<ClientResource> getClientResource() async {
     var response =
-        await Onegini.instance.resourcesMethods.getResource("devices");
-    return clientResourceFromJson(response);
+    await Onegini.instance.resourcesMethods.getResource("devices");
+    var res = json.decode(response);
+    return clientResourceFromJson(res["body"]);
   }
 
   Future<String> getImplicitUserDetails() async {
-    var response = await Onegini.instance.resourcesMethods.getResourceImplicit(
-        "user-id-decorated", ["read"],
-        parameters: {"username": "foo@bax.com", "age": 15});
-    Map<String, dynamic> responseAsJson = json.decode(response);
-    return responseAsJson["decorated_user_id"];
+    var returnString = "";
+    var user = await Onegini.instance.userClient.authenticateUserImplicitly(["read"]);
+    if(user!=null && user.profileId != null){
+      var response = await Onegini.instance.resourcesMethods
+          .getResourceImplicit("user-id-decorated");
+      var res = json.decode(response);
+      returnString = json.decode(res["body"])["decorated_user_id"];
+    }
+    return returnString;
   }
 
   Future<String> makeUnaunthenticatedRequest() async {
     var headers = {'Declareren-Appversion': 'CZ.app'};
     var response = await Onegini.instance.resourcesMethods
-        .getUnauthenticatedResource("devices", headers: headers, method: 'GET');
-    return response;
+        .getUnauthenticatedResource("devices", headers: headers, method: 'GET').catchError((onError) {
+          debugPrint(onError);
+        });
+    var res = json.decode(response);
+    return res["body"];
   }
 
   @override

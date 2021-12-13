@@ -103,6 +103,10 @@ class Constants {
   /// Get unauthenticated resource method name
   static const String getUnauthenticatedResource = "getUnauthenticatedResource";
 
+  static const String authenticateUserImplicitly = "authenticateUserImplicitly";
+
+  static const String authenticateDevice = "authenticateDevice";
+
   // Other
 
   /// Get app to web single sign on method name

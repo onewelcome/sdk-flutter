@@ -38,6 +38,8 @@ interface Constants {
         const val METHOD_GET_REDIRECT_URL = "getRedirectUrl"
 
         // Resources
+        const val METHOD_AUTHENTICATE_DEVICE = "authenticateDevice"
+        const val METHOD_AUTHENTICATE_USER_IMPLICITLY = "authenticateUserImplicitly"
         const val METHOD_GET_RESOURCE_ANONYMOUS = "getResourceAnonymous"
         const val METHOD_GET_RESOURCE = "getResource"
         const val METHOD_GET_IMPLICIT_RESOURCE = "getImplicitResource"

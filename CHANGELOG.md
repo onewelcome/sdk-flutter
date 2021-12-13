@@ -22,3 +22,11 @@
 
 * Bump Android SDK to 11.4.0.
 * Modified `buildContext` to be `nullable` in all of the API calls.
+
+## 1.0.4, November 19, 2021
+
+* Fixes and improvements.
+
+## 1.0.5, December 3, 2021
+
+* Fixed object type of result `authenticateUser` method.

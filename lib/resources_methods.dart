@@ -9,25 +9,23 @@ class ResourcesMethods {
   ///
   /// Method requires [path] parameter.
   Future<String> getResourceAnonymous(
-    String path,
-    List<String> scopes, {
+    String path, {
     Map<String, String>? headers,
     String? method,
     String? encoding,
+    Map<String, String>? params,
     String? body,
-    Map<String, dynamic>? parameters,
   }) async {
     try {
       var response;
       response = await Onegini.instance.channel
           .invokeMethod(Constants.getResourceAnonymous, <String, dynamic>{
         'path': path,
-        'scope': scopes,
         'headers': headers,
         'method': method,
         'encoding': encoding,
-        'body': body,
-        'parameters': parameters,
+        'parameters': params,
+        'body': body
       });
 
       return response;
@@ -44,8 +42,8 @@ class ResourcesMethods {
     Map<String, String>? headers,
     String? method,
     String? encoding,
+    Map<String, String>? params,
     String? body,
-    Map<String, dynamic>? parameters,
   }) async {
     try {
       var response = await Onegini.instance.channel
@@ -54,8 +52,8 @@ class ResourcesMethods {
         'headers': headers,
         'method': method,
         'encoding': encoding,
-        'body': body,
-        'parameters': parameters,
+        'parameters': params,
+        'body': body
       });
       return response;
     } on PlatformException catch (error) {
@@ -67,13 +65,12 @@ class ResourcesMethods {
   ///
   /// Method requires [path] parameter.
   Future<String> getResourceImplicit(
-    String path,
-    List<String> scope, {
+    String path, {
     Map<String, String>? headers,
     String? method,
     String? encoding,
+    Map<String, String>? params,
     String? body,
-    Map<String, dynamic>? parameters,
   }) async {
     try {
       var response;
@@ -81,12 +78,11 @@ class ResourcesMethods {
       response = await Onegini.instance.channel
           .invokeMethod(Constants.getImplicitResource, <String, dynamic>{
         'path': path,
-        'scope': scope,
         'headers': headers,
         'method': method,
         'encoding': encoding,
-        'body': body,
-        'parameters': parameters,
+        'parameters': params,
+        'body': body
       });
 
       return response;
@@ -100,8 +96,8 @@ class ResourcesMethods {
     Map<String, String>? headers,
     String? method,
     String? encoding,
+    Map<String, String>? params,
     String? body,
-    Map<String, dynamic>? parameters,
   }) async {
     try {
       var response = await Onegini.instance.channel
@@ -110,8 +106,8 @@ class ResourcesMethods {
         'headers': headers,
         'method': method,
         'encoding': encoding,
-        'body': body,
-        'parameters': parameters,
+        'parameters': params,
+        'body': body
       });
       return response;
     } on PlatformException catch (error) {

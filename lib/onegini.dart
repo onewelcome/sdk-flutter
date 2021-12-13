@@ -39,6 +39,8 @@ class Onegini {
   /// Initialize SDK and establish communication on [eventListener].
   Future<List<RemovedUserProfile>> startApplication(
     OneginiEventListener eventListener, {
+    String? securityControllerClassName,
+    String? configModelClassName,
     List<String>? twoStepCustomIdentityProviderIds,
     int? connectionTimeout,
     int? readTimeout,
@@ -47,6 +49,8 @@ class Onegini {
     try {
       String removedUserProfiles = await channel
           .invokeMethod(Constants.startAppMethod, <String, dynamic>{
+        'securityControllerClassName': securityControllerClassName,
+        'configModelClassName': configModelClassName,
         'twoStepCustomIdentityProviderIds': twoStepCustomIdentityProviderIds,
         'connectionTimeout': connectionTimeout,
         'readTimeout': readTimeout
