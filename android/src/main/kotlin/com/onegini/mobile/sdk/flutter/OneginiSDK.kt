@@ -14,16 +14,17 @@ import java.util.concurrent.TimeUnit
 class OneginiSDK {
 
     private lateinit var registrationRequestHandler: RegistrationRequestHandler
+    private var pinAuthenticationRequestHandler: PinAuthenticationRequestHandler? = null
     private var oneginiClient: OneginiClient? = null
 
     fun buildSDK(context: Context, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>, config: Config, oneginiEventsSender: OneginiEventsSender, result: MethodChannel.Result) {
         val applicationContext = context.applicationContext
         registrationRequestHandler = RegistrationRequestHandler(oneginiEventsSender)
-        val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
-        val pinAuthenticationRequestHandler = PinAuthenticationRequestHandler()
-        val createPinRequestHandler = PinRequestHandler()
-        val mobileAuthWithOtpRequestHandler = MobileAuthOtpRequestHandler()
-        val clientBuilder = OneginiClientBuilder(applicationContext, createPinRequestHandler, pinAuthenticationRequestHandler) // handlers for optional functionalities
+        pinAuthenticationRequestHandler = PinAuthenticationRequestHandler(oneginiEventsSender)
+        val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(oneginiEventsSender)
+        val createPinRequestHandler = PinRequestHandler(oneginiEventsSender)
+        val mobileAuthWithOtpRequestHandler = MobileAuthOtpRequestHandler(oneginiEventsSender)
+        val clientBuilder = OneginiClientBuilder(applicationContext, createPinRequestHandler, pinAuthenticationRequestHandler!!) // handlers for optional functionalities
                 .setBrowserRegistrationRequestHandler(registrationRequestHandler)
                 .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler)
                 .setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
@@ -60,7 +61,6 @@ class OneginiSDK {
         return pinAuthenticationRequestHandler
     }
 
-    private fun setConfigModel(clientBuilder: OneginiClientBuilder, config: Config) {
     private fun setConfigModel(clientBuilder: OneginiClientBuilder, config: Config, result: MethodChannel.Result) {
         if (config.configModelClassName == null) {
             return
