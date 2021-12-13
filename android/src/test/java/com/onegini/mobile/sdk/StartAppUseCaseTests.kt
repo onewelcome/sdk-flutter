@@ -9,9 +9,11 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.models.Config
 import com.onegini.mobile.sdk.flutter.useCases.StartAppUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
@@ -41,9 +43,13 @@ class StartAppUseCaseTests {
     @Mock
     lateinit var oneginiInitializationError: OneginiInitializationError
 
+    @Before
+    fun attach() {
+        whenever(oneginiSDKMock.getOneginiClient()).thenReturn(clientMock)
+    }
+
     @Test
     fun `should return UserProfile when start method returns single UserProfile`() {
-        whenever(oneginiSDKMock.getOneginiClient(eq(contextMock), isNull(), isNull(), eq(mutableListOf()))).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(setOf(UserProfile("QWERTY")))
         }
@@ -57,7 +63,6 @@ class StartAppUseCaseTests {
 
     @Test
     fun `should return error when when start method returns error`() {
-        whenever(oneginiSDKMock.getOneginiClient(eq(contextMock), isNull(), isNull(), eq(mutableListOf()))).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onError(oneginiInitializationError)
         }
@@ -71,7 +76,6 @@ class StartAppUseCaseTests {
 
     @Test
     fun `should return set of UserProfiles when start method returns set with UserProfiles`() {
-        whenever(oneginiSDKMock.getOneginiClient(eq(contextMock), isNull(), isNull(), eq(mutableListOf()))).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(setOf(UserProfile("QWERTY"), UserProfile("ASDFGH")))
         }
@@ -85,7 +89,6 @@ class StartAppUseCaseTests {
 
     @Test
     fun `should return empty set when start method returns empty set`() {
-        whenever(oneginiSDKMock.getOneginiClient(eq(contextMock), isNull(), isNull(), eq(mutableListOf()))).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
@@ -100,7 +103,6 @@ class StartAppUseCaseTests {
     @Test
     fun `should properly pass oneginiCustomIdentityProviderList param to the SDK when list contains two items`() {
         whenever(callMock.argument<ArrayList<String>>("twoStepCustomIdentityProviderIds")).thenReturn(arrayListOf("id1", "id2"))
-        whenever(oneginiSDKMock.getOneginiClient(eq(contextMock), isNull(), isNull(), any())).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
@@ -108,7 +110,7 @@ class StartAppUseCaseTests {
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         argumentCaptor<List<OneginiCustomIdentityProvider>> {
-            verify(oneginiSDKMock).getOneginiClient(eq(contextMock), isNull(), isNull(), capture())
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), any(), eq(resultSpy))
             assertThat(firstValue.size).isEqualTo(2)
             assertThat(firstValue[0].id).isEqualTo("id1")
             assertThat(firstValue[1].id).isEqualTo("id2")
@@ -118,7 +120,6 @@ class StartAppUseCaseTests {
     @Test
     fun `should properly pass oneginiCustomIdentityProviderList param to the SDK when list contains one item`() {
         whenever(callMock.argument<ArrayList<String>>("twoStepCustomIdentityProviderIds")).thenReturn(arrayListOf("id1"))
-        whenever(oneginiSDKMock.getOneginiClient(eq(contextMock), isNull(), isNull(), any())).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
@@ -126,28 +127,43 @@ class StartAppUseCaseTests {
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         argumentCaptor<List<OneginiCustomIdentityProvider>> {
-            verify(oneginiSDKMock).getOneginiClient(eq(contextMock), isNull(), isNull(), capture())
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), any(), eq(resultSpy))
             assertThat(firstValue.size).isEqualTo(1)
             assertThat(firstValue[0].id).isEqualTo("id1")
         }
     }
-
-
+    
     @Test
     fun `should properly pass connectionTimeout and readTimeout params to the SDK when provided`() {
         whenever(callMock.argument<Int>("connectionTimeout")).thenReturn(5)
         whenever(callMock.argument<Int>("readTimeout")).thenReturn(20)
-        whenever(oneginiSDKMock.getOneginiClient(eq(contextMock), isNotNull(), isNotNull(), eq(mutableListOf()))).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
 
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
-        argumentCaptor<Long> {
-            verify(oneginiSDKMock).getOneginiClient(eq(contextMock), capture(), capture(), eq(mutableListOf()))
-            assertThat(firstValue).isEqualTo(5)
-            assertThat(secondValue).isEqualTo(20)
+        argumentCaptor<Config> {
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), eq(mutableListOf()), capture(), eq(resultSpy))
+            assertThat(firstValue.httpConnectionTimeout).isEqualTo(5)
+            assertThat(firstValue.httpReadTimeout).isEqualTo(20)
+        }
+    }
+
+    @Test
+    fun `should properly pass securityControllerClassName and configModelClassName params to the SDK when provided`() {
+        whenever(callMock.argument<String>("securityControllerClassName")).thenReturn("com.onegini.mobile.onegini_example.SecurityController")
+        whenever(callMock.argument<String>("configModelClassName")).thenReturn("com.onegini.mobile.onegini_example.OneginiConfigModel")
+        whenever(clientMock.start(any())).thenAnswer {
+            it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
+        }
+
+        StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
+
+        argumentCaptor<Config> {
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), eq(mutableListOf()), capture(), eq(resultSpy))
+            assertThat(firstValue.configModelClassName).isEqualTo("com.onegini.mobile.onegini_example.OneginiConfigModel")
+            assertThat(firstValue.securityControllerClassName).isEqualTo("com.onegini.mobile.onegini_example.SecurityController")
         }
     }
 
@@ -155,19 +171,16 @@ class StartAppUseCaseTests {
     fun `should properly pass connectionTimeout and readTimeout params with zero values to the SDK when provided`() {
         whenever(callMock.argument<Int>("connectionTimeout")).thenReturn(0)
         whenever(callMock.argument<Int>("readTimeout")).thenReturn(0)
-        whenever(oneginiSDKMock.getOneginiClient(eq(contextMock), isNotNull(), isNotNull(), eq(mutableListOf()))).thenReturn(clientMock)
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
 
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
-        argumentCaptor<Long> {
-            verify(oneginiSDKMock).getOneginiClient(eq(contextMock), capture(), capture(), eq(mutableListOf()))
-            assertThat(firstValue).isEqualTo(0)
-            assertThat(secondValue).isEqualTo(0)
+        argumentCaptor<Config> {
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), eq(mutableListOf()), capture(), eq(resultSpy))
+            assertThat(firstValue.httpConnectionTimeout).isEqualTo(0)
+            assertThat(firstValue.httpReadTimeout).isEqualTo(0)
         }
     }
-
-
 }

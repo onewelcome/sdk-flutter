@@ -11,5 +11,6 @@ enum class OneginiWrapperErrors(val code: String, val message: String) {
     URL_CANT_BE_NULL("8008", "url can`t be null"),
     URL_IS_NOT_WEB_PATH("8009", "incorrect url format"),
     PREFERRED_AUTHENTICATOR_ERROR("8010", "something went wrong"),
-    HTTP_REQUEST_ERROR("8011","")
+    HTTP_REQUEST_ERROR("8011",""),
+    ONEGINI_SDK_NOT_INITIALIZED("8012","OneginiSDK not initialized")
 }
