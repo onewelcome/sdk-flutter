@@ -2,7 +2,6 @@ package com.onegini.mobile.sdk.flutter
 
 import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiBrowserRegistrationCallback
 import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.useCases.*
@@ -102,7 +101,6 @@ class OneginiMethodsWrapper {
     fun fallbackToPin(oneginiSDK: OneginiSDK) {
         FingerprintFallbackToPinUseCase(oneginiSDK)
     }
-}
 
     fun logout(result: MethodChannel.Result,oneginiClient: OneginiClient) {
         LogoutUseCase(oneginiClient)(result)

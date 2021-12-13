@@ -67,7 +67,6 @@ class OneginiSDK {
         return fingerprintRequestHandler
     }
 
-    private fun setConfigModel(clientBuilder: OneginiClientBuilder, config: Config) {
     private fun setConfigModel(clientBuilder: OneginiClientBuilder, config: Config, result: MethodChannel.Result) {
         if (config.configModelClassName == null) {
             return
