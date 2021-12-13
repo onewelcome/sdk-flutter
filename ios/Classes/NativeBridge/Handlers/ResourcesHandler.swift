@@ -85,14 +85,10 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 
         let completionRequest: ((ONGResourceResponse?, Error?) -> Void)? = { response, error in
             if let error = error {
-                completion(nil, SdkError(errorDescription: error.localizedDescription, code: error.code))
+                completion(nil, SdkError(errorDescription: error.localizedDescription, code: error.code, response: response))
             } else {
-                if let data = response?.data {
-                    if let responseData = String.init(data: data, encoding: .utf8) {
-                        completion(responseData, nil)
-                    } else {
-                        completion(nil, SdkError.init(customType: .failedParseData))
-                    }
+                if let response = response, let _ = response.data {
+                    completion(response.toString(), nil)
                 } else {
                     completion(nil, SdkError.init(customType: .responseIsNull))
                 }
@@ -113,14 +109,10 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 
         ONGUserClient.sharedInstance().fetchImplicitResource(request) { response, error in
             if let error = error {
-                completion(nil, SdkError(errorDescription: error.localizedDescription))
+                completion(nil, SdkError(errorDescription: error.localizedDescription, code: error.code, response: response))
             } else {
-                if let data = response?.data {
-                    if let responseData = String(data: data, encoding: .utf8) {
-                        completion(responseData, nil)
-                    } else {
-                        completion(nil, SdkError.init(customType: .failedParseData))
-                    }
+                if let response = response, let _ = response.data {
+                    completion(response.toString(), nil)
                 } else {
                     completion(nil, SdkError.init(customType: .responseIsNull))
                 }
@@ -194,7 +186,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                     if let data = _data {
                         completion(data)
                     } else {
-                        completion(_data)
+                        completion(error)
                     }
                 }
             } else {
@@ -212,12 +204,12 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         
         ONGDeviceClient.sharedInstance().fetchUnauthenticatedResource(request) { (response, error) in
             if let _errorResource = error {
-                callback(SdkError.convertToFlutter(SdkError.init(errorDescription: _errorResource.localizedDescription, code: _errorResource.code)))
+                callback(SdkError.convertToFlutter(SdkError.init(errorDescription: _errorResource.localizedDescription, code: _errorResource.code, response: response)))
                 return
             } else {
-                if let data = response?.data {
-                    if let convertedString = String(data: data, encoding: .utf8) {
-                        callback(convertedString)
+                if let response = response, let data = response.data {
+                    if let _ = String(data: data, encoding: .utf8) {
+                        callback(response.toString())
                     } else {
                         callback(data)
                     }
@@ -271,5 +263,19 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         }
         
         return request
+    }
+}
+
+extension ONGResourceResponse {
+    func toJSON() -> Dictionary<String, Any?> {
+        return ["statusCode": statusCode,
+                "headers": allHeaderFields,
+                "url": rawResponse.url?.absoluteString,
+                "body": data != nil ? String(data: data!, encoding: .utf8) : nil
+        ]
+    }
+    
+    func toString() -> String {
+        return String.stringify(json: self.toJSON())
     }
 }

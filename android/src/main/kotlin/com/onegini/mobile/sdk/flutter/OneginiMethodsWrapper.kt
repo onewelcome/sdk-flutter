@@ -39,8 +39,8 @@ class OneginiMethodsWrapper {
         GetUserProfilesUseCase(oneginiClient)(result)
     }
 
-    fun startApp(call: MethodCall, oneginiSDK: OneginiSDK ,result: MethodChannel.Result, oneginiEventsSender: OneginiEventsSender, context: Context) {
-        StartAppUseCase(context, oneginiSDK, oneginiEventsSender)(call, result)
+    fun startApp(call: MethodCall, result: MethodChannel.Result, oneginiSDK: OneginiSDK, context: Context, oneginiEventsSender: OneginiEventsSender) {
+        StartAppUseCase(context, oneginiSDK)(call, result, oneginiEventsSender)
     }
 
     fun getRegisteredAuthenticators(result: MethodChannel.Result, oneginiClient: OneginiClient) {
@@ -90,5 +90,9 @@ class OneginiMethodsWrapper {
 
     fun isAuthenticatorRegistered(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         IsAuthenticatorRegisteredUseCase(oneginiClient)(call, result)
+    }
+
+    fun logout(result: MethodChannel.Result,oneginiClient: OneginiClient) {
+        LogoutUseCase(oneginiClient)(result)
     }
 }
