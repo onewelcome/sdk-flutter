@@ -76,16 +76,12 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_DENY_OTP_AUTHENTICATION_REQUEST -> MobileAuthOtpRequestHandler.CALLBACK?.denyAuthenticationRequest()
 
             // Resources
-            Constants.METHOD_AUTHENTICATE_USER_IMPLICITLY -> oneginiMethodsWrapper.authenticateUserImplicitly(call, result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_AUTHENTICATE_DEVICE -> oneginiMethodsWrapper.authenticateDevice(call, result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_GET_RESOURCE_ANONYMOUS -> oneginiMethodsWrapper.getResourceAnonymous(call, result, OneginiSDK().getOneginiClient(context), ResourceHelper())
-            Constants.METHOD_GET_RESOURCE -> oneginiMethodsWrapper.getResource(call, result, OneginiSDK().getOneginiClient(context), ResourceHelper())
-            Constants.METHOD_GET_IMPLICIT_RESOURCE -> oneginiMethodsWrapper.getImplicitResource(call, result, OneginiSDK().getOneginiClient(context), ResourceHelper())
-            Constants.METHOD_GET_UNAUTHENTICATED_RESOURCE -> oneginiMethodsWrapper.getUnauthenticatedResource(call, result, OneginiSDK().getOneginiClient(context), ResourceHelper())
-            Constants.METHOD_GET_RESOURCE_ANONYMOUS -> ResourceHelper(call, result, client).getAnonymous()
-            Constants.METHOD_GET_RESOURCE -> ResourceHelper(call, result, client).getUserClient()
-            Constants.METHOD_GET_IMPLICIT_RESOURCE -> ResourceHelper(call, result, client).getImplicit()
-            Constants.METHOD_GET_UNAUTHENTICATED_RESOURCE -> ResourceHelper(call, result, client).getUnauthenticatedResource()
+            Constants.METHOD_AUTHENTICATE_USER_IMPLICITLY -> oneginiMethodsWrapper.authenticateUserImplicitly(call, result, client)
+            Constants.METHOD_AUTHENTICATE_DEVICE -> oneginiMethodsWrapper.authenticateDevice(call, result, client)
+            Constants.METHOD_GET_RESOURCE_ANONYMOUS -> oneginiMethodsWrapper.getResourceAnonymous(call, result, client, ResourceHelper())
+            Constants.METHOD_GET_RESOURCE -> oneginiMethodsWrapper.getResource(call, result, client, ResourceHelper())
+            Constants.METHOD_GET_IMPLICIT_RESOURCE -> oneginiMethodsWrapper.getImplicitResource(call, result, client, ResourceHelper())
+            Constants.METHOD_GET_UNAUTHENTICATED_RESOURCE -> oneginiMethodsWrapper.getUnauthenticatedResource(call, result, client, ResourceHelper())
 
             // Other
             Constants.METHOD_CHANGE_PIN -> startChangePinFlow(result, client)
