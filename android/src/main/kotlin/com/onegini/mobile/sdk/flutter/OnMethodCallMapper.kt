@@ -31,7 +31,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         val client = oneginiSDK.getOneginiClient()
         if (call.method == Constants.METHOD_START_APP) {
-            oneginiMethodsWrapper.startApp(call, result, oneginiSDK, context)
+            oneginiMethodsWrapper.startApp(call, result, oneginiSDK, context, oneginiEventsSender)
         } else if (client != null) {
             onSDKMethodCall(call, client, result)
         } else {
