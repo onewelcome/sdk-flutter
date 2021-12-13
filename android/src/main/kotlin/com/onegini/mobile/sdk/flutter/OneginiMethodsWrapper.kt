@@ -3,6 +3,7 @@ package com.onegini.mobile.sdk.flutter
 import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
+import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.useCases.*
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -75,6 +76,30 @@ class OneginiMethodsWrapper {
 
     fun authenticateUser(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         AuthenticateUserUseCase(oneginiClient)(call, result)
+    }
+
+    fun authenticateDevice(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient){
+        AuthenticateDeviceUseCase(oneginiClient)(call, result)
+    }
+
+    fun authenticateUserImplicitly(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient){
+        AuthenticateUserImplicitlyUseCase(oneginiClient)(call, result)
+    }
+
+    fun getResourceAnonymous(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient, resourceHelper: ResourceHelper){
+        GetResourceAnonymousUseCase(oneginiClient)(call, result, resourceHelper)
+    }
+
+    fun getResource(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient, resourceHelper: ResourceHelper){
+        GetResourceUseCase(oneginiClient)(call, result, resourceHelper)
+    }
+
+    fun getImplicitResource(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient, resourceHelper: ResourceHelper){
+        GetImplicitResourceUseCase(oneginiClient)(call, result, resourceHelper)
+    }
+
+    fun getUnauthenticatedResource(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient, resourceHelper: ResourceHelper){
+        GetUnauthenticatedResourceUseCase(oneginiClient)(call, result, resourceHelper)
     }
 
     fun isAuthenticatorRegistered(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient) {
