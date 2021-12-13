@@ -15,7 +15,6 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
 import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
 import com.onegini.mobile.sdk.flutter.constants.Constants
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
-import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.MobileAuthenticationObject
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
@@ -49,7 +48,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_CANCEL_REGISTRATION -> oneginiMethodsWrapper.cancelRegistration(oneginiSDK.getRegistrationRequestHandler())
             Constants.METHOD_ACCEPT_PIN_REGISTRATION_REQUEST -> oneginiMethodsWrapper.acceptPinRegistrationRequest(oneginiSDK, call)
             Constants.METHOD_DENY_PIN_REGISTRATION_REQUEST -> oneginiMethodsWrapper.denyPinRegistrationRequest(oneginiSDK)
-            Constants.METHOD_DEREGISTER_USER -> oneginiMethodsWrapper.deregisterUser(call, result, oneginiSDK.getOneginiClient())
+            Constants.METHOD_DEREGISTER_USER -> oneginiMethodsWrapper.deregisterUser(call, result, client)
 
             // Authenticate
             Constants.METHOD_REGISTER_AUTHENTICATOR -> oneginiMethodsWrapper.registerAuthenticator(call, result, client)

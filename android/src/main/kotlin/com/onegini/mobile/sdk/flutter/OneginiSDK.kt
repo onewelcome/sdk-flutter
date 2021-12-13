@@ -24,8 +24,6 @@ class OneginiSDK {
         registrationRequestHandler = RegistrationRequestHandler(oneginiEventsSender)
         fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(oneginiEventsSender)
         pinAuthenticationRequestHandler = PinAuthenticationRequestHandler(oneginiEventsSender)
-        val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(oneginiEventsSender)
-        val createPinRequestHandler = PinRequestHandler(oneginiEventsSender)
         pinRequestHandler = PinRequestHandler(oneginiEventsSender)
         val mobileAuthWithOtpRequestHandler = MobileAuthOtpRequestHandler(oneginiEventsSender)
         val clientBuilder = OneginiClientBuilder(applicationContext, pinRequestHandler!!, pinAuthenticationRequestHandler!!) // handlers for optional functionalities
@@ -73,7 +71,6 @@ class OneginiSDK {
         return pinRequestHandler
     }
 
-    private fun setConfigModel(clientBuilder: OneginiClientBuilder, config: Config) {
     private fun setConfigModel(clientBuilder: OneginiClientBuilder, config: Config, result: MethodChannel.Result) {
         if (config.configModelClassName == null) {
             return
