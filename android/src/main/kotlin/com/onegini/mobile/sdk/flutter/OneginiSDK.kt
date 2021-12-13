@@ -6,16 +6,16 @@ import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 import com.onegini.mobile.sdk.flutter.handlers.*
+import com.onegini.mobile.sdk.flutter.models.Config
+import io.flutter.plugin.common.MethodChannel
+import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.TimeUnit
 
 class OneginiSDK {
 
-    companion object {
-        var oneginiClientConfigModel: OneginiClientConfigModel? = null
-        var oneginiSecurityController: Class<*>? = null
-    }
+    private var oneginiClient: OneginiClient? = null
 
-    private fun buildSDK(context: Context, httpConnectionTimeout: Long?, httpReadTimeout: Long?, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>): OneginiClient {
+    fun buildSDK(context: Context, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>, config: Config, result: MethodChannel.Result) {
         val applicationContext = context.applicationContext
         val registrationRequestHandler = RegistrationRequestHandler()
         val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
@@ -26,24 +26,56 @@ class OneginiSDK {
                 .setBrowserRegistrationRequestHandler(registrationRequestHandler)
                 .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler)
                 .setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
-                .setSecurityController(oneginiSecurityController)
-                .setConfigModel(oneginiClientConfigModel)
+
         oneginiCustomIdentityProviders.map { clientBuilder.addCustomIdentityProvider(it) }
+
+        val httpConnectionTimeout = config.httpConnectionTimeout
+        val httpReadTimeout = config.httpReadTimeout
+
         if (httpConnectionTimeout != null) {
             clientBuilder.setHttpConnectTimeout(TimeUnit.SECONDS.toMillis(httpConnectionTimeout).toInt())
         }
+
         if (httpReadTimeout != null) {
             clientBuilder.setHttpReadTimeout(TimeUnit.SECONDS.toMillis(httpReadTimeout).toInt())
         }
-        return clientBuilder.build()
+
+        setConfigModel(clientBuilder, config, result)
+
+        setSecurityController(clientBuilder, config, result)
+
+        oneginiClient = clientBuilder.build()
     }
 
-    fun getOneginiClient(context: Context, httpConnectionTimeout: Long? = null, httpReadTimeout: Long? = null, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider> = mutableListOf()): OneginiClient {
-        var oneginiClient = OneginiClient.getInstance()
-        if (oneginiClient == null) {
-            oneginiClient = buildSDK(context, httpConnectionTimeout, httpReadTimeout, oneginiCustomIdentityProviders)
-        }
+    fun getOneginiClient(): OneginiClient? {
         return oneginiClient
     }
 
+    private fun setConfigModel(clientBuilder: OneginiClientBuilder, config: Config, result: MethodChannel.Result) {
+        if (config.configModelClassName == null) {
+            return
+        }
+        try {
+            val clazz = Class.forName(config.configModelClassName)
+            val ctor = clazz.getConstructor()
+            val `object` = ctor.newInstance()
+            if (`object` is OneginiClientConfigModel) {
+                clientBuilder.setConfigModel(`object`)
+            }
+        } catch (e: Exception) {
+           result.error("10000",e.message, null)
+        }
+    }
+
+    private fun setSecurityController(clientBuilder: OneginiClientBuilder, config: Config, result: MethodChannel.Result) {
+        if (config.securityControllerClassName == null) {
+            return
+        }
+        try {
+            val securityController = Class.forName(config.securityControllerClassName)
+            clientBuilder.setSecurityController(securityController)
+        } catch (e: ClassNotFoundException) {
+            result.error("10000",e.message, null)
+        }
+    }
 }
