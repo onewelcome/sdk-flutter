@@ -43,7 +43,7 @@ class DenyPinAuthenticationUseCaseTests {
     @Test
     fun `should call denyAuthenticationRequest`() {
         whenever(oneginiSDKMock.getPinAuthenticationRequestHandler()).thenReturn(pinAuthenticationRequestHandlerMock)
-        whenever(pinAuthenticationRequestHandlerMock.oneginiPinCallback).thenReturn(oneginiPinCallbackMock)
+        whenever(pinAuthenticationRequestHandlerMock.getCallback()).thenReturn(oneginiPinCallbackMock)
 
         DenyPinAuthenticationUseCase(oneginiSDKMock)()
 

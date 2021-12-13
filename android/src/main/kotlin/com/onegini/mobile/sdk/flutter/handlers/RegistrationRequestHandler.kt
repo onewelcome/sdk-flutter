@@ -13,7 +13,8 @@ class RegistrationRequestHandler(private val oneginiEventsSender: OneginiEventsS
     private var oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback? = null
 
     companion object {
-         var CALLBACK: OneginiBrowserRegistrationCallback? = null
+        private var CALLBACK: OneginiBrowserRegistrationCallback? = null
+
         /**
          * Finish registration action with result from web browser
          */
@@ -25,7 +26,7 @@ class RegistrationRequestHandler(private val oneginiEventsSender: OneginiEventsS
         }
 
         fun onRegistrationCanceled() {
-            if(CALLBACK!=null) {
+            if (CALLBACK != null) {
                 CALLBACK?.denyRegistration()
                 CALLBACK = null
             }
@@ -43,10 +44,6 @@ class RegistrationRequestHandler(private val oneginiEventsSender: OneginiEventsS
         this.oneginiBrowserRegistrationCallback = null
         CALLBACK = null
     }
-
-    /**
-     * Cancel registration action in case of web browser error
-     */
 
 
     override fun startRegistration(uri: Uri, oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback) {

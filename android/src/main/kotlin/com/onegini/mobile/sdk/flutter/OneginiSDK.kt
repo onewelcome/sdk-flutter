@@ -8,23 +8,24 @@ import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 import com.onegini.mobile.sdk.flutter.handlers.*
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.models.Config
-import java.lang.reflect.InvocationTargetException
+import io.flutter.plugin.common.MethodChannel
 import java.util.concurrent.TimeUnit
 
 class OneginiSDK {
 
-    private lateinit var oneginiClient: OneginiClient
     private lateinit var registrationRequestHandler: RegistrationRequestHandler
     private var fingerprintRequestHandler: FingerprintAuthenticationRequestHandler? = null
     private var pinAuthenticationRequestHandler: PinAuthenticationRequestHandler? = null
+    private var oneginiClient: OneginiClient? = null
     private var pinRequestHandler: PinRequestHandler? = null
 
-
-    fun buildSDK(context: Context, httpConnectionTimeout: Long?, httpReadTimeout: Long?, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>, config: Config, oneginiEventsSender: OneginiEventsSender) {
+    fun buildSDK(context: Context, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>, config: Config, oneginiEventsSender: OneginiEventsSender, result: MethodChannel.Result) {
         val applicationContext = context.applicationContext
         registrationRequestHandler = RegistrationRequestHandler(oneginiEventsSender)
         fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(oneginiEventsSender)
         pinAuthenticationRequestHandler = PinAuthenticationRequestHandler(oneginiEventsSender)
+        val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(oneginiEventsSender)
+        val createPinRequestHandler = PinRequestHandler(oneginiEventsSender)
         pinRequestHandler = PinRequestHandler(oneginiEventsSender)
         val mobileAuthWithOtpRequestHandler = MobileAuthOtpRequestHandler(oneginiEventsSender)
         val clientBuilder = OneginiClientBuilder(applicationContext, pinRequestHandler!!, pinAuthenticationRequestHandler!!) // handlers for optional functionalities
@@ -32,29 +33,32 @@ class OneginiSDK {
             .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler!!)
             .setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
 
-        // Set config model
-        setConfigModel(clientBuilder, config)
-
-        // Set security controller
-        setSecurityController(clientBuilder, config)
-        
         oneginiCustomIdentityProviders.map { clientBuilder.addCustomIdentityProvider(it) }
+
+        val httpConnectionTimeout = config.httpConnectionTimeout
+        val httpReadTimeout = config.httpReadTimeout
+
         if (httpConnectionTimeout != null) {
             clientBuilder.setHttpConnectTimeout(TimeUnit.SECONDS.toMillis(httpConnectionTimeout).toInt())
         }
+
         if (httpReadTimeout != null) {
             clientBuilder.setHttpReadTimeout(TimeUnit.SECONDS.toMillis(httpReadTimeout).toInt())
         }
+
+        setConfigModel(clientBuilder, config, result)
+
+        setSecurityController(clientBuilder, config, result)
+
         oneginiClient = clientBuilder.build()
     }
 
-    fun getOneginiClient(): OneginiClient {
-        // todo should we use OneginiClient.getInstance or this var 
-        return OneginiClient.getInstance() ?: oneginiClient
+    fun getRegistrationRequestHandler(): RegistrationRequestHandler {
+        return registrationRequestHandler
     }
-    
-    fun getRegistrationRequestHandler() : RegistrationRequestHandler {
-        return  registrationRequestHandler
+
+    fun getOneginiClient(): OneginiClient? {
+        return oneginiClient
     }
 
     fun getPinAuthenticationRequestHandler() : PinAuthenticationRequestHandler? {
@@ -70,6 +74,7 @@ class OneginiSDK {
     }
 
     private fun setConfigModel(clientBuilder: OneginiClientBuilder, config: Config) {
+    private fun setConfigModel(clientBuilder: OneginiClientBuilder, config: Config, result: MethodChannel.Result) {
         if (config.configModelClassName == null) {
             return
         }
@@ -80,20 +85,12 @@ class OneginiSDK {
             if (`object` is OneginiClientConfigModel) {
                 clientBuilder.setConfigModel(`object`)
             }
-        } catch (e: ClassNotFoundException) {
-            e.printStackTrace()
-        } catch (e: NoSuchMethodException) {
-            e.printStackTrace()
-        } catch (e: IllegalAccessException) {
-            e.printStackTrace()
-        } catch (e: InstantiationException) {
-            e.printStackTrace()
-        } catch (e: InvocationTargetException) {
-            e.printStackTrace()
+        } catch (e: Exception) {
+            result.error("10000", e.message, null)
         }
     }
 
-    private fun setSecurityController(clientBuilder: OneginiClientBuilder, config: Config) {
+    private fun setSecurityController(clientBuilder: OneginiClientBuilder, config: Config, result: MethodChannel.Result) {
         if (config.securityControllerClassName == null) {
             return
         }
@@ -101,7 +98,7 @@ class OneginiSDK {
             val securityController = Class.forName(config.securityControllerClassName)
             clientBuilder.setSecurityController(securityController)
         } catch (e: ClassNotFoundException) {
-            e.printStackTrace()
+            result.error("10000", e.message, null)
         }
     }
 }
