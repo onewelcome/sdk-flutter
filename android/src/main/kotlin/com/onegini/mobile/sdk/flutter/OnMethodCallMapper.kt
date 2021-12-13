@@ -18,7 +18,6 @@ import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestH
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
-import com.onegini.mobile.sdk.flutter.helpers.MobileAuthenticationObject
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationAction
 import io.flutter.plugin.common.MethodCall
@@ -38,7 +37,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
         }
     }
 
-   private fun onSDKMethodCall(call: MethodCall, client: OneginiClient, result: MethodChannel.Result) {
+    private fun onSDKMethodCall(call: MethodCall, client: OneginiClient, result: MethodChannel.Result) {
         when (call.method) {
             Constants.METHOD_CUSTOM_TWO_STEP_REGISTRATION_RETURN_SUCCESS -> CustomTwoStepRegistrationAction.CALLBACK?.returnSuccess(call.argument("data"))
             Constants.METHOD_CUSTOM_TWO_STEP_REGISTRATION_RETURN_ERROR -> CustomTwoStepRegistrationAction.CALLBACK?.returnError(Exception(call.argument<String>("error")))
@@ -71,9 +70,8 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_FINGERPRINT_FALL_BACK_TO_PIN -> FingerprintAuthenticationRequestHandler.fingerprintCallback?.fallbackToPin()
 
             // OTP
-            Constants.METHOD_HANDLE_MOBILE_AUTH_WITH_OTP -> oneginiMethodsWrapper.handleMobileAuthWithOtp(call, result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_ENROLL_USER_FOR_MOBILE_AUTH -> oneginiMethodsWrapper.enrollUserForMobileAuth(result, OneginiSDK().getOneginiClient(context))
-            Constants.METHOD_HANDLE_MOBILE_AUTH_WITH_OTP -> MobileAuthenticationObject.mobileAuthWithOtp(call.argument<String>("data"), result, client)
+            Constants.METHOD_HANDLE_MOBILE_AUTH_WITH_OTP -> oneginiMethodsWrapper.handleMobileAuthWithOtp(call, result, client)
+            Constants.METHOD_ENROLL_USER_FOR_MOBILE_AUTH -> oneginiMethodsWrapper.enrollUserForMobileAuth(result, client)
             Constants.METHOD_ACCEPT_OTP_AUTHENTICATION_REQUEST -> MobileAuthOtpRequestHandler.CALLBACK?.acceptAuthenticationRequest()
             Constants.METHOD_DENY_OTP_AUTHENTICATION_REQUEST -> MobileAuthOtpRequestHandler.CALLBACK?.denyAuthenticationRequest()
 
