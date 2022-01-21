@@ -1,7 +1,6 @@
 package com.onegini.mobile.sdk.flutter
 
 import android.content.Intent
-import android.telephony.ims.RegistrationManager
 import androidx.annotation.NonNull
 import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
@@ -15,7 +14,7 @@ import io.flutter.plugin.common.PluginRegistry
 
 /** OneginiPlugin */
 class OneginiPlugin : FlutterPlugin, ActivityAware,
-        PluginRegistry.NewIntentListener  {
+        PluginRegistry.NewIntentListener {
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -40,8 +39,16 @@ class OneginiPlugin : FlutterPlugin, ActivityAware,
     }
 
     private fun handleIntent(intent: Intent?) {
-        if (intent?.data != null) {
-            RegistrationRequestHandler.handleRegistrationCallback(intent.data!!)
+        if (intent?.data == null) {
+            return
+        }
+
+        val client = oneginiSDK.getOneginiClient()
+        val scheme = intent.data?.scheme ?: ""
+        if (intent.data != null) {
+            if (client != null && client.configModel.redirectUri.startsWith(scheme)) {
+                RegistrationRequestHandler.handleRegistrationCallback(intent.data!!)
+            }
         }
     }
 
@@ -60,7 +67,10 @@ class OneginiPlugin : FlutterPlugin, ActivityAware,
     }
 
     override fun onNewIntent(intent: Intent?): Boolean {
-        this.handleIntent(intent)
+        if(intent?.data != null){
+            this.handleIntent(intent)
+            return true
+        }
         return false
     }
 
