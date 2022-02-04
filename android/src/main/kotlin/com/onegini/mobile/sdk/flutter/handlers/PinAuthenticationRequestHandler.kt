@@ -14,7 +14,7 @@ class PinAuthenticationRequestHandler : OneginiPinAuthenticationRequestHandler {
         var CALLBACK: OneginiPinCallback? = null
     }
 
-    override fun startAuthentication(userProfile: UserProfile, oneginiPinCallback: OneginiPinCallback, attemptCounter: AuthenticationAttemptCounter?) {
+    override fun startAuthentication(userProfile: UserProfile, oneginiPinCallback: OneginiPinCallback, attemptCounter: AuthenticationAttemptCounter) {
         CALLBACK = oneginiPinCallback
         OneginiEventsSender.events?.success(Constants.EVENT_OPEN_PIN_AUTH)
     }

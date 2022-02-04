@@ -16,13 +16,19 @@ class CustomTwoStepRegistrationAction(private val providerId: String) : OneginiC
         callback.returnSuccess(null)
     }
 
-    override fun finishRegistration(callback: OneginiCustomRegistrationCallback, customInfo: CustomInfo) {
+    override fun finishRegistration(callback: OneginiCustomRegistrationCallback, customInfo: CustomInfo?) {
         CALLBACK = callback
-        if (customInfo.status < 2001) {
-            val data = Gson().toJson(CustomTwoStepRegistrationModel(customInfo.data, providerId))
-            OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_OPEN_CUSTOM_TWO_STEP_REGISTRATION_SCREEN, data)))
-        } else {
-            OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_ERROR, Gson().toJson(Error(customInfo.status.toString(), customInfo.data)).toString())))
+        // TODO
+        // I don't think this implementation is valid, but if it works for CZ I will leave it as it is, just added
+        // the required null checks. Has to be refactored
+        if (customInfo != null) {
+            if (customInfo.status < 2001) {
+                val data = Gson().toJson(CustomTwoStepRegistrationModel(customInfo.data.orEmpty(), providerId))
+                OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_OPEN_CUSTOM_TWO_STEP_REGISTRATION_SCREEN, data)))
+            } else {
+                val error = Error(customInfo.status.toString(), customInfo.data.orEmpty())
+                OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_ERROR, Gson().toJson(error).toString())))
+            }
         }
     }
 
