@@ -33,7 +33,7 @@ class StartAppUseCase(private val context: Context, private val oneginiSDK: Oneg
             result.error(OneginiWrapperErrors.ONEGINI_SDK_NOT_INITIALIZED.code, OneginiWrapperErrors.ONEGINI_SDK_NOT_INITIALIZED.message, null)
         } else {
             oneginiClient.start(object : OneginiInitializationHandler {
-                override fun onSuccess(removedUserProfiles: Set<UserProfile?>?) {
+                override fun onSuccess(removedUserProfiles: Set<UserProfile>) {
                     val removedUserProfileArray = getRemovedUserProfileArray(removedUserProfiles)
                     result.success(Gson().toJson(removedUserProfileArray))
                 }
@@ -45,17 +45,13 @@ class StartAppUseCase(private val context: Context, private val oneginiSDK: Oneg
         }
     }
 
-    private fun getRemovedUserProfileArray(removedUserProfiles: Set<UserProfile?>?): ArrayList<Map<String, Any>> {
+    private fun getRemovedUserProfileArray(removedUserProfiles: Set<UserProfile>): ArrayList<Map<String, Any>> {
         val removedUserProfileArray: ArrayList<Map<String, Any>> = ArrayList()
-        if (removedUserProfiles != null) {
-            for (userProfile in removedUserProfiles) {
-                if (userProfile != null && userProfile.profileId != null) {
-                    val map = mutableMapOf<String, Any>()
-                    map["isDefault"] = userProfile.isDefault
-                    map["profileId"] = userProfile.profileId
-                    removedUserProfileArray.add(map)
-                }
-            }
+        for (userProfile in removedUserProfiles) {
+            val map = mutableMapOf<String, Any>()
+            map["isDefault"] = userProfile.isDefault
+            map["profileId"] = userProfile.profileId
+            removedUserProfileArray.add(map)
         }
         return removedUserProfileArray
     }

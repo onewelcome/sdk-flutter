@@ -16,7 +16,7 @@ class PinRequestHandler : OneginiCreatePinRequestHandler {
         var CALLBACK: OneginiPinCallback? = null
     }
 
-    override fun startPinCreation(userProfile: UserProfile?, oneginiPinCallback: OneginiPinCallback, p2: Int) {
+    override fun startPinCreation(userProfile: UserProfile, oneginiPinCallback: OneginiPinCallback, p2: Int) {
         CALLBACK = oneginiPinCallback
         OneginiEventsSender.events?.success(Constants.EVENT_OPEN_PIN)
     }
