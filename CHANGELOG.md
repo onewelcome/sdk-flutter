@@ -30,3 +30,7 @@
 ## 1.0.5, December 3, 2021
 
 * Fixed object type of result `authenticateUser` method.
+
+## 1.0.6, February 7, 2022
+
+* Updated Android SDK to version 11.6.1
