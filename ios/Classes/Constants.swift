@@ -20,6 +20,7 @@ enum Constants {
         
         //authentication
         static let authenticateUser: String = "authenticateUser"
+        static let authenticateDevice: String = "authenticateDevice"
         static let getAllNotRegisteredAuthenticators: String = "getAllNotRegisteredAuthenticators"
         static let getRegisteredAuthenticators: String = "getRegisteredAuthenticators"
         static let getAllAuthenticators: String = "getAllAuthenticators"
