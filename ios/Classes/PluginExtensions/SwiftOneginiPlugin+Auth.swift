@@ -46,9 +46,9 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
     }
     
     func authenticateDevice(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        guard let _arg = call.arguments as! [String: Any]? else { return; }
+        guard let _arg = call.arguments as! [String: Any]? else { return }
         let _scopes = _arg["scope"] as? [String]
-        OneginiModuleSwift.sharedInstance.authenticateDeviceForResource(_scopes, callback: result)
+        OneginiModuleSwift.sharedInstance.authenticateDevice(_scopes, callback: result)
     }
     
     func getRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
