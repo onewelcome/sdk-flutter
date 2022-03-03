@@ -5,7 +5,7 @@ import OneginiCrypto
 typealias FlutterDataCallback = (Any?, SdkError?) -> Void
 
 protocol FetchResourcesHandlerProtocol: AnyObject {
-    func authenticateDevice(_ scopes: [String], completion: @escaping (Bool, SdkError?) -> Void)
+    func authenticateDevice(_ scopes: [String]?, completion: @escaping (Bool, SdkError?) -> Void)
     func authenticateImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Bool, SdkError?) -> Void)
     func resourceRequest(isImplicit: Bool, isAnonymousCall: Bool, parameters: [String: Any], completion: @escaping FlutterDataCallback)
     func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
@@ -17,7 +17,7 @@ protocol FetchResourcesHandlerProtocol: AnyObject {
 //MARK: -
 class ResourcesHandler: FetchResourcesHandlerProtocol {
     
-    func authenticateDevice(_ scopes: [String], completion: @escaping (Bool, SdkError?) -> Void) {
+    func authenticateDevice(_ scopes: [String]?, completion: @escaping (Bool, SdkError?) -> Void) {
         Logger.log("authenticateDevice", sender: self)
         ONGDeviceClient.sharedInstance().authenticateDevice(scopes) { success, error in
             if let error = error {
@@ -137,21 +137,13 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         Logger.log("fetchAnonymousResource", sender: self)
         
         let newParameters = generateParameters(from: parameters, path: path)
-        let scopes = (newParameters["scope"] as? [String]) ?? [String]()
 
-        OneginiModuleSwift.sharedInstance.authenticateDeviceForResource(scopes) { (data) in
-            guard let value = data, let _value = value as? Bool, _value else {
-                completion(data)
+        OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: false, parameters: newParameters) { (data, error) in
+            if let _errorResource = error {
+                completion(_errorResource)
                 return
-            }
-
-            OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: false, parameters: newParameters) { (data, error) in
-                if let _errorResource = error {
-                    completion(_errorResource)
-                    return
-                } else {
-                    completion(data)
-                }
+            } else {
+                completion(data)
             }
         }
     }
@@ -234,10 +226,6 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 
         if let body = buffer["body"] {
             newParameters["body"] = body
-        }
-
-        if let scope = buffer["scope"] {
-            newParameters["scope"] = scope
         }
         
         if let parameters = buffer["parameters"] {
