@@ -34,3 +34,7 @@
 ## 1.0.6, February 7, 2022
 
 * Updated Android SDK to version 11.6.1
+
+## 1.0.7, March 3, 2022
+
+* Fixed `authenticateDevice` method for iOS - please make sure authenticate device method is called before fetching anonymous resources.
