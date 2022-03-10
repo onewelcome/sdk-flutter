@@ -38,3 +38,8 @@
 ## 1.0.7, March 3, 2022
 
 * Fixed `authenticateDevice` method for iOS - please make sure authenticate device method is called before fetching anonymous resources.
+
+## 1.0.8, March 11, 2022
+
+* Updated the Android SDK to version 11.7.0. See [the release notes](https://docs.onegini.com/projects/android-sdk/en/stable/release-notes/11.X/#1170)
+and [upgrade instructions](https://docs.onegini.com/projects/android-sdk/en/stable/upgrade-instructions/11.7/) for more information.
