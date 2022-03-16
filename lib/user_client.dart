@@ -103,7 +103,7 @@ class UserClient {
   /// If [registeredAuthenticatorId] is null, starts authentication by default authenticator.
   /// Usually it is Pin authenticator.
   Future<RegistrationResponse> authenticateUser(
-    BuildContext context,
+    BuildContext? context,
     String? registeredAuthenticatorId,
   ) async {
     Onegini.instance.setEventContext(context);
