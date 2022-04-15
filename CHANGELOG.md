@@ -43,3 +43,7 @@
 
 * Updated the Android SDK to version 11.7.0. See [the release notes](https://docs.onegini.com/projects/android-sdk/en/stable/release-notes/11.X/#1170)
 and [upgrade instructions](https://docs.onegini.com/projects/android-sdk/en/stable/upgrade-instructions/11.7/) for more information.
+
+## 1.0.9, April 15, 2022
+
+* Updated the iOS SDK to version 11.0.2. This is a major change in case of tampering protection mechanism. See [the release notes](https://docs-single-tenant.onegini.com/msp/stable/ios-sdk/upgrade-instructions/11.0.0.html) for more information.
