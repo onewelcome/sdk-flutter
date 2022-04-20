@@ -35,7 +35,7 @@ class OneginiFingerprintCallback {
   /// Accept fingerprint request.
   ///
   /// Use this method when you want start scanning fingerprint.
-  Future<void> acceptAuthenticationRequest(BuildContext context) async {
+  Future<void> acceptAuthenticationRequest(BuildContext? context) async {
     Onegini.instance.setEventContext(context);
     try {
       await Onegini.instance.channel
