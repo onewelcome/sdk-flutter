@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen> {
             fontSize: 16.0);
       }
     });
-    if (registrationResponse.userProfile?.profileId != null)
+    if (registrationResponse?.userProfile?.profileId != null)
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
