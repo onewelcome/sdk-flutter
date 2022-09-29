@@ -57,8 +57,7 @@ class UserClient {
     try {
       var providers = await Onegini.instance.channel
           .invokeMethod(Constants.getIdentityProvidersMethod);
-      var result = responseFromJson(providers);
-      return result;
+      return responseFromJson(providers);
     } on PlatformException catch (error) {
       throw error;
     } on TypeError catch (error) {
