@@ -30,6 +30,9 @@ class UserClient {
       return registrationResponseFromJson(response);
     } on PlatformException catch (error) {
       throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: '', stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -54,9 +57,13 @@ class UserClient {
     try {
       var providers = await Onegini.instance.channel
           .invokeMethod(Constants.getIdentityProvidersMethod);
-      return responseFromJson(providers);
+      var result = responseFromJson(providers);
+      return result;
     } on PlatformException catch (error) {
       throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: '', stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -67,7 +74,7 @@ class UserClient {
           .invokeMethod(Constants.deregisterUserMethod, <String, String?>{
         'profileId': profileId,
       });
-      return isSuccess;
+      return isSuccess ?? false;
     } on PlatformException catch (error) {
       throw error;
     }
@@ -83,6 +90,9 @@ class UserClient {
       return responseFromJson(authenticators);
     } on PlatformException catch (error) {
       throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: '', stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -95,6 +105,9 @@ class UserClient {
       return responseFromJson(authenticators);
     } on PlatformException catch (error) {
       throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: '', stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -115,6 +128,9 @@ class UserClient {
       return registrationResponseFromJson(response);
     } on PlatformException catch (error) {
       throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: '', stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -127,6 +143,9 @@ class UserClient {
       return responseFromJson(authenticators);
     } on PlatformException catch (error) {
       throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: '', stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -162,7 +181,7 @@ class UserClient {
           .invokeMethod(Constants.isAuthenticatorRegistered, <String, String>{
         'authenticatorId': authenticatorId,
       });
-      return isAuthenticatorRegistered;
+      return isAuthenticatorRegistered ?? false;
     } on PlatformException catch (error) {
       throw error;
     }
@@ -191,7 +210,7 @@ class UserClient {
           .invokeMethod(Constants.deregisterAuthenticator, <String, String>{
         'authenticatorId': authenticatorId,
       });
-      return success;
+      return success ?? false;
     } on PlatformException catch (error) {
       throw error;
     }
@@ -202,14 +221,14 @@ class UserClient {
     try {
       var isSuccess =
           await Onegini.instance.channel.invokeMethod(Constants.logout);
-      return isSuccess;
+      return isSuccess ?? false;
     } on PlatformException catch (error) {
       throw error;
     }
   }
 
   /// Starts mobile authentication on web by OTP.
-  Future<String> mobileAuthWithOtp(String data) async {
+  Future<String?> mobileAuthWithOtp(String data) async {
     try {
       var isSuccess = await Onegini.instance.channel
           .invokeMethod(Constants.handleMobileAuthWithOtp, <String, dynamic>{
@@ -232,6 +251,9 @@ class UserClient {
       return oneginiAppToWebSingleSignOnFromJson(oneginiAppToWebSingleSignOn);
     } on PlatformException catch (error) {
       throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: '', stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -244,6 +266,9 @@ class UserClient {
           json.decode(profiles).map((x) => UserProfile.fromJson(x)));
     } on PlatformException catch (error) {
       throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: '', stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -251,13 +276,13 @@ class UserClient {
     try {
       var success = await Onegini.instance.channel.invokeMethod(
           Constants.validatePinWithPolicy, <String, String?>{'pin': pin});
-      return success;
+      return success ?? false;
     } on PlatformException catch (error) {
       throw error;
     }
   }
 
-  Future<String> getAccessToken() async {
+  Future<String?> getAccessToken() async {
     try {
       var accessToken =
           await Onegini.instance.channel.invokeMethod(Constants.getAccessToken);
@@ -267,7 +292,7 @@ class UserClient {
     }
   }
 
-  Future<String> getRedirectUrl(String pin) async {
+  Future<String?> getRedirectUrl(String pin) async {
     try {
       var redirectUrl =
           await Onegini.instance.channel.invokeMethod(Constants.getRedirectUrl);
@@ -285,6 +310,9 @@ class UserClient {
       return UserProfile.fromJson(json.decode(userProfile));
     } on PlatformException catch (error) {
       throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: '', stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -293,7 +321,7 @@ class UserClient {
       var success = await Onegini.instance.channel.invokeMethod(
           Constants.authenticateDevice, <String, dynamic>{'scope': scopes});
 
-      return success;
+      return success ?? false;
     } on PlatformException catch (error) {
       throw error;
     }
@@ -307,6 +335,9 @@ class UserClient {
       return UserProfile.fromJson(json.decode(userProfile));
     } on PlatformException catch (error) {
       throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: '', stacktrace: error.stackTrace?.toString());
     }
   }
 }

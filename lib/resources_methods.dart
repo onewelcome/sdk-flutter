@@ -8,7 +8,7 @@ class ResourcesMethods {
   /// Gets resources anonymously.
   ///
   /// Method requires [path] parameter.
-  Future<String> getResourceAnonymous(
+  Future<String?> getResourceAnonymous(
     String path, {
     Map<String, String>? headers,
     String? method,
@@ -37,7 +37,7 @@ class ResourcesMethods {
   /// Gets resources.
   ///
   /// Method requires [path] parameter.
-  Future<String> getResource(
+  Future<String?> getResource(
     String path, {
     Map<String, String>? headers,
     String? method,
@@ -64,7 +64,7 @@ class ResourcesMethods {
   /// Gets implicit resource.
   ///
   /// Method requires [path] parameter.
-  Future<String> getResourceImplicit(
+  Future<String?> getResourceImplicit(
     String path, {
     Map<String, String>? headers,
     String? method,
@@ -91,7 +91,7 @@ class ResourcesMethods {
     }
   }
 
-  Future<String> getUnauthenticatedResource(
+  Future<String?> getUnauthenticatedResource(
     String path, {
     Map<String, String>? headers,
     String? method,
