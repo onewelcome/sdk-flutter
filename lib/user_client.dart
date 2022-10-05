@@ -174,18 +174,6 @@ class UserClient {
     }
   }
 
-  Future<bool> isAuthenticatorRegistered(String authenticatorId) async {
-    try {
-      var isAuthenticatorRegistered = await Onegini.instance.channel
-          .invokeMethod(Constants.isAuthenticatorRegistered, <String, String>{
-        'authenticatorId': authenticatorId,
-      });
-      return isAuthenticatorRegistered ?? false;
-    } on PlatformException catch (error) {
-      throw error;
-    }
-  }
-
   ///Set preferred authenticator
   Future<bool> setPreferredAuthenticator(
       BuildContext? context, String authenticatorId) async {

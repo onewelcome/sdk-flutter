@@ -58,7 +58,6 @@ class Constants {
   static const String logout = 'logout';
   static const String setPreferredAuthenticator = "setPreferredAuthenticator";
   static const String deregisterAuthenticator = "deregisterAuthenticator";
-  static const String isAuthenticatorRegistered = "isAuthenticatorRegistered";
 
   // Fingerprint
 

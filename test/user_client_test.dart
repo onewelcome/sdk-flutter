@@ -353,68 +353,6 @@ void main() {
     );
   });
 
-  group('UserClient isAuthenticatorRegistered', () {
-    test(
-      'return true',
-      () async {
-        //arrange
-        setupMethodChannel(
-            Constants.isAuthenticatorRegistered, Future.value(true));
-
-        //act
-        var result = await userClient.isAuthenticatorRegistered('fingerprint');
-
-        //assert
-        expect(result, true);
-      },
-    );
-
-    test(
-      'return false',
-      () async {
-        //arrange
-        setupMethodChannel(
-            Constants.isAuthenticatorRegistered, Future.value(false));
-
-        //act
-        var result = await userClient.isAuthenticatorRegistered('fingerprint');
-
-        //assert
-        expect(result, false);
-      },
-    );
-
-    test(
-      'return null defaults to false',
-      () async {
-        //arrange
-        setupMethodChannel(
-            Constants.isAuthenticatorRegistered, Future.value(null));
-
-        //act
-        var result = await userClient.isAuthenticatorRegistered('fingerprint');
-
-        //assert
-        expect(result, false);
-      },
-    );
-
-    test(
-      'handle PlatformException',
-      () async {
-        //arrange
-        setupMethodChannel(Constants.isAuthenticatorRegistered,
-            Future.error(PlatformException(code: '1')));
-
-        //assert
-        expect(
-            () async =>
-                await userClient.isAuthenticatorRegistered('fingerprint'),
-            throwsA(isA<PlatformException>()));
-      },
-    );
-  });
-
   group('UserClient deregisterAuthenticator', () {
     test(
       'return true',
