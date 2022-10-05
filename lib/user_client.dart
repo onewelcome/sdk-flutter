@@ -290,8 +290,8 @@ class UserClient {
 
   Future<bool> authenticateDevice(List<String>? scopes) async {
     try {
-      var success = await Onegini.instance.channel
-          .invokeMethod(Constants.authenticateDevice,<String, dynamic>{'scope': scopes});
+      var success = await Onegini.instance.channel.invokeMethod(
+          Constants.authenticateDevice, <String, dynamic>{'scope': scopes});
 
       return success;
     } on PlatformException catch (error) {
@@ -301,8 +301,8 @@ class UserClient {
 
   Future<UserProfile> authenticateUserImplicitly(List<String>? scopes) async {
     try {
-      var userProfile = await Onegini.instance.channel
-          .invokeMethod(Constants.authenticateDevice, <String, dynamic>{'scope': scopes});
+      var userProfile = await Onegini.instance.channel.invokeMethod(
+          Constants.authenticateDevice, <String, dynamic>{'scope': scopes});
 
       return UserProfile.fromJson(json.decode(userProfile));
     } on PlatformException catch (error) {
