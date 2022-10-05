@@ -194,10 +194,8 @@ class NumPad extends StatelessWidget {
     return Expanded(
       child: Container(
         margin: EdgeInsets.all(2),
-        child: FlatButton(
-          height: 50,
+        child: TextButton(
           onPressed: () => onTap(text),
-          color: Colors.blue,
           child: Text(
             text,
             style: TextStyle(fontSize: 20),
@@ -211,11 +209,8 @@ class NumPad extends StatelessWidget {
     return Expanded(
       child: Container(
         margin: EdgeInsets.all(2),
-        child: FlatButton(
-          height: 50,
+        child: TextButton(
           onPressed: onTap,
-          color: Colors.blue,
-          disabledColor: Colors.grey[500],
           child: Text(
             text,
             style: TextStyle(fontSize: 20),
