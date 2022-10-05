@@ -338,37 +338,6 @@ void main() {
 
   group('UserClient registerAuthenticator', () {
     test(
-      'return String',
-      () async {
-        //arrange
-        setupMethodChannel(
-            Constants.registerAuthenticator, Future.value('success'));
-
-        //act
-        var result =
-            await userClient.registerAuthenticator(null, 'fingerprint');
-
-        //assert
-        expect(result, 'success');
-      },
-    );
-
-    test(
-      'return null',
-      () async {
-        //arrange
-        setupMethodChannel(Constants.registerAuthenticator, Future.value(null));
-
-        //act
-        var result =
-            await userClient.registerAuthenticator(null, 'fingerprint');
-
-        //assert
-        expect(result, null);
-      },
-    );
-
-    test(
       'handle PlatformException',
       () async {
         //arrange
