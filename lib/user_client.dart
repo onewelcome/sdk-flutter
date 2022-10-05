@@ -269,40 +269,6 @@ class UserClient {
     }
   }
 
-  Future<String?> getAccessToken() async {
-    try {
-      var accessToken =
-          await Onegini.instance.channel.invokeMethod(Constants.getAccessToken);
-      return accessToken;
-    } on PlatformException catch (error) {
-      throw error;
-    }
-  }
-
-  Future<String?> getRedirectUrl(String pin) async {
-    try {
-      var redirectUrl =
-          await Onegini.instance.channel.invokeMethod(Constants.getRedirectUrl);
-      return redirectUrl;
-    } on PlatformException catch (error) {
-      throw error;
-    }
-  }
-
-  Future<UserProfile> getAuthenticatedUserProfile() async {
-    try {
-      var userProfile = await Onegini.instance.channel
-          .invokeMethod(Constants.getAuthenticatedUserProfile);
-
-      return UserProfile.fromJson(json.decode(userProfile));
-    } on PlatformException catch (error) {
-      throw error;
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: '', stacktrace: error.stackTrace?.toString());
-    }
-  }
-
   Future<bool> authenticateDevice(List<String>? scopes) async {
     try {
       var success = await Onegini.instance.channel.invokeMethod(
