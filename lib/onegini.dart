@@ -59,6 +59,11 @@ class Onegini {
       return removedUserProfileListFromJson(removedUserProfiles);
     } on PlatformException catch (error) {
       throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 }

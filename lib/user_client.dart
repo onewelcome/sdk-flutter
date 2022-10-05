@@ -32,7 +32,9 @@ class UserClient {
       throw error;
     } on TypeError catch (error) {
       throw PlatformException(
-          code: '', stacktrace: error.stackTrace?.toString());
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -62,7 +64,9 @@ class UserClient {
       throw error;
     } on TypeError catch (error) {
       throw PlatformException(
-          code: '', stacktrace: error.stackTrace?.toString());
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -76,6 +80,11 @@ class UserClient {
       return isSuccess ?? false;
     } on PlatformException catch (error) {
       throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -91,7 +100,9 @@ class UserClient {
       throw error;
     } on TypeError catch (error) {
       throw PlatformException(
-          code: '', stacktrace: error.stackTrace?.toString());
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -106,7 +117,9 @@ class UserClient {
       throw error;
     } on TypeError catch (error) {
       throw PlatformException(
-          code: '', stacktrace: error.stackTrace?.toString());
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -129,7 +142,9 @@ class UserClient {
       throw error;
     } on TypeError catch (error) {
       throw PlatformException(
-          code: '', stacktrace: error.stackTrace?.toString());
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -144,7 +159,9 @@ class UserClient {
       throw error;
     } on TypeError catch (error) {
       throw PlatformException(
-          code: '', stacktrace: error.stackTrace?.toString());
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -186,6 +203,11 @@ class UserClient {
       return data;
     } on PlatformException catch (error) {
       throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -200,6 +222,11 @@ class UserClient {
       return success ?? false;
     } on PlatformException catch (error) {
       throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -211,6 +238,11 @@ class UserClient {
       return isSuccess ?? false;
     } on PlatformException catch (error) {
       throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -224,6 +256,11 @@ class UserClient {
       return isSuccess;
     } on PlatformException catch (error) {
       throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -240,7 +277,9 @@ class UserClient {
       throw error;
     } on TypeError catch (error) {
       throw PlatformException(
-          code: '', stacktrace: error.stackTrace?.toString());
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -255,7 +294,9 @@ class UserClient {
       throw error;
     } on TypeError catch (error) {
       throw PlatformException(
-          code: '', stacktrace: error.stackTrace?.toString());
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -266,6 +307,11 @@ class UserClient {
       return success ?? false;
     } on PlatformException catch (error) {
       throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -277,6 +323,11 @@ class UserClient {
       return success ?? false;
     } on PlatformException catch (error) {
       throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -290,7 +341,9 @@ class UserClient {
       throw error;
     } on TypeError catch (error) {
       throw PlatformException(
-          code: '', stacktrace: error.stackTrace?.toString());
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 }
