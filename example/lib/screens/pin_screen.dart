@@ -5,17 +5,15 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/callbacks/onegini_pin_authentication_callback.dart';
 
 class PinScreen extends StatefulWidget {
-
   final PinScreenController controller;
 
-  PinScreen( { this.controller } );
+  PinScreen({this.controller});
 
   @override
   _PinScreenState createState() => _PinScreenState(controller);
 }
 
 class PinScreenController {
-
   void Function() clearState;
 }
 
@@ -39,7 +37,7 @@ class _PinScreenState extends State<PinScreen> {
       if (pinCode[i] == null) {
         setState(() => pinCode[i] = num);
         // if last pin digit is provided
-        if (i == pinCode.length -1) {
+        if (i == pinCode.length - 1) {
           submit();
         }
         break;
@@ -112,16 +110,15 @@ class _PinScreenState extends State<PinScreen> {
                 children: pinCode.map((e) => pinItem(e)).toList(),
               ),
               Spacer(),
-              isLoading ?
-                Container(
-                  height: 200,
-                    alignment: Alignment.center,
-                    child: CircularProgressIndicator()
-                )
-                : NumPad(
-                  enterNum: enterNum,
-                  removeLast: removeLast,
-                ),
+              isLoading
+                  ? Container(
+                      height: 200,
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator())
+                  : NumPad(
+                      enterNum: enterNum,
+                      removeLast: removeLast,
+                    ),
               SizedBox(
                 height: 10,
               )
