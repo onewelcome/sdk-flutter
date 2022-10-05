@@ -57,8 +57,6 @@ class Onegini {
       });
       eventListener.listen();
       return removedUserProfileListFromJson(removedUserProfiles);
-    } on PlatformException catch (error) {
-      throw error;
     } on TypeError catch (error) {
       throw PlatformException(
           code: Constants.wrapperTypeError.code.toString(),

@@ -16,22 +16,18 @@ class ResourcesMethods {
     Map<String, String>? params,
     String? body,
   }) async {
-    try {
-      var response;
-      response = await Onegini.instance.channel
-          .invokeMethod(Constants.getResourceAnonymous, <String, dynamic>{
-        'path': path,
-        'headers': headers,
-        'method': method,
-        'encoding': encoding,
-        'parameters': params,
-        'body': body
-      });
+    var response;
+    response = await Onegini.instance.channel
+        .invokeMethod(Constants.getResourceAnonymous, <String, dynamic>{
+      'path': path,
+      'headers': headers,
+      'method': method,
+      'encoding': encoding,
+      'parameters': params,
+      'body': body
+    });
 
-      return response;
-    } on PlatformException catch (error) {
-      throw error;
-    }
+    return response;
   }
 
   /// Gets resources.
@@ -56,8 +52,6 @@ class ResourcesMethods {
         'body': body
       });
       return response;
-    } on PlatformException catch (error) {
-      throw error;
     } on TypeError catch (error) {
       throw PlatformException(
           code: Constants.wrapperTypeError.code.toString(),
@@ -91,8 +85,6 @@ class ResourcesMethods {
       });
 
       return response;
-    } on PlatformException catch (error) {
-      throw error;
     } on TypeError catch (error) {
       throw PlatformException(
           code: Constants.wrapperTypeError.code.toString(),
@@ -120,8 +112,6 @@ class ResourcesMethods {
         'body': body
       });
       return response;
-    } on PlatformException catch (error) {
-      throw error;
     } on TypeError catch (error) {
       throw PlatformException(
           code: Constants.wrapperTypeError.code.toString(),

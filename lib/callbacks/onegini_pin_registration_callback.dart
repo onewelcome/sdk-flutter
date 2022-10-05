@@ -8,12 +8,8 @@ import '../onegini.dart';
 class OneginiPinRegistrationCallback {
   /// Cancels pin registration request.
   Future<void> denyAuthenticationRequest() async {
-    try {
-      await Onegini.instance.channel
-          .invokeMethod(Constants.denyPinRegistrationRequest);
-    } on PlatformException catch (error) {
-      throw error;
-    }
+    await Onegini.instance.channel
+        .invokeMethod(Constants.denyPinRegistrationRequest);
   }
 
   /// Accepts pin registration and sent [pin] to the OneginiSdk.
@@ -21,14 +17,10 @@ class OneginiPinRegistrationCallback {
   Future<void> acceptAuthenticationRequest(BuildContext? context,
       {String? pin, bool isCustomAuthenticator = false}) async {
     Onegini.instance.setEventContext(context);
-    try {
-      await Onegini.instance.channel.invokeMethod(
-          Constants.acceptPinRegistrationRequest, <String, String?>{
-        'pin': pin,
-        'isCustomAuth': isCustomAuthenticator ? "true" : null,
-      });
-    } on PlatformException catch (error) {
-      throw error;
-    }
+    await Onegini.instance.channel
+        .invokeMethod(Constants.acceptPinRegistrationRequest, <String, String?>{
+      'pin': pin,
+      'isCustomAuth': isCustomAuthenticator ? "true" : null,
+    });
   }
 }
