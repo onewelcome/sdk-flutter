@@ -1,6 +1,6 @@
 name: onegini
-description: Onegini Mobile Flutter plugin.
-version: 1.1.0
+description: The Onegini Flutter Plugin is a plugin that allows you to utilize the Onegini Mobile SDKs in your Flutter applications.
+version: 1.1.1
 homepage: https://www.onegini.com
 
 environment:

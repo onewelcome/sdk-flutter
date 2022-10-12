@@ -8,25 +8,17 @@ import '../onegini.dart';
 class OneginiPinAuthenticationCallback {
   /// Cancels pin authentication.
   Future<void> denyAuthenticationRequest() async {
-    try {
-      await Onegini.instance.channel
-          .invokeMethod(Constants.denyPinAuthenticationRequest);
-    } on PlatformException catch (error) {
-      throw error;
-    }
+    await Onegini.instance.channel
+        .invokeMethod(Constants.denyPinAuthenticationRequest);
   }
 
   /// Accepts pin authentication and sent [pin] to the OneginiSdk.
   Future<void> acceptAuthenticationRequest(BuildContext? context,
       {String? pin}) async {
     Onegini.instance.setEventContext(context);
-    try {
-      await Onegini.instance.channel.invokeMethod(
-          Constants.acceptPinAuthenticationRequest, <String, String?>{
-        'pin': pin,
-      });
-    } on PlatformException catch (error) {
-      throw error;
-    }
+    await Onegini.instance.channel.invokeMethod(
+        Constants.acceptPinAuthenticationRequest, <String, String?>{
+      'pin': pin,
+    });
   }
 }

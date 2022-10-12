@@ -5,19 +5,41 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/callbacks/onegini_pin_authentication_callback.dart';
 
 class PinScreen extends StatefulWidget {
-  const PinScreen({Key key}) : super(key: key);
+  final PinScreenController controller;
+
+  PinScreen({this.controller});
 
   @override
-  _PinScreenState createState() => _PinScreenState();
+  _PinScreenState createState() => _PinScreenState(controller);
+}
+
+class PinScreenController {
+  void Function() clearState;
 }
 
 class _PinScreenState extends State<PinScreen> {
-  var pinCode = new List(5);
+  List<String> pinCode = List<String>.filled(5, null);
+  var isLoading = false;
+
+  _PinScreenState(PinScreenController _controller) {
+    _controller.clearState = clearState;
+  }
+
+  void clearState() {
+    setState(() {
+      isLoading = false;
+      pinCode = List<String>.filled(5, null);
+    });
+  }
 
   enterNum(String num) {
     for (var i = 0; i < pinCode.length; i++) {
       if (pinCode[i] == null) {
         setState(() => pinCode[i] = num);
+        // if last pin digit is provided
+        if (i == pinCode.length - 1) {
+          submit();
+        }
         break;
       }
     }
@@ -36,7 +58,8 @@ class _PinScreenState extends State<PinScreen> {
     }
   }
 
-  done() {
+  submit() {
+    setState(() => {isLoading = true});
     String pin = "";
     pinCode.forEach((element) {
       pin += element;
@@ -45,6 +68,7 @@ class _PinScreenState extends State<PinScreen> {
         .acceptAuthenticationRequest(context, pin: pin)
         .catchError((error) {
       if (error is PlatformException) {
+        setState(() => {isLoading = false});
         Fluttertoast.showToast(
             msg: error.message,
             toastLength: Toast.LENGTH_SHORT,
@@ -86,11 +110,15 @@ class _PinScreenState extends State<PinScreen> {
                 children: pinCode.map((e) => pinItem(e)).toList(),
               ),
               Spacer(),
-              NumPad(
-                enterNum: enterNum,
-                removeLast: removeLast,
-                done: pinCode.contains(null) ? null : done,
-              ),
+              isLoading
+                  ? Container(
+                      height: 200,
+                      alignment: Alignment.center,
+                      child: CircularProgressIndicator())
+                  : NumPad(
+                      enterNum: enterNum,
+                      removeLast: removeLast,
+                    ),
               SizedBox(
                 height: 10,
               )
@@ -118,10 +146,8 @@ class _PinScreenState extends State<PinScreen> {
 class NumPad extends StatelessWidget {
   final Function(String) enterNum;
   final Function removeLast;
-  final Function done;
 
-  const NumPad({Key key, this.enterNum, this.removeLast, this.done})
-      : super(key: key);
+  const NumPad({Key key, this.enterNum, this.removeLast}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -153,7 +179,7 @@ class NumPad extends StatelessWidget {
             children: [
               additionalItem("<-", removeLast),
               numItem("0", enterNum),
-              additionalItem("Done", done),
+              Spacer()
             ],
           )
         ],
@@ -165,10 +191,8 @@ class NumPad extends StatelessWidget {
     return Expanded(
       child: Container(
         margin: EdgeInsets.all(2),
-        child: FlatButton(
-          height: 50,
+        child: TextButton(
           onPressed: () => onTap(text),
-          color: Colors.blue,
           child: Text(
             text,
             style: TextStyle(fontSize: 20),
@@ -182,11 +206,8 @@ class NumPad extends StatelessWidget {
     return Expanded(
       child: Container(
         margin: EdgeInsets.all(2),
-        child: FlatButton(
-          height: 50,
+        child: TextButton(
           onPressed: onTap,
-          color: Colors.blue,
-          disabledColor: Colors.grey[500],
           child: Text(
             text,
             style: TextStyle(fontSize: 20),

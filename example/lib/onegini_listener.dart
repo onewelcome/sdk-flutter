@@ -18,6 +18,9 @@ import 'package:onegini_example/screens/pin_screen.dart';
 import 'screens/otp_screen.dart';
 
 class OneginiListener extends OneginiEventListener {
+
+  final PinScreenController pinScreenController = PinScreenController();
+
   @override
   void closePin(BuildContext buildContext) {
     if (Navigator.of(buildContext).canPop()) {
@@ -67,7 +70,7 @@ class OneginiListener extends OneginiEventListener {
   void openPinScreenAuth(BuildContext buildContext) {
     Navigator.push(
       buildContext,
-      MaterialPageRoute(builder: (context) => PinScreen()),
+      MaterialPageRoute(builder: (context) => PinScreen(controller: pinScreenController)),
     );
   }
 
@@ -85,6 +88,7 @@ class OneginiListener extends OneginiEventListener {
   @override
   void nextAuthenticationAttempt(
       BuildContext buildContext, AuthenticationAttempt authenticationAttempt) {
+    pinScreenController.clearState();
     Fluttertoast.showToast(
         msg:
             "failed attempts ${authenticationAttempt.failedAttempts} from ${authenticationAttempt.maxAttempts}",

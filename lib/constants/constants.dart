@@ -1,3 +1,5 @@
+import '../model/onegini_error.dart';
+
 /// The class with constant values.
 ///
 /// Contains names of methods that Flutter calls on native code, and events that comes back to Flutter.
@@ -58,7 +60,6 @@ class Constants {
   static const String logout = 'logout';
   static const String setPreferredAuthenticator = "setPreferredAuthenticator";
   static const String deregisterAuthenticator = "deregisterAuthenticator";
-  static const String isAuthenticatorRegistered = "isAuthenticatorRegistered";
 
   // Fingerprint
 
@@ -191,6 +192,12 @@ class Constants {
 
   /// Error event name
   static const String eventError = "eventError";
+
+  // Error codes
+
+  //When the native type does not correspond with the expected dart type
+  static OneginiError wrapperTypeError = OneginiError(
+      message: "The native sdk returned an unexpected type", code: 8019);
 
 //#endregion Onegini events
 }

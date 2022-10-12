@@ -46,8 +46,8 @@ extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
         if let _typeValue = typeValue, let value = WebSignInType.init(rawValue: _typeValue) {
             type = value
         }
-        
         OneginiModuleSwift.sharedInstance.handleRegisteredProcessUrl(url ?? "", webSignInType: type)
+        result(nil)
     }
     
     func cancelRegistration(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
