@@ -1,3 +1,15 @@
+## 1.1.1, October 10, 2022
+
+* Update podfile for example app to build on m1.
+* Created a new WrapperError which is thrown as a platformException when the native SDK returns a value that the wrapper did not expect which would previously cause a typeError.
+* Example app no longer requires signing config files for debug.
+* Updated `registerAuthenticator` to return Future<void> instead of Future<String>
+* Updated example app android and dependency versions.
+* Fixed a bug where `handleRegisteredProcessUrl` would never resolve.
+* Updated `getResourceAnonymous` `getResource` `getResourceImplicit` `getUnauthenticatedResource` to return a Future<String?> instead of Future<String>
+* Added unit tests for UserClient and ResourceMethods to test return types.
+* Removed a few files from git which were in gitignore, but were already in version control.
+
 ## 1.1.0, April 20, 2022
 
 * Updated the iOS SDK to version 11.0.2. This is a major change in case of tampering protection mechanism. See [the release notes](https://docs-single-tenant.onegini.com/msp/stable/ios-sdk/upgrade-instructions/11.0.0.html) for more information.

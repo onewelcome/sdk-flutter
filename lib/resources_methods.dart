@@ -8,7 +8,7 @@ class ResourcesMethods {
   /// Gets resources anonymously.
   ///
   /// Method requires [path] parameter.
-  Future<String> getResourceAnonymous(
+  Future<String?> getResourceAnonymous(
     String path, {
     Map<String, String>? headers,
     String? method,
@@ -16,28 +16,24 @@ class ResourcesMethods {
     Map<String, String>? params,
     String? body,
   }) async {
-    try {
-      var response;
-      response = await Onegini.instance.channel
-          .invokeMethod(Constants.getResourceAnonymous, <String, dynamic>{
-        'path': path,
-        'headers': headers,
-        'method': method,
-        'encoding': encoding,
-        'parameters': params,
-        'body': body
-      });
+    var response;
+    response = await Onegini.instance.channel
+        .invokeMethod(Constants.getResourceAnonymous, <String, dynamic>{
+      'path': path,
+      'headers': headers,
+      'method': method,
+      'encoding': encoding,
+      'parameters': params,
+      'body': body
+    });
 
-      return response;
-    } on PlatformException catch (error) {
-      throw error;
-    }
+    return response;
   }
 
   /// Gets resources.
   ///
   /// Method requires [path] parameter.
-  Future<String> getResource(
+  Future<String?> getResource(
     String path, {
     Map<String, String>? headers,
     String? method,
@@ -56,15 +52,18 @@ class ResourcesMethods {
         'body': body
       });
       return response;
-    } on PlatformException catch (error) {
-      throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
   /// Gets implicit resource.
   ///
   /// Method requires [path] parameter.
-  Future<String> getResourceImplicit(
+  Future<String?> getResourceImplicit(
     String path, {
     Map<String, String>? headers,
     String? method,
@@ -86,12 +85,15 @@ class ResourcesMethods {
       });
 
       return response;
-    } on PlatformException catch (error) {
-      throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
-  Future<String> getUnauthenticatedResource(
+  Future<String?> getUnauthenticatedResource(
     String path, {
     Map<String, String>? headers,
     String? method,
@@ -110,8 +112,11 @@ class ResourcesMethods {
         'body': body
       });
       return response;
-    } on PlatformException catch (error) {
-      throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 }

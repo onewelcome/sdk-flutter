@@ -7,25 +7,17 @@ import '../onegini.dart';
 class OneginiCustomTwoStepRegistrationCallback {
   /// Returns success result with [data] which are needed for a successful result.
   Future<void> returnSuccess(String data) async {
-    try {
-      await Onegini.instance.channel.invokeMethod(
-          Constants.customTwoStepRegistrationReturnSuccess, <String, String?>{
-        'data': data,
-      });
-    } on PlatformException catch (error) {
-      throw error;
-    }
+    await Onegini.instance.channel.invokeMethod(
+        Constants.customTwoStepRegistrationReturnSuccess, <String, String?>{
+      'data': data,
+    });
   }
 
   /// Returns the error text. Typically used when a user has canceled a registration action.
   Future<void> returnError(String error) async {
-    try {
-      await Onegini.instance.channel.invokeMethod(
-          Constants.customTwoStepRegistrationReturnError, <String, String?>{
-        'error': error,
-      });
-    } on PlatformException catch (error) {
-      throw error;
-    }
+    await Onegini.instance.channel.invokeMethod(
+        Constants.customTwoStepRegistrationReturnError, <String, String?>{
+      'error': error,
+    });
   }
 }
