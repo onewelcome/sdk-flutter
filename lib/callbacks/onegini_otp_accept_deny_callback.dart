@@ -8,22 +8,14 @@ import '../onegini.dart';
 class OneginiOtpAcceptDenyCallback {
   /// Cancels OTP authentication.
   Future<void> denyAuthenticationRequest() async {
-    try {
-      await Onegini.instance.channel
-          .invokeMethod(Constants.denyOtpAuthenticationRequest);
-    } on PlatformException catch (error) {
-      throw error;
-    }
+    await Onegini.instance.channel
+        .invokeMethod(Constants.denyOtpAuthenticationRequest);
   }
 
   /// Accepts OTP authentication.
   Future<void> acceptAuthenticationRequest(BuildContext? context) async {
     Onegini.instance.setEventContext(context);
-    try {
-      await Onegini.instance.channel
-          .invokeMethod(Constants.acceptOtpAuthenticationRequest);
-    } on PlatformException catch (error) {
-      throw error;
-    }
+    await Onegini.instance.channel
+        .invokeMethod(Constants.acceptOtpAuthenticationRequest);
   }
 }

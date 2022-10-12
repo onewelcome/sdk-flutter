@@ -7,11 +7,7 @@ import '../onegini.dart';
 class OneginiRegistrationCallback {
   /// Cancels registration action.
   Future<void> cancelRegistration() async {
-    try {
-      await Onegini.instance.channel
-          .invokeMethod(Constants.cancelRegistrationMethod);
-    } on PlatformException catch (error) {
-      throw error;
-    }
+    await Onegini.instance.channel
+        .invokeMethod(Constants.cancelRegistrationMethod);
   }
 }

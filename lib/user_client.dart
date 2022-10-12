@@ -28,23 +28,22 @@ class UserClient {
         'identityProviderId': identityProviderId,
       });
       return registrationResponseFromJson(response);
-    } on PlatformException catch (error) {
-      throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
   Future<void> handleRegisteredUserUrl(BuildContext? context, String? url,
       {WebSignInType signInType = WebSignInType.insideApp}) async {
     Onegini.instance.setEventContext(context);
-    try {
-      await Onegini.instance.channel
-          .invokeMethod(Constants.handleRegisteredUserUrl, <String, Object?>{
-        'url': url,
-        'type': signInType.value,
-      });
-    } on PlatformException catch (error) {
-      throw error;
-    }
+    await Onegini.instance.channel
+        .invokeMethod(Constants.handleRegisteredUserUrl, <String, Object?>{
+      'url': url,
+      'type': signInType.value,
+    });
   }
 
   /// Returns a list of available identity providers.
@@ -55,8 +54,11 @@ class UserClient {
       var providers = await Onegini.instance.channel
           .invokeMethod(Constants.getIdentityProvidersMethod);
       return responseFromJson(providers);
-    } on PlatformException catch (error) {
-      throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -67,9 +69,12 @@ class UserClient {
           .invokeMethod(Constants.deregisterUserMethod, <String, String?>{
         'profileId': profileId,
       });
-      return isSuccess;
-    } on PlatformException catch (error) {
-      throw error;
+      return isSuccess ?? false;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -81,8 +86,11 @@ class UserClient {
       var authenticators = await Onegini.instance.channel
           .invokeMethod(Constants.getRegisteredAuthenticators);
       return responseFromJson(authenticators);
-    } on PlatformException catch (error) {
-      throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -93,8 +101,11 @@ class UserClient {
       var authenticators = await Onegini.instance.channel
           .invokeMethod(Constants.getAllAuthenticators);
       return responseFromJson(authenticators);
-    } on PlatformException catch (error) {
-      throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -113,8 +124,11 @@ class UserClient {
         'registeredAuthenticatorId': registeredAuthenticatorId,
       });
       return registrationResponseFromJson(response);
-    } on PlatformException catch (error) {
-      throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -125,8 +139,11 @@ class UserClient {
       var authenticators = await Onegini.instance.channel
           .invokeMethod(Constants.getAllNotRegisteredAuthenticators);
       return responseFromJson(authenticators);
-    } on PlatformException catch (error) {
-      throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -135,38 +152,17 @@ class UserClient {
     BuildContext? context,
   ) async {
     Onegini.instance.setEventContext(context);
-    try {
-      await Onegini.instance.channel.invokeMethod(Constants.changePin);
-    } on PlatformException catch (error) {
-      throw error;
-    }
+    await Onegini.instance.channel.invokeMethod(Constants.changePin);
   }
 
   /// Registers authenticator from [getNotRegisteredAuthenticators] list.
-  Future<String> registerAuthenticator(
+  Future<void> registerAuthenticator(
       BuildContext? context, String authenticatorId) async {
     Onegini.instance.setEventContext(context);
-    try {
-      var data = await Onegini.instance.channel
-          .invokeMethod(Constants.registerAuthenticator, <String, String>{
-        'authenticatorId': authenticatorId,
-      });
-      return data;
-    } on PlatformException catch (error) {
-      throw error;
-    }
-  }
-
-  Future<bool> isAuthenticatorRegistered(String authenticatorId) async {
-    try {
-      var isAuthenticatorRegistered = await Onegini.instance.channel
-          .invokeMethod(Constants.isAuthenticatorRegistered, <String, String>{
-        'authenticatorId': authenticatorId,
-      });
-      return isAuthenticatorRegistered;
-    } on PlatformException catch (error) {
-      throw error;
-    }
+    await Onegini.instance.channel
+        .invokeMethod(Constants.registerAuthenticator, <String, String>{
+      'authenticatorId': authenticatorId,
+    });
   }
 
   ///Set preferred authenticator
@@ -179,8 +175,11 @@ class UserClient {
         'authenticatorId': authenticatorId,
       });
       return data;
-    } on PlatformException catch (error) {
-      throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -192,9 +191,12 @@ class UserClient {
           .invokeMethod(Constants.deregisterAuthenticator, <String, String>{
         'authenticatorId': authenticatorId,
       });
-      return success;
-    } on PlatformException catch (error) {
-      throw error;
+      return success ?? false;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -203,22 +205,28 @@ class UserClient {
     try {
       var isSuccess =
           await Onegini.instance.channel.invokeMethod(Constants.logout);
-      return isSuccess;
-    } on PlatformException catch (error) {
-      throw error;
+      return isSuccess ?? false;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
   /// Starts mobile authentication on web by OTP.
-  Future<String> mobileAuthWithOtp(String data) async {
+  Future<String?> mobileAuthWithOtp(String data) async {
     try {
       var isSuccess = await Onegini.instance.channel
           .invokeMethod(Constants.handleMobileAuthWithOtp, <String, dynamic>{
         'data': data,
       });
       return isSuccess;
-    } on PlatformException catch (error) {
-      throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -231,8 +239,11 @@ class UserClient {
         'url': url,
       });
       return oneginiAppToWebSingleSignOnFromJson(oneginiAppToWebSingleSignOn);
-    } on PlatformException catch (error) {
-      throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -243,8 +254,11 @@ class UserClient {
           await Onegini.instance.channel.invokeMethod(Constants.userProfiles);
       return List<UserProfile>.from(
           json.decode(profiles).map((x) => UserProfile.fromJson(x)));
-    } on PlatformException catch (error) {
-      throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
@@ -252,62 +266,40 @@ class UserClient {
     try {
       var success = await Onegini.instance.channel.invokeMethod(
           Constants.validatePinWithPolicy, <String, String?>{'pin': pin});
-      return success;
-    } on PlatformException catch (error) {
-      throw error;
-    }
-  }
-
-  Future<String> getAccessToken() async {
-    try {
-      var accessToken =
-          await Onegini.instance.channel.invokeMethod(Constants.getAccessToken);
-      return accessToken;
-    } on PlatformException catch (error) {
-      throw error;
-    }
-  }
-
-  Future<String> getRedirectUrl(String pin) async {
-    try {
-      var redirectUrl =
-          await Onegini.instance.channel.invokeMethod(Constants.getRedirectUrl);
-      return redirectUrl;
-    } on PlatformException catch (error) {
-      throw error;
-    }
-  }
-
-  Future<UserProfile> getAuthenticatedUserProfile() async {
-    try {
-      var userProfile = await Onegini.instance.channel
-          .invokeMethod(Constants.getAuthenticatedUserProfile);
-
-      return UserProfile.fromJson(json.decode(userProfile));
-    } on PlatformException catch (error) {
-      throw error;
+      return success ?? false;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
   Future<bool> authenticateDevice(List<String>? scopes) async {
     try {
-      var success = await Onegini.instance.channel
-          .invokeMethod(Constants.authenticateDevice,<String, dynamic>{'scope': scopes});
+      var success = await Onegini.instance.channel.invokeMethod(
+          Constants.authenticateDevice, <String, dynamic>{'scope': scopes});
 
-      return success;
-    } on PlatformException catch (error) {
-      throw error;
+      return success ?? false;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 
   Future<UserProfile> authenticateUserImplicitly(List<String>? scopes) async {
     try {
-      var userProfile = await Onegini.instance.channel
-          .invokeMethod(Constants.authenticateDevice, <String, dynamic>{'scope': scopes});
+      var userProfile = await Onegini.instance.channel.invokeMethod(
+          Constants.authenticateDevice, <String, dynamic>{'scope': scopes});
 
       return UserProfile.fromJson(json.decode(userProfile));
-    } on PlatformException catch (error) {
-      throw error;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
     }
   }
 }
