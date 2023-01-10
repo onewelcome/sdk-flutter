@@ -470,8 +470,12 @@ class _InfoState extends State<Info> {
   }
 
   Future<ClientResource> getClientResource() async {
-    var response =
-    await Onegini.instance.resourcesMethods.getResource("devices");
+    var response = await Onegini.instance.resourcesMethods.getResource("devices")
+      .catchError((error) {
+        print('Caught error: $error');
+        return;
+      });
+
     var res = json.decode(response);
     return clientResourceFromJson(res["body"]);
   }

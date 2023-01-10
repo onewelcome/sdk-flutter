@@ -1,6 +1,5 @@
 package com.onegini.mobile.sdk.flutter.helpers
 
-import com.google.gson.GsonBuilder
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticationHandler
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticatorDeregistrationHandler
@@ -11,7 +10,7 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorRegistr
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
 import io.flutter.plugin.common.MethodChannel
 
 object AuthenticationObject {
@@ -20,7 +19,9 @@ object AuthenticationObject {
         var authenticator: OneginiAuthenticator? = null
         val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
         if (userProfile == null) {
-            result.error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
+            SdkError(
+                wrapperError = OneWelcomeWrapperErrors.USER_PROFILE_IS_NULL
+            ).flutterError(result)
             return
         }
         val registeredAuthenticators = userProfile.let { oneginiClient.userClient.getRegisteredAuthenticators(it) }
@@ -31,14 +32,18 @@ object AuthenticationObject {
             }
         }
         if (authenticator == null) {
-            result.error(OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.message, null)
+            SdkError(
+                wrapperError = OneWelcomeWrapperErrors.AUTHENTICATOR_IS_NULL
+            ).flutterError(result)
             return
         }
         try {
             oneginiClient.userClient.setPreferredAuthenticator(authenticator)
             result.success(true)
         } catch (e: Exception) {
-            result.error(OneginiWrapperErrors.PREFERRED_AUTHENTICATOR_ERROR.code, OneginiWrapperErrors.PREFERRED_AUTHENTICATOR_ERROR.message, null)
+            SdkError(
+                wrapperError = OneWelcomeWrapperErrors.PREFERRED_AUTHENTICATOR_ERROR
+            ).flutterError(result)
         }
     }
 
@@ -46,7 +51,9 @@ object AuthenticationObject {
         var authenticator: OneginiAuthenticator? = null
         val authenticatedUserProfile = oneginiClient.userClient.authenticatedUserProfile
         if (authenticatedUserProfile == null) {
-            result.error(OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
+            SdkError(
+                wrapperError = OneWelcomeWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL
+            ).flutterError(result)
             return
         }
         val notRegisteredAuthenticators = authenticatedUserProfile.let { oneginiClient.userClient.getNotRegisteredAuthenticators(it) }
@@ -58,7 +65,9 @@ object AuthenticationObject {
             }
         }
         if (authenticator == null) {
-            result.error(OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.message, null)
+            SdkError(
+                wrapperError = OneWelcomeWrapperErrors.AUTHENTICATOR_IS_NULL
+            ).flutterError(result)
             return
         }
         oneginiClient.userClient.registerAuthenticator(
@@ -69,7 +78,10 @@ object AuthenticationObject {
                     }
 
                     override fun onError(oneginiAuthenticatorRegistrationError: OneginiAuthenticatorRegistrationError) {
-                        result.error(oneginiAuthenticatorRegistrationError.errorType.toString(), oneginiAuthenticatorRegistrationError.message, null)
+                        SdkError(
+                            code = oneginiAuthenticatorRegistrationError.errorType,
+                            message = oneginiAuthenticatorRegistrationError.message
+                        ).flutterError(result)
                     }
                 }
         )
@@ -79,7 +91,9 @@ object AuthenticationObject {
         var authenticator: OneginiAuthenticator? = null
         val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
         if (userProfile == null) {
-            result.error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
+            SdkError(
+                wrapperError = OneWelcomeWrapperErrors.USER_PROFILE_IS_NULL
+            ).flutterError(result)
             return
         }
         val registeredAuthenticators = userProfile.let { oneginiClient.userClient.getRegisteredAuthenticators(it) }
@@ -90,7 +104,9 @@ object AuthenticationObject {
             }
         }
         if (authenticator == null) {
-            result.error(OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.message, null)
+            SdkError(
+                wrapperError = OneWelcomeWrapperErrors.AUTHENTICATOR_IS_NULL
+            ).flutterError(result)
             return
         }
         oneginiClient.userClient.deregisterAuthenticator(
@@ -101,8 +117,10 @@ object AuthenticationObject {
                     }
 
                     override fun onError(oneginiAuthenticatorDeregistrationError: OneginiAuthenticatorDeregistrationError) {
-                        result.error(oneginiAuthenticatorDeregistrationError.errorType.toString(), oneginiAuthenticatorDeregistrationError.message
-                                ?: "", null)
+                        SdkError(
+                            code = oneginiAuthenticatorDeregistrationError.errorType,
+                            message = oneginiAuthenticatorDeregistrationError.message
+                        ).flutterError(result)
                     }
                 }
         )
@@ -112,7 +130,9 @@ object AuthenticationObject {
         var authenticator: OneginiAuthenticator? = null
         val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
         if (userProfile == null) {
-            result.error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
+            SdkError(
+                wrapperError = OneWelcomeWrapperErrors.USER_PROFILE_IS_NULL
+            ).flutterError(result)
             return
         }
         val registeredAuthenticators = userProfile.let { oneginiClient.userClient.getRegisteredAuthenticators(it) }
@@ -140,7 +160,10 @@ object AuthenticationObject {
             }
 
             override fun onError(error: OneginiAuthenticationError) {
-                result.error(error.errorType.toString(), error.message, null)
+                SdkError(
+                    code = error.errorType,
+                    message = error.message
+                ).flutterError(result)
             }
         }
     }

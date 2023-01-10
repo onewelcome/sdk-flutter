@@ -6,6 +6,7 @@ import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 import com.onegini.mobile.sdk.flutter.handlers.*
+import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.models.Config
 import io.flutter.plugin.common.MethodChannel
 import java.lang.reflect.InvocationTargetException
@@ -63,7 +64,18 @@ class OneginiSDK {
                 clientBuilder.setConfigModel(`object`)
             }
         } catch (e: Exception) {
-           result.error("10000",e.message, null)
+            val eMessage :String? = e.message
+
+            if (eMessage != null) {
+                SdkError(
+                    code = OneWelcomeWrapperErrors.CONFIG_ERROR.code,
+                    message = eMessage
+                ).flutterError(result)
+            } else {
+                SdkError(
+                    wrapperError = OneWelcomeWrapperErrors.CONFIG_ERROR
+                ).flutterError(result)
+            }
         }
     }
 
@@ -75,7 +87,18 @@ class OneginiSDK {
             val securityController = Class.forName(config.securityControllerClassName)
             clientBuilder.setSecurityController(securityController)
         } catch (e: ClassNotFoundException) {
-            result.error("10000",e.message, null)
+            val eMessage :String? = e.message
+
+            if (eMessage != null) {
+                SdkError(
+                    code = OneWelcomeWrapperErrors.SECURITY_CONTROLLER_ERROR.code,
+                    message = eMessage
+                ).flutterError(result)
+            } else {
+                SdkError(
+                    wrapperError = OneWelcomeWrapperErrors.SECURITY_CONTROLLER_ERROR
+                ).flutterError(result)
+            }
         }
     }
 }

@@ -4,7 +4,7 @@ import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
 import com.onegini.mobile.sdk.flutter.useCases.IsAuthenticatorRegisteredUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -14,7 +14,6 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -50,7 +49,7 @@ class IsAuthenticatorRegisteredUseCaseTests {
 
         IsAuthenticatorRegisteredUseCase(clientMock)(callMock,resultSpy)
 
-        verify(resultSpy).error(OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
+        verify(resultSpy).error(OneWelcomeWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneWelcomeWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
     }
 
     @Test
@@ -59,7 +58,7 @@ class IsAuthenticatorRegisteredUseCaseTests {
 
         IsAuthenticatorRegisteredUseCase(clientMock)(callMock,resultSpy)
 
-        verify(resultSpy).error(OneginiWrapperErrors.AUTHENTICATOR_NOT_FOUND.code, OneginiWrapperErrors.AUTHENTICATOR_NOT_FOUND.message, null)
+        verify(resultSpy).error(OneWelcomeWrapperErrors.AUTHENTICATOR_NOT_FOUND.code, OneWelcomeWrapperErrors.AUTHENTICATOR_NOT_FOUND.message, null)
     }
 
     @Test
@@ -71,7 +70,7 @@ class IsAuthenticatorRegisteredUseCaseTests {
 
         IsAuthenticatorRegisteredUseCase(clientMock)(callMock,resultSpy)
 
-        verify(resultSpy).error(OneginiWrapperErrors.AUTHENTICATOR_NOT_FOUND.code, OneginiWrapperErrors.AUTHENTICATOR_NOT_FOUND.message, null)
+        verify(resultSpy).error(OneWelcomeWrapperErrors.AUTHENTICATOR_NOT_FOUND.code, OneWelcomeWrapperErrors.AUTHENTICATOR_NOT_FOUND.message, null)
     }
 
     @Test

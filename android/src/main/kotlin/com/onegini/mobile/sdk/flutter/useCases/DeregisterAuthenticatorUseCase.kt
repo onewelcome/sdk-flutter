@@ -5,7 +5,8 @@ import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticatorDeregistratio
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorDeregistrationError
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
+import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
@@ -14,12 +15,16 @@ class DeregisterAuthenticatorUseCase(private var oneginiClient: OneginiClient) {
         val authenticatorId = call.argument<String>("authenticatorId")
         val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
         if (userProfile == null) {
-            result.error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
+            SdkError(
+                wrapperError = OneWelcomeWrapperErrors.USER_PROFILE_IS_NULL
+            ).flutterError(result)
             return
         }
         val authenticator = getAuthenticatorById(authenticatorId, userProfile)
         if (authenticator == null) {
-            result.error(OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.message, null)
+            SdkError(
+                wrapperError = OneWelcomeWrapperErrors.AUTHENTICATOR_IS_NULL
+            ).flutterError(result)
             return
         }
         oneginiClient.userClient.deregisterAuthenticator(authenticator, object : OneginiAuthenticatorDeregistrationHandler {
@@ -28,7 +33,10 @@ class DeregisterAuthenticatorUseCase(private var oneginiClient: OneginiClient) {
             }
 
             override fun onError(oneginiAuthenticatorDeregistrationError: OneginiAuthenticatorDeregistrationError) {
-                result.error(oneginiAuthenticatorDeregistrationError.errorType.toString(), oneginiAuthenticatorDeregistrationError.message, null)
+                SdkError(
+                    code = oneginiAuthenticatorDeregistrationError.errorType,
+                    message = oneginiAuthenticatorDeregistrationError.message
+                ).flutterError(result)
             }
         }
         )

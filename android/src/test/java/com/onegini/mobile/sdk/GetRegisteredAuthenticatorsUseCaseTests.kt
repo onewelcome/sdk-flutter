@@ -5,7 +5,7 @@ import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
 import com.onegini.mobile.sdk.flutter.useCases.GetRegisteredAuthenticatorsUseCase
 import io.flutter.plugin.common.MethodChannel
 import org.junit.Before
@@ -58,7 +58,7 @@ class GetRegisteredAuthenticatorsUseCaseTests {
 
         GetRegisteredAuthenticatorsUseCase(clientMock)(resultSpy)
 
-        verify(resultSpy).error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
+        verify(resultSpy).error(OneWelcomeWrapperErrors.USER_PROFILE_IS_NULL.code, OneWelcomeWrapperErrors.USER_PROFILE_IS_NULL.message, null)
     }
 
     @Test

@@ -7,7 +7,8 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticationError
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
+import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
@@ -16,12 +17,16 @@ class AuthenticateUserUseCase(private val oneginiClient: OneginiClient) {
         val registeredAuthenticatorsId = call.argument<String>("registeredAuthenticatorId")
         val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
         if (userProfile == null) {
-            result.error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
+            SdkError(
+                wrapperError = OneWelcomeWrapperErrors.USER_PROFILE_IS_NULL
+            ).flutterError(result)
             return
         }
         val authenticator = getAuthenticatorById(registeredAuthenticatorsId, userProfile)
         if (registeredAuthenticatorsId != null && authenticator == null) {
-            result.error(OneginiWrapperErrors.AUTHENTICATOR_NOT_FOUND.code, OneginiWrapperErrors.AUTHENTICATOR_NOT_FOUND.message, null)
+            SdkError(
+                wrapperError = OneWelcomeWrapperErrors.AUTHENTICATOR_NOT_FOUND
+            ).flutterError(result)
             return
         }
         authenticate(userProfile, authenticator, result, oneginiClient)
@@ -57,7 +62,10 @@ class AuthenticateUserUseCase(private val oneginiClient: OneginiClient) {
             }
 
             override fun onError(error: OneginiAuthenticationError) {
-                result.error(error.errorType.toString(), error.message, null)
+                SdkError(
+                    code = error.errorType,
+                    message = error.message
+                ).flutterError(result)
             }
         }
     }

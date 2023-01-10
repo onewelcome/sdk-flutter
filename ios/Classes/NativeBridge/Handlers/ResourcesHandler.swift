@@ -16,7 +16,7 @@ protocol FetchResourcesHandlerProtocol: AnyObject {
 
 //MARK: -
 class ResourcesHandler: FetchResourcesHandlerProtocol {
-    
+
     func authenticateDevice(_ scopes: [String]?, completion: @escaping (Bool, SdkError?) -> Void) {
         Logger.log("authenticateDevice", sender: self)
         ONGDeviceClient.sharedInstance().authenticateDevice(scopes) { success, error in
@@ -44,7 +44,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                     if let error = error {
                         completion(false, error)
                     } else {
-                        completion(false, SdkError.init(customType: .failedParseData))
+                        completion(false, SdkError.init(wrapperError: .failedParseData))
                     }
                 }
             }
@@ -70,7 +70,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         Logger.log("authenticateProfileImplicitly", sender: self)
         ONGUserClient.sharedInstance().implicitlyAuthenticateUser(profile, scopes: scopes) { success, error in
             if !success {
-                let mappedError = error != nil ? ErrorMapper().mapError(error!) : SdkError.init(customType: .somethingWentWrong)
+                let mappedError = error != nil ? ErrorMapper().mapError(error!) : SdkError.init(wrapperError: .generic)
                 completion(success, mappedError)
                 return
             }
@@ -80,17 +80,21 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 
     private func simpleResourcesRequest(isAnonymousCall: Bool, parameters: [String: Any], _ completion: @escaping (Any?, SdkError?) -> Void) {
         Logger.log("simpleResourcesRequest", sender: self)
-        
         let request = generateONGResourceRequest(from: parameters)
 
         let completionRequest: ((ONGResourceResponse?, Error?) -> Void)? = { response, error in
             if let error = error {
-                completion(nil, SdkError(errorDescription: error.localizedDescription, code: error.code, response: response))
+                if let response = response {
+                    completion(nil, SdkError(wrapperError: .errorCodeHttpRequest, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
+                } else {
+                    completion(nil, SdkError(wrapperError: .httpRequestError, iosCode: error.code, iosMessage: error.localizedDescription))
+                }
+
             } else {
                 if let response = response, let _ = response.data {
                     completion(response.toString(), nil)
                 } else {
-                    completion(nil, SdkError.init(customType: .responseIsNull))
+                    completion(nil, SdkError.init(wrapperError: .responseIsNull))
                 }
             }
         }
@@ -114,7 +118,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 if let response = response, let _ = response.data {
                     completion(response.toString(), nil)
                 } else {
-                    completion(nil, SdkError.init(customType: .responseIsNull))
+                    completion(nil, SdkError.init(wrapperError: .responseIsNull))
                 }
             }
         }
@@ -131,7 +135,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             return ONGParametersEncoding.JSON
         }
     }
-    
+
     //MARK: - Bridge
     func fetchAnonymousResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
         Logger.log("fetchAnonymousResource", sender: self)
@@ -147,11 +151,11 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             }
         }
     }
-    
+
     func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
         Logger.log("fetchSimpleResources", sender: self)
         let newParameters = generateParameters(from: parameters, path: path)
-
+        Logger.log("fetchSimpleResources xav test", sender: self)
         OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: false, isAnonymousCall: false, parameters: newParameters) { (_data, error) in
             if let _errorResource = error {
                 completion(_errorResource)
@@ -161,14 +165,14 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             }
         }
     }
-    
+
     func fetchResourceWithImplicitResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
         Logger.log("fetchResourceWithImplicitResource", sender: self)
         guard let _profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
-            completion(SdkError.init(customType: .userAuthenticatedProfileIsNull))
+            completion(SdkError.init(wrapperError: .authenticatedUserProfileIsNull))
             return
         }
-        
+
         let newParameters = generateParameters(from: parameters, path: path)
         let scopes = newParameters["scope"] as? [String]
         
@@ -186,14 +190,14 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             }
         }
     }
-    
+
     func unauthenticatedRequest(_ path: String, parameters: [String: Any?], callback: @escaping FlutterResult) {
         Logger.log("unauthenticatedRequest", sender: self)
-        
+
         let newParameters = generateParameters(from: parameters, path: path)
 
         let request = generateONGResourceRequest(from: newParameters)
-        
+
         ONGDeviceClient.sharedInstance().fetchUnauthenticatedResource(request) { (response, error) in
             if let _errorResource = error {
                 callback(SdkError.convertToFlutter(SdkError.init(errorDescription: _errorResource.localizedDescription, code: _errorResource.code, response: response)))
@@ -206,12 +210,12 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                         callback(data)
                     }
                 } else {
-                    callback(SdkError.init(customType: .responseIsNull))
+                    callback(SdkError.init(wrapperError: .responseIsNull))
                 }
             }
         }
     }
-    
+
     func generateParameters(from parameters: [String: Any?], path: String) -> [String: Any] {
         let buffer = parameters.filter { !($0.1 is NSNull) }
         
@@ -234,7 +238,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         
         return newParameters
     }
-    
+
     func generateONGResourceRequest(from parameters: [String: Any]) -> ONGResourceRequest {
         let encoding = getEncodingByValue(parameters["encoding"] as! String)
         let path = parameters["path"] as! String
@@ -249,7 +253,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         } else {
             request = ONGResourceRequest.init(path:path, method: method, parameters: parameters["parameters"] as? [String : Any], encoding: encoding, headers: headers)
         }
-        
+
         return request
     }
 }
@@ -262,7 +266,7 @@ extension ONGResourceResponse {
                 "body": data != nil ? String(data: data!, encoding: .utf8) : nil
         ]
     }
-    
+
     func toString() -> String {
         return String.stringify(json: self.toJSON())
     }

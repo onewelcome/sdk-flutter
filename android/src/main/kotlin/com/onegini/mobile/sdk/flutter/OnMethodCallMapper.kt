@@ -20,6 +20,7 @@ import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.MobileAuthenticationObject
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
+import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationAction
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -34,7 +35,9 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
         } else if (client != null) {
             onSDKMethodCall(call, client, result)
         } else {
-            result.error(OneginiWrapperErrors.ONEGINI_SDK_NOT_INITIALIZED.code, OneginiWrapperErrors.ONEGINI_SDK_NOT_INITIALIZED.message, null)
+            SdkError(
+                wrapperError = OneWelcomeWrapperErrors.ONEWELCOME_SDK_NOT_INITIALIZED
+            ).flutterError(result)
         }
     }
 
@@ -93,18 +96,24 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
 
             Constants.METHOD_VALIDATE_PIN_WITH_POLICY -> validatePinWithPolicy(call.argument<String>("pin")?.toCharArray(), result, client)
 
-            else -> result.error(OneginiWrapperErrors.METHOD_TO_CALL_NOT_FOUND.code, OneginiWrapperErrors.METHOD_TO_CALL_NOT_FOUND.message, null)
+            else -> SdkError(
+                wrapperError = OneWelcomeWrapperErrors.METHOD_TO_CALL_NOT_FOUND
+            ).flutterError(result)
         }
     }
 
     // "https://login-mobile.test.onegini.com/personal/dashboard"
     fun getAppToWebSingleSignOn(url: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         if (url == null) {
-            result.error(OneginiWrapperErrors.URL_CANT_BE_NULL.code, OneginiWrapperErrors.URL_CANT_BE_NULL.message, null)
+            SdkError(
+                wrapperError = OneWelcomeWrapperErrors.URL_CANT_BE_NULL
+            ).flutterError(result)
             return
         }
         if (!Patterns.WEB_URL.matcher(url).matches()) {
-            result.error(OneginiWrapperErrors.URL_IS_NOT_WEB_PATH.code, OneginiWrapperErrors.URL_IS_NOT_WEB_PATH.message, null)
+            SdkError(
+                wrapperError = OneWelcomeWrapperErrors.URL_IS_NOT_WEB_PATH
+            ).flutterError(result)
             return
         }
         val targetUri: Uri = Uri.parse(url)
@@ -116,7 +125,10 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
                     }
 
                     override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
-                        result.error(oneginiSingleSignOnError.errorType.toString(), oneginiSingleSignOnError.message, null)
+                        SdkError(
+                            code = oneginiSingleSignOnError.errorType,
+                            message = oneginiSingleSignOnError.message
+                        ).flutterError(result)
                     }
                 }
         )
@@ -131,7 +143,10 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
                     }
 
                     override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
-                        result.error(oneginiPinValidationError.errorType.toString(), oneginiPinValidationError.message, null)
+                        SdkError(
+                            code = oneginiPinValidationError.errorType,
+                            message = oneginiPinValidationError.message
+                        ).flutterError(result)
                     }
                 }
         )
@@ -144,7 +159,10 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             }
 
             override fun onError(error: OneginiChangePinError) {
-                result.error(error.errorType.toString(), error.message, null)
+                SdkError(
+                    code = error.errorType,
+                    message = error.message
+                ).flutterError(result)
             }
         })
     }

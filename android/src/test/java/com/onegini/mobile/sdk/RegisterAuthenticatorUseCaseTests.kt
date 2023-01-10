@@ -8,7 +8,7 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorRegistr
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
 import com.onegini.mobile.sdk.flutter.useCases.RegisterAuthenticatorUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -55,7 +55,7 @@ class RegisterAuthenticatorUseCaseTests {
 
         RegisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
+        verify(resultSpy).error(OneWelcomeWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneWelcomeWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
     }
 
     @Test
@@ -66,7 +66,7 @@ class RegisterAuthenticatorUseCaseTests {
 
         RegisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.message, null)
+        verify(resultSpy).error(OneWelcomeWrapperErrors.AUTHENTICATOR_IS_NULL.code, OneWelcomeWrapperErrors.AUTHENTICATOR_IS_NULL.message, null)
     }
 
     @Test
@@ -77,7 +77,7 @@ class RegisterAuthenticatorUseCaseTests {
 
         RegisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.message, null)
+        verify(resultSpy).error(OneWelcomeWrapperErrors.AUTHENTICATOR_IS_NULL.code, OneWelcomeWrapperErrors.AUTHENTICATOR_IS_NULL.message, null)
     }
 
     @Test

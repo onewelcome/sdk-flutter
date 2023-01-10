@@ -5,7 +5,7 @@ import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
 import com.onegini.mobile.sdk.flutter.useCases.GetAllAuthenticatorsUseCase
 import io.flutter.plugin.common.MethodChannel
 import org.junit.Before
@@ -14,7 +14,6 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -46,7 +45,7 @@ class GetAllAuthenticatorsUseCaseTests {
 
         GetAllAuthenticatorsUseCase(clientMock)(resultSpy)
 
-        verify(resultSpy).error(OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
+        verify(resultSpy).error(OneWelcomeWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneWelcomeWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
     }
 
     @Test

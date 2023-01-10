@@ -1,7 +1,8 @@
 package com.onegini.mobile.sdk.flutter.helpers
 
 import com.google.gson.Gson
-import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
+
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -24,15 +25,27 @@ class ResourceHelper {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(
                         { data ->
-                            val response = Gson().toJson(mapOf("statusCode" to data.code, "body" to data.body?.string(), "headers" to data.headers, "url" to data.request.url.toString()))
                             if (data.code >= 400) {
-                                result.error(data.code.toString(), response, null)
+                                    SdkError(
+                                        wrapperError = OneWelcomeWrapperErrors.ERROR_CODE_HTTP_REQUEST,
+                                        httpResponse = data
+                                    ).flutterError(result)
                             } else {
+                                val response = Gson().toJson(mapOf("statusCode" to data.code, "body" to data.body?.string(), "headers" to data.headers, "url" to data.request.url.toString()))
                                 result.success(response)
                             }
                         },
                         {
-                            result.error(OneginiWrapperErrors.HTTP_REQUEST_ERROR.code, it.message, null)
+                            if (it.message != null) {
+                                SdkError(
+                                    code = OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR.code,
+                                    message = it.message.toString()
+                                ).flutterError(result)
+                            } else {
+                                SdkError(
+                                    wrapperError = OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR,
+                                ).flutterError(result)
+                            }
                         }
                 )
     }

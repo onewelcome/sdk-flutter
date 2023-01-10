@@ -14,17 +14,18 @@ buildscript {
 allprojects {
     repositories {
         google()
-        if (project.hasProperty('onegini_artifactory_user') && project.hasProperty('onegini_artifactory_password')) {
+        def (artifactoryUser, artifactoryPassword) = getArtifactoryCredentials()
+        if (artifactoryUser?.trim() && artifactoryPassword?.trim() && artifactoryUser != "" && artifactoryPassword != "") {
             maven {
                 url "https://repo.onegini.com/artifactory/onegini-sdk"
                 credentials {
-                    username "${onegini_artifactory_user}"
-                    password "${onegini_artifactory_password}"
+                    username artifactoryUser
+                    password artifactoryPassword
                 }
             }
         } else {
-            throw new InvalidUserDataException("You must configure the 'artifactory_user' and 'artifactory_password' properties in your project before you can " +
-                    "build it.")
+            throw new InvalidUserDataException("You must configure the 'ARTIFACTORY_USER' and 'ARTIFACTORY_PASSWORD' environment variables before you can " +
+              "build the project.")
         }
     }
 }
@@ -39,4 +40,23 @@ subprojects {
 
 task clean(type: Delete) {
     delete rootProject.buildDir
+}
+
+def getArtifactoryCredentials() {
+    // Leave onegini_ property for backwards compatibility
+    if (project.hasProperty('onegini_artifactory_user') && project.hasProperty('onegini_artifactory_password')) {
+        return [onegini_artifactory_user, onegini_artifactory_password]
+    } else if (project.hasProperty('artifactory_user') && project.hasProperty('artifactory_password')) {
+        return [artifactory_user, artifactory_password]
+    } else if (System.env.ARTIFACTORY_USER && System.env.ARTIFACTORY_PASSWORD) {
+        return [System.env.ARTIFACTORY_USER, System.env.ARTIFACTORY_PASSWORD]
+    } else {
+        def artifactoryFile = file("${project.rootDir}/artifactory.properties")
+        if (artifactoryFile.exists()) {
+            def props = new Properties()
+            artifactoryFile.withInputStream { props.load(it) }
+            return [props.getProperty("artifactoryUser"), props.getProperty("artifactoryPassword")]
+        }
+    }
+    return ["", ""]
 }

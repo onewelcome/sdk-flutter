@@ -5,31 +5,46 @@ import OneginiSDKiOS
 class SdkError {
     var title: String
     var errorDescription: String
-    var recoverySuggestion: String
     var code: Int
     var info: [String: Any?] = [:]
     var ongResponse: ONGResourceResponse? = nil
+    var iosCode: Int? = nil
+    var iosMessage: String? = nil
 
-    init(title: String = "Error", errorDescription: String, recoverySuggestion: String = "Please try again.", code: Int = 400, info: [String: Any?] = [:], response: ONGResourceResponse? = nil) {
+    init(title: String = "Error",
+        errorDescription: String, code: Int = OneWelcomeWrapperError.generic.rawValue, info: [String: Any?] = [:], response: ONGResourceResponse? = nil) {
         self.title = title
-        self.errorDescription = errorDescription
-        self.recoverySuggestion = recoverySuggestion
         self.code = code
+        self.errorDescription = errorDescription
         self.info = info
         self.ongResponse = response
     }
     
-    init(customType: OneginiErrorCustomType, title: String = "Error", recoverySuggestion: String = "Please try again.") {
+    init(wrapperError: OneWelcomeWrapperError, title: String = "Error", info: [String: Any?] = [:], response: ONGResourceResponse? = nil, iosCode: Int? = nil, iosMessage: String? = nil) {
         self.title = title
-        self.errorDescription = customType.message()
-        self.recoverySuggestion = recoverySuggestion
-        self.code = customType.rawValue
+        self.code = wrapperError.rawValue
+        self.errorDescription = wrapperError.message()
+        self.info = info
+        self.ongResponse = response
+        self.iosCode = iosCode
+        self.iosMessage = iosMessage
     }
-    
+
     func toJSON() -> Dictionary<String, Any?>? {
-        return ["title": title, "message": errorDescription, "recoverySuggestion": recoverySuggestion, "code": code, "userInfo": info, "response": ongResponse?.toJSON()]
+        var result: Dictionary<String, Any?>? = ["title": title, "message": errorDescription, "code": code, "userInfo": info, "response": ongResponse?.toJSON()]
+
+        // Add potential native error information on top of wrapper error
+        if iosCode != nil {
+            result?["iosCode"] = iosCode
+        }
+
+        if iosMessage != nil {
+            result?["iosMessage"] = iosMessage
+        }
+
+        return result
     }
-    
+
     func flutterError() -> FlutterError {
         let _error = FlutterError(code: "\(self.code)", message: self.errorDescription, details: self.toJSON())
 
@@ -37,7 +52,7 @@ class SdkError {
     }
     
     static func convertToFlutter(_ error: SdkError?) -> FlutterError {
-        let _error = error ?? SdkError(customType: .somethingWentWrong)
+        let _error = error ?? SdkError(wrapperError: .generic)
         return _error.flutterError()
     }
 }

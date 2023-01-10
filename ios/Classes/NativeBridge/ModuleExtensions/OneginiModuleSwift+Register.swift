@@ -85,7 +85,7 @@ extension OneginiModuleSwift {
     
     func registerAuthenticator(_ authenticatorId: String, callback: @escaping FlutterResult) {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first else {
-            callback(SdkError.convertToFlutter(SdkError(customType: .userProfileIsNull)))
+            callback(SdkError.convertToFlutter(SdkError(wrapperError: .userProfileIsNull)))
             return
         }
         
@@ -94,7 +94,7 @@ extension OneginiModuleSwift {
         let authenticator: ONGAuthenticator? = notRegisteredAuthenticators.first(where: { $0.identifier == authenticatorId })
         
         guard let _ = authenticator else {
-            callback(SdkError.convertToFlutter(SdkError.init(customType: .authenticatorNotAvailable)))
+            callback(SdkError.convertToFlutter(SdkError.init(wrapperError: .authenticatorNotFound)))
             return
         }
         
@@ -111,7 +111,7 @@ extension OneginiModuleSwift {
     
     func fetchRegisteredAuthenticators(callback: @escaping FlutterResult) {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first else {
-            callback(SdkError.convertToFlutter(SdkError(customType: .userProfileIsNull)))
+            callback(SdkError.convertToFlutter(SdkError(wrapperError: .userProfileIsNull)))
             return
         }
         
@@ -125,7 +125,7 @@ extension OneginiModuleSwift {
     
     func fetchNotRegisteredAuthenticator(callback: @escaping FlutterResult) -> Void {
         guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
-            callback(SdkError.convertToFlutter(SdkError(customType: .userAuthenticatedProfileIsNull)))
+            callback(SdkError.convertToFlutter(SdkError(wrapperError: .authenticatedUserProfileIsNull)))
             return
         }
         
@@ -140,7 +140,7 @@ extension OneginiModuleSwift {
     
     func fetchAllAuthenticators(callback: @escaping FlutterResult) -> Void {
         guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
-            callback(SdkError.convertToFlutter(SdkError(customType: .userAuthenticatedProfileIsNull)))
+            callback(SdkError.convertToFlutter(SdkError(wrapperError: .authenticatedUserProfileIsNull)))
             return
         }
         
