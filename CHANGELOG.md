@@ -1,3 +1,6 @@
+## 1.1.2, January 17, 2023
+* Update the Android SDK version version to 11.8.1. This brings See [the release notes](https://developer.onewelcome.com/android/android-sdk/11-x) and [upgrade notes](https://developer.onewelcome.com/android/android-sdk/v11-8.1) for more information.
+* [Breaking] Bump the compile- and target-SDK of the plugin to version 32 due to dependecies of the new Android SDK version.
 ## 1.1.1, October 10, 2022
 
 * Update podfile for example app to build on m1.
