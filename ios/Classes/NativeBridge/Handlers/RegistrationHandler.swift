@@ -85,7 +85,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     func handleRedirectURL(url: URL?) {
         Logger.log("handleRedirectURL url: \(url?.absoluteString ?? "nil")", sender: self)
         guard let browserRegistrationChallenge = self.browserRegistrationChallenge else {
-            signUpCompletion?(false, nil, nil, SdkError.init(.genericError))
+            signUpCompletion?(false, nil, nil, SdkError(.genericError))
             return
         }
         
@@ -155,12 +155,12 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
 
     func processRedirectURL(url: String, webSignInType: WebSignInType) {
         guard let url = URL.init(string: url) else {
-            signUpCompletion?(false, nil, nil, SdkError.init(.providedUrlIncorrectError))
+            signUpCompletion?(false, nil, nil, SdkError(.providedUrlIncorrectError))
             return
         }
         
         if webSignInType != .insideApp && !UIApplication.shared.canOpenURL(url) {
-            signUpCompletion?(false, nil, nil, SdkError.init(.providedUrlIncorrectError))
+            signUpCompletion?(false, nil, nil, SdkError(.providedUrlIncorrectError))
             return
         }
         
@@ -251,7 +251,7 @@ extension RegistrationHandler: ONGRegistrationDelegate {
             else
             {
                 successfulRequest = false
-                result["eventValue"] = SdkError.init(errorDescription: mapErrorMessageFromStatus(info.status) ?? "null", code: info.status).toJSON()
+                result["eventValue"] = SdkError(errorDescription: mapErrorMessageFromStatus(info.status) ?? "null", code: info.status).toJSON()
             }
         }
 

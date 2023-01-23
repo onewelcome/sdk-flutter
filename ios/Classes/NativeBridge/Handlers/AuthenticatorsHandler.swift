@@ -68,12 +68,12 @@ class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
 extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     func registerAuthenticator(_ userProfile: ONGUserProfile, _ authenticator: ONGAuthenticator,_ completion: @escaping (Bool, SdkError?) -> Void) {
         guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticator.identifier}) else {
-            completion(false, SdkError.init(.authenticatorNotFoundError))
+            completion(false, SdkError(.authenticatorNotFoundError))
             return;
         }
         
         if(authenticator.isRegistered == true) {
-            completion(false, SdkError.init(.authenticatorNotFoundError))
+            completion(false, SdkError(.authenticatorNotFoundError))
             return;
         }
         
@@ -83,12 +83,12 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
 
     func deregisterAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String,_ completion: @escaping (Bool, SdkError?) -> Void) {
         guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticatorId}) else {
-            completion(false, SdkError.init(.authenticatorNotFoundError))
+            completion(false, SdkError(.authenticatorNotFoundError))
             return;
         }
         
         if(authenticator.isRegistered != true) {
-            completion(false, SdkError.init(.authenticatorNotRegisteredError))
+            completion(false, SdkError(.authenticatorNotRegisteredError))
             return;
         }
         
@@ -98,12 +98,12 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
 
     func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String,_ completion: @escaping (Bool, SdkError?) -> Void) {
         guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticatorId}) else {
-            completion(false, SdkError.init(.authenticatorNotFoundError))
+            completion(false, SdkError(.authenticatorNotFoundError))
             return;
         }
         
         if(!authenticator.isRegistered) {
-            completion(false, SdkError.init(.authenticatorNotRegisteredError))
+            completion(false, SdkError(.authenticatorNotRegisteredError))
             return;
         }
         
@@ -181,7 +181,7 @@ extension AuthenticatorsHandler: ONGAuthenticatorDeregistrationDelegate {
         Logger.log("[AUTH] userClient didFailToDeregister ONGAuthenticator", sender: self)
         //BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            deregistrationCompletion?(false, SdkError.init(.authenticatorDeregistrationCancelledError))
+            deregistrationCompletion?(false, SdkError(.authenticatorDeregistrationCancelledError))
         } else {
             let mappedError = ErrorMapper().mapError(error)
             deregistrationCompletion?(false, mappedError)

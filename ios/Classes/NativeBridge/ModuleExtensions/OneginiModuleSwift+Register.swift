@@ -94,7 +94,7 @@ extension OneginiModuleSwift {
         let authenticator: ONGAuthenticator? = notRegisteredAuthenticators.first(where: { $0.identifier == authenticatorId })
         
         guard let _ = authenticator else {
-            callback(SdkError.convertToFlutter(SdkError.init(.authenticatorNotFoundError)))
+            callback(SdkError.convertToFlutter(SdkError(.authenticatorNotFoundError)))
             return
         }
         

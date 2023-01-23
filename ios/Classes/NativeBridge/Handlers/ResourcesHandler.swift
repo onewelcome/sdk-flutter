@@ -70,7 +70,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         Logger.log("authenticateProfileImplicitly", sender: self)
         ONGUserClient.sharedInstance().implicitlyAuthenticateUser(profile, scopes: scopes) { success, error in
             if !success {
-                let mappedError = error != nil ? ErrorMapper().mapError(error!) : SdkError.init(.genericError)
+                let mappedError = error != nil ? ErrorMapper().mapError(error!) : SdkError(.genericError)
                 completion(success, mappedError)
                 return
             }
@@ -94,7 +94,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 if let response = response, let _ = response.data {
                     completion(response.toString(), nil)
                 } else {
-                    completion(nil, SdkError.init(.responseIsNullError))
+                    completion(nil, SdkError(.responseIsNullError))
                 }
             }
         }
@@ -118,7 +118,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 if let response = response, let _ = response.data {
                     completion(response.toString(), nil)
                 } else {
-                    completion(nil, SdkError.init(.responseIsNullError))
+                    completion(nil, SdkError(.responseIsNullError))
                 }
             }
         }
@@ -169,7 +169,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     func fetchResourceWithImplicitResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
         Logger.log("fetchResourceWithImplicitResource", sender: self)
         guard let _profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
-            completion(SdkError.init(.authenticatedUserProfileIsNullError))
+            completion(SdkError(.authenticatedUserProfileIsNullError))
             return
         }
 
@@ -200,7 +200,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 
         ONGDeviceClient.sharedInstance().fetchUnauthenticatedResource(request) { (response, error) in
             if let _errorResource = error {
-                callback(SdkError.convertToFlutter(SdkError.init(errorDescription: _errorResource.localizedDescription, code: _errorResource.code, response: response)))
+                callback(SdkError.convertToFlutter(SdkError(errorDescription: _errorResource.localizedDescription, code: _errorResource.code, response: response)))
                 return
             } else {
                 if let response = response, let data = response.data {
@@ -210,7 +210,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                         callback(data)
                     }
                 } else {
-                    callback(SdkError.init(.responseIsNullError))
+                    callback(SdkError(.responseIsNullError))
                 }
             }
         }

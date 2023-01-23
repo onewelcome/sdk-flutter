@@ -145,7 +145,7 @@ extension PinHandler : PinConnectorToPinHandler {
                 return
             }
             
-            completion(false, SdkError.init(errorDescription: _error.localizedDescription, code: _error.code))
+            completion(false, SdkError(errorDescription: _error.localizedDescription, code: _error.code))
         }
     }
  }

@@ -42,7 +42,7 @@ extension OneginiModuleSwift {
         
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
-            callback(SdkError.convertToFlutter(SdkError.init(.userProfileIsNullError)))
+            callback(SdkError.convertToFlutter(SdkError(.userProfileIsNullError)))
             return
         }
 
@@ -74,12 +74,12 @@ extension OneginiModuleSwift {
     
     func authenticateWithRegisteredAuthentication(_ identifierId: String?, callback: @escaping FlutterResult) {
         guard let _identifierId = identifierId else {
-            callback(SdkError.convertToFlutter(SdkError.init(.authenticatorIdIsNullError)))
+            callback(SdkError.convertToFlutter(SdkError(.authenticatorIdIsNullError)))
             return
         }
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
-            callback(SdkError.convertToFlutter(SdkError.init(.userProfileIsNullError)))
+            callback(SdkError.convertToFlutter(SdkError(.userProfileIsNullError)))
             return
         }
         
@@ -108,12 +108,12 @@ extension OneginiModuleSwift {
     
     func setPreferredAuthenticator(_ identifierId: String?, callback: @escaping FlutterResult) {
         guard let _identifierId = identifierId else {
-            callback(SdkError.convertToFlutter(SdkError.init(.authenticatorIdIsNullError)))
+            callback(SdkError.convertToFlutter(SdkError(.authenticatorIdIsNullError)))
             return
         }
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
-            callback(SdkError.convertToFlutter(SdkError.init(.userProfileIsNullError)))
+            callback(SdkError.convertToFlutter(SdkError(.userProfileIsNullError)))
             return
         }
         
@@ -130,12 +130,12 @@ extension OneginiModuleSwift {
     
     func deregisterAuthenticator(_ identifierId: String?, callback: @escaping FlutterResult) {
         guard let _identifierId = identifierId else {
-            callback(SdkError.convertToFlutter(SdkError.init(.authenticatorIdIsNullError)))
+            callback(SdkError.convertToFlutter(SdkError(.authenticatorIdIsNullError)))
             return
         }
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
-            callback(SdkError.convertToFlutter(SdkError.init(.userProfileIsNullError)))
+            callback(SdkError.convertToFlutter(SdkError(.userProfileIsNullError)))
             return
         }
         

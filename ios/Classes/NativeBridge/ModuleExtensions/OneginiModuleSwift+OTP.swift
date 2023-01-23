@@ -19,7 +19,7 @@ extension OneginiModuleSwift {
             ONGUserClient.sharedInstance().enroll { [weak self] (value, error) in
                 
                 if let _error = error {
-                    callback(SdkError.init(errorDescription: _error.localizedDescription, code: _error.code).flutterError())
+                    callback(SdkError(errorDescription: _error.localizedDescription, code: _error.code).flutterError())
                     return
                 }
                 
