@@ -1,7 +1,11 @@
 package com.onegini.mobile.sdk.flutter.helpers
 
 import com.google.gson.Gson
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_BODY
+import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_HEADERS
+import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_STATUS_CODE
+import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_URL
 
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -27,24 +31,22 @@ class ResourceHelper {
                         { data ->
                             if (data.code >= 400) {
                                     SdkError(
-                                        wrapperError = OneWelcomeWrapperErrors.ERROR_CODE_HTTP_REQUEST,
+                                        wrapperError = ERROR_CODE_HTTP_REQUEST_ERROR,
                                         httpResponse = data
                                     ).flutterError(result)
                             } else {
-                                val response = Gson().toJson(mapOf("statusCode" to data.code, "body" to data.body?.string(), "headers" to data.headers, "url" to data.request.url.toString()))
+                                val response = Gson().toJson(mapOf(RESPONSE_STATUS_CODE to data.code, RESPONSE_BODY to data.body?.string(), RESPONSE_HEADERS to data.headers, RESPONSE_URL to data.request.url.toString()))
                                 result.success(response)
                             }
                         },
                         {
                             if (it.message != null) {
                                 SdkError(
-                                    code = OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR.code,
+                                    code = HTTP_REQUEST_ERROR.code,
                                     message = it.message.toString()
                                 ).flutterError(result)
                             } else {
-                                SdkError(
-                                    wrapperError = OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR,
-                                ).flutterError(result)
+                                SdkError(HTTP_REQUEST_ERROR).flutterError(result)
                             }
                         }
                 )

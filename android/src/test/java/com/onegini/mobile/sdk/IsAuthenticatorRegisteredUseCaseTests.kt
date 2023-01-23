@@ -4,7 +4,7 @@ import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.useCases.IsAuthenticatorRegisteredUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -49,7 +49,7 @@ class IsAuthenticatorRegisteredUseCaseTests {
 
         IsAuthenticatorRegisteredUseCase(clientMock)(callMock,resultSpy)
 
-        verify(resultSpy).error(OneWelcomeWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneWelcomeWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
+        verify(resultSpy).error(AUTHENTICATED_USER_PROFILE_IS_NULL_ERROR.code.toString(), AUTHENTICATED_USER_PROFILE_IS_NULL_ERROR.message, null)
     }
 
     @Test
@@ -58,7 +58,7 @@ class IsAuthenticatorRegisteredUseCaseTests {
 
         IsAuthenticatorRegisteredUseCase(clientMock)(callMock,resultSpy)
 
-        verify(resultSpy).error(OneWelcomeWrapperErrors.AUTHENTICATOR_NOT_FOUND.code, OneWelcomeWrapperErrors.AUTHENTICATOR_NOT_FOUND.message, null)
+        verify(resultSpy).error(AUTHENTICATOR_NOT_FOUND_ERROR.code.toString(), AUTHENTICATOR_NOT_FOUND_ERROR.message, null)
     }
 
     @Test
@@ -70,7 +70,7 @@ class IsAuthenticatorRegisteredUseCaseTests {
 
         IsAuthenticatorRegisteredUseCase(clientMock)(callMock,resultSpy)
 
-        verify(resultSpy).error(OneWelcomeWrapperErrors.AUTHENTICATOR_NOT_FOUND.code, OneWelcomeWrapperErrors.AUTHENTICATOR_NOT_FOUND.message, null)
+        verify(resultSpy).error(AUTHENTICATOR_NOT_FOUND_ERROR.code.toString(), AUTHENTICATOR_NOT_FOUND_ERROR.message, null)
     }
 
     @Test

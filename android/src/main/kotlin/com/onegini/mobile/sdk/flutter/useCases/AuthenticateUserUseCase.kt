@@ -7,7 +7,7 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticationError
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -17,16 +17,12 @@ class AuthenticateUserUseCase(private val oneginiClient: OneginiClient) {
         val registeredAuthenticatorsId = call.argument<String>("registeredAuthenticatorId")
         val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
         if (userProfile == null) {
-            SdkError(
-                wrapperError = OneWelcomeWrapperErrors.USER_PROFILE_IS_NULL
-            ).flutterError(result)
+            SdkError(USER_PROFILE_IS_NULL_ERROR).flutterError(result)
             return
         }
         val authenticator = getAuthenticatorById(registeredAuthenticatorsId, userProfile)
         if (registeredAuthenticatorsId != null && authenticator == null) {
-            SdkError(
-                wrapperError = OneWelcomeWrapperErrors.AUTHENTICATOR_NOT_FOUND
-            ).flutterError(result)
+            SdkError(AUTHENTICATOR_NOT_FOUND_ERROR).flutterError(result)
             return
         }
         authenticate(userProfile, authenticator, result, oneginiClient)

@@ -49,7 +49,7 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
             }
             
             if !result {
-                callback(SdkError(wrapperError: .generic).flutterError())
+                callback(SdkError(.genericError).flutterError())
                 return
             }
             

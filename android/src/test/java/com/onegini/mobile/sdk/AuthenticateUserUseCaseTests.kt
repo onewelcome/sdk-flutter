@@ -8,7 +8,7 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticationError
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -72,7 +72,7 @@ class AuthenticateUserUseCaseTests {
 
         AuthenticateUserUseCase(clientMock)(callMock, resultSpy)
 
-        Mockito.verify(resultSpy).error(OneWelcomeWrapperErrors.USER_PROFILE_IS_NULL.code, OneWelcomeWrapperErrors.USER_PROFILE_IS_NULL.message, null)
+        Mockito.verify(resultSpy).error(USER_PROFILE_IS_NULL_ERROR.code.toString(), USER_PROFILE_IS_NULL_ERROR.message, null)
     }
 
     @Test
@@ -83,7 +83,7 @@ class AuthenticateUserUseCaseTests {
 
         AuthenticateUserUseCase(clientMock)(callMock, resultSpy)
 
-        Mockito.verify(resultSpy).error(OneWelcomeWrapperErrors.AUTHENTICATOR_NOT_FOUND.code, OneWelcomeWrapperErrors.AUTHENTICATOR_NOT_FOUND.message, null)
+        Mockito.verify(resultSpy).error(AUTHENTICATOR_NOT_FOUND_ERROR.code.toString(), AUTHENTICATOR_NOT_FOUND_ERROR.message, null)
     }
 
     @Test

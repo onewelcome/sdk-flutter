@@ -2,7 +2,7 @@ package com.onegini.mobile.sdk.flutter.useCases
 
 import com.google.gson.GsonBuilder
 import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodChannel
 
@@ -11,9 +11,7 @@ class GetAllAuthenticatorsUseCase(private var oneginiClient: OneginiClient) {
         val gson = GsonBuilder().serializeNulls().create()
         val authenticatedUserProfile = oneginiClient.userClient.authenticatedUserProfile
         if (authenticatedUserProfile == null) {
-            SdkError(
-                wrapperError = OneWelcomeWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL
-            ).flutterError(result)
+            SdkError(AUTHENTICATED_USER_PROFILE_IS_NULL_ERROR).flutterError(result)
             return
         }
         val allAuthenticators = oneginiClient.userClient.getAllAuthenticators(authenticatedUserProfile)

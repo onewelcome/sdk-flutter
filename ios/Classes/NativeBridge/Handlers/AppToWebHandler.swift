@@ -11,7 +11,7 @@ protocol AppToWebHandlerProtocol: AnyObject {
 class AppToWebHandler: AppToWebHandlerProtocol {
     func signInAppToWeb(targetURL: URL?, completion: @escaping (Dictionary<String, Any>?, SdkError?) -> Void) {
         guard let _targetURL = targetURL else {
-            completion(nil, SdkError.init(wrapperError: .providedUrlIncorrect))
+            completion(nil, SdkError.init(.providedUrlIncorrectError))
             return
         }
 

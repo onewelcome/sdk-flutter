@@ -473,6 +473,16 @@ class _InfoState extends State<Info> {
     var response = await Onegini.instance.resourcesMethods.getResource("devices")
       .catchError((error) {
         print('Caught error: $error');
+
+        Fluttertoast.showToast(
+            msg: error.message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.black38,
+            textColor: Colors.white,
+            fontSize: 16.0);
+
         return;
       });
 

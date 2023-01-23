@@ -7,7 +7,7 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiRegistrationError
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -19,9 +19,7 @@ class RegistrationUseCase(private var oneginiClient: OneginiClient) {
         val scopes = call.argument<ArrayList<String>>("scopes") ?: ArrayList()
         val identityProvider = getIdentityProviderById(identityProviderId)
         if (identityProviderId != null && identityProvider == null) {
-            SdkError(
-                wrapperError = OneWelcomeWrapperErrors.IDENTITY_PROVIDER_NOT_FOUND
-            ).flutterError(result)
+            SdkError(IDENTITY_PROVIDER_NOT_FOUND_ERROR).flutterError(result)
             return
         }
         register(identityProvider, scopes.toArray(arrayOfNulls<String>(scopes.size)), result)

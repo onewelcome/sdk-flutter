@@ -110,7 +110,7 @@ extension LoginHandler: ONGAuthenticationDelegate {
         pinHandler?.closeFlow()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            loginCompletion?(nil, SdkError.init(wrapperError: .loginCanceled))
+            loginCompletion?(nil, SdkError.init(.loginCanceledError))
         } else {
             let mappedError = ErrorMapper().mapError(error)
             loginCompletion?(nil, mappedError)

@@ -51,7 +51,7 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
                 completion(false, mappedError)
               } else {
                 if(enrolled == false){
-                    completion(false, SdkError(wrapperError: .enrollmentFailed))
+                    completion(false, SdkError(.enrollmentFailedError))
                     return;
                 }
                 
@@ -102,7 +102,7 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
     func handleQrOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Any?, SdkError?) -> Void) {
         mobileAuthCompletion = completion
         guard ONGUserClient.sharedInstance().canHandleOTPMobileAuthRequest(otp) else {
-            completion(false, SdkError(wrapperError: .cantHandleOTP))
+            completion(false, SdkError(.cantHandleOTPError))
             return
         }
         ONGUserClient.sharedInstance().handleOTPMobileAuthRequest(otp, delegate: self)
@@ -134,7 +134,7 @@ extension MobileAuthHandler: ONGMobileAuthRequestDelegate {
 
     func userClient(_ userClient: ONGUserClient, didFailToHandle request: ONGMobileAuthRequest, authenticator: ONGAuthenticator?, error: Error) {
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            mobileAuthCompletion?(false, SdkError(wrapperError: .authenticationCancelled))
+            mobileAuthCompletion?(false, SdkError(.authenticationCancelledError))
         } else {
             let mappedError = ErrorMapper().mapError(error)
             mobileAuthCompletion?(false, mappedError)

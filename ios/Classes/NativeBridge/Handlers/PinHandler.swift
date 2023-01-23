@@ -216,7 +216,7 @@ extension PinHandler: ONGChangePinDelegate {
         let mappedError = ErrorMapper().mapError(error)
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            changePinCompletion?(false, SdkError(wrapperError: .changingCancelled))
+            changePinCompletion?(false, SdkError(.changingCancelledError))
         } else if error.code == ONGGenericError.userDeregistered.rawValue {
             changePinCompletion?(false, mappedError)
         } else {

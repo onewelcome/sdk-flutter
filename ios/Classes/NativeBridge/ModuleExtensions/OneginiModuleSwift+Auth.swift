@@ -8,7 +8,7 @@ extension OneginiModuleSwift {
     public func authenticateUserImplicitly(_ profileId: String, scopes: [String]?,
                                            callback: @escaping (Bool, FlutterError?) -> Void) {
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first(where: { $0.profileId == profileId }) else {
-            callback(false, SdkError.convertToFlutter(SdkError(wrapperError: .userProfileIsNull)))
+            callback(false, SdkError.convertToFlutter(SdkError(.userProfileIsNullError)))
             return
         }
 
@@ -42,7 +42,7 @@ extension OneginiModuleSwift {
         
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
-            callback(SdkError.convertToFlutter(SdkError.init(wrapperError: .userProfileIsNull)))
+            callback(SdkError.convertToFlutter(SdkError.init(.userProfileIsNullError)))
             return
         }
 
@@ -63,7 +63,7 @@ extension OneginiModuleSwift {
     func runSingleSignOn(_ path: String?, callback: @escaping FlutterResult) -> Void {
         
         guard let _path = path, let _url = URL(string: _path) else {
-            callback(SdkError(wrapperError: .providedUrlIncorrect))
+            callback(SdkError(.providedUrlIncorrectError))
             return
         }
         
@@ -74,12 +74,12 @@ extension OneginiModuleSwift {
     
     func authenticateWithRegisteredAuthentication(_ identifierId: String?, callback: @escaping FlutterResult) {
         guard let _identifierId = identifierId else {
-            callback(SdkError.convertToFlutter(SdkError.init(wrapperError: .authenticatorIdIsNull)))
+            callback(SdkError.convertToFlutter(SdkError.init(.authenticatorIdIsNullError)))
             return
         }
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
-            callback(SdkError.convertToFlutter(SdkError.init(wrapperError: .userProfileIsNull)))
+            callback(SdkError.convertToFlutter(SdkError.init(.userProfileIsNullError)))
             return
         }
         
@@ -108,12 +108,12 @@ extension OneginiModuleSwift {
     
     func setPreferredAuthenticator(_ identifierId: String?, callback: @escaping FlutterResult) {
         guard let _identifierId = identifierId else {
-            callback(SdkError.convertToFlutter(SdkError.init(wrapperError: .authenticatorIdIsNull)))
+            callback(SdkError.convertToFlutter(SdkError.init(.authenticatorIdIsNullError)))
             return
         }
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
-            callback(SdkError.convertToFlutter(SdkError.init(wrapperError: .userProfileIsNull)))
+            callback(SdkError.convertToFlutter(SdkError.init(.userProfileIsNullError)))
             return
         }
         
@@ -130,12 +130,12 @@ extension OneginiModuleSwift {
     
     func deregisterAuthenticator(_ identifierId: String?, callback: @escaping FlutterResult) {
         guard let _identifierId = identifierId else {
-            callback(SdkError.convertToFlutter(SdkError.init(wrapperError: .authenticatorIdIsNull)))
+            callback(SdkError.convertToFlutter(SdkError.init(.authenticatorIdIsNullError)))
             return
         }
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
-            callback(SdkError.convertToFlutter(SdkError.init(wrapperError: .userProfileIsNull)))
+            callback(SdkError.convertToFlutter(SdkError.init(.userProfileIsNullError)))
             return
         }
         

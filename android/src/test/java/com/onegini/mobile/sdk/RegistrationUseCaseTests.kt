@@ -8,7 +8,7 @@ import com.onegini.mobile.sdk.android.handlers.OneginiRegistrationHandler
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.useCases.RegistrationUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -91,7 +91,7 @@ class RegistrationUseCaseTests {
 
         RegistrationUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(eq(OneWelcomeWrapperErrors.IDENTITY_PROVIDER_NOT_FOUND.code), eq(OneWelcomeWrapperErrors.IDENTITY_PROVIDER_NOT_FOUND.message), isNull())
+        verify(resultSpy).error(eq(IDENTITY_PROVIDER_NOT_FOUND_ERROR.code.toString()), eq(IDENTITY_PROVIDER_NOT_FOUND_ERROR.message), isNull())
     }
 
     @Test

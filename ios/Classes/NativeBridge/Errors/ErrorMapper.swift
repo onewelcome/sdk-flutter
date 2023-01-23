@@ -3,70 +3,70 @@ import OneginiCrypto
 
 enum OneWelcomeWrapperError: Int {
     // iOS and Android
-    case generic = 8000
-    case userProfileIsNull = 8001
-    case authenticatedUserProfileIsNull = 8002
-    case authenticatorNotFound = 8004
+    case genericError = 8000
+    case userProfileIsNullError = 8001
+    case authenticatedUserProfileIsNullError = 8002
+    case authenticatorNotFoundError = 8004
     case httpRequestError = 8011
-    case errorCodeHttpRequest = 8013
+    case errorCodeHttpRequestError = 8013
     
     // iOS only
-    case providedUrlIncorrect = 8014
-    case loginCanceled = 8015
-    case enrollmentFailed = 8016
-    case authenticationCancelled = 8017
-    case changingCancelled = 8018
-    case registrationCancelled = 8020
-    case cantHandleOTP = 8021
-    case incorrectResourcesAccess = 8022
-    case authenticatorNotRegistered = 8023
-    case authenticatorDeregistrationCancelled = 8024
-    case failedParseData = 8025
-    case responseIsNull = 8026
-    case authenticatorIdIsNull = 8027
-    case emptyInputValue = 8028
+    case providedUrlIncorrectError = 8014
+    case loginCanceledError = 8015
+    case enrollmentFailedError = 8016
+    case authenticationCancelledError = 8017
+    case changingCancelledError = 8018
+    case registrationCancelledError = 8020
+    case cantHandleOTPError = 8021
+    case incorrectResourcesAccessError = 8022
+    case authenticatorNotRegisteredError = 8023
+    case authenticatorDeregistrationCancelledError = 8024
+    case failedToParseDataError = 8025
+    case responseIsNullError = 8026
+    case authenticatorIdIsNullError = 8027
+    case emptyInputValueError = 8028
 
     func message() -> String {
         var message = ""
         
         switch self {
-        case .generic:
+        case .genericError:
             message = "Something went wrong."
-        case .userProfileIsNull:
+        case .userProfileIsNullError:
             message = "User profile is null."
-        case .authenticatedUserProfileIsNull:
+        case .authenticatedUserProfileIsNullError:
             message = "User authenticated profile is null."
-        case .authenticatorNotFound:
+        case .authenticatorNotFoundError:
             message = "The requested authenticator is not found"
-        case .providedUrlIncorrect:
+        case .providedUrlIncorrectError:
             message = "Provided url is incorrect."
-        case .enrollmentFailed:
+        case .enrollmentFailedError:
             message = "Enrollment failed. Please try again or contact maintainer."
-        case .loginCanceled:
+        case .loginCanceledError:
             message = "Login cancelled."
-        case .authenticationCancelled:
+        case .authenticationCancelledError:
             message = "Authentication cancelled."
-        case .authenticatorDeregistrationCancelled:
+        case .authenticatorDeregistrationCancelledError:
             message = "Authenticator deregistration cancelled."
-        case .changingCancelled:
+        case .changingCancelledError:
             message = "Changing cancelled."
-        case .registrationCancelled:
+        case .registrationCancelledError:
             message = "Registration  cancelled."
-        case .cantHandleOTP:
+        case .cantHandleOTPError:
             message = "Can't handle otp authentication request."
-        case .incorrectResourcesAccess:
+        case .incorrectResourcesAccessError:
             message = "Incorrect access to resources."
-        case .authenticatorNotRegistered:
+        case .authenticatorNotRegisteredError:
             message = "This authenticator is not registered."
-        case .failedParseData:
+        case .failedToParseDataError:
             message = "Failed to parse data."
-        case .responseIsNull:
+        case .responseIsNullError:
             message = "Response doesn't contain data."
-        case .authenticatorIdIsNull:
+        case .authenticatorIdIsNullError:
             message = "Authenticator ID is empty."
-        case .emptyInputValue:
+        case .emptyInputValueError:
             message = "Empty input value."
-        case .errorCodeHttpRequest:
+        case .errorCodeHttpRequestError:
             message = "OneWelcome: HTTP Request failed. Check Response for more info."
         case .httpRequestError:
             message = "OneWelcome: HTTP Request failed. Check iosCode and iosMessage for more info."

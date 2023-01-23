@@ -5,7 +5,7 @@ import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.useCases.SetPreferredAuthenticatorUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -48,7 +48,7 @@ class SetPreferredAuthenticatorUseCaseTests {
 
         SetPreferredAuthenticatorUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(OneWelcomeWrapperErrors.USER_PROFILE_IS_NULL.code, OneWelcomeWrapperErrors.USER_PROFILE_IS_NULL.message, null)
+        verify(resultSpy).error(USER_PROFILE_IS_NULL_ERROR.code.toString(), USER_PROFILE_IS_NULL_ERROR.message, null)
     }
 
     @Test
@@ -59,7 +59,7 @@ class SetPreferredAuthenticatorUseCaseTests {
 
         SetPreferredAuthenticatorUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(OneWelcomeWrapperErrors.AUTHENTICATOR_IS_NULL.code, OneWelcomeWrapperErrors.AUTHENTICATOR_IS_NULL.message, null)
+        verify(resultSpy).error(AUTHENTICATOR_IS_NULL_ERROR.code.toString(), AUTHENTICATOR_IS_NULL_ERROR.message, null)
     }
 
     @Test
@@ -70,7 +70,7 @@ class SetPreferredAuthenticatorUseCaseTests {
 
         SetPreferredAuthenticatorUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(OneWelcomeWrapperErrors.AUTHENTICATOR_IS_NULL.code, OneWelcomeWrapperErrors.AUTHENTICATOR_IS_NULL.message, null)
+        verify(resultSpy).error(AUTHENTICATOR_IS_NULL_ERROR.code.toString(), AUTHENTICATOR_IS_NULL_ERROR.message, null)
     }
 
     @Test

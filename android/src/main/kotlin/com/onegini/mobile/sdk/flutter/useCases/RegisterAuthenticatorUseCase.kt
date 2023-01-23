@@ -7,7 +7,7 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorRegistr
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -17,16 +17,12 @@ class RegisterAuthenticatorUseCase(private var oneginiClient: OneginiClient) {
         val authenticatorId = call.argument<String>("authenticatorId")
         val authenticatedUserProfile = oneginiClient.userClient.authenticatedUserProfile
         if (authenticatedUserProfile == null) {
-            SdkError(
-                wrapperError = OneWelcomeWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL
-            ).flutterError(result)
+            SdkError(AUTHENTICATED_USER_PROFILE_IS_NULL_ERROR).flutterError(result)
             return
         }
         val authenticator = getAuthenticatorById(authenticatorId, authenticatedUserProfile)
         if (authenticator == null) {
-            SdkError(
-                wrapperError = OneWelcomeWrapperErrors.AUTHENTICATOR_IS_NULL
-            ).flutterError(result)
+            SdkError(AUTHENTICATOR_IS_NULL_ERROR).flutterError(result)
             return
         }
         oneginiClient.userClient.registerAuthenticator(authenticator, object : OneginiAuthenticatorRegistrationHandler {

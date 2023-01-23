@@ -44,7 +44,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                     if let error = error {
                         completion(false, error)
                     } else {
-                        completion(false, SdkError.init(wrapperError: .failedParseData))
+                        completion(false, SdkError.init(.failedToParseDataError))
                     }
                 }
             }
@@ -70,7 +70,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         Logger.log("authenticateProfileImplicitly", sender: self)
         ONGUserClient.sharedInstance().implicitlyAuthenticateUser(profile, scopes: scopes) { success, error in
             if !success {
-                let mappedError = error != nil ? ErrorMapper().mapError(error!) : SdkError.init(wrapperError: .generic)
+                let mappedError = error != nil ? ErrorMapper().mapError(error!) : SdkError.init(.genericError)
                 completion(success, mappedError)
                 return
             }
@@ -85,16 +85,16 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         let completionRequest: ((ONGResourceResponse?, Error?) -> Void)? = { response, error in
             if let error = error {
                 if let response = response {
-                    completion(nil, SdkError(wrapperError: .errorCodeHttpRequest, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
+                    completion(nil, SdkError(.errorCodeHttpRequestError, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
                 } else {
-                    completion(nil, SdkError(wrapperError: .httpRequestError, iosCode: error.code, iosMessage: error.localizedDescription))
+                    completion(nil, SdkError(.httpRequestError, iosCode: error.code, iosMessage: error.localizedDescription))
                 }
 
             } else {
                 if let response = response, let _ = response.data {
                     completion(response.toString(), nil)
                 } else {
-                    completion(nil, SdkError.init(wrapperError: .responseIsNull))
+                    completion(nil, SdkError.init(.responseIsNullError))
                 }
             }
         }
@@ -118,7 +118,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 if let response = response, let _ = response.data {
                     completion(response.toString(), nil)
                 } else {
-                    completion(nil, SdkError.init(wrapperError: .responseIsNull))
+                    completion(nil, SdkError.init(.responseIsNullError))
                 }
             }
         }
@@ -169,7 +169,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     func fetchResourceWithImplicitResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
         Logger.log("fetchResourceWithImplicitResource", sender: self)
         guard let _profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
-            completion(SdkError.init(wrapperError: .authenticatedUserProfileIsNull))
+            completion(SdkError.init(.authenticatedUserProfileIsNullError))
             return
         }
 
@@ -210,7 +210,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                         callback(data)
                     }
                 } else {
-                    callback(SdkError.init(wrapperError: .responseIsNull))
+                    callback(SdkError.init(.responseIsNullError))
                 }
             }
         }

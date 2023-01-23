@@ -11,6 +11,7 @@ import com.onegini.mobile.sdk.flutter.models.Config
 import io.flutter.plugin.common.MethodChannel
 import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.TimeUnit
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 
 class OneginiSDK {
 
@@ -64,18 +65,12 @@ class OneginiSDK {
                 clientBuilder.setConfigModel(`object`)
             }
         } catch (e: Exception) {
-            val eMessage :String? = e.message
-
-            if (eMessage != null) {
+            e.message?.let { message ->
                 SdkError(
-                    code = OneWelcomeWrapperErrors.CONFIG_ERROR.code,
-                    message = eMessage
+                    code = CONFIG_ERROR.code,
+                    message = message
                 ).flutterError(result)
-            } else {
-                SdkError(
-                    wrapperError = OneWelcomeWrapperErrors.CONFIG_ERROR
-                ).flutterError(result)
-            }
+            } ?: SdkError(CONFIG_ERROR).flutterError(result)
         }
     }
 
@@ -87,18 +82,12 @@ class OneginiSDK {
             val securityController = Class.forName(config.securityControllerClassName)
             clientBuilder.setSecurityController(securityController)
         } catch (e: ClassNotFoundException) {
-            val eMessage :String? = e.message
-
-            if (eMessage != null) {
+            e.message?.let { message ->
                 SdkError(
-                    code = OneWelcomeWrapperErrors.SECURITY_CONTROLLER_ERROR.code,
-                    message = eMessage
+                    code = SECURITY_CONTROLLER_ERROR.code,
+                    message = message
                 ).flutterError(result)
-            } else {
-                SdkError(
-                    wrapperError = OneWelcomeWrapperErrors.SECURITY_CONTROLLER_ERROR
-                ).flutterError(result)
-            }
+            } ?: SdkError(SECURITY_CONTROLLER_ERROR).flutterError(result)
         }
     }
 }

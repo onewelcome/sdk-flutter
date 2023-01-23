@@ -85,7 +85,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     func handleRedirectURL(url: URL?) {
         Logger.log("handleRedirectURL url: \(url?.absoluteString ?? "nil")", sender: self)
         guard let browserRegistrationChallenge = self.browserRegistrationChallenge else {
-            signUpCompletion?(false, nil, nil, SdkError.init(wrapperError: .generic))
+            signUpCompletion?(false, nil, nil, SdkError.init(.genericError))
             return
         }
         
@@ -155,12 +155,12 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
 
     func processRedirectURL(url: String, webSignInType: WebSignInType) {
         guard let url = URL.init(string: url) else {
-            signUpCompletion?(false, nil, nil, SdkError.init(wrapperError: .providedUrlIncorrect))
+            signUpCompletion?(false, nil, nil, SdkError.init(.providedUrlIncorrectError))
             return
         }
         
         if webSignInType != .insideApp && !UIApplication.shared.canOpenURL(url) {
-            signUpCompletion?(false, nil, nil, SdkError.init(wrapperError: .providedUrlIncorrect))
+            signUpCompletion?(false, nil, nil, SdkError.init(.providedUrlIncorrectError))
             return
         }
         
@@ -281,7 +281,7 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         pinHandler?.closeFlow()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            signUpCompletion?(false, nil, nil, SdkError(wrapperError: .registrationCancelled))
+            signUpCompletion?(false, nil, nil, SdkError(.registrationCancelledError))
         } else {
             let mappedError = ErrorMapper().mapError(error)
             signUpCompletion?(false, nil, nil, mappedError)

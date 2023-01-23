@@ -24,9 +24,9 @@ import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationAction
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 
 class OnMethodCallMapper(private var context: Context, private val oneginiMethodsWrapper: OneginiMethodsWrapper, private val oneginiSDK: OneginiSDK) : MethodChannel.MethodCallHandler {
-
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         val client = oneginiSDK.getOneginiClient()
@@ -35,9 +35,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
         } else if (client != null) {
             onSDKMethodCall(call, client, result)
         } else {
-            SdkError(
-                wrapperError = OneWelcomeWrapperErrors.ONEWELCOME_SDK_NOT_INITIALIZED
-            ).flutterError(result)
+            SdkError(ONEWELCOME_SDK_NOT_INITIALIZED_ERROR).flutterError(result)
         }
     }
 
@@ -96,24 +94,35 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
 
             Constants.METHOD_VALIDATE_PIN_WITH_POLICY -> validatePinWithPolicy(call.argument<String>("pin")?.toCharArray(), result, client)
 
-            else -> SdkError(
-                wrapperError = OneWelcomeWrapperErrors.METHOD_TO_CALL_NOT_FOUND
-            ).flutterError(result)
+            else -> SdkError(METHOD_TO_CALL_NOT_FOUND_ERROR).flutterError(result)
         }
     }
 
-    // "https://login-mobile.test.onegini.com/personal/dashboard"
+    private fun validatePinWithPolicy(pin: CharArray?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
+        oneginiClient.userClient.validatePinWithPolicy(
+            pin,
+            object : OneginiPinValidationHandler {
+                override fun onSuccess() {
+                    result.success(true)
+                }
+
+                override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
+                    SdkError(
+                        code = oneginiPinValidationError.errorType,
+                        message = oneginiPinValidationError.message
+                    ).flutterError(result)
+                }
+            }
+        )
+    }
+
     fun getAppToWebSingleSignOn(url: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         if (url == null) {
-            SdkError(
-                wrapperError = OneWelcomeWrapperErrors.URL_CANT_BE_NULL
-            ).flutterError(result)
+            SdkError(URL_CANT_BE_NULL_ERROR).flutterError(result)
             return
         }
         if (!Patterns.WEB_URL.matcher(url).matches()) {
-            SdkError(
-                wrapperError = OneWelcomeWrapperErrors.URL_IS_NOT_WEB_PATH
-            ).flutterError(result)
+            SdkError(MALFORMED_URL_ERROR).flutterError(result)
             return
         }
         val targetUri: Uri = Uri.parse(url)
@@ -128,24 +137,6 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
                         SdkError(
                             code = oneginiSingleSignOnError.errorType,
                             message = oneginiSingleSignOnError.message
-                        ).flutterError(result)
-                    }
-                }
-        )
-    }
-
-    private fun validatePinWithPolicy(pin: CharArray?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        oneginiClient.userClient.validatePinWithPolicy(
-                pin,
-                object : OneginiPinValidationHandler {
-                    override fun onSuccess() {
-                        result.success(true)
-                    }
-
-                    override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
-                        SdkError(
-                            code = oneginiPinValidationError.errorType,
-                            message = oneginiPinValidationError.message
                         ).flutterError(result)
                     }
                 }

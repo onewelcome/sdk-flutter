@@ -8,7 +8,7 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.models.Config
 import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepIdentityProvider
@@ -31,9 +31,7 @@ class StartAppUseCase(private val context: Context, private val oneginiSDK: Oneg
 
     private fun start(oneginiClient: OneginiClient?, result: MethodChannel.Result) {
         if (oneginiClient == null) {
-            SdkError(
-                wrapperError = OneWelcomeWrapperErrors.ONEWELCOME_SDK_NOT_INITIALIZED
-            ).flutterError(result)
+            SdkError(ONEWELCOME_SDK_NOT_INITIALIZED_ERROR).flutterError(result)
         } else {
             oneginiClient.start(object : OneginiInitializationHandler {
                 override fun onSuccess(removedUserProfiles: Set<UserProfile>) {
