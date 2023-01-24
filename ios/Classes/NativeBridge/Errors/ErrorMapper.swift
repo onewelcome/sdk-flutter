@@ -25,6 +25,9 @@ enum OneWelcomeWrapperError: Int {
     case responseIsNullError = 8026
     case authenticatorIdIsNullError = 8027
     case emptyInputValueError = 8028
+    case unsupportedPinActionError = 8029
+    case unsupportedCustomRegistrationActionError = 8030
+    case authenticatorRegistrationCancelled = 8031
 
     func message() -> String {
         var message = ""
@@ -51,7 +54,7 @@ enum OneWelcomeWrapperError: Int {
         case .changingCancelledError:
             message = "Changing cancelled."
         case .registrationCancelledError:
-            message = "Registration  cancelled."
+            message = "Registration cancelled."
         case .cantHandleOTPError:
             message = "Can't handle otp authentication request."
         case .incorrectResourcesAccessError:
@@ -70,6 +73,12 @@ enum OneWelcomeWrapperError: Int {
             message = "OneWelcome: HTTP Request failed. Check Response for more info."
         case .httpRequestError:
             message = "OneWelcome: HTTP Request failed. Check iosCode and iosMessage for more info."
+        case .unsupportedPinActionError:
+            message = "Unsupported pin action. Contact SDK maintainer."
+        case .unsupportedCustomRegistrationActionError:
+            message = "Unsupported custom registration action. Contact SDK maintainer."
+        case .authenticatorRegistrationCancelled:
+            message = "The authenticator-registration was cancelled."
         default:
             message = "Something went wrong."
         }
@@ -82,7 +91,7 @@ class ErrorMapper {
     func mapError(_ error: Error, pinChallenge: ONGPinChallenge? = nil, customInfo: ONGCustomInfo? = nil) -> SdkError {
         Logger.log("Error domain: \(error.domain)")
         
-        return SdkError(errorDescription: error.localizedDescription, code: error.code)
+        return SdkError(code: error.code, errorDescription: error.localizedDescription)
     }
     
     func mapErrorFromPinChallenge(_ challenge: ONGPinChallenge?) -> SdkError? {
@@ -92,7 +101,7 @@ class ErrorMapper {
                   maxAttempts != previousCount else {
                 return ErrorMapper().mapError(error, pinChallenge: challenge)
             }
-            return SdkError(errorDescription: "Failed attempts", code: error.code, info: ["failedAttempts": previousCount, "maxAttempts": maxAttempts])
+            return SdkError(code: error.code, errorDescription: "Failed attempts", info: ["failedAttempts": previousCount, "maxAttempts": maxAttempts])
         } else {
             return nil
         }

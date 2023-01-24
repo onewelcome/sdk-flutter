@@ -27,7 +27,7 @@ class PinConnector : BridgeToPinConnectorProtocol, PinNotificationReceiverProtoc
                 pinHandler.onCancel()
                 break
             default:
-                sendEvent(data: ["eventName": PinNotification.showError.rawValue, "eventValue": SdkError(errorDescription: "Unsupported pin action. Contact SDK maintainer.").toJSON() as Any?])
+            sendEvent(data: ["eventName": PinNotification.showError.rawValue, "eventValue": SdkError(.unsupportedPinActionError).details as Any?])
                 break
         }
     }
@@ -47,10 +47,14 @@ class PinConnector : BridgeToPinConnectorProtocol, PinNotificationReceiverProtoc
                 sendEvent(data: PinNotification.closeAuth.rawValue)
                 break;
             case .showError:
-                sendEvent(data: String.stringify(json: ["eventName": PinNotification.showError.rawValue, "eventValue": error?.toJSON() as Any?]))
+                sendEvent(data: String.stringify(json: ["eventName": PinNotification.showError.rawValue, "eventValue": error?.details as Any?]))
                 break
             case .nextAuthenticationAttempt:
-                sendEvent(data: String.stringify(json: ["eventName": PinNotification.nextAuthenticationAttempt.rawValue, "eventValue": String.stringify(json: error?.info ?? [:]) as Any?]))
+                if (error != nil && error?.details["userInfo"] != nil) {
+                    sendEvent(data: String.stringify(json: ["eventName": PinNotification.nextAuthenticationAttempt.rawValue, "eventValue": String.stringify(json: error?.details["userInfo"] as Any)]))
+                } else {
+                    sendEvent(data: String.stringify(json: ["eventName": PinNotification.nextAuthenticationAttempt.rawValue, "eventValue": String.stringify(json: [:]) as Any?]))
+                }
                 break
         }
     }

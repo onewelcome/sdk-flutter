@@ -10,43 +10,100 @@ import io.flutter.plugin.common.MethodChannel
 import okhttp3.Response
 
 class SdkError {
-    private val title: String
     private val code: Int
     private val message: String
-    private val info: Map<String, Any>
-    private val httpResponse: Response?
+    private val details: MutableMap<String, Any> = mutableMapOf()
 
+    // Only error codes
     constructor(
-        title: String = "Error",
-        code: Int = GENERIC_ERROR.code,
-        message: String? = GENERIC_ERROR.message,
-        info: Map<String, Any> = emptyMap(),
-        httpResponse: Response? = null
+        code: Int,
+        message: String?,
     ) {
-        this.title = title
         this.code = code
         this.message = when(message) {
             null -> GENERIC_ERROR.message
             else -> message
         }
-        this.info = info
-        this.httpResponse = httpResponse
+
+        setGenericDetails()
+    }
+
+    constructor(
+        wrapperError: OneWelcomeWrapperErrors
+    ) {
+        this.code = wrapperError.code
+        this.message = wrapperError.message
+
+        setGenericDetails()
+    }
+
+    // Error codes with userInfo
+    constructor(
+        code: Int,
+        message: String?,
+        info: Map<String, Any>?,
+    ) {
+        this.code = code
+        this.message = when(message) {
+            null -> GENERIC_ERROR.message
+            else -> message
+        }
+
+        setGenericDetails()
+        setInfoDetails(info)
     }
 
     constructor(
         wrapperError: OneWelcomeWrapperErrors,
-        title: String = "Error",
-        info: Map<String, Any> = emptyMap(),
-        httpResponse: Response? = null
+        info: Map<String, Any>?,
     ) {
-        this.title = title
         this.code = wrapperError.code
         this.message = wrapperError.message
-        this.info = info
-        this.httpResponse = httpResponse
+
+        setGenericDetails()
+        setInfoDetails(info)
     }
 
-    private fun getResponseDetails(): MutableMap<String, Any> {
+    // Error codes with httpResponse information
+    constructor(
+        code: Int,
+        message: String?,
+        httpResponse: Response?,
+    ) {
+        this.code = code
+        this.message = when(message) {
+            null -> HTTP_REQUEST_ERROR.message
+            else -> message
+        }
+
+        setGenericDetails()
+        setResponseDetails(httpResponse)
+    }
+
+    constructor(
+        wrapperError: OneWelcomeWrapperErrors,
+        httpResponse: Response?,
+    ) {
+        this.code = wrapperError.code
+        this.message = wrapperError.message
+
+        setGenericDetails()
+        setResponseDetails(httpResponse)
+    }
+
+    private fun setGenericDetails() {
+        details["code"] = code.toString()
+        details["message"] = message
+    }
+
+    private fun setInfoDetails(info: Map<String, Any>?) {
+        when (info) {
+            null -> details["userInfo"] = emptyMap<String, Any>()
+            else -> details["userInfo"] = info
+        }
+    }
+
+    private fun setResponseDetails(httpResponse: Response?) {
         val response: MutableMap<String, Any> = mutableMapOf()
 
         if (httpResponse != null) {
@@ -55,26 +112,17 @@ class SdkError {
             response[RESPONSE_HEADERS] = httpResponse.headers.toMap()
 
             val bodyString = httpResponse.body?.string()
-            if (bodyString != null) {
-                response[RESPONSE_BODY] = bodyString
+
+            response[RESPONSE_BODY] = when (bodyString) {
+                null -> ""
+                else -> bodyString
             }
         }
 
-        return response
-    }
-
-    private fun getDetails(): MutableMap<String, Any> {
-        val details: MutableMap<String, Any> = mutableMapOf()
-        details["title"] = title
-        details["code"] = code.toString()
-        details["message"] = message
-        details["userInfo"] = info
-        details["response"] = getResponseDetails()
-
-        return details
+        details["response"] = response
     }
 
     fun flutterError(result: MethodChannel.Result) {
-        result.error(code.toString(), message, getDetails())
+        result.error(code.toString(), message, details)
     }
 }

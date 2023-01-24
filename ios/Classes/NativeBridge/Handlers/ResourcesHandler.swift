@@ -84,12 +84,11 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 
         let completionRequest: ((ONGResourceResponse?, Error?) -> Void)? = { response, error in
             if let error = error {
-                if let response = response {
+                if response != nil {
                     completion(nil, SdkError(.errorCodeHttpRequestError, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
                 } else {
-                    completion(nil, SdkError(.httpRequestError, iosCode: error.code, iosMessage: error.localizedDescription))
+                    completion(nil, SdkError(.httpRequestError, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
                 }
-
             } else {
                 if let response = response, let _ = response.data {
                     completion(response.toString(), nil)
@@ -113,7 +112,11 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 
         ONGUserClient.sharedInstance().fetchImplicitResource(request) { response, error in
             if let error = error {
-                completion(nil, SdkError(errorDescription: error.localizedDescription, code: error.code, response: response))
+                if response != nil {
+                    completion(nil, SdkError(.errorCodeHttpRequestError, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
+                } else {
+                    completion(nil, SdkError(.httpRequestError, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
+                }
             } else {
                 if let response = response, let _ = response.data {
                     completion(response.toString(), nil)
@@ -155,7 +158,6 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
         Logger.log("fetchSimpleResources", sender: self)
         let newParameters = generateParameters(from: parameters, path: path)
-        Logger.log("fetchSimpleResources xav test", sender: self)
         OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: false, isAnonymousCall: false, parameters: newParameters) { (_data, error) in
             if let _errorResource = error {
                 completion(_errorResource)
@@ -200,7 +202,11 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 
         ONGDeviceClient.sharedInstance().fetchUnauthenticatedResource(request) { (response, error) in
             if let _errorResource = error {
-                callback(SdkError.convertToFlutter(SdkError(errorDescription: _errorResource.localizedDescription, code: _errorResource.code, response: response)))
+                if response != nil {
+                    callback(SdkError.convertToFlutter(SdkError(.errorCodeHttpRequestError, response: response, iosCode: _errorResource.code, iosMessage: _errorResource.localizedDescription)))
+                } else {
+                    callback(SdkError.convertToFlutter(SdkError(.httpRequestError, response: response, iosCode: _errorResource.code, iosMessage: _errorResource.localizedDescription)))
+                }
                 return
             } else {
                 if let response = response, let data = response.data {

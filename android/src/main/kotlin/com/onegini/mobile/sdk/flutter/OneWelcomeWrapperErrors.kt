@@ -16,7 +16,7 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
     URL_CANT_BE_NULL_ERROR(8008, "Url can not be null"),
     MALFORMED_URL_ERROR(8009, "Incorrect url format"),
     PREFERRED_AUTHENTICATOR_ERROR(8010, "Something went wrong when setting the preferred authenticator"),
-    ONEWELCOME_SDK_NOT_INITIALIZED_ERROR(8012, "OneWelcomeSDK not initialized"),
+    ONEWELCOME_SDK_NOT_INITIALIZED_ERROR(8012, "OneWelcomeSDK is not initialized"),
     CONFIG_ERROR(8029, "Something went wrong while setting the configuration"),
-    SECURITY_CONTROLLER_ERROR(8030, "Security controller class not found"),
+    SECURITY_CONTROLLER_NOT_FOUND_ERROR(8030, "Security controller class not found"),
 }

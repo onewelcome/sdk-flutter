@@ -21,7 +21,7 @@ class AppToWebHandler: AppToWebHandlerProtocol {
                 completion(["token": _token, "redirectUrl": _url.absoluteString ], nil)
             } else if let _error = error {
                 // Handle error
-                let sdkError = SdkError(errorDescription: _error.localizedDescription)
+                let sdkError = SdkError(code: OneWelcomeWrapperError.genericError.rawValue, errorDescription: _error.localizedDescription)
                 completion(nil, sdkError)
             }
         }

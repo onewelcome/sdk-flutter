@@ -150,7 +150,7 @@ extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
         Logger.log("[AUTH] userClient didFailToRegister ONGAuthenticator", sender:self)
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            registrationCompletion!(false, SdkError(errorDescription: "Authenticator registration cancelled."))
+            registrationCompletion!(false, SdkError(.authenticatorRegistrationCancelled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
             registrationCompletion!(false, mappedError)

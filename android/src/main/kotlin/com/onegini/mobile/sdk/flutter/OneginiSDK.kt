@@ -9,7 +9,6 @@ import com.onegini.mobile.sdk.flutter.handlers.*
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.models.Config
 import io.flutter.plugin.common.MethodChannel
-import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.TimeUnit
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 
@@ -84,10 +83,10 @@ class OneginiSDK {
         } catch (e: ClassNotFoundException) {
             e.message?.let { message ->
                 SdkError(
-                    code = SECURITY_CONTROLLER_ERROR.code,
+                    code = SECURITY_CONTROLLER_NOT_FOUND_ERROR.code,
                     message = message
                 ).flutterError(result)
-            } ?: SdkError(SECURITY_CONTROLLER_ERROR).flutterError(result)
+            } ?: SdkError(SECURITY_CONTROLLER_NOT_FOUND_ERROR).flutterError(result)
         }
     }
 }

@@ -89,6 +89,5 @@ interface Constants {
         const val RESPONSE_HEADERS = "headers"
         const val RESPONSE_BODY = "body"
         const val RESPONSE_URL = "url"
-
     }
 }

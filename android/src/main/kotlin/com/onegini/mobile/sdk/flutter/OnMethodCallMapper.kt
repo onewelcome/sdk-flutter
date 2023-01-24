@@ -25,17 +25,17 @@ import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationAction
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.METHOD_START_APP
 
 class OnMethodCallMapper(private var context: Context, private val oneginiMethodsWrapper: OneginiMethodsWrapper, private val oneginiSDK: OneginiSDK) : MethodChannel.MethodCallHandler {
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         val client = oneginiSDK.getOneginiClient()
-        if (call.method == Constants.METHOD_START_APP) {
-            oneginiMethodsWrapper.startApp(call, result, oneginiSDK, context)
-        } else if (client != null) {
-            onSDKMethodCall(call, client, result)
-        } else {
-            SdkError(ONEWELCOME_SDK_NOT_INITIALIZED_ERROR).flutterError(result)
+
+        when {
+            call.method == METHOD_START_APP -> oneginiMethodsWrapper.startApp(call, result, oneginiSDK, context)
+            client != null -> onSDKMethodCall(call, client, result)
+            else -> SdkError(ONEWELCOME_SDK_NOT_INITIALIZED_ERROR).flutterError(result)
         }
     }
 
