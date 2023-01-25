@@ -20,10 +20,7 @@ class SdkError {
         message: String?,
     ) {
         this.code = code
-        this.message = when(message) {
-            null -> GENERIC_ERROR.message
-            else -> message
-        }
+        this.message = message ?: GENERIC_ERROR.message
 
         setGenericDetails()
     }
@@ -44,10 +41,7 @@ class SdkError {
         info: Map<String, Any>?,
     ) {
         this.code = code
-        this.message = when(message) {
-            null -> GENERIC_ERROR.message
-            else -> message
-        }
+        this.message = message ?: GENERIC_ERROR.message
 
         setGenericDetails()
         setInfoDetails(info)
@@ -71,10 +65,7 @@ class SdkError {
         httpResponse: Response?,
     ) {
         this.code = code
-        this.message = when(message) {
-            null -> HTTP_REQUEST_ERROR.message
-            else -> message
-        }
+        this.message = message ?: GENERIC_ERROR.message
 
         setGenericDetails()
         setResponseDetails(httpResponse)

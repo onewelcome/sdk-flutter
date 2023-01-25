@@ -35,7 +35,11 @@ class ResourceHelper {
                                         httpResponse = data
                                     ).flutterError(result)
                             } else {
-                                val response = Gson().toJson(mapOf(RESPONSE_STATUS_CODE to data.code, RESPONSE_BODY to data.body?.string(), RESPONSE_HEADERS to data.headers, RESPONSE_URL to data.request.url.toString()))
+                                val response = Gson().toJson(mapOf(
+                                    RESPONSE_STATUS_CODE to data.code,
+                                    RESPONSE_BODY to data.body?.string(),
+                                    RESPONSE_HEADERS to data.headers,
+                                    RESPONSE_URL to data.request.url.toString()))
                                 result.success(response)
                             }
                         },
