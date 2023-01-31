@@ -5,26 +5,28 @@ import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiInitializationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
-import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
 import com.onegini.mobile.sdk.flutter.models.Config
-import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepIdentityProvider
+import com.onegini.mobile.sdk.flutter.models.CustomIdentityProviderConfig
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
 class StartAppUseCase(private val context: Context, private val oneginiSDK: OneginiSDK) {
     operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
-        val twoStepCustomIdentityProviderIds = call.argument<ArrayList<String>>("twoStepCustomIdentityProviderIds")
+        val customIdentityProviderConfigs = ArrayList<CustomIdentityProviderConfig>()
+        call.argument<ArrayList<String>>("customIdentityProviderConfigs")?.forEach {
+            customIdentityProviderConfigs.add(Gson().fromJson(it, CustomIdentityProviderConfig::class.java))
+        }
+
         val connectionTimeout = call.argument<Int>("connectionTimeout")
         val readTimeout = call.argument<Int>("readTimeout")
         val securityControllerClassName = call.argument<String>("securityControllerClassName")
         val configModelClassName = call.argument<String>("configModelClassName")
-        val config = Config(configModelClassName, securityControllerClassName, connectionTimeout?.toLong(), readTimeout?.toLong())
-        val oneginiCustomIdentityProviderList = mutableListOf<OneginiCustomIdentityProvider>()
-        twoStepCustomIdentityProviderIds?.forEach { oneginiCustomIdentityProviderList.add(CustomTwoStepIdentityProvider(it)) }
-        oneginiSDK.buildSDK(context, oneginiCustomIdentityProviderList, config, result)
+        val config = Config(configModelClassName, securityControllerClassName, connectionTimeout, readTimeout, customIdentityProviderConfigs)
+
+        oneginiSDK.buildSDK(context, config, result)
         start(oneginiSDK.getOneginiClient(), result)
     }
 

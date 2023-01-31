@@ -24,6 +24,7 @@ import OneginiCrypto
 
         OneginiModuleSwift.sharedInstance.eventSinkCustomIdentifier = exampleCustomEventIdentifier
 
+        // TODO: these methods are only used for testing and should be reworked into another place
         methodChannel.setMethodCallHandler({
             (call: FlutterMethodCall, result: @escaping FlutterResult) -> Void in
               switch call.method {

@@ -57,26 +57,33 @@ abstract class OneginiEventListener {
           break;
         case Constants.userProfiles:
         default:
-          if (event != null) {
+          if(event != null) {
             Event _event = eventFromJson(event);
-            if (_event.eventName == Constants.eventNextAuthenticationAttempt) {
-              nextAuthenticationAttempt(
+
+            switch(_event.eventName) {
+              case Constants.eventNextAuthenticationAttempt: {
+                nextAuthenticationAttempt(
                   _context, authenticationAttemptFromJson(_event.eventValue!));
-            }
-            if (_event.eventName == Constants.eventOpenAuthOTP) {
-              openAuthOtp(_context, _event.eventValue!);
-            }
-            if (_event.eventName == Constants.eventHandleRegisteredUrl) {
-              handleRegisteredUrl(_context, _event.eventValue!);
-            }
-            if (_event.eventName ==
-                Constants.openCustomTwoStepRegistrationScreen) {
-              openCustomTwoStepRegistrationScreen(_context, _event.eventValue!);
-            }
-            if (_event.eventName == Constants.eventError) {
-              showError(_context, oneginiErrorFromJson(_event.eventValue!));
-            } else {
-              eventOther(_context, _event);
+              }
+              break;
+
+              case Constants.eventOpenAuthOTP: { openAuthOtp(_context, _event.eventValue!); }
+              break;
+
+              case Constants.eventHandleRegisteredUrl: { handleRegisteredUrl(_context, _event.eventValue!); }
+              break;
+
+              case Constants.eventInitCustomRegistration: { eventInitCustomRegistration(_context, _event.eventValue!); }
+              break;
+
+              case Constants.eventFinishCustomRegistration: { eventFinishCustomRegistration(_context, _event.eventValue!); }
+              break;
+
+              case Constants.eventError: { showError(_context, oneginiErrorFromJson(_event.eventValue!)); }
+              break;
+
+              default: { eventOther(_context, _event); }
+              break;
             }
           }
       }
@@ -125,8 +132,12 @@ abstract class OneginiEventListener {
   /// Called to close fingerprint screen.
   void closeFingerprintScreen(BuildContext? buildContext);
 
-  /// Called when two step registration want to open screen.
-  void openCustomTwoStepRegistrationScreen(
+  /// Called when the InitCustomRegistration event occurs and a response should be given (only for two-step)
+  void eventInitCustomRegistration(
+      BuildContext? buildContext, String data);
+
+  /// Called when the FinishCustomRegistration event occurs and a response should be given
+  void eventFinishCustomRegistration(
       BuildContext? buildContext, String data);
 
   /// Called when error event was received.

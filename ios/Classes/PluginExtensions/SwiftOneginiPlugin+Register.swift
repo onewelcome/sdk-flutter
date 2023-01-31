@@ -9,19 +9,20 @@ enum WebSignInType: Int {
 }
 
 protocol OneginiPluginRegisterProtocol {
-    
+
     func getIdentityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
-    
+
     func registerUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func handleRegisteredProcessUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
-    func cancelRegistration(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     
+    func cancelBrowserRegistration(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
+
     func acceptPinRegistrationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func denyPinRegistrationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
-    
-    func customTwoStepRegistrationReturnSuccess(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
-    func customTwoStepRegistrationReturnError(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
-    
+
+    func submitCustomRegistrationSuccess(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
+    func submitCustomRegistrationError(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
+
     func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 }
 
@@ -29,14 +30,14 @@ extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
     func getIdentityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         OneginiModuleSwift.sharedInstance.identityProviders(callback: result)
     }
-    
+
     func registerUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         guard let arg = call.arguments as? [String: Any] else { return; }
         let identifier = arg["identityProviderId"] as? String
         let scopes = arg["scopes"] as? [String]
         OneginiModuleSwift.sharedInstance.registerUser(identifier, scopes: scopes, callback: result)
     }
-    
+
     func handleRegisteredProcessUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         guard let arg = call.arguments as? [String: Any] else { return }
         let url = arg["url"] as? String
@@ -49,37 +50,37 @@ extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
         OneginiModuleSwift.sharedInstance.handleRegisteredProcessUrl(url ?? "", webSignInType: type)
         result(nil)
     }
-    
-    func cancelRegistration(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        OneginiModuleSwift.sharedInstance.cancelRegistration()
+
+    func cancelBrowserRegistration(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        OneginiModuleSwift.sharedInstance.cancelBrowserRegistration()
     }
-    
+
     func acceptPinRegistrationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         guard let _arg = call.arguments as! [String: Any]?, let _pin = _arg["pin"] as! String? else { return; }
         
         OneginiModuleSwift.sharedInstance.submitPinAction(PinFlow.create.rawValue, action: PinAction.provide.rawValue, pin: _pin)
     }
-    
+
     func denyPinRegistrationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         OneginiModuleSwift.sharedInstance.cancelPinAuth()
     }
-    
-    func customTwoStepRegistrationReturnSuccess(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+
+    func submitCustomRegistrationSuccess(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         guard let _arg = call.arguments as! [String: Any]?, let _data = _arg["data"] as! String? else { return; }
-        OneginiModuleSwift.sharedInstance.handleTwoStepRegistration(_data)
+        OneginiModuleSwift.sharedInstance.submitCustomRegistrationSuccess(_data)
     }
-    
-    func customTwoStepRegistrationReturnError(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+
+    func submitCustomRegistrationError(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         guard let _arg = call.arguments as! [String: Any]?, let _error = _arg["error"] as! String? else { return; }
-        OneginiModuleSwift.sharedInstance.cancelTwoStepRegistration(_error)
+        OneginiModuleSwift.sharedInstance.submitCustomRegistrationError(_error)
     }
-    
+
     func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         var profileId: String?
         if let arguments = call.arguments as? [String: Any], let userProfileId = arguments["profileId"] as? String {
             profileId = userProfileId
         }
-        
+
         OneginiModuleSwift.sharedInstance.deregisterUser(userProfileId: profileId,callback:result)
     }
 }

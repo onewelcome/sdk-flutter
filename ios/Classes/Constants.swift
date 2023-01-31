@@ -6,12 +6,13 @@ enum Constants {
         // onegini methods
         static let startApp: String = "startApp"
 
-        static let customTwoStepRegistrationReturnSuccess: String = "customTwoStepRegistrationReturnSuccess"
-        static let customTwoStepRegistrationReturnError: String = "customTwoStepRegistrationReturnError"
+        // Submit CustomRegistration Actions
+        static let submitCustomRegistrationSuccessAction: String = "submitCustomRegistrationSuccessAction"
+        static let submitCustomRegistrationErrorAction: String = "submitCustomRegistrationErrorAction"
         
         // registration
         static let registerUser: String = "registerUser"
-        static let cancelRegistration: String = "cancelRegistration"
+        static let cancelBrowserRegistration: String = "cancelBrowserRegistration"
         static let getIdentityProviders: String = "getIdentityProviders"
         static let denyPinRegistrationRequest: String = "denyPinRegistrationRequest"
         static let acceptPinRegistrationRequest: String = "acceptPinRegistrationRequest"

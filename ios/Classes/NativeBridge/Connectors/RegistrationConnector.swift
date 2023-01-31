@@ -18,6 +18,7 @@ class RegistrationConnector : BridgeToRegistrationConnectorProtocol, CustomRegis
         handler.otpNotificationReceiver = self
     }
     
+    // TODO: Function only used for testing should be looked at during test rework
     func handleCustomRegistrationAction(_ action: String, _ identityProviderId: String, _ code: String? = nil) -> Void {
         switch action {
             case CustomRegistrationAction.provide.rawValue:
@@ -36,7 +37,7 @@ class RegistrationConnector : BridgeToRegistrationConnectorProtocol, CustomRegis
         
         var _data = data
         switch (event){
-        case .initRegistration, .finishRegistration, .openCustomTwoStepRegistrationScreen, .eventError, .eventHandleRegisteredUrl:
+        case .initRegistration, .finishRegistration, .eventError, .eventHandleRegisteredUrl:
             _data?["eventName"] = event.rawValue
             break
         }
@@ -61,9 +62,8 @@ class RegistrationConnector : BridgeToRegistrationConnectorProtocol, CustomRegis
 //MARK: -
 // Custom registration notification actions
 enum CustomRegistrationNotification : String {
-    case initRegistration = "initRegistration",
-         finishRegistration = "finishRegistration",
-         openCustomTwoStepRegistrationScreen = "openCustomTwoStepRegistrationScreen",
+    case initRegistration = "eventInitCustomRegistration",
+         finishRegistration = "eventFinishCustomRegistration",
          eventError = "eventError",
          eventHandleRegisteredUrl = "eventHandleRegisteredUrl"
 }

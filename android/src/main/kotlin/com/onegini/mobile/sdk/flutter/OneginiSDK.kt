@@ -4,18 +4,22 @@ import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
-import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 import com.onegini.mobile.sdk.flutter.handlers.*
 import com.onegini.mobile.sdk.flutter.models.Config
+import com.onegini.mobile.sdk.flutter.models.CustomIdentityProviderConfig
+import com.onegini.mobile.sdk.flutter.providers.CustomIdentityProvider
+import com.onegini.mobile.sdk.flutter.providers.CustomRegistrationAction
+import com.onegini.mobile.sdk.flutter.providers.CustomRegistrationActionImp
+import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationActionImpl
 import io.flutter.plugin.common.MethodChannel
-import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.TimeUnit
 
 class OneginiSDK {
 
     private var oneginiClient: OneginiClient? = null
+    private var customRegistrationActions = ArrayList<CustomRegistrationAction>()
 
-    fun buildSDK(context: Context, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>, config: Config, result: MethodChannel.Result) {
+    fun buildSDK(context: Context, config: Config, result: MethodChannel.Result) {
         val applicationContext = context.applicationContext
         val registrationRequestHandler = RegistrationRequestHandler()
         val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
@@ -27,17 +31,17 @@ class OneginiSDK {
                 .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler)
                 .setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
 
-        oneginiCustomIdentityProviders.map { clientBuilder.addCustomIdentityProvider(it) }
+        initProviders(clientBuilder, config.customIdentityProviderConfigs)
 
         val httpConnectionTimeout = config.httpConnectionTimeout
         val httpReadTimeout = config.httpReadTimeout
 
         if (httpConnectionTimeout != null) {
-            clientBuilder.setHttpConnectTimeout(TimeUnit.SECONDS.toMillis(httpConnectionTimeout).toInt())
+            clientBuilder.setHttpConnectTimeout(TimeUnit.SECONDS.toMillis(httpConnectionTimeout.toLong()).toInt())
         }
 
         if (httpReadTimeout != null) {
-            clientBuilder.setHttpReadTimeout(TimeUnit.SECONDS.toMillis(httpReadTimeout).toInt())
+            clientBuilder.setHttpReadTimeout(TimeUnit.SECONDS.toMillis(httpReadTimeout.toLong()).toInt())
         }
 
         setConfigModel(clientBuilder, config, result)
@@ -49,6 +53,25 @@ class OneginiSDK {
 
     fun getOneginiClient(): OneginiClient? {
         return oneginiClient
+    }
+
+    fun getCustomRegistrationActions(): ArrayList<CustomRegistrationAction> {
+        return customRegistrationActions
+    }
+
+    private fun initProviders(clientBuilder: OneginiClientBuilder, customIdentityProviderConfigs: List<CustomIdentityProviderConfig>) {
+        customIdentityProviderConfigs.forEach {
+            val action = when (it.isTwoStep) {
+                true -> CustomTwoStepRegistrationActionImpl(it.providerID)
+                false -> CustomRegistrationActionImp(it.providerID)
+            }
+
+            // Save action for future custom registration steps
+            customRegistrationActions.add(action)
+
+            // set provider in the client builder
+            clientBuilder.addCustomIdentityProvider(CustomIdentityProvider(action))
+        }
     }
 
     private fun setConfigModel(clientBuilder: OneginiClientBuilder, config: Config, result: MethodChannel.Result) {

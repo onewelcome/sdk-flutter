@@ -14,6 +14,7 @@ import 'package:onegini_example/screens/auth_otp_screen.dart';
 import 'package:onegini_example/screens/fingerprint_screen.dart';
 import 'package:onegini_example/screens/pin_request_screen.dart';
 import 'package:onegini_example/screens/pin_screen.dart';
+import 'package:onegini/callbacks/onegini_custom_registration_callback.dart';
 
 import 'screens/otp_screen.dart';
 
@@ -164,12 +165,59 @@ class OneginiListener extends OneginiEventListener {
   void openCustomTwoStepRegistrationScreen(
       BuildContext buildContext, String data) {
     var response = jsonDecode(data);
-    if (response["providerId"] == "2-way-otp-api")
+    var providerId = response["providerId"];
+
+    if (providerId == "2-way-otp-api")
       Navigator.push(
         buildContext,
         MaterialPageRoute(
             builder: (context) => OtpScreen(
                   password: response["data"],
+                  providerId: providerId
+                )),
+      );
+  }
+
+  @override
+  void eventInitCustomRegistration(
+      BuildContext buildContext, String data) {
+    var response = jsonDecode(data);
+    var providerId = response["providerId"];
+
+    if (providerId == "2-way-otp-api") {
+      // a 2-way-otp does not require data for the initialization request
+      OneginiCustomRegistrationCallback()
+        .submitSuccessAction(providerId, null)
+        .catchError((error) => {
+          if (error is PlatformException)
+            {
+              Fluttertoast.showToast(
+                  msg: error.message,
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIosWeb: 1,
+                  backgroundColor: Colors.black38,
+                  textColor: Colors.white,
+                  fontSize: 16.0)
+            }
+          });
+    }
+  }
+
+  @override
+  void eventFinishCustomRegistration(
+      BuildContext buildContext, String data) {
+
+    var response = jsonDecode(data);
+    var providerId = response["providerId"];
+
+    if (providerId == "2-way-otp-api")
+      Navigator.push(
+        buildContext,
+        MaterialPageRoute(
+            builder: (context) => OtpScreen(
+                  password: response["data"],
+                  providerId: providerId
                 )),
       );
   }

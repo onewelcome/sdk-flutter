@@ -4,18 +4,12 @@ import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomRegistrationA
 import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomTwoStepRegistrationAction
 import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 
-class CustomTwoStepIdentityProvider(private val providerId: String) : OneginiCustomIdentityProvider {
-
-    private val registrationAction: OneginiCustomTwoStepRegistrationAction
+class CustomIdentityProvider(private val action: CustomRegistrationAction) : OneginiCustomIdentityProvider {
     override fun getRegistrationAction(): OneginiCustomRegistrationAction {
-        return registrationAction
+        return action.getCustomRegistrationAction()
     }
 
     override fun getId(): String {
-        return providerId
-    }
-
-    init {
-        registrationAction = CustomTwoStepRegistrationAction(providerId)
+        return action.getIdProvider()
     }
 }

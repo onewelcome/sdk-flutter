@@ -2,8 +2,10 @@ package com.onegini.mobile.sdk.flutter
 
 import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
+import com.onegini.mobile.sdk.flutter.handlers.CustomRegistrationHandler
 import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
+import com.onegini.mobile.sdk.flutter.providers.CustomRegistrationAction
 import com.onegini.mobile.sdk.flutter.useCases.*
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -12,6 +14,20 @@ class OneginiMethodsWrapper {
 
     fun registerUser(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         RegistrationUseCase(oneginiClient)(call, result)
+    }
+
+    fun customRegistrationActionRespondSuccess(
+        idProvider: String?,
+        customRegistrationActions: ArrayList<CustomRegistrationAction>,
+        token: String?) {
+        CustomRegistrationHandler().actionRespondSuccess(idProvider, customRegistrationActions, token)
+    }
+
+    fun customRegistrationActionRespondError(
+        idProvider: String?,
+        customRegistrationActions: ArrayList<CustomRegistrationAction>,
+        error: String?) {
+        CustomRegistrationHandler().actionRespondError(idProvider, customRegistrationActions, error)
     }
 
     fun handleRegisteredUrl(call: MethodCall, context: Context, oneginiClient: OneginiClient) {
@@ -26,7 +42,7 @@ class OneginiMethodsWrapper {
         GetAccessTokenUseCase(oneginiClient)(result)
     }
 
-    fun cancelRegistration() {
+    fun cancelBrowserRegistration() {
         RegistrationRequestHandler.onRegistrationCanceled()
     }
 

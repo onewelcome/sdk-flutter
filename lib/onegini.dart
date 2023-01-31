@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -41,17 +42,22 @@ class Onegini {
     OneginiEventListener eventListener, {
     String? securityControllerClassName,
     String? configModelClassName,
-    List<String>? twoStepCustomIdentityProviderIds,
+    List<Map<String, Object>>? customIdentityProviderConfigs,
     int? connectionTimeout,
     int? readTimeout,
   }) async {
     _eventListener = eventListener;
     try {
+      var customIdentityProviderConfigsJson = null;
+      if (customIdentityProviderConfigs != null) {
+        customIdentityProviderConfigsJson = [for (var x in customIdentityProviderConfigs) json.encode(x)];
+      }
+
       String removedUserProfiles = await channel
           .invokeMethod(Constants.startAppMethod, <String, dynamic>{
         'securityControllerClassName': securityControllerClassName,
         'configModelClassName': configModelClassName,
-        'twoStepCustomIdentityProviderIds': twoStepCustomIdentityProviderIds,
+        'customIdentityProviderConfigs': customIdentityProviderConfigsJson,
         'connectionTimeout': connectionTimeout,
         'readTimeout': readTimeout
       });
