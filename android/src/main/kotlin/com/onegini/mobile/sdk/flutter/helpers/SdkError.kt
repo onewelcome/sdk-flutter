@@ -34,30 +34,6 @@ class SdkError {
         setGenericDetails()
     }
 
-    // Error codes with userInfo
-    constructor(
-        code: Int,
-        message: String?,
-        info: Map<String, Any>?,
-    ) {
-        this.code = code
-        this.message = message ?: GENERIC_ERROR.message
-
-        setGenericDetails()
-        setInfoDetails(info)
-    }
-
-    constructor(
-        wrapperError: OneWelcomeWrapperErrors,
-        info: Map<String, Any>?,
-    ) {
-        this.code = wrapperError.code
-        this.message = wrapperError.message
-
-        setGenericDetails()
-        setInfoDetails(info)
-    }
-
     // Error codes with httpResponse information
     constructor(
         code: Int,
