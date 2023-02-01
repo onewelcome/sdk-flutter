@@ -38,7 +38,7 @@ class SdkError {
     constructor(
         code: Int,
         message: String?,
-        httpResponse: Response?,
+        httpResponse: Response,
     ) {
         this.code = code
         this.message = message ?: GENERIC_ERROR.message
@@ -49,7 +49,7 @@ class SdkError {
 
     constructor(
         wrapperError: OneWelcomeWrapperErrors,
-        httpResponse: Response?,
+        httpResponse: Response,
     ) {
         this.code = wrapperError.code
         this.message = wrapperError.message
@@ -63,27 +63,18 @@ class SdkError {
         details["message"] = message
     }
 
-    private fun setInfoDetails(info: Map<String, Any>?) {
-        when (info) {
-            null -> details["userInfo"] = emptyMap<String, Any>()
-            else -> details["userInfo"] = info
-        }
-    }
-
-    private fun setResponseDetails(httpResponse: Response?) {
+    private fun setResponseDetails(httpResponse: Response) {
         val response: MutableMap<String, Any> = mutableMapOf()
 
-        if (httpResponse != null) {
-            response[RESPONSE_URL] = httpResponse.request.url.toString()
-            response[RESPONSE_STATUS_CODE] = httpResponse.code.toString()
-            response[RESPONSE_HEADERS] = httpResponse.headers.toMap()
+        response[RESPONSE_URL] = httpResponse.request.url.toString()
+        response[RESPONSE_STATUS_CODE] = httpResponse.code.toString()
+        response[RESPONSE_HEADERS] = httpResponse.headers.toMap()
 
-            val bodyString = httpResponse.body?.string()
+        val bodyString = httpResponse.body?.string()
 
-            response[RESPONSE_BODY] = when (bodyString) {
-                null -> ""
-                else -> bodyString
-            }
+        response[RESPONSE_BODY] = when (bodyString) {
+            null -> ""
+            else -> bodyString
         }
 
         details["response"] = response
