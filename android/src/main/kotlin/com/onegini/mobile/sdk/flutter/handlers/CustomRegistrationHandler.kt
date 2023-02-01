@@ -12,7 +12,7 @@ class CustomRegistrationHandler {
 
         when {
             action != null ->  action.returnSuccess(token)
-            else -> return // TODO throw platform exception no provider found with that id once error rework is merged
+            else -> return // TODO throw new custom platform exception "no provider found" with that id once FP-16 is merged
          }
     }
 
