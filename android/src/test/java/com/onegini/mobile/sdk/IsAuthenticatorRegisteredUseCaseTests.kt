@@ -49,7 +49,7 @@ class IsAuthenticatorRegisteredUseCaseTests {
 
         IsAuthenticatorRegisteredUseCase(clientMock)(callMock,resultSpy)
 
-        verify(resultSpy).error(AUTHENTICATED_USER_PROFILE_IS_NULL_ERROR.code.toString(), AUTHENTICATED_USER_PROFILE_IS_NULL_ERROR.message, null)
+        verify(resultSpy).error(AUTHENTICATED_USER_PROFILE_IS_NULL.code.toString(), AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
     }
 
     @Test
@@ -58,7 +58,7 @@ class IsAuthenticatorRegisteredUseCaseTests {
 
         IsAuthenticatorRegisteredUseCase(clientMock)(callMock,resultSpy)
 
-        verify(resultSpy).error(AUTHENTICATOR_NOT_FOUND_ERROR.code.toString(), AUTHENTICATOR_NOT_FOUND_ERROR.message, null)
+        verify(resultSpy).error(AUTHENTICATOR_NOT_FOUND.code.toString(), AUTHENTICATOR_NOT_FOUND.message, null)
     }
 
     @Test
@@ -70,7 +70,7 @@ class IsAuthenticatorRegisteredUseCaseTests {
 
         IsAuthenticatorRegisteredUseCase(clientMock)(callMock,resultSpy)
 
-        verify(resultSpy).error(AUTHENTICATOR_NOT_FOUND_ERROR.code.toString(), AUTHENTICATOR_NOT_FOUND_ERROR.message, null)
+        verify(resultSpy).error(AUTHENTICATOR_NOT_FOUND.code.toString(), AUTHENTICATOR_NOT_FOUND.message, null)
     }
 
     @Test

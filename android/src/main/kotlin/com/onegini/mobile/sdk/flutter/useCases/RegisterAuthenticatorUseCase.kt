@@ -17,12 +17,12 @@ class RegisterAuthenticatorUseCase(private var oneginiClient: OneginiClient) {
         val authenticatorId = call.argument<String>("authenticatorId")
         val authenticatedUserProfile = oneginiClient.userClient.authenticatedUserProfile
         if (authenticatedUserProfile == null) {
-            SdkError(AUTHENTICATED_USER_PROFILE_IS_NULL_ERROR).flutterError(result)
+            SdkError(AUTHENTICATED_USER_PROFILE_IS_NULL).flutterError(result)
             return
         }
         val authenticator = getAuthenticatorById(authenticatorId, authenticatedUserProfile)
         if (authenticator == null) {
-            SdkError(AUTHENTICATOR_IS_NULL_ERROR).flutterError(result)
+            SdkError(AUTHENTICATOR_IS_NULL).flutterError(result)
             return
         }
         oneginiClient.userClient.registerAuthenticator(authenticator, object : OneginiAuthenticatorRegistrationHandler {

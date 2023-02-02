@@ -155,12 +155,12 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
 
     func processRedirectURL(url: String, webSignInType: WebSignInType) {
         guard let url = URL.init(string: url) else {
-            signUpCompletion?(false, nil, nil, SdkError(.providedUrlIncorrectError))
+            signUpCompletion?(false, nil, nil, SdkError(.providedUrlIncorrect))
             return
         }
         
         if webSignInType != .insideApp && !UIApplication.shared.canOpenURL(url) {
-            signUpCompletion?(false, nil, nil, SdkError(.providedUrlIncorrectError))
+            signUpCompletion?(false, nil, nil, SdkError(.providedUrlIncorrect))
             return
         }
         
@@ -281,7 +281,7 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         pinHandler?.closeFlow()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            signUpCompletion?(false, nil, nil, SdkError(.registrationCancelledError))
+            signUpCompletion?(false, nil, nil, SdkError(.registrationCancelled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
             signUpCompletion?(false, nil, nil, mappedError)

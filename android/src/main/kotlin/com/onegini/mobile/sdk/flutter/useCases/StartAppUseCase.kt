@@ -31,7 +31,7 @@ class StartAppUseCase(private val context: Context, private val oneginiSDK: Oneg
 
     private fun start(oneginiClient: OneginiClient?, result: MethodChannel.Result) {
         if (oneginiClient == null) {
-            SdkError(ONEWELCOME_SDK_NOT_INITIALIZED_ERROR).flutterError(result)
+            SdkError(ONEWELCOME_SDK_NOT_INITIALIZED).flutterError(result)
         } else {
             oneginiClient.start(object : OneginiInitializationHandler {
                 override fun onSuccess(removedUserProfiles: Set<UserProfile>) {

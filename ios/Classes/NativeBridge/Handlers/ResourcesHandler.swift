@@ -44,7 +44,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                     if let error = error {
                         completion(false, error)
                     } else {
-                        completion(false, SdkError.init(.failedToParseDataError))
+                        completion(false, SdkError.init(.failedToParseData))
                     }
                 }
             }
@@ -85,7 +85,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         let completionRequest: ((ONGResourceResponse?, Error?) -> Void)? = { response, error in
             if let error = error {
                 if response != nil {
-                    completion(nil, SdkError(.errorCodeHttpRequestError, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
+                    completion(nil, SdkError(.errorCodeHttpRequest, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
                 } else {
                     completion(nil, SdkError(.httpRequestError, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
                 }
@@ -93,7 +93,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 if let response = response, let _ = response.data {
                     completion(response.toString(), nil)
                 } else {
-                    completion(nil, SdkError(.responseIsNullError))
+                    completion(nil, SdkError(.responseIsNull))
                 }
             }
         }
@@ -113,7 +113,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         ONGUserClient.sharedInstance().fetchImplicitResource(request) { response, error in
             if let error = error {
                 if response != nil {
-                    completion(nil, SdkError(.errorCodeHttpRequestError, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
+                    completion(nil, SdkError(.errorCodeHttpRequest, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
                 } else {
                     completion(nil, SdkError(.httpRequestError, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
                 }
@@ -121,7 +121,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 if let response = response, let _ = response.data {
                     completion(response.toString(), nil)
                 } else {
-                    completion(nil, SdkError(.responseIsNullError))
+                    completion(nil, SdkError(.responseIsNull))
                 }
             }
         }
@@ -203,7 +203,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         ONGDeviceClient.sharedInstance().fetchUnauthenticatedResource(request) { (response, error) in
             if let _errorResource = error {
                 if response != nil {
-                    callback(SdkError.convertToFlutter(SdkError(.errorCodeHttpRequestError, response: response, iosCode: _errorResource.code, iosMessage: _errorResource.localizedDescription)))
+                    callback(SdkError.convertToFlutter(SdkError(.errorCodeHttpRequest, response: response, iosCode: _errorResource.code, iosMessage: _errorResource.localizedDescription)))
                 } else {
                     callback(SdkError.convertToFlutter(SdkError(.httpRequestError, response: response, iosCode: _errorResource.code, iosMessage: _errorResource.localizedDescription)))
                 }
@@ -216,7 +216,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                         callback(data)
                     }
                 } else {
-                    callback(SdkError(.responseIsNullError))
+                    callback(SdkError(.responseIsNull))
                 }
             }
         }

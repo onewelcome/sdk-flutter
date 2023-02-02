@@ -83,10 +83,10 @@ class OneginiSDK {
         } catch (e: ClassNotFoundException) {
             e.message?.let { message ->
                 SdkError(
-                    code = SECURITY_CONTROLLER_NOT_FOUND_ERROR.code,
+                    code = SECURITY_CONTROLLER_NOT_FOUND.code,
                     message = message
                 ).flutterError(result)
-            } ?: SdkError(SECURITY_CONTROLLER_NOT_FOUND_ERROR).flutterError(result)
+            } ?: SdkError(SECURITY_CONTROLLER_NOT_FOUND).flutterError(result)
         }
     }
 }

@@ -12,13 +12,13 @@ object MobileAuthenticationObject {
 
     fun mobileAuthWithOtp(data: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         if (data == null) {
-            SdkError(QR_CODE_HAS_NO_DATA_ERROR).flutterError(result)
+            SdkError(QR_CODE_HAS_NO_DATA).flutterError(result)
             return
         }
         val userClient = oneginiClient.userClient
         val authenticatedUserProfile = oneginiClient.userClient.authenticatedUserProfile
         if (authenticatedUserProfile == null) {
-            SdkError(AUTHENTICATED_USER_PROFILE_IS_NULL_ERROR).flutterError(result)
+            SdkError(AUTHENTICATED_USER_PROFILE_IS_NULL).flutterError(result)
             return
         }
         if (userClient.isUserEnrolledForMobileAuth(authenticatedUserProfile)) {

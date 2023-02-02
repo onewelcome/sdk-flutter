@@ -40,7 +40,7 @@ extension OneginiModuleSwift {
             Logger.log("super params4 \(parameters)")
             bridgeConnector.toResourceFetchHandler.unauthenticatedRequest(path, parameters: parameters, callback: callback)
         default:
-            callback(SdkError.convertToFlutter(SdkError(.incorrectResourcesAccessError)))
+            callback(SdkError.convertToFlutter(SdkError(.incorrectResourcesAccess)))
         }
     }
 }

@@ -19,7 +19,7 @@ class RegistrationUseCase(private var oneginiClient: OneginiClient) {
         val scopes = call.argument<ArrayList<String>>("scopes") ?: ArrayList()
         val identityProvider = getIdentityProviderById(identityProviderId)
         if (identityProviderId != null && identityProvider == null) {
-            SdkError(IDENTITY_PROVIDER_NOT_FOUND_ERROR).flutterError(result)
+            SdkError(IDENTITY_PROVIDER_NOT_FOUND).flutterError(result)
             return
         }
         register(identityProvider, scopes.toArray(arrayOfNulls<String>(scopes.size)), result)

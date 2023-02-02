@@ -72,7 +72,7 @@ class AuthenticateUserUseCaseTests {
 
         AuthenticateUserUseCase(clientMock)(callMock, resultSpy)
 
-        Mockito.verify(resultSpy).error(USER_PROFILE_IS_NULL_ERROR.code.toString(), USER_PROFILE_IS_NULL_ERROR.message, null)
+        Mockito.verify(resultSpy).error(USER_PROFILE_IS_NULL.code.toString(), USER_PROFILE_IS_NULL.message, null)
     }
 
     @Test
@@ -83,7 +83,7 @@ class AuthenticateUserUseCaseTests {
 
         AuthenticateUserUseCase(clientMock)(callMock, resultSpy)
 
-        Mockito.verify(resultSpy).error(AUTHENTICATOR_NOT_FOUND_ERROR.code.toString(), AUTHENTICATOR_NOT_FOUND_ERROR.message, null)
+        Mockito.verify(resultSpy).error(AUTHENTICATOR_NOT_FOUND.code.toString(), AUTHENTICATOR_NOT_FOUND.message, null)
     }
 
     @Test

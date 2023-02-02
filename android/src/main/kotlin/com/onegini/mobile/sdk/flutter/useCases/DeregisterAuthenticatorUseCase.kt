@@ -15,12 +15,12 @@ class DeregisterAuthenticatorUseCase(private var oneginiClient: OneginiClient) {
         val authenticatorId = call.argument<String>("authenticatorId")
         val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
         if (userProfile == null) {
-            SdkError(USER_PROFILE_IS_NULL_ERROR).flutterError(result)
+            SdkError(USER_PROFILE_IS_NULL).flutterError(result)
             return
         }
         val authenticator = getAuthenticatorById(authenticatorId, userProfile)
         if (authenticator == null) {
-            SdkError(AUTHENTICATOR_IS_NULL_ERROR).flutterError(result)
+            SdkError(AUTHENTICATOR_IS_NULL).flutterError(result)
             return
         }
         oneginiClient.userClient.deregisterAuthenticator(authenticator, object : OneginiAuthenticatorDeregistrationHandler {

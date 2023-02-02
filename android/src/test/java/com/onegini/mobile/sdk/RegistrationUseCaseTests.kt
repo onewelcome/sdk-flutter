@@ -91,7 +91,7 @@ class RegistrationUseCaseTests {
 
         RegistrationUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(eq(IDENTITY_PROVIDER_NOT_FOUND_ERROR.code.toString()), eq(IDENTITY_PROVIDER_NOT_FOUND_ERROR.message), isNull())
+        verify(resultSpy).error(eq(IDENTITY_PROVIDER_NOT_FOUND.code.toString()), eq(IDENTITY_PROVIDER_NOT_FOUND.message), isNull())
     }
 
     @Test

@@ -55,7 +55,7 @@ class RegisterAuthenticatorUseCaseTests {
 
         RegisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(AUTHENTICATED_USER_PROFILE_IS_NULL_ERROR.code.toString(), AUTHENTICATED_USER_PROFILE_IS_NULL_ERROR.message, null)
+        verify(resultSpy).error(AUTHENTICATED_USER_PROFILE_IS_NULL.code.toString(), AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
     }
 
     @Test
@@ -66,7 +66,7 @@ class RegisterAuthenticatorUseCaseTests {
 
         RegisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(AUTHENTICATOR_IS_NULL_ERROR.code.toString(), AUTHENTICATOR_IS_NULL_ERROR.message, null)
+        verify(resultSpy).error(AUTHENTICATOR_IS_NULL.code.toString(), AUTHENTICATOR_IS_NULL.message, null)
     }
 
     @Test
@@ -77,7 +77,7 @@ class RegisterAuthenticatorUseCaseTests {
 
         RegisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(AUTHENTICATOR_IS_NULL_ERROR.code.toString(), AUTHENTICATOR_IS_NULL_ERROR.message, null)
+        verify(resultSpy).error(AUTHENTICATOR_IS_NULL.code.toString(), AUTHENTICATOR_IS_NULL.message, null)
     }
 
     @Test

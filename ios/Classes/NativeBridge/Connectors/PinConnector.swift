@@ -27,7 +27,7 @@ class PinConnector : BridgeToPinConnectorProtocol, PinNotificationReceiverProtoc
                 pinHandler.onCancel()
                 break
             default:
-            sendEvent(data: ["eventName": PinNotification.showError.rawValue, "eventValue": SdkError(.unsupportedPinActionError).details as Any?])
+            sendEvent(data: ["eventName": PinNotification.showError.rawValue, "eventValue": SdkError(.unsupportedPinAction).details as Any?])
                 break
         }
     }

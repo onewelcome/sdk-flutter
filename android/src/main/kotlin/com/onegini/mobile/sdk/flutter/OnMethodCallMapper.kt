@@ -35,7 +35,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
         when {
             call.method == METHOD_START_APP -> oneginiMethodsWrapper.startApp(call, result, oneginiSDK, context)
             client != null -> onSDKMethodCall(call, client, result)
-            else -> SdkError(ONEWELCOME_SDK_NOT_INITIALIZED_ERROR).flutterError(result)
+            else -> SdkError(ONEWELCOME_SDK_NOT_INITIALIZED).flutterError(result)
         }
     }
 
@@ -94,7 +94,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
 
             Constants.METHOD_VALIDATE_PIN_WITH_POLICY -> validatePinWithPolicy(call.argument<String>("pin")?.toCharArray(), result, client)
 
-            else -> SdkError(METHOD_TO_CALL_NOT_FOUND_ERROR).flutterError(result)
+            else -> SdkError(METHOD_TO_CALL_NOT_FOUND).flutterError(result)
         }
     }
 
@@ -118,11 +118,11 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
 
     fun getAppToWebSingleSignOn(url: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         if (url == null) {
-            SdkError(URL_CANT_BE_NULL_ERROR).flutterError(result)
+            SdkError(URL_CANT_BE_NULL).flutterError(result)
             return
         }
         if (!Patterns.WEB_URL.matcher(url).matches()) {
-            SdkError(MALFORMED_URL_ERROR).flutterError(result)
+            SdkError(MALFORMED_URL).flutterError(result)
             return
         }
         val targetUri: Uri = Uri.parse(url)

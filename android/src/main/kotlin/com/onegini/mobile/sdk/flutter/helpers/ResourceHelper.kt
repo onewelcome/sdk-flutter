@@ -31,7 +31,7 @@ class ResourceHelper {
                         { data ->
                             if (data.code >= 400) {
                                     SdkError(
-                                        wrapperError = ERROR_CODE_HTTP_REQUEST_ERROR,
+                                        wrapperError = ERROR_CODE_HTTP_REQUEST,
                                         httpResponse = data
                                     ).flutterError(result)
                             } else {

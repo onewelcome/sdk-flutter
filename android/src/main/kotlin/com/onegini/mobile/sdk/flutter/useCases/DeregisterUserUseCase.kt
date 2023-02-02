@@ -13,7 +13,7 @@ class DeregisterUserUseCase(private val oneginiClient: OneginiClient) {
     operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
         val userProfileId = call.argument<String>("profileId")
         if (userProfileId == null) {
-            SdkError(USER_PROFILE_IS_NULL_ERROR).flutterError(result)
+            SdkError(USER_PROFILE_IS_NULL).flutterError(result)
             return
         }
         var userProfile: UserProfile? = null
@@ -25,7 +25,7 @@ class DeregisterUserUseCase(private val oneginiClient: OneginiClient) {
             }
         }
         if (userProfile == null) {
-            SdkError(USER_PROFILE_IS_NULL_ERROR).flutterError(result)
+            SdkError(USER_PROFILE_IS_NULL).flutterError(result)
             return
         }
         oneginiClient.userClient.deregisterUser(userProfile, object : OneginiDeregisterUserProfileHandler {

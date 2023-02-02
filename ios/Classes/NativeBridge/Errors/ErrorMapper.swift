@@ -4,29 +4,29 @@ import OneginiCrypto
 enum OneWelcomeWrapperError: Int {
     // iOS and Android
     case genericError = 8000
-    case userProfileIsNullError = 8001
-    case authenticatedUserProfileIsNullError = 8002
-    case authenticatorNotFoundError = 8004
+    case userProfileIsNull = 8001
+    case authenticatedUserProfileIsNull = 8002
+    case authenticatorNotFound = 8004
     case httpRequestError = 8011
-    case errorCodeHttpRequestError = 8013
+    case errorCodeHttpRequest = 8013
     
     // iOS only
-    case providedUrlIncorrectError = 8014
-    case loginCanceledError = 8015
-    case enrollmentFailedError = 8016
-    case authenticationCancelledError = 8017
-    case changingCancelledError = 8018
-    case registrationCancelledError = 8020
-    case cantHandleOTPError = 8021
-    case incorrectResourcesAccessError = 8022
-    case authenticatorNotRegisteredError = 8023
-    case authenticatorDeregistrationCancelledError = 8024
-    case failedToParseDataError = 8025
-    case responseIsNullError = 8026
-    case authenticatorIdIsNullError = 8027
-    case emptyInputValueError = 8028
-    case unsupportedPinActionError = 8029
-    case unsupportedCustomRegistrationActionError = 8030
+    case providedUrlIncorrect = 8014
+    case loginCanceled = 8015
+    case enrollmentFailed = 8016
+    case authenticationCancelled = 8017
+    case changingPinCancelled = 8018
+    case registrationCancelled = 8020
+    case cantHandleOTP = 8021
+    case incorrectResourcesAccess = 8022
+    case authenticatorNotRegistered = 8023
+    case authenticatorDeregistrationCancelled = 8024
+    case failedToParseData = 8025
+    case responseIsNull = 8026
+    case authenticatorIdIsNull = 8027
+    case emptyInputValue = 8028
+    case unsupportedPinAction = 8029
+    case unsupportedCustomRegistrationAction = 8030
     case authenticatorRegistrationCancelled = 8031
 
     func message() -> String {
@@ -35,47 +35,47 @@ enum OneWelcomeWrapperError: Int {
         switch self {
         case .genericError:
             message = "Something went wrong."
-        case .userProfileIsNullError:
+        case .userProfileIsNull:
             message = "User profile is null."
-        case .authenticatedUserProfileIsNullError:
+        case .authenticatedUserProfileIsNull:
             message = "User authenticated profile is null."
-        case .authenticatorNotFoundError:
+        case .authenticatorNotFound:
             message = "The requested authenticator is not found"
-        case .providedUrlIncorrectError:
+        case .providedUrlIncorrect:
             message = "Provided url is incorrect."
-        case .enrollmentFailedError:
+        case .enrollmentFailed:
             message = "Enrollment failed. Please try again or contact maintainer."
-        case .loginCanceledError:
+        case .loginCanceled:
             message = "Login cancelled."
-        case .authenticationCancelledError:
+        case .authenticationCancelled:
             message = "Authentication cancelled."
-        case .authenticatorDeregistrationCancelledError:
+        case .authenticatorDeregistrationCancelled:
             message = "Authenticator deregistration cancelled."
-        case .changingCancelledError:
-            message = "Changing cancelled."
-        case .registrationCancelledError:
+        case .changingPinCancelled:
+            message = "Changing pin cancelled."
+        case .registrationCancelled:
             message = "Registration cancelled."
-        case .cantHandleOTPError:
+        case .cantHandleOTP:
             message = "Can't handle otp authentication request."
-        case .incorrectResourcesAccessError:
+        case .incorrectResourcesAccess:
             message = "Incorrect access to resources."
-        case .authenticatorNotRegisteredError:
+        case .authenticatorNotRegistered:
             message = "This authenticator is not registered."
-        case .failedToParseDataError:
+        case .failedToParseData:
             message = "Failed to parse data."
-        case .responseIsNullError:
+        case .responseIsNull:
             message = "Response doesn't contain data."
-        case .authenticatorIdIsNullError:
+        case .authenticatorIdIsNull:
             message = "Authenticator ID is empty."
-        case .emptyInputValueError:
+        case .emptyInputValue:
             message = "Empty input value."
-        case .errorCodeHttpRequestError:
+        case .errorCodeHttpRequest:
             message = "OneWelcome: HTTP Request failed. Check Response for more info."
         case .httpRequestError:
             message = "OneWelcome: HTTP Request failed. Check iosCode and iosMessage for more info."
-        case .unsupportedPinActionError:
+        case .unsupportedPinAction:
             message = "Unsupported pin action. Contact SDK maintainer."
-        case .unsupportedCustomRegistrationActionError:
+        case .unsupportedCustomRegistrationAction:
             message = "Unsupported custom registration action. Contact SDK maintainer."
         case .authenticatorRegistrationCancelled:
             message = "The authenticator-registration was cancelled."
