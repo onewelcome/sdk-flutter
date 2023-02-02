@@ -7,7 +7,8 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorRegistr
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
@@ -16,12 +17,12 @@ class RegisterAuthenticatorUseCase(private var oneginiClient: OneginiClient) {
         val authenticatorId = call.argument<String>("authenticatorId")
         val authenticatedUserProfile = oneginiClient.userClient.authenticatedUserProfile
         if (authenticatedUserProfile == null) {
-            result.error(OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
+            SdkError(AUTHENTICATED_USER_PROFILE_IS_NULL).flutterError(result)
             return
         }
         val authenticator = getAuthenticatorById(authenticatorId, authenticatedUserProfile)
         if (authenticator == null) {
-            result.error(OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.message, null)
+            SdkError(AUTHENTICATOR_IS_NULL).flutterError(result)
             return
         }
         oneginiClient.userClient.registerAuthenticator(authenticator, object : OneginiAuthenticatorRegistrationHandler {
@@ -30,7 +31,10 @@ class RegisterAuthenticatorUseCase(private var oneginiClient: OneginiClient) {
             }
 
             override fun onError(oneginiAuthenticatorRegistrationError: OneginiAuthenticatorRegistrationError) {
-                result.error(oneginiAuthenticatorRegistrationError.errorType.toString(), oneginiAuthenticatorRegistrationError.message, null)
+                SdkError(
+                    code = oneginiAuthenticatorRegistrationError.errorType,
+                    message = oneginiAuthenticatorRegistrationError.message
+                ).flutterError(result)
             }
         }
         )

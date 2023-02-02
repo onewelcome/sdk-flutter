@@ -7,7 +7,8 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiRegistrationError
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
@@ -18,7 +19,7 @@ class RegistrationUseCase(private var oneginiClient: OneginiClient) {
         val scopes = call.argument<ArrayList<String>>("scopes") ?: ArrayList()
         val identityProvider = getIdentityProviderById(identityProviderId)
         if (identityProviderId != null && identityProvider == null) {
-            result.error(OneginiWrapperErrors.IDENTITY_PROVIDER_NOT_FOUND.code, OneginiWrapperErrors.IDENTITY_PROVIDER_NOT_FOUND.message, null)
+            SdkError(IDENTITY_PROVIDER_NOT_FOUND).flutterError(result)
             return
         }
         register(identityProvider, scopes.toArray(arrayOfNulls<String>(scopes.size)), result)
@@ -47,7 +48,10 @@ class RegistrationUseCase(private var oneginiClient: OneginiClient) {
             }
 
             override fun onError(oneginiRegistrationError: OneginiRegistrationError) {
-                result.error(oneginiRegistrationError.errorType.toString(), oneginiRegistrationError.message, null)
+                SdkError(
+                    code = oneginiRegistrationError.errorType,
+                    message = oneginiRegistrationError.message
+                ).flutterError(result)
             }
         })
     }

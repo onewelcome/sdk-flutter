@@ -81,5 +81,13 @@ interface Constants {
         const val METHOD_VALIDATE_PIN_WITH_POLICY = "validatePinWithPolicy"
         const val METHOD_GET_ACCESS_TOKEN = "getAccessToken"
         const val METHOD_GET_AUTHENTICATED_USER_PROFILE = "getAuthenticatedUserProfile"
+
+        /**
+         * HTTP Response properties
+         */
+        const val RESPONSE_STATUS_CODE = "statusCode"
+        const val RESPONSE_HEADERS = "headers"
+        const val RESPONSE_BODY = "body"
+        const val RESPONSE_URL = "url"
     }
 }
