@@ -33,7 +33,7 @@ class CustomRegistrationHandler {
         }
     }
 
-    private fun getCustomRegistrationAction(idProvider: String?, customRegistrationActions: ArrayList<CustomRegistrationAction>): CustomRegistrationAction? {
+    fun getCustomRegistrationAction(idProvider: String?, customRegistrationActions: ArrayList<CustomRegistrationAction>): CustomRegistrationAction? {
         if (idProvider == null) return null
 
         customRegistrationActions.forEach {
