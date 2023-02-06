@@ -21,11 +21,12 @@ import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.MobileAuthenticationObject
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.providers.CustomRegistrationAction
+import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 
 class OnMethodCallMapper(private var context: Context, private val oneginiMethodsWrapper: OneginiMethodsWrapper, private val oneginiSDK: OneginiSDK) : MethodChannel.MethodCallHandler {
-
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         val client = oneginiSDK.getOneginiClient()
@@ -33,15 +34,15 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
         when {
             call.method == Constants.METHOD_START_APP -> oneginiMethodsWrapper.startApp(call, result, oneginiSDK, context)
             client != null -> onSDKMethodCall(call, client, result, oneginiSDK.getCustomRegistrationActions())
-            else -> result.error(OneginiWrapperErrors.ONEGINI_SDK_NOT_INITIALIZED.code, OneginiWrapperErrors.ONEGINI_SDK_NOT_INITIALIZED.message, null)
+            else -> SdkError(ONEWELCOME_SDK_NOT_INITIALIZED).flutterError(result)
         }
     }
 
     private fun onSDKMethodCall(call: MethodCall, client: OneginiClient, result: MethodChannel.Result, customRegistrationActions: ArrayList<CustomRegistrationAction>) {
         when (call.method) {
             // Custom Registration Callbacks
-            Constants.METHOD_SUBMIT_CUSTOM_REGISTRATION_SUCCESS_ACTION -> oneginiMethodsWrapper.customRegistrationActionRespondSuccess(call.argument("identityProviderId"), customRegistrationActions, call.argument("token"))
-            Constants.METHOD_SUBMIT_CUSTOM_REGISTRATION_ERROR_ACTION -> oneginiMethodsWrapper.customRegistrationActionRespondError(call.argument("identityProviderId"), customRegistrationActions, call.argument("error"))
+            Constants.METHOD_SUBMIT_CUSTOM_REGISTRATION_ACTION -> oneginiMethodsWrapper.respondCustomRegistrationAction(call, result, customRegistrationActions)
+            Constants.METHOD_CANCEL_CUSTOM_REGISTRATION_ACTION -> oneginiMethodsWrapper.cancelCustomRegistrationAction(call, result, customRegistrationActions)
 
             //Register
             Constants.METHOD_REGISTER_USER -> oneginiMethodsWrapper.registerUser(call, result, client)
@@ -93,18 +94,35 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
 
             Constants.METHOD_VALIDATE_PIN_WITH_POLICY -> validatePinWithPolicy(call.argument<String>("pin")?.toCharArray(), result, client)
 
-            else -> result.error(OneginiWrapperErrors.METHOD_TO_CALL_NOT_FOUND.code, OneginiWrapperErrors.METHOD_TO_CALL_NOT_FOUND.message, null)
+            else -> SdkError(METHOD_TO_CALL_NOT_FOUND).flutterError(result)
         }
     }
 
-    // "https://login-mobile.test.onegini.com/personal/dashboard"
+    private fun validatePinWithPolicy(pin: CharArray?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
+        oneginiClient.userClient.validatePinWithPolicy(
+            pin,
+            object : OneginiPinValidationHandler {
+                override fun onSuccess() {
+                    result.success(true)
+                }
+
+                override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
+                    SdkError(
+                        code = oneginiPinValidationError.errorType,
+                        message = oneginiPinValidationError.message
+                    ).flutterError(result)
+                }
+            }
+        )
+    }
+
     fun getAppToWebSingleSignOn(url: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         if (url == null) {
-            result.error(OneginiWrapperErrors.URL_CANT_BE_NULL.code, OneginiWrapperErrors.URL_CANT_BE_NULL.message, null)
+            SdkError(URL_CANT_BE_NULL).flutterError(result)
             return
         }
         if (!Patterns.WEB_URL.matcher(url).matches()) {
-            result.error(OneginiWrapperErrors.URL_IS_NOT_WEB_PATH.code, OneginiWrapperErrors.URL_IS_NOT_WEB_PATH.message, null)
+            SdkError(MALFORMED_URL).flutterError(result)
             return
         }
         val targetUri: Uri = Uri.parse(url)
@@ -116,22 +134,10 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
                     }
 
                     override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
-                        result.error(oneginiSingleSignOnError.errorType.toString(), oneginiSingleSignOnError.message, null)
-                    }
-                }
-        )
-    }
-
-    private fun validatePinWithPolicy(pin: CharArray?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        oneginiClient.userClient.validatePinWithPolicy(
-                pin,
-                object : OneginiPinValidationHandler {
-                    override fun onSuccess() {
-                        result.success(true)
-                    }
-
-                    override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
-                        result.error(oneginiPinValidationError.errorType.toString(), oneginiPinValidationError.message, null)
+                        SdkError(
+                            code = oneginiSingleSignOnError.errorType,
+                            message = oneginiSingleSignOnError.message
+                        ).flutterError(result)
                     }
                 }
         )
@@ -144,7 +150,10 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             }
 
             override fun onError(error: OneginiChangePinError) {
-                result.error(error.errorType.toString(), error.message, null)
+                SdkError(
+                    code = error.errorType,
+                    message = error.message
+                ).flutterError(result)
             }
         })
     }

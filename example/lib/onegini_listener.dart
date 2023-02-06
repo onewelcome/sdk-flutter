@@ -44,27 +44,12 @@ class OneginiListener extends OneginiEventListener {
 
   @override
   void eventError(BuildContext buildContext, PlatformException error) {
-    Fluttertoast.showToast(
-        msg: "${error.message}  Code: ${error.code}",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.black38,
-        textColor: Colors.white,
-        fontSize: 16.0);
+    showErrorToast("${error.message} Code: ${error.code} ");
   }
 
   @override
   void showError(BuildContext buildContext, OneginiError error) {
-    Fluttertoast.showToast(
-      msg: "${error.message} Code: ${error.code} " ?? "Something went wrong",
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.black38,
-      textColor: Colors.white,
-      fontSize: 16.0,
-    );
+    showErrorToast("${error.message} Code: ${error.code} " ?? "Something went wrong");
   }
 
   @override
@@ -162,45 +147,26 @@ class OneginiListener extends OneginiEventListener {
   }
 
   @override
-  void openCustomTwoStepRegistrationScreen(
-      BuildContext buildContext, String data) {
-    var response = jsonDecode(data);
-    var providerId = response["providerId"];
-
-    if (providerId == "2-way-otp-api")
-      Navigator.push(
-        buildContext,
-        MaterialPageRoute(
-            builder: (context) => OtpScreen(
-                  password: response["data"],
-                  providerId: providerId
-                )),
-      );
-  }
-
-  @override
   void eventInitCustomRegistration(
-      BuildContext buildContext, String data) {
-    var response = jsonDecode(data);
-    var providerId = response["providerId"];
+    BuildContext buildContext, String data) {
 
-    if (providerId == "2-way-otp-api") {
-      // a 2-way-otp does not require data for the initialization request
-      OneginiCustomRegistrationCallback()
-        .submitSuccessAction(providerId, null)
-        .catchError((error) => {
-          if (error is PlatformException)
-            {
-              Fluttertoast.showToast(
-                  msg: error.message,
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  timeInSecForIosWeb: 1,
-                  backgroundColor: Colors.black38,
-                  textColor: Colors.white,
-                  fontSize: 16.0)
+    try {
+      var response = jsonDecode(data);
+      var providerId = response["providerId"];
+
+      if (providerId == "2-way-otp-api") {
+        // a 2-way-otp does not require data for the initialization request
+        OneginiCustomRegistrationCallback()
+          .submitSuccessAction(providerId, null)
+          .catchError((error) => {
+            if (error is PlatformException) {
+              showErrorToast(error.message)
             }
           });
+      }
+    } on FormatException catch (error) {
+      showErrorToast(error.message);
+      return;
     }
   }
 
@@ -208,23 +174,39 @@ class OneginiListener extends OneginiEventListener {
   void eventFinishCustomRegistration(
       BuildContext buildContext, String data) {
 
-    var response = jsonDecode(data);
-    var providerId = response["providerId"];
+    try {
+      var response = jsonDecode(data);
+      var providerId = response["providerId"];
 
-    if (providerId == "2-way-otp-api")
-      Navigator.push(
-        buildContext,
-        MaterialPageRoute(
-            builder: (context) => OtpScreen(
-                  password: response["data"],
-                  providerId: providerId
-                )),
-      );
+      if (providerId == "2-way-otp-api")
+        Navigator.push(
+          buildContext,
+          MaterialPageRoute(
+              builder: (context) => OtpScreen(
+                    password: response["data"],
+                    providerId: providerId
+                  )),
+        );
+    } on FormatException catch (error) {
+      showErrorToast(error.message);
+      return;
+    }
   }
 
   @override
   void handleRegisteredUrl(BuildContext buildContext, String url) async {
     await Onegini.instance.userClient.handleRegisteredUserUrl(buildContext, url,
         signInType: WebSignInType.insideApp);
+  }
+
+  void showErrorToast(String errorMessage) {
+    Fluttertoast.showToast(
+      msg: errorMessage,
+      toastLength: Toast.LENGTH_SHORT,
+      gravity: ToastGravity.BOTTOM,
+      timeInSecForIosWeb: 1,
+      backgroundColor: Colors.black38,
+      textColor: Colors.white,
+      fontSize: 16.0);
   }
 }

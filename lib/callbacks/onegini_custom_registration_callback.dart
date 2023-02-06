@@ -3,11 +3,10 @@ import 'package:onegini/constants/constants.dart';
 
 import '../onegini.dart';
 
-/// A callback to respond to the init and finish of customRegistrationActions.
 class OneginiCustomRegistrationCallback {
     Future<void> submitSuccessAction(String identityProviderId, String? token) async {
         await Onegini.instance.channel.invokeMethod(
-            Constants.submitCustomRegistrationSuccessAction,
+            Constants.submitCustomRegistrationAction,
             <String, dynamic>{
                 'identityProviderId': identityProviderId,
                 'token': token
@@ -17,7 +16,7 @@ class OneginiCustomRegistrationCallback {
 
     Future<void> submitErrorAction(String identityProviderId, String error) async {
         await Onegini.instance.channel.invokeMethod(
-            Constants.submitCustomRegistrationErrorAction,
+            Constants.cancelCustomRegistrationAction,
             <String, String>{
                 'identityProviderId': identityProviderId,
                 'error': error,

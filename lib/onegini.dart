@@ -50,7 +50,7 @@ class Onegini {
     try {
       var customIdentityProviderConfigsJson = null;
       if (customIdentityProviderConfigs != null) {
-        customIdentityProviderConfigsJson = [for (var x in customIdentityProviderConfigs) json.encode(x)];
+        customIdentityProviderConfigsJson = [for (var customIdentityProviderConfig in customIdentityProviderConfigs) json.encode(customIdentityProviderConfig)];
       }
 
       String removedUserProfiles = await channel

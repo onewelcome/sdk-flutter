@@ -40,8 +40,8 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     case Constants.Routes.denyPinRegistrationRequest: denyPinRegistrationRequest(call, result)
     
     // custom registration
-    case Constants.Routes.submitCustomRegistrationSuccessAction: submitCustomRegistrationSuccess(call, result)
-    case Constants.Routes.submitCustomRegistrationErrorAction: submitCustomRegistrationError(call, result)
+    case Constants.Routes.submitCustomRegistrationAction: submitCustomRegistrationAction(call, result)
+    case Constants.Routes.cancelCustomRegistrationAction: cancelCustomRegistrationAction(call, result)
         
     case Constants.Routes.deregisterUser: deregisterUser(call, result)
         

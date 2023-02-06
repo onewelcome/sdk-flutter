@@ -5,23 +5,23 @@ import com.onegini.mobile.sdk.android.handlers.OneginiMobileAuthEnrollmentHandle
 import com.onegini.mobile.sdk.android.handlers.OneginiMobileAuthWithOtpHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthEnrollmentError
 import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthWithOtpError
-import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import io.flutter.plugin.common.MethodChannel
 
 object MobileAuthenticationObject {
 
     fun mobileAuthWithOtp(data: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         if (data == null) {
-            result.error(OneginiWrapperErrors.QR_CODE_NOT_HAVE_DATA.code, OneginiWrapperErrors.QR_CODE_NOT_HAVE_DATA.message, null)
+            SdkError(QR_CODE_HAS_NO_DATA).flutterError(result)
             return
         }
         val userClient = oneginiClient.userClient
         val authenticatedUserProfile = oneginiClient.userClient.authenticatedUserProfile
         if (authenticatedUserProfile == null) {
-            result.error(OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
+            SdkError(AUTHENTICATED_USER_PROFILE_IS_NULL).flutterError(result)
             return
         }
-        if (authenticatedUserProfile.let { userClient.isUserEnrolledForMobileAuth(it) }) {
+        if (userClient.isUserEnrolledForMobileAuth(authenticatedUserProfile)) {
             handleMobileAuthWithOtp(data, result, oneginiClient)
         } else {
             enrollMobileAuthentication(data, result, oneginiClient)
@@ -36,8 +36,11 @@ object MobileAuthenticationObject {
                         result.success("success auth with otp")
                     }
 
-                    override fun onError(p0: OneginiMobileAuthWithOtpError) {
-                        result.error(p0.errorType.toString(), p0.message, null)
+                    override fun onError(otpError: OneginiMobileAuthWithOtpError) {
+                        SdkError(
+                            code = otpError.errorType,
+                            message = otpError.message
+                        ).flutterError(result)
                     }
                 }
         )
@@ -49,8 +52,11 @@ object MobileAuthenticationObject {
                 handleMobileAuthWithOtp(data, result, oneginiClient)
             }
 
-            override fun onError(p0: OneginiMobileAuthEnrollmentError) {
-                result.error(p0.errorType.toString(), p0.message, null)
+            override fun onError(enrollError: OneginiMobileAuthEnrollmentError) {
+                SdkError(
+                    code = enrollError.errorType,
+                    message = enrollError.message
+                ).flutterError(result)
             }
         })
     }

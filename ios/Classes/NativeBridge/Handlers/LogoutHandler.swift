@@ -21,7 +21,7 @@ class LogoutHandler: LogoutHandlerProtocol {
         }
         else
         {
-            completion(SdkError.init(customType: .userAuthenticatedProfileIsNull))
+            completion(SdkError(.authenticatedUserProfileIsNull))
         }
     }
 }

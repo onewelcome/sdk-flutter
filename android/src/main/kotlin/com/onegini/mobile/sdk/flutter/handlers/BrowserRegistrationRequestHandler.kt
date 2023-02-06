@@ -8,7 +8,7 @@ import com.onegini.mobile.sdk.flutter.constants.Constants
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
 
-class RegistrationRequestHandler : OneginiBrowserRegistrationRequestHandler {
+class BrowserRegistrationRequestHandler : OneginiBrowserRegistrationRequestHandler {
 
     companion object {
         private var CALLBACK: OneginiBrowserRegistrationCallback? = null

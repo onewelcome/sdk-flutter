@@ -20,8 +20,8 @@ protocol OneginiPluginRegisterProtocol {
     func acceptPinRegistrationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func denyPinRegistrationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 
-    func submitCustomRegistrationSuccess(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
-    func submitCustomRegistrationError(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
+    func submitCustomRegistrationAction(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
+    func cancelCustomRegistrationAction(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 
     func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 }
@@ -65,12 +65,12 @@ extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
         OneginiModuleSwift.sharedInstance.cancelPinAuth()
     }
 
-    func submitCustomRegistrationSuccess(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+    func submitCustomRegistrationAction(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         guard let _arg = call.arguments as! [String: Any]?, let _data = _arg["data"] as! String? else { return; }
         OneginiModuleSwift.sharedInstance.submitCustomRegistrationSuccess(_data)
     }
 
-    func submitCustomRegistrationError(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+    func cancelCustomRegistrationAction(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         guard let _arg = call.arguments as! [String: Any]?, let _error = _arg["error"] as! String? else { return; }
         OneginiModuleSwift.sharedInstance.submitCustomRegistrationError(_error)
     }

@@ -31,8 +31,8 @@ interface Constants {
          */
         const val METHOD_START_APP = "startApp"
 
-        const val METHOD_SUBMIT_CUSTOM_REGISTRATION_SUCCESS_ACTION = "submitCustomRegistrationSuccessAction"
-        const val METHOD_SUBMIT_CUSTOM_REGISTRATION_ERROR_ACTION = "submitCustomRegistrationErrorAction"
+        const val METHOD_SUBMIT_CUSTOM_REGISTRATION_ACTION = "submitCustomRegistrationAction"
+        const val METHOD_CANCEL_CUSTOM_REGISTRATION_ACTION = "cancelCustomRegistrationAction"
 
         const val METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON = "getAppToWebSingleSignOn"
         const val METHOD_CHANGE_PIN = "changePin"
@@ -82,5 +82,13 @@ interface Constants {
         const val METHOD_VALIDATE_PIN_WITH_POLICY = "validatePinWithPolicy"
         const val METHOD_GET_ACCESS_TOKEN = "getAccessToken"
         const val METHOD_GET_AUTHENTICATED_USER_PROFILE = "getAuthenticatedUserProfile"
+
+        /**
+         * HTTP Response properties
+         */
+        const val RESPONSE_STATUS_CODE = "statusCode"
+        const val RESPONSE_HEADERS = "headers"
+        const val RESPONSE_BODY = "body"
+        const val RESPONSE_URL = "url"
     }
 }

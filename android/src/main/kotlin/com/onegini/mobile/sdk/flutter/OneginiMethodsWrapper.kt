@@ -2,8 +2,7 @@ package com.onegini.mobile.sdk.flutter
 
 import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onegini.mobile.sdk.flutter.handlers.CustomRegistrationHandler
-import com.onegini.mobile.sdk.flutter.handlers.RegistrationRequestHandler
+import com.onegini.mobile.sdk.flutter.handlers.BrowserRegistrationRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.providers.CustomRegistrationAction
 import com.onegini.mobile.sdk.flutter.useCases.*
@@ -16,18 +15,18 @@ class OneginiMethodsWrapper {
         RegistrationUseCase(oneginiClient)(call, result)
     }
 
-    fun customRegistrationActionRespondSuccess(
-        idProvider: String?,
-        customRegistrationActions: ArrayList<CustomRegistrationAction>,
-        token: String?) {
-        CustomRegistrationHandler().actionRespondSuccess(idProvider, customRegistrationActions, token)
+    fun respondCustomRegistrationAction(
+        call: MethodCall,
+        result: MethodChannel.Result,
+        customRegistrationActions: ArrayList<CustomRegistrationAction>) {
+        SubmitCustomRegistrationActionUseCase(customRegistrationActions)(result, call)
     }
 
-    fun customRegistrationActionRespondError(
-        idProvider: String?,
-        customRegistrationActions: ArrayList<CustomRegistrationAction>,
-        error: String?) {
-        CustomRegistrationHandler().actionRespondError(idProvider, customRegistrationActions, error)
+    fun cancelCustomRegistrationAction(
+        call: MethodCall,
+        result: MethodChannel.Result,
+        customRegistrationActions: ArrayList<CustomRegistrationAction>) {
+        CancelCustomRegistrationActionUseCase(customRegistrationActions)(result, call)
     }
 
     fun handleRegisteredUrl(call: MethodCall, context: Context, oneginiClient: OneginiClient) {
@@ -43,7 +42,7 @@ class OneginiMethodsWrapper {
     }
 
     fun cancelBrowserRegistration() {
-        RegistrationRequestHandler.onRegistrationCanceled()
+        BrowserRegistrationRequestHandler.onRegistrationCanceled()
     }
 
     fun getAuthenticatedUserProfile(result: MethodChannel.Result, oneginiClient: OneginiClient) {

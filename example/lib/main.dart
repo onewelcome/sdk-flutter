@@ -61,7 +61,7 @@ class _BodyWidgetState extends State<BodyWidget> {
         .startApplication(OneginiListener(),
           securityControllerClassName: "com.onegini.mobile.onegini_example.SecurityController",
           configModelClassName: "com.onegini.mobile.onegini_example.OneginiConfigModel",
-          customIdentityProviderConfigs: [{"providerID": "2-way-otp-api", "isTwoStep": true}],
+          customIdentityProviderConfigs: [{"providerId": "2-way-otp-api", "isTwoStep": true}],
           connectionTimeout: 5,
           readTimeout: 25)
         .catchError((error) {

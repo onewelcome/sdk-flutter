@@ -57,33 +57,32 @@ abstract class OneginiEventListener {
           break;
         case Constants.userProfiles:
         default:
-          if(event != null) {
+          if (event != null) {
             Event _event = eventFromJson(event);
 
             switch(_event.eventName) {
-              case Constants.eventNextAuthenticationAttempt: {
+              case Constants.eventNextAuthenticationAttempt:
                 nextAuthenticationAttempt(
                   _context, authenticationAttemptFromJson(_event.eventValue!));
-              }
-              break;
-
-              case Constants.eventOpenAuthOTP: { openAuthOtp(_context, _event.eventValue!); }
-              break;
-
-              case Constants.eventHandleRegisteredUrl: { handleRegisteredUrl(_context, _event.eventValue!); }
-              break;
-
-              case Constants.eventInitCustomRegistration: { eventInitCustomRegistration(_context, _event.eventValue!); }
-              break;
-
-              case Constants.eventFinishCustomRegistration: { eventFinishCustomRegistration(_context, _event.eventValue!); }
-              break;
-
-              case Constants.eventError: { showError(_context, oneginiErrorFromJson(_event.eventValue!)); }
-              break;
-
-              default: { eventOther(_context, _event); }
-              break;
+                break;
+              case Constants.eventOpenAuthOTP:
+                openAuthOtp(_context, _event.eventValue!);
+                break;
+              case Constants.eventHandleRegisteredUrl:
+                handleRegisteredUrl(_context, _event.eventValue!);
+                break;
+              case Constants.eventInitCustomRegistration:
+                eventInitCustomRegistration(_context, _event.eventValue!);
+                break;
+              case Constants.eventFinishCustomRegistration:
+                eventFinishCustomRegistration(_context, _event.eventValue!);
+                break;
+              case Constants.eventError:
+                showError(_context, oneginiErrorFromJson(_event.eventValue!));
+                break;
+              default:
+                eventOther(_context, _event);
+                break;
             }
           }
       }

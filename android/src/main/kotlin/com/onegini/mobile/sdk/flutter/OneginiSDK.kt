@@ -5,6 +5,7 @@ import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 import com.onegini.mobile.sdk.flutter.handlers.*
+import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.models.Config
 import com.onegini.mobile.sdk.flutter.models.CustomIdentityProviderConfig
 import com.onegini.mobile.sdk.flutter.providers.CustomIdentityProvider
@@ -13,6 +14,7 @@ import com.onegini.mobile.sdk.flutter.providers.CustomRegistrationActionImp
 import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationActionImpl
 import io.flutter.plugin.common.MethodChannel
 import java.util.concurrent.TimeUnit
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 
 class OneginiSDK {
 
@@ -21,7 +23,7 @@ class OneginiSDK {
 
     fun buildSDK(context: Context, config: Config, result: MethodChannel.Result) {
         val applicationContext = context.applicationContext
-        val registrationRequestHandler = RegistrationRequestHandler()
+        val registrationRequestHandler = BrowserRegistrationRequestHandler()
         val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
         val pinAuthenticationRequestHandler = PinAuthenticationRequestHandler()
         val createPinRequestHandler = PinRequestHandler()
@@ -62,14 +64,11 @@ class OneginiSDK {
     private fun initProviders(clientBuilder: OneginiClientBuilder, customIdentityProviderConfigs: List<CustomIdentityProviderConfig>) {
         customIdentityProviderConfigs.forEach {
             val action = when (it.isTwoStep) {
-                true -> CustomTwoStepRegistrationActionImpl(it.providerID)
-                false -> CustomRegistrationActionImp(it.providerID)
+                true -> CustomTwoStepRegistrationActionImpl(it.providerId)
+                false -> CustomRegistrationActionImp(it.providerId)
             }
 
-            // Save action for future custom registration steps
             customRegistrationActions.add(action)
-
-            // set provider in the client builder
             clientBuilder.addCustomIdentityProvider(CustomIdentityProvider(action))
         }
     }
@@ -86,7 +85,12 @@ class OneginiSDK {
                 clientBuilder.setConfigModel(`object`)
             }
         } catch (e: Exception) {
-           result.error("10000",e.message, null)
+            e.message?.let { message ->
+                SdkError(
+                    code = CONFIG_ERROR.code,
+                    message = message
+                ).flutterError(result)
+            } ?: SdkError(CONFIG_ERROR).flutterError(result)
         }
     }
 
@@ -98,7 +102,12 @@ class OneginiSDK {
             val securityController = Class.forName(config.securityControllerClassName)
             clientBuilder.setSecurityController(securityController)
         } catch (e: ClassNotFoundException) {
-            result.error("10000",e.message, null)
+            e.message?.let { message ->
+                SdkError(
+                    code = SECURITY_CONTROLLER_NOT_FOUND.code,
+                    message = message
+                ).flutterError(result)
+            } ?: SdkError(SECURITY_CONTROLLER_NOT_FOUND).flutterError(result)
         }
     }
 }

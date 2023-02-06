@@ -6,7 +6,7 @@ import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticatorDeregistratio
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorDeregistrationError
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterAuthenticatorUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -54,7 +54,7 @@ class DeregisterAuthenticatorUseCaseTests {
 
         DeregisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
+        verify(resultSpy).error(USER_PROFILE_IS_NULL.code.toString(), USER_PROFILE_IS_NULL.message, null)
     }
 
     @Test
@@ -65,7 +65,7 @@ class DeregisterAuthenticatorUseCaseTests {
 
         DeregisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.message, null)
+        verify(resultSpy).error(AUTHENTICATOR_IS_NULL.code.toString(), AUTHENTICATOR_IS_NULL.message, null)
     }
 
     @Test
@@ -76,7 +76,7 @@ class DeregisterAuthenticatorUseCaseTests {
 
         DeregisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.code, OneginiWrapperErrors.AUTHENTICATOR_IS_NULL.message, null)
+        verify(resultSpy).error(AUTHENTICATOR_IS_NULL.code.toString(), AUTHENTICATOR_IS_NULL.message, null)
     }
 
     @Test

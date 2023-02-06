@@ -4,14 +4,12 @@ import OneginiCrypto
 protocol RegistrationConnectorToHandlerProtocol: RegistrationHandlerToPinHanlderProtocol {
     func signUp(_ providerId: String?, scopes: [String]?, completion: @escaping (Bool, ONGUserProfile?, ONGCustomInfo?, SdkError?) -> Void)
     func processRedirectURL(url: String, webSignInType: WebSignInType)
-    func cancelRegistration()
+    func cancelBrowserRegistration()
     func logout(completion: @escaping (SdkError?) -> Void)
     func deregister(userProfileId: String?, completion: @escaping (SdkError?) -> Void)
     func identityProviders() -> Array<ONGIdentityProvider>
-    func processOTPCode(code: String?)
-    func cancelCustomRegistration()
     func submitCustomRegistrationSuccess(_ data: String)
-    func submitCustomRegistrationError(_ error: String)
+    func cancelCustomRegistration(_ error: String)
     func currentChallenge() -> ONGCustomRegistrationChallenge?
 }
 
@@ -21,10 +19,6 @@ protocol RegistrationHandlerToPinHanlderProtocol: class {
 
 protocol CustomRegistrationNotificationReceiverProtocol: class {
     func sendCustomRegistrationNotification(_ event: CustomRegistrationNotification,_ data: Dictionary<String, Any?>?)
-}
-
-protocol OtpRegistrationNotificationReceiverProtocol: class {
-    func sendCustomOtpNotification(_ event: OneginiBridgeEvents,_ data: Dictionary<String, Any?>?)
 }
 
 class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, PinHandlerToReceiverProtocol, RegistrationHandlerToPinHanlderProtocol {
@@ -43,7 +37,6 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     unowned var pinHandler: PinConnectorToPinHandler?
     
     unowned var customNotificationReceiver: CustomRegistrationNotificationReceiverProtocol?
-    unowned var otpNotificationReceiver: OtpRegistrationNotificationReceiverProtocol?
     
     //MARK:-
     func currentChallenge() -> ONGCustomRegistrationChallenge? {
@@ -85,7 +78,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     func handleRedirectURL(url: URL?) {
         Logger.log("handleRedirectURL url: \(url?.absoluteString ?? "nil")", sender: self)
         guard let browserRegistrationChallenge = self.browserRegistrationChallenge else {
-            signUpCompletion?(false, nil, nil, SdkError.init(customType: .somethingWentWrong))
+            signUpCompletion?(false, nil, nil, SdkError(.genericError))
             return
         }
         
@@ -106,15 +99,6 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
         } else {
             createPinChallenge.sender.cancel(createPinChallenge)
         }
-    }
-
-    func handleOTPCode(_ code: String? = nil, _ cancelled: Bool? = false) {
-        guard let customRegistrationChallenge = self.customRegistrationChallenge else { return }
-        if(cancelled == true) {
-            customRegistrationChallenge.sender.cancel(customRegistrationChallenge)
-            return;
-        }
-        customRegistrationChallenge.sender.respond(withData: code, challenge: customRegistrationChallenge)
     }
 
     fileprivate func mapErrorFromPinChallenge(_ challenge: ONGCreatePinChallenge) -> SdkError? {
@@ -155,26 +139,16 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
 
     func processRedirectURL(url: String, webSignInType: WebSignInType) {
         guard let url = URL.init(string: url) else {
-            signUpCompletion?(false, nil, nil, SdkError.init(customType: .providedUrlIncorrect))
+            signUpCompletion?(false, nil, nil, SdkError(.providedUrlIncorrect))
             return
         }
         
         if webSignInType != .insideApp && !UIApplication.shared.canOpenURL(url) {
-            signUpCompletion?(false, nil, nil, SdkError.init(customType: .providedUrlIncorrect))
+            signUpCompletion?(false, nil, nil, SdkError(.providedUrlIncorrect))
             return
         }
         
         presentBrowserUserRegistrationView(registrationUserURL: url, webSignInType: webSignInType)
-    }
-
-    // function only used for testing
-    func processOTPCode(code: String?) {
-        handleOTPCode(code)
-    }
-
-    // function only used for testing and maybe by CZ but idk what the intention of this could be
-    func cancelCustomRegistration() {
-        handleOTPCode(nil, true)
     }
     
     func submitCustomRegistrationSuccess(_ data: String) {
@@ -182,12 +156,12 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
         customRegistrationChallenge.sender.respond(withData: data, challenge: customRegistrationChallenge)
     }
     
-    func submitCustomRegistrationError(_ error: String) {
+    func cancelCustomRegistration(_ error: String) {
         guard let customRegistrationChallenge = self.customRegistrationChallenge else { return }
         customRegistrationChallenge.sender.cancel(customRegistrationChallenge)
     }
 
-    func cancelRegistration() {
+    func cancelBrowserRegistration() {
         handleRedirectURL(url: nil)
     }
 }
@@ -223,7 +197,7 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         Logger.log("didReceiveCustomRegistrationInitChallenge ONGCustomRegistrationChallenge", sender: self)
         customRegistrationChallenge = challenge
         
-        var result = setupCustomInfoResponse(challenge)
+        let result = makeCustomInfoResponse(challenge)
         
         sendCustomRegistrationNotification(CustomRegistrationNotification.initRegistration, result)
     }
@@ -232,7 +206,7 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         Logger.log("didReceiveCustomRegistrationFinish ONGCustomRegistrationChallenge", sender: self)
         customRegistrationChallenge = challenge
 
-        var result = setupCustomInfoResponse(challenge)
+        var result = makeCustomInfoResponse(challenge)
 
         sendCustomRegistrationNotification(CustomRegistrationNotification.finishRegistration, result)
     }
@@ -244,14 +218,14 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         pinHandler?.closeFlow()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            signUpCompletion?(false, nil, nil, SdkError(customType: .registrationCancelled))
+            signUpCompletion?(false, nil, nil, SdkError(.registrationCancelled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
             signUpCompletion?(false, nil, nil, mappedError)
         }
     }
     
-    private func setupCustomInfoResponse(_ challenge: ONGCustomRegistrationChallenge) -> Dictionary<String, Any?> {
+    private func makeCustomInfoResponse(_ challenge: ONGCustomRegistrationChallenge) -> Dictionary<String, Any?> {
         var result = Dictionary<String, Any?>()
 
         if let info = challenge.info {

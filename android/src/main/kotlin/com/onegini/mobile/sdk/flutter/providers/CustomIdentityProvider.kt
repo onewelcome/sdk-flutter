@@ -1,7 +1,6 @@
 package com.onegini.mobile.sdk.flutter.providers
 
 import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomRegistrationAction
-import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomTwoStepRegistrationAction
 import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 
 class CustomIdentityProvider(private val action: CustomRegistrationAction) : OneginiCustomIdentityProvider {

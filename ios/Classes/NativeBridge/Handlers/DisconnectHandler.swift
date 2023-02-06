@@ -13,7 +13,7 @@ class DisconnectHandler: DisconnectHandlerProtocol {
         guard let profileId = userProfileId,
               let profile = userClient.userProfiles().first(where: { $0.profileId == profileId })
         else {
-            completion(SdkError.init(customType: .userAuthenticatedProfileIsNull))
+            completion(SdkError(.authenticatedUserProfileIsNull))
             return
         }
         

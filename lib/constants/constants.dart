@@ -120,20 +120,12 @@ class Constants {
   static const String validatePinWithPolicy = "validatePinWithPolicy";
 
   // Submit CustomRegistration Action success method
-  static const String submitCustomRegistrationSuccessAction =
-    "submitCustomRegistrationSuccessAction";
+  static const String submitCustomRegistrationAction =
+    "submitCustomRegistrationAction";
 
   // Submit CustomRegistration Action error method to cancel custom registration
-  static const String submitCustomRegistrationErrorAction =
-    "submitCustomRegistrationErrorAction";
-
-  /// todo remove Custom two step registration return success method name
-  static const String customTwoStepRegistrationReturnSuccess =
-      "customTwoStepRegistrationReturnSuccess";
-
-  /// todo remove Custom two step registration return error method name
-  static const String customTwoStepRegistrationReturnError =
-      "customTwoStepRegistrationReturnError";
+  static const String cancelCustomRegistrationAction =
+    "cancelCustomRegistrationAction";
 
   //#endregion Onegini methods
 
@@ -197,10 +189,6 @@ class Constants {
 
   /// Event triggered by the finishRegistration needs to be responded
   static const String eventFinishCustomRegistration = "eventFinishCustomRegistration";
-
-  /// TODO REMOVE THIS Open custom two step registration screen event name
-  static const String openCustomTwoStepRegistrationScreen =
-      "openCustomTwoStepRegistrationScreen";
 
   /// Error event name
   static const String eventError = "eventError";

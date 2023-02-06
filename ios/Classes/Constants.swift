@@ -7,8 +7,8 @@ enum Constants {
         static let startApp: String = "startApp"
 
         // Submit CustomRegistration Actions
-        static let submitCustomRegistrationSuccessAction: String = "submitCustomRegistrationSuccessAction"
-        static let submitCustomRegistrationErrorAction: String = "submitCustomRegistrationErrorAction"
+        static let submitCustomRegistrationAction: String = "submitCustomRegistrationAction"
+        static let cancelCustomRegistrationAction: String = "cancelCustomRegistrationAction"
         
         // registration
         static let registerUser: String = "registerUser"
