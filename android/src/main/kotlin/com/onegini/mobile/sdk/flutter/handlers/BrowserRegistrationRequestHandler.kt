@@ -8,6 +8,7 @@ import com.onegini.mobile.sdk.flutter.constants.Constants
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
 
+// TODO Put functions into use cases; https://onewelcome.atlassian.net/browse/FP-35
 class BrowserRegistrationRequestHandler : OneginiBrowserRegistrationRequestHandler {
 
     companion object {
