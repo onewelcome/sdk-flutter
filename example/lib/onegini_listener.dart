@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/model/authentication_attempt.dart';
 import 'package:onegini/model/onegini_error.dart';
 import 'package:onegini/model/onegini_event.dart';
@@ -14,6 +13,7 @@ import 'package:onegini_example/screens/auth_otp_screen.dart';
 import 'package:onegini_example/screens/fingerprint_screen.dart';
 import 'package:onegini_example/screens/pin_request_screen.dart';
 import 'package:onegini_example/screens/pin_screen.dart';
+import 'package:onegini_example/components/display_toast.dart';
 import 'package:onegini/callbacks/onegini_custom_registration_callback.dart';
 
 import 'screens/otp_screen.dart';
@@ -44,12 +44,12 @@ class OneginiListener extends OneginiEventListener {
 
   @override
   void eventError(BuildContext buildContext, PlatformException error) {
-    showErrorToast("${error.message} Code: ${error.code} ");
+    DisplayToast().error("${error.message} Code: ${error.code} ");
   }
 
   @override
   void showError(BuildContext buildContext, OneginiError error) {
-    showErrorToast("${error.message} Code: ${error.code} " ?? "Something went wrong");
+    DisplayToast().error("${error.message} Code: ${error.code} " ?? "Something went wrong");
   }
 
   @override
@@ -75,15 +75,7 @@ class OneginiListener extends OneginiEventListener {
   void nextAuthenticationAttempt(
       BuildContext buildContext, AuthenticationAttempt authenticationAttempt) {
     pinScreenController.clearState();
-    Fluttertoast.showToast(
-        msg:
-            "failed attempts ${authenticationAttempt.failedAttempts} from ${authenticationAttempt.maxAttempts}",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 2,
-        backgroundColor: Colors.black38,
-        textColor: Colors.white,
-        fontSize: 16.0);
+    DisplayToast().message("failed attempts ${authenticationAttempt.failedAttempts} from ${authenticationAttempt.maxAttempts}");
   }
 
   @override
@@ -160,12 +152,12 @@ class OneginiListener extends OneginiEventListener {
           .submitSuccessAction(providerId, null)
           .catchError((error) => {
             if (error is PlatformException) {
-              showErrorToast(error.message)
+              DisplayToast().error(error.message)
             }
           });
       }
     } on FormatException catch (error) {
-      showErrorToast(error.message);
+      DisplayToast().error(error.message);
       return;
     }
   }
@@ -188,7 +180,7 @@ class OneginiListener extends OneginiEventListener {
                   )),
         );
     } on FormatException catch (error) {
-      showErrorToast(error.message);
+      DisplayToast().error(error.message);
       return;
     }
   }
@@ -197,16 +189,5 @@ class OneginiListener extends OneginiEventListener {
   void handleRegisteredUrl(BuildContext buildContext, String url) async {
     await Onegini.instance.userClient.handleRegisteredUserUrl(buildContext, url,
         signInType: WebSignInType.insideApp);
-  }
-
-  void showErrorToast(String errorMessage) {
-    Fluttertoast.showToast(
-      msg: errorMessage,
-      toastLength: Toast.LENGTH_SHORT,
-      gravity: ToastGravity.BOTTOM,
-      timeInSecForIosWeb: 1,
-      backgroundColor: Colors.black38,
-      textColor: Colors.white,
-      fontSize: 16.0);
   }
 }

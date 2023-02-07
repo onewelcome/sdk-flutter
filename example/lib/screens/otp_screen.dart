@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/callbacks/onegini_custom_registration_callback.dart';
+import 'package:onegini_example/components/display_toast.dart';
 
 import 'login_screen.dart';
 
@@ -29,11 +30,11 @@ class _OtpScreenState extends State<OtpScreen> {
         .submitSuccessAction(widget.providerId, myController.text ?? " ")
         .catchError((error) => {
           if (error is PlatformException) {
-            showToast(error.message)
+            DisplayToast().error(error.message)
           }
         });
     } else {
-      showToast("Enter code");
+      DisplayToast().message("Enter code");
     }
   }
 
@@ -42,24 +43,13 @@ class _OtpScreenState extends State<OtpScreen> {
       .submitErrorAction(widget.providerId, "Registration canceled")
       .catchError((error) {
         if (error is PlatformException) {
-          showToast(error.message);
+          DisplayToast().error(error.message);
         }
       });
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => LoginScreen()),
     );
-  }
-
-  void showToast(message) {
-    Fluttertoast.showToast(
-              msg: message,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.black38,
-              textColor: Colors.white,
-              fontSize: 16.0);
   }
 
   @override
