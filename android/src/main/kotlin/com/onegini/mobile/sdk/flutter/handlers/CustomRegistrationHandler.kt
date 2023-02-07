@@ -7,8 +7,6 @@ class CustomRegistrationHandler {
     idProvider: String?,
     customRegistrationActions: ArrayList<CustomRegistrationAction>
   ): CustomRegistrationAction? {
-    if (idProvider == null) return null
-
-    return customRegistrationActions.find { it.getIdProvider() == idProvider }
+    return idProvider?.let { customRegistrationActions.find { it.getIdProvider() == idProvider } }
   }
 }

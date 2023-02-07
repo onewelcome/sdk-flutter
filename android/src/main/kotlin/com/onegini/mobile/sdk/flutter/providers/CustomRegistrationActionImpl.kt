@@ -12,7 +12,7 @@ import com.onegini.mobile.sdk.flutter.models.CustomRegistrationModel
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
 import io.flutter.plugin.common.MethodChannel
 
-class CustomRegistrationActionImp(private val providerId: String) : OneginiCustomRegistrationAction, CustomRegistrationAction {
+class CustomRegistrationActionImpl(private val providerId: String) : OneginiCustomRegistrationAction, CustomRegistrationAction {
     var callback: OneginiCustomRegistrationCallback? = null
 
     override fun finishRegistration(callback: OneginiCustomRegistrationCallback, info: CustomInfo?) {

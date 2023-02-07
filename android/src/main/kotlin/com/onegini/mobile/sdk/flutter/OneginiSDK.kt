@@ -10,7 +10,7 @@ import com.onegini.mobile.sdk.flutter.models.Config
 import com.onegini.mobile.sdk.flutter.models.CustomIdentityProviderConfig
 import com.onegini.mobile.sdk.flutter.providers.CustomIdentityProvider
 import com.onegini.mobile.sdk.flutter.providers.CustomRegistrationAction
-import com.onegini.mobile.sdk.flutter.providers.CustomRegistrationActionImp
+import com.onegini.mobile.sdk.flutter.providers.CustomRegistrationActionImpl
 import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationActionImpl
 import io.flutter.plugin.common.MethodChannel
 import java.util.concurrent.TimeUnit
@@ -65,7 +65,7 @@ class OneginiSDK {
         customIdentityProviderConfigs.forEach {
             val action = when (it.isTwoStep) {
                 true -> CustomTwoStepRegistrationActionImpl(it.providerId)
-                false -> CustomRegistrationActionImp(it.providerId)
+                false -> CustomRegistrationActionImpl(it.providerId)
             }
 
             customRegistrationActions.add(action)
