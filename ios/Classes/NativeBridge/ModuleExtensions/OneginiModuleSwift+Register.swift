@@ -61,27 +61,17 @@ extension OneginiModuleSwift {
         OneginiModuleSwift.sharedInstance.sendBridgeEvent(eventName: OneginiBridgeEvents.pinNotification, data: data)
     }
     
-    func handleTwoStepRegistration(_ data: String) {
-        bridgeConnector.toRegistrationConnector.registrationHandler.processTwoStepRegistration(data)
+    func submitCustomRegistrationSuccess(_ data: String) {
+        bridgeConnector.toRegistrationConnector.registrationHandler.submitCustomRegistrationSuccess(data)
     }
     
-    func cancelTwoStepRegistration(_ error: String) {
-        bridgeConnector.toRegistrationConnector.registrationHandler.cancelTwoStepRegistration(error)
+    func submitCustomRegistrationError(_ error: String) {
+        bridgeConnector.toRegistrationConnector.registrationHandler.cancelCustomRegistration(error)
     }
     
-    public func cancelRegistration() -> Void {
-        bridgeConnector.toRegistrationConnector.registrationHandler.cancelRegistration()
+    public func cancelBrowserRegistration() -> Void {
+        bridgeConnector.toRegistrationConnector.registrationHandler.cancelBrowserRegistration()
     }
-    
-    public func cancelCustomRegistration() -> Void {
-        bridgeConnector.toRegistrationConnector.registrationHandler.cancelCustomRegistration()
-    }
-    
-//    func handleRegistrationCallback(_ url: String) -> Void {
-//        guard let _url = URL(string: url) else { return }
-//        
-//        bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: _url)
-//    }
     
     func registerAuthenticator(_ authenticatorId: String, callback: @escaping FlutterResult) {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first else {

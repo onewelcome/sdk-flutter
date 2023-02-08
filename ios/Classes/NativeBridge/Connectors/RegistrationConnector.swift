@@ -1,13 +1,11 @@
 //MARK: - 
-protocol BridgeToRegistrationConnectorProtocol: CustomRegistrationNotificationReceiverProtocol, OtpRegistrationNotificationReceiverProtocol {
+protocol BridgeToRegistrationConnectorProtocol: CustomRegistrationNotificationReceiverProtocol {
     var bridgeConnector: BridgeConnectorProtocol? { get set }
     var registrationHandler: RegistrationConnectorToHandlerProtocol & BrowserHandlerToRegisterHandlerProtocol { get }
-    func handleCustomRegistrationAction(_ action: String, _ identityProviderId: String, _ code: String?) -> Void
 }
 
 //MARK: -
-class RegistrationConnector : BridgeToRegistrationConnectorProtocol, CustomRegistrationNotificationReceiverProtocol, OtpRegistrationNotificationReceiverProtocol {
-    
+class RegistrationConnector : BridgeToRegistrationConnectorProtocol, CustomRegistrationNotificationReceiverProtocol {
     var registrationHandler: RegistrationConnectorToHandlerProtocol & BrowserHandlerToRegisterHandlerProtocol
     unowned var bridgeConnector: BridgeConnectorProtocol?
 
@@ -15,41 +13,18 @@ class RegistrationConnector : BridgeToRegistrationConnectorProtocol, CustomRegis
         let handler = RegistrationHandler()
         registrationHandler = handler
         handler.customNotificationReceiver = self
-        handler.otpNotificationReceiver = self
-    }
-    
-    func handleCustomRegistrationAction(_ action: String, _ identityProviderId: String, _ code: String? = nil) -> Void {
-        switch action {
-            case CustomRegistrationAction.provide.rawValue:
-                registrationHandler.processOTPCode(code: code as String?)
-                break
-            case CustomRegistrationAction.cancel.rawValue:
-                registrationHandler.cancelCustomRegistration()
-                break
-            default:
-            sendEvent(data: ["eventName": PinNotification.showError.rawValue, "eventValue": SdkError(.unsupportedCustomRegistrationAction).details as Any?])
-                break
-        }
     }
 
     func sendCustomRegistrationNotification(_ event: CustomRegistrationNotification,_ data: Dictionary<String, Any?>?) {
         
         var _data = data
         switch (event){
-        case .initRegistration, .finishRegistration, .openCustomTwoStepRegistrationScreen, .eventError, .eventHandleRegisteredUrl:
+        case .initRegistration, .finishRegistration, .eventError, .eventHandleRegisteredUrl:
             _data?["eventName"] = event.rawValue
             break
         }
         
         sendEvent(data: _data)
-    }
-    
-    func sendCustomOtpNotification(_ event: OneginiBridgeEvents,_ data: Dictionary<String, Any?>?) {
-        var _data = data
-        _data?["eventName"] = OneginiBridgeEvents.otpOpen.rawValue
-        
-        let value = String.stringify(json: _data ?? "")
-        bridgeConnector?.sendBridgeEvent(eventName: OneginiBridgeEvents.otpOpen, data: value)
     }
 
     private func sendEvent(data: Any?) {
@@ -61,9 +36,8 @@ class RegistrationConnector : BridgeToRegistrationConnectorProtocol, CustomRegis
 //MARK: -
 // Custom registration notification actions
 enum CustomRegistrationNotification : String {
-    case initRegistration = "initRegistration",
-         finishRegistration = "finishRegistration",
-         openCustomTwoStepRegistrationScreen = "openCustomTwoStepRegistrationScreen",
+    case initRegistration = "eventInitCustomRegistration",
+         finishRegistration = "eventFinishCustomRegistration",
          eventError = "eventError",
          eventHandleRegisteredUrl = "eventHandleRegisteredUrl"
 }

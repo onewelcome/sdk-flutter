@@ -19,4 +19,5 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
     ONEWELCOME_SDK_NOT_INITIALIZED(8012, "OneWelcomeSDK is not initialized"),
     CONFIG_ERROR(8032, "Something went wrong while setting the configuration"),
     SECURITY_CONTROLLER_NOT_FOUND(8033, "Security controller class not found"),
+    REGISTRATION_NOT_IN_PROGRESS(8034, "No registration in progress for the given Identity Provider"),
 }
