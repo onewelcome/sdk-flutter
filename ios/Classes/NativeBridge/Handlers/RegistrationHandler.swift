@@ -4,14 +4,12 @@ import OneginiCrypto
 protocol RegistrationConnectorToHandlerProtocol: RegistrationHandlerToPinHanlderProtocol {
     func signUp(_ providerId: String?, scopes: [String]?, completion: @escaping (Bool, ONGUserProfile?, ONGCustomInfo?, SdkError?) -> Void)
     func processRedirectURL(url: String, webSignInType: WebSignInType)
-    func cancelRegistration()
+    func cancelBrowserRegistration()
     func logout(completion: @escaping (SdkError?) -> Void)
     func deregister(userProfileId: String?, completion: @escaping (SdkError?) -> Void)
     func identityProviders() -> Array<ONGIdentityProvider>
-    func processOTPCode(code: String?)
-    func cancelCustomRegistration()
-    func processTwoStepRegistration(_ data: String)
-    func cancelTwoStepRegistration(_ error: String)
+    func submitCustomRegistrationSuccess(_ data: String)
+    func cancelCustomRegistration(_ error: String)
     func currentChallenge() -> ONGCustomRegistrationChallenge?
 }
 
@@ -21,10 +19,6 @@ protocol RegistrationHandlerToPinHanlderProtocol: class {
 
 protocol CustomRegistrationNotificationReceiverProtocol: class {
     func sendCustomRegistrationNotification(_ event: CustomRegistrationNotification,_ data: Dictionary<String, Any?>?)
-}
-
-protocol OtpRegistrationNotificationReceiverProtocol: class {
-    func sendCustomOtpNotification(_ event: OneginiBridgeEvents,_ data: Dictionary<String, Any?>?)
 }
 
 class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, PinHandlerToReceiverProtocol, RegistrationHandlerToPinHanlderProtocol {
@@ -43,7 +37,6 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     unowned var pinHandler: PinConnectorToPinHandler?
     
     unowned var customNotificationReceiver: CustomRegistrationNotificationReceiverProtocol?
-    unowned var otpNotificationReceiver: OtpRegistrationNotificationReceiverProtocol?
     
     //MARK:-
     func currentChallenge() -> ONGCustomRegistrationChallenge? {
@@ -108,15 +101,6 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
         }
     }
 
-    func handleOTPCode(_ code: String? = nil, _ cancelled: Bool? = false) {
-        guard let customRegistrationChallenge = self.customRegistrationChallenge else { return }
-        if(cancelled == true) {
-            customRegistrationChallenge.sender.cancel(customRegistrationChallenge)
-            return;
-        }
-        customRegistrationChallenge.sender.respond(withData: code, challenge: customRegistrationChallenge)
-    }
-
     fileprivate func mapErrorFromPinChallenge(_ challenge: ONGCreatePinChallenge) -> SdkError? {
         if let error = challenge.error {
             return ErrorMapper().mapError(error)
@@ -166,26 +150,18 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
         
         presentBrowserUserRegistrationView(registrationUserURL: url, webSignInType: webSignInType)
     }
-
-    func processOTPCode(code: String?) {
-        handleOTPCode(code)
-    }
-
-    func cancelCustomRegistration() {
-        handleOTPCode(nil, true)
-    }
     
-    func processTwoStepRegistration(_ data: String) {
+    func submitCustomRegistrationSuccess(_ data: String) {
         guard let customRegistrationChallenge = self.customRegistrationChallenge else { return }
         customRegistrationChallenge.sender.respond(withData: data, challenge: customRegistrationChallenge)
     }
     
-    func cancelTwoStepRegistration(_ error: String) {
+    func cancelCustomRegistration(_ error: String) {
         guard let customRegistrationChallenge = self.customRegistrationChallenge else { return }
         customRegistrationChallenge.sender.cancel(customRegistrationChallenge)
     }
 
-    func cancelRegistration() {
+    func cancelBrowserRegistration() {
         handleRedirectURL(url: nil)
     }
 }
@@ -220,58 +196,19 @@ extension RegistrationHandler: ONGRegistrationDelegate {
     func userClient(_: ONGUserClient, didReceiveCustomRegistrationInitChallenge challenge: ONGCustomRegistrationChallenge) {
         Logger.log("didReceiveCustomRegistrationInitChallenge ONGCustomRegistrationChallenge", sender: self)
         customRegistrationChallenge = challenge
-
-        var result = Dictionary<String, Any?>()
-        result["eventValue"] = challenge.identityProvider.identifier
         
-        middleTwoStep = true
+        let result = makeCustomInfoResponse(challenge)
         
         sendCustomRegistrationNotification(CustomRegistrationNotification.initRegistration, result)
-
-        challenge.sender.respond(withData: nil, challenge: challenge)
     }
 
     func userClient(_: ONGUserClient, didReceiveCustomRegistrationFinish challenge: ONGCustomRegistrationChallenge) {
         Logger.log("didReceiveCustomRegistrationFinish ONGCustomRegistrationChallenge", sender: self)
         customRegistrationChallenge = challenge
 
-        var result = Dictionary<String, Any?>()
-        result["eventValue"] = challenge.identityProvider.identifier
+        var result = makeCustomInfoResponse(challenge)
 
-        var successfulRequest = true
-        if let info = challenge.info {
-            if (info.status < 2001) {
-                var customInfo = Dictionary<String, Any?>()
-
-                customInfo["data"] = info.data
-                customInfo["providerId"] = challenge.identityProvider.identifier
-
-                result["eventValue"] = String.stringify(json: customInfo)
-            }
-            else
-            {
-                successfulRequest = false
-                result["eventValue"] = SdkError(code: info.status, errorDescription: mapErrorMessageFromStatus(info.status) ?? "null").details
-            }
-        }
-
-        if (successfulRequest) {
-            if let _middle = middleTwoStep {
-                if (_middle) {
-                    sendCustomRegistrationNotification(CustomRegistrationNotification.openCustomTwoStepRegistrationScreen, result)
-                    otpNotificationReceiver?.sendCustomOtpNotification(.otpOpen, result)
-                    middleTwoStep = false
-                    return
-                }
-            }
-            
-            sendCustomRegistrationNotification(CustomRegistrationNotification.finishRegistration, result)
-            middleTwoStep = nil
-        }
-        else {
-            sendCustomRegistrationNotification(CustomRegistrationNotification.eventError, result)
-            otpNotificationReceiver?.sendCustomOtpNotification(.errorNotification, result)
-        }
+        sendCustomRegistrationNotification(CustomRegistrationNotification.finishRegistration, result)
     }
 
     func userClient(_ userClient: ONGUserClient, didFailToRegisterWith identityProvider: ONGIdentityProvider, error: Error) {
@@ -288,18 +225,20 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         }
     }
     
-    private func mapErrorMessageFromStatus(_ status: Int) -> String? {
-        var errorMessage: String? = nil
-        
-        if status <= 2000 {
-            errorMessage = nil
-        } else if status == 4002 {
-            errorMessage = "This code is not initialized on portal."
-        } else {
-            errorMessage = "Provided code is incorrect."
+    private func makeCustomInfoResponse(_ challenge: ONGCustomRegistrationChallenge) -> Dictionary<String, Any?> {
+        var result = Dictionary<String, Any?>()
+
+        if let info = challenge.info {
+            var customInfo = Dictionary<String, Any?>()
+
+            customInfo["status"] = info.status
+            customInfo["data"] = info.data
+            customInfo["providerId"] = challenge.identityProvider.identifier
+
+            result["eventValue"] = String.stringify(json: customInfo)
         }
-        
-        return errorMessage
+
+        return result
     }
 }
     

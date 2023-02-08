@@ -153,7 +153,7 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => isLoading = false);
 
     await OneginiRegistrationCallback()
-        .cancelRegistration()
+        .cancelBrowserRegistration()
         .catchError((error) {
       if (error is PlatformException) {
         Fluttertoast.showToast(

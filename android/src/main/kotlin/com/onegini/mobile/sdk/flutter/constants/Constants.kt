@@ -21,7 +21,8 @@ interface Constants {
         const val EVENT_OPEN_AUTH_OTP = "eventOpenAuthOtp"
         const val EVENT_CLOSE_AUTH_OTP = "eventCloseAuthOtp"
 
-        const val EVENT_OPEN_CUSTOM_TWO_STEP_REGISTRATION_SCREEN = "openCustomTwoStepRegistrationScreen"
+        const val EVENT_INIT_CUSTOM_REGISTRATION = "eventInitCustomRegistration"
+        const val EVENT_FINISH_CUSTOM_REGISTRATION = "eventFinishCustomRegistration"
 
         const val EVENT_HANDLE_REGISTERED_URL = "eventHandleRegisteredUrl"
 
@@ -29,8 +30,9 @@ interface Constants {
          * MethodsName
          */
         const val METHOD_START_APP = "startApp"
-        const val METHOD_CUSTOM_TWO_STEP_REGISTRATION_RETURN_SUCCESS = "customTwoStepRegistrationReturnSuccess"
-        const val METHOD_CUSTOM_TWO_STEP_REGISTRATION_RETURN_ERROR = "customTwoStepRegistrationReturnError"
+
+        const val METHOD_SUBMIT_CUSTOM_REGISTRATION_ACTION = "submitCustomRegistrationAction"
+        const val METHOD_CANCEL_CUSTOM_REGISTRATION_ACTION = "cancelCustomRegistrationAction"
 
         const val METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON = "getAppToWebSingleSignOn"
         const val METHOD_CHANGE_PIN = "changePin"
@@ -45,11 +47,10 @@ interface Constants {
         const val METHOD_GET_IMPLICIT_RESOURCE = "getImplicitResource"
         const val METHOD_GET_UNAUTHENTICATED_RESOURCE = "getUnauthenticatedResource"
 
-
         //Registration
         const val METHOD_REGISTER_USER = "registerUser"
         const val METHOD_HANDLE_REGISTERED_URL = "handleRegisteredUserUrl"
-        const val METHOD_CANCEL_REGISTRATION = "cancelRegistration"
+        const val METHOD_CANCEL_BROWSER_REGISTRATION = "cancelBrowserRegistration"
         const val METHOD_DENY_PIN_REGISTRATION_REQUEST = "denyPinRegistrationRequest"
         const val METHOD_ACCEPT_PIN_REGISTRATION_REQUEST = "acceptPinRegistrationRequest"
         const val METHOD_GET_IDENTITY_PROVIDERS = "getIdentityProviders"
