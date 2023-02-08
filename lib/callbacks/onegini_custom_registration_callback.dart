@@ -7,7 +7,7 @@ class OneginiCustomRegistrationCallback {
     Future<void> submitSuccessAction(String identityProviderId, String? token) async {
         await Onegini.instance.channel.invokeMethod(
             Constants.submitCustomRegistrationAction,
-            <String, dynamic>{
+            <String, String?>{
                 'identityProviderId': identityProviderId,
                 'token': token
             }
