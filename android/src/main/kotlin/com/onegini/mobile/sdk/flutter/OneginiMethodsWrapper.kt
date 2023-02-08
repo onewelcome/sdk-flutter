@@ -34,8 +34,8 @@ class OneginiMethodsWrapper {
         GetAuthenticatedUserProfileUseCase(oneginiClient)(result)
     }
 
-    fun getUserProfiles(result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        GetUserProfilesUseCase(oneginiClient)(result)
+    fun fetchUserProfiles(result: MethodChannel.Result, oneginiClient: OneginiClient) {
+        FetchUserProfilesUseCase(oneginiClient)(result)
     }
 
     fun startApp(call: MethodCall, result: MethodChannel.Result, oneginiSDK: OneginiSDK, context: Context) {

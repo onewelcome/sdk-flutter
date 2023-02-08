@@ -567,7 +567,7 @@ void main() {
       'return List<UserProfile>',
       () async {
         //arrange
-        setupMethodChannel(Constants.userProfiles,
+        setupMethodChannel(Constants.fetchUserProfiles,
             Future.value('[{"profileId":"1234","isDefault":true}]'));
 
         //act
@@ -582,7 +582,7 @@ void main() {
       'return null, handle TypeError and throw PlatformException',
       () async {
         //arrange
-        setupMethodChannel(Constants.userProfiles, Future.value(null));
+        setupMethodChannel(Constants.fetchUserProfiles, Future.value(null));
 
         //assert
         expect(() async => await userClient.fetchUserProfiles(),
@@ -595,7 +595,7 @@ void main() {
       () async {
         //arrange
         setupMethodChannel(
-            Constants.userProfiles, Future.error(PlatformException(code: '1')));
+            Constants.fetchUserProfiles, Future.error(PlatformException(code: '1')));
 
         //assert
         expect(() async => await userClient.fetchUserProfiles(),

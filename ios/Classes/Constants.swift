@@ -21,39 +21,40 @@ enum Constants {
         //authentication
         static let authenticateUser: String = "authenticateUser"
         static let authenticateDevice: String = "authenticateDevice"
+        static let authenticateUserImplicitly: String = "authenticateUserImplicitly"
         static let getAllNotRegisteredAuthenticators: String = "getAllNotRegisteredAuthenticators"
         static let getRegisteredAuthenticators: String = "getRegisteredAuthenticators"
         static let getAllAuthenticators: String = "getAllAuthenticators"
-        static let registerAuthenticator: String = "registerAuthenticator";
-        static let denyPinAuthenticationRequest: String = "denyPinAuthenticationRequest";
-        static let acceptPinAuthenticationRequest: String = "acceptPinAuthenticationRequest";
+        static let registerAuthenticator: String = "registerAuthenticator"
+        static let denyPinAuthenticationRequest: String = "denyPinAuthenticationRequest"
+        static let acceptPinAuthenticationRequest: String = "acceptPinAuthenticationRequest"
         static let logout: String = "logout";
         static let validatePinWithPolicy: String = "validatePinWithPolicy"
-        static let setPreferredAuthenticator: String = "setPreferredAuthenticator";
+        static let setPreferredAuthenticator: String = "setPreferredAuthenticator"
         static let deregisterAuthenticator: String = "deregisterAuthenticator"
 
         //fingerprint
-        static let acceptFingerprintAuthenticationRequest: String = "acceptFingerprintAuthenticationRequest";
-        static let denyFingerprintAuthenticationRequest: String = "denyFingerprintAuthenticationRequest";
-        static let fingerprintFallbackToPin: String = "fingerprintFallbackToPin";
+        static let acceptFingerprintAuthenticationRequest: String = "acceptFingerprintAuthenticationRequest"
+        static let denyFingerprintAuthenticationRequest: String = "denyFingerprintAuthenticationRequest"
+        static let fingerprintFallbackToPin: String = "fingerprintFallbackToPin"
 
         //otp
-        static let handleMobileAuthWithOtp: String = "handleMobileAuthWithOtp";
-        static let acceptOtpAuthenticationRequest: String = "acceptOtpAuthenticationRequest";
-        static let denyOtpAuthenticationRequest: String = "denyOtpAuthenticationRequest";
+        static let handleMobileAuthWithOtp: String = "handleMobileAuthWithOtp"
+        static let acceptOtpAuthenticationRequest: String = "acceptOtpAuthenticationRequest"
+        static let denyOtpAuthenticationRequest: String = "denyOtpAuthenticationRequest"
 
         //resources
-        static let getResourceAnonymous: String = "getResourceAnonymous";
-        static let getResource: String = "getResource";
-        static let getImplicitResource: String = "getImplicitResource";
-        static let unauthenticatedRequest: String = "getUnauthenticatedResource";
+        static let getResourceAnonymous: String = "getResourceAnonymous"
+        static let getResource: String = "getResource"
+        static let getImplicitResource: String = "getImplicitResource"
+        static let unauthenticatedRequest: String = "getUnauthenticatedResource"
         
         static let eventHandleRegisteredUrl: String = "eventHandleRegisteredUrl"
 
         //Other
-        static let getAppToWebSingleSignOn: String = "getAppToWebSingleSignOn";
-        static let changePin: String = "changePin";
-        static let userProfiles: String = "userProfiles";
+        static let getAppToWebSingleSignOn: String = "getAppToWebSingleSignOn"
+        static let changePin: String = "changePin"
+        static let fetchUserProfiles: String = "fetchUserProfiles"
     }
     
     enum Keys {

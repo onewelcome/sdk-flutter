@@ -12,13 +12,16 @@ import io.flutter.plugin.common.MethodChannel
 
 class AuthenticateUserImplicitlyUseCase(private var oneginiClient: OneginiClient) {
     operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
-        val scope = call.argument<ArrayList<String>>("scope")
-        val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
+        val profileId = call.argument<String>("profileId")
+        val scopes = call.argument<ArrayList<String>>("scopes")
+
+        val userProfile = oneginiClient.userClient.userProfiles.find { it.profileId == profileId }
+
         if (userProfile == null) {
             SdkError(USER_PROFILE_IS_NULL).flutterError(result)
             return
         }
-        oneginiClient.userClient.authenticateUserImplicitly(userProfile, scope?.toArray(arrayOfNulls<String>(scope.size)), object : OneginiImplicitAuthenticationHandler {
+        oneginiClient.userClient.authenticateUserImplicitly(userProfile, scopes?.toArray(arrayOfNulls<String>(scopes.size)), object : OneginiImplicitAuthenticationHandler {
             override fun onSuccess(profile: UserProfile) {
                 result.success(Gson().toJson(userProfile))
             }
