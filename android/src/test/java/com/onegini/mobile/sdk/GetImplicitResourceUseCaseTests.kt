@@ -4,6 +4,8 @@ import com.google.common.truth.Truth
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
+import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.UNAUTHENTICATED_IMPLICITLY
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.useCases.GetImplicitResourceUseCase
 import com.onegini.mobile.sdk.utils.RxSchedulerRule
@@ -63,7 +65,19 @@ class GetImplicitResourceUseCaseTests {
     }
 
     @Test
+    fun `should return error when the user is not implicitly authenticated`() {
+        GetImplicitResourceUseCase(clientMock)(callMock, resultSpy, resourceHelper)
+
+        verify(resultSpy).error(
+            UNAUTHENTICATED_IMPLICITLY.code.toString(), UNAUTHENTICATED_IMPLICITLY.message,
+            mutableMapOf("code" to UNAUTHENTICATED_IMPLICITLY.code.toString(), "message" to UNAUTHENTICATED_IMPLICITLY.message)
+        )
+    }
+
+    @Test
     fun `should call getRequest with correct params`() {
+        whenever(userClientMock.implicitlyAuthenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
+
         GetImplicitResourceUseCase(clientMock)(callMock, resultSpy, resourceHelper)
 
         verify(resourceHelper).getRequest(callMock, "https://token-mobile.test.onegini.com/resources/")
@@ -72,13 +86,14 @@ class GetImplicitResourceUseCaseTests {
     @Test
     fun `should call request with correct HTTP client`() {
         whenever(resourceHelper.getRequest(callMock, "https://token-mobile.test.onegini.com/resources/")).thenReturn(requestMock)
+        whenever(userClientMock.implicitlyAuthenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
 
         GetImplicitResourceUseCase(clientMock)(callMock, resultSpy, resourceHelper)
+
 
         argumentCaptor<OkHttpClient> {
             Mockito.verify(resourceHelper).callRequest(capture(), eq(requestMock), eq(resultSpy))
             Truth.assertThat(firstValue).isEqualTo(implicitResourceOkHttpClientMock)
         }
     }
-
 }
