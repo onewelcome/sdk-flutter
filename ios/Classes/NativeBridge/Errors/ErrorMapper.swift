@@ -9,6 +9,7 @@ enum OneWelcomeWrapperError: Int {
     case authenticatorNotFound = 8004
     case httpRequestError = 8011
     case errorCodeHttpRequest = 8013
+    case unauthenticatedImplicitly = 8035
     
     // iOS only
     case providedUrlIncorrect = 8014
@@ -79,6 +80,8 @@ enum OneWelcomeWrapperError: Int {
             message = "Unsupported custom registration action. Contact SDK maintainer."
         case .authenticatorRegistrationCancelled:
             message = "The authenticator-registration was cancelled."
+        case .unauthenticatedImplicitly:
+            message = "The requested action requires you to be authenticated implicitly"
         default:
             message = "Something went wrong."
         }

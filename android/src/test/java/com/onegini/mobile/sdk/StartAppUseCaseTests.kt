@@ -10,6 +10,7 @@ import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.models.Config
+import com.onegini.mobile.sdk.flutter.models.CustomIdentityProviderConfig
 import com.onegini.mobile.sdk.flutter.useCases.StartAppUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -101,35 +102,41 @@ class StartAppUseCaseTests {
     }
 
     @Test
-    fun `should properly pass oneginiCustomIdentityProviderList param to the SDK when list contains two items`() {
-        whenever(callMock.argument<ArrayList<String>>("twoStepCustomIdentityProviderIds")).thenReturn(arrayListOf("id1", "id2"))
+    fun `should properly pass customIdentityProviderConfigs JSON string list within the config to the SDK when list contains two items`() {
+        whenever(callMock.argument<ArrayList<String>>("customIdentityProviderConfigs"))
+            .thenReturn(arrayListOf(Gson().toJson(CustomIdentityProviderConfig("id1", false)),
+                Gson().toJson(CustomIdentityProviderConfig("id2", true))))
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
 
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
-        argumentCaptor<List<OneginiCustomIdentityProvider>> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), any(), eq(resultSpy))
-            assertThat(firstValue.size).isEqualTo(2)
-            assertThat(firstValue[0].id).isEqualTo("id1")
-            assertThat(firstValue[1].id).isEqualTo("id2")
+        argumentCaptor<Config> {
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), eq(resultSpy))
+            assertThat(firstValue.customIdentityProviderConfigs.size).isEqualTo(2)
+            assertThat(firstValue.customIdentityProviderConfigs[0].providerId).isEqualTo("id1")
+            assertThat(firstValue.customIdentityProviderConfigs[0].isTwoStep).isEqualTo(false)
+            assertThat(firstValue.customIdentityProviderConfigs[1].providerId).isEqualTo("id2")
+            assertThat(firstValue.customIdentityProviderConfigs[1].isTwoStep).isEqualTo(true)
         }
     }
 
     @Test
-    fun `should properly pass oneginiCustomIdentityProviderList param to the SDK when list contains one item`() {
-        whenever(callMock.argument<ArrayList<String>>("twoStepCustomIdentityProviderIds")).thenReturn(arrayListOf("id1"))
+    fun `should properly pass customIdentityProviderConfigs JSON string list within the config to the SDK when list contains one item`() {
+        whenever(callMock.argument<ArrayList<String>>("customIdentityProviderConfigs"))
+            .thenReturn(arrayListOf(Gson().toJson(CustomIdentityProviderConfig("id1", false))))
         whenever(clientMock.start(any())).thenAnswer {
             it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
         }
 
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
-        argumentCaptor<List<OneginiCustomIdentityProvider>> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), any(), eq(resultSpy))
-            assertThat(firstValue.size).isEqualTo(1)
-            assertThat(firstValue[0].id).isEqualTo("id1")
+        argumentCaptor<Config> {
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), eq(resultSpy))
+            assertThat(firstValue.customIdentityProviderConfigs.size).isEqualTo(1)
+            assertThat(firstValue.customIdentityProviderConfigs[0].providerId).isEqualTo("id1")
+            assertThat(firstValue.customIdentityProviderConfigs[0].isTwoStep).isEqualTo(false)
         }
     }
     
@@ -144,7 +151,7 @@ class StartAppUseCaseTests {
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         argumentCaptor<Config> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), eq(mutableListOf()), capture(), eq(resultSpy))
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), eq(resultSpy))
             assertThat(firstValue.httpConnectionTimeout).isEqualTo(5)
             assertThat(firstValue.httpReadTimeout).isEqualTo(20)
         }
@@ -161,7 +168,7 @@ class StartAppUseCaseTests {
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         argumentCaptor<Config> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), eq(mutableListOf()), capture(), eq(resultSpy))
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), eq(resultSpy))
             assertThat(firstValue.configModelClassName).isEqualTo("com.onegini.mobile.onegini_example.OneginiConfigModel")
             assertThat(firstValue.securityControllerClassName).isEqualTo("com.onegini.mobile.onegini_example.SecurityController")
         }
@@ -178,7 +185,7 @@ class StartAppUseCaseTests {
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
         argumentCaptor<Config> {
-            verify(oneginiSDKMock).buildSDK(eq(contextMock), eq(mutableListOf()), capture(), eq(resultSpy))
+            verify(oneginiSDKMock).buildSDK(eq(contextMock), capture(), eq(resultSpy))
             assertThat(firstValue.httpConnectionTimeout).isEqualTo(0)
             assertThat(firstValue.httpReadTimeout).isEqualTo(0)
         }

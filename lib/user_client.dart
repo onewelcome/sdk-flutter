@@ -290,12 +290,11 @@ class UserClient {
     }
   }
 
-  Future<UserProfile> authenticateUserImplicitly(String profileId, List<String>? scopes) async {
+  Future<String> authenticateUserImplicitly(String profileId, List<String>? scopes) async {
     try {
-      var userProfile = await Onegini.instance.channel.invokeMethod(
+      var userProfileId = await Onegini.instance.channel.invokeMethod(
           Constants.authenticateUserImplicitly, <String, dynamic>{'profileId': profileId, 'scopes': scopes});
-
-      return UserProfile.fromJson(json.decode(userProfile));
+      return userProfileId;
     } on TypeError catch (error) {
       throw PlatformException(
           code: Constants.wrapperTypeError.code.toString(),

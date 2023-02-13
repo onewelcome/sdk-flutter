@@ -6,7 +6,7 @@ typealias FlutterDataCallback = (Any?, SdkError?) -> Void
 
 protocol FetchResourcesHandlerProtocol: AnyObject {
     func authenticateDevice(_ scopes: [String]?, completion: @escaping (Bool, SdkError?) -> Void)
-    func authenticateImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Bool, SdkError?) -> Void)
+    func authenticateUserImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (String?, SdkError?) -> Void)
     func resourceRequest(isImplicit: Bool, isAnonymousCall: Bool, parameters: [String: Any], completion: @escaping FlutterDataCallback)
     func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
     func fetchAnonymousResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
@@ -29,24 +29,14 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         }
     }
 
-    func authenticateImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Bool, SdkError?) -> Void) {
+    func authenticateUserImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (String?, SdkError?) -> Void) {
         Logger.log("authenticateImplicitly", sender: self)
-        if isProfileImplicitlyAuthenticated(profile) {
-            Logger.log("authenticateImplicitly - isProfileImplicitlyAuthenticated", sender: self)
-            completion(true, nil)
-        } else {
-            Logger.log("authenticateImplicitly - isProfileImplicitlyAuthenticated else", sender: self)
-            authenticateProfileImplicitly(profile, scopes: scopes) { success, error in
-                Logger.log("authenticateImplicitly - authenticateProfileImplicitly \(success) e: \((error?.errorDescription ?? "nil"))", sender: self)
-                if success {
-                    completion(true, nil)
-                } else {
-                    if let error = error {
-                        completion(false, error)
-                    } else {
-                        completion(false, SdkError.init(.failedToParseData))
-                    }
-                }
+        ONGUserClient.sharedInstance().implicitlyAuthenticateUser(profile, scopes: scopes) { success, error in
+            if success {
+                completion(profile.profileId, nil)
+            } else {
+                let mappedError = error != nil ? ErrorMapper().mapError(error!) : SdkError(.genericError)
+                completion(nil, mappedError)
             }
         }
     }
@@ -170,23 +160,17 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 
     func fetchResourceWithImplicitResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
         Logger.log("fetchResourceWithImplicitResource", sender: self)
-        guard let _profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
-            completion(SdkError(.authenticatedUserProfileIsNull))
+        guard let _ = ONGUserClient.sharedInstance().implicitlyAuthenticatedUserProfile() else {
+            completion(SdkError(.unauthenticatedImplicitly).flutterError())
             return
         }
 
         let newParameters = generateParameters(from: parameters, path: path)
         let scopes = newParameters["scope"] as? [String]
         
-        OneginiModuleSwift.sharedInstance.authenticateUserImplicitly(_profile.profileId, scopes: scopes) { (value, error) in
-            if (error == nil) {
-                OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: value, parameters: newParameters) { (_data, error) in
-                    if let data = _data {
-                        completion(data)
-                    } else {
-                        completion(error)
-                    }
-                }
+        OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: true, parameters: newParameters) { (_data, error) in
+            if let data = _data {
+                completion(data)
             } else {
                 completion(error)
             }

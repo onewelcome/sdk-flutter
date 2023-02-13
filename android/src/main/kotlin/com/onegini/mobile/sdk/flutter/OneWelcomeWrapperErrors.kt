@@ -7,6 +7,7 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
     AUTHENTICATOR_NOT_FOUND(8004, "The requested authenticator is not found"),
     HTTP_REQUEST_ERROR(8011, "OneWelcome: HTTP Request failed internally."),
     ERROR_CODE_HTTP_REQUEST(8013, "OneWelcome: HTTP Request returned an error code. Check Response for more info."),
+    UNAUTHENTICATED_IMPLICITLY(8035, "The requested action requires you to be authenticated implicitly"),
 
     // Errors that only occur on Android
     AUTHENTICATOR_IS_NULL(8003, "Authenticator is null"),

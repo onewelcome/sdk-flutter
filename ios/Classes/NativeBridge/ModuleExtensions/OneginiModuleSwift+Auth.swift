@@ -4,19 +4,6 @@ import OneginiCrypto
 import Flutter
 
 extension OneginiModuleSwift {
-    
-    public func authenticateUserImplicitly(_ profileId: String, scopes: [String]?,
-                                           callback: @escaping (Bool, FlutterError?) -> Void) {
-        guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first(where: { $0.profileId == profileId }) else {
-            callback(false, SdkError.convertToFlutter(SdkError(.userProfileIsNull)))
-            return
-        }
-
-        bridgeConnector.toResourceFetchHandler.authenticateImplicitly(profile, scopes: scopes) {
-            (data, error) -> Void in
-            error != nil ? callback(data, error?.flutterError()) : callback(data, nil)
-        }
-    }
 
     func identityProviders(callback: @escaping FlutterResult) {
         let _providers = ONGClient.sharedInstance().userClient.identityProviders()
@@ -60,6 +47,19 @@ extension OneginiModuleSwift {
         })
     }
     
+    public func authenticateUserImplicitly(_ profileId: String, _ scopes: [String]?,
+                                           _ callback: @escaping FlutterResult) {
+        guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first(where: { $0.profileId == profileId }) else {
+            callback(SdkError.convertToFlutter(SdkError(.userProfileIsNull)))
+            return
+        }
+
+        bridgeConnector.toResourceFetchHandler.authenticateUserImplicitly(profile, scopes: scopes, completion: {
+            (userProfileId, error) -> Void in
+            error != nil ? callback(error?.flutterError()) : callback(userProfileId)
+        })
+    }
+
     func runSingleSignOn(_ path: String?, callback: @escaping FlutterResult) -> Void {
         
         guard let _path = path, let _url = URL(string: _path) else {

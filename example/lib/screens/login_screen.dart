@@ -94,8 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
         .authenticateUser(
       context,
       null,
-    )
-        .catchError((error) {
+    ).catchError((error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
         Fluttertoast.showToast(
@@ -169,29 +168,32 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<List<UserProfile>> fetchUserProfiles() async {
-    return Onegini.instance.userClient.fetchUserProfiles();
+    try {
+      var profiles = await Onegini.instance.userClient.fetchUserProfiles();
+      return profiles;
+    } catch (err) {
+      print("caught error in fetchProfiles: $err");
+      return [];
+    }
   }
 
   Future<String> getImplicitUserDetails(String profileId) async {
     var returnString = "";
-    print("xav: $profileId");
     try {
-      print('Awaiting user order...');
-      var order = await Onegini.instance.userClient.authenticateUserImplicitly(profileId, ["read"]);
-    } catch (err) {
-      print('Caught error: $err');
-    }
-    var user = await Onegini.instance.userClient.authenticateUserImplicitly(profileId, ["read"]);
+      var userProfileId = await Onegini.instance.userClient.authenticateUserImplicitly(profileId, ["read"]);
 
-    if(user!=null && user.profileId != null){
-      var response = await Onegini.instance.resourcesMethods
-          .getResourceImplicit("user-id-decorated");
-      print("xav tussen: $response");
-      var res = json.decode(response);
-      returnString = json.decode(res["body"])["decorated_user_id"];
+      if(userProfileId != null){
+        var response = await Onegini.instance.resourcesMethods.getResourceImplicit("user-id-decorated");
+        var res = json.decode(response);
+
+        returnString = json.decode(res["body"])["decorated_user_id"];
+      }
+
+      return returnString;
+    } catch (err) {
+      print("Caught error: $err");
+      return "Error occured check logs";
     }
-    print("xav result: $returnString");
-    return returnString;
   }
 
   @override

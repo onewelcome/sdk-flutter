@@ -23,7 +23,7 @@ class AuthenticateUserImplicitlyUseCase(private var oneginiClient: OneginiClient
         }
         oneginiClient.userClient.authenticateUserImplicitly(userProfile, scopes?.toArray(arrayOfNulls<String>(scopes.size)), object : OneginiImplicitAuthenticationHandler {
             override fun onSuccess(profile: UserProfile) {
-                result.success(Gson().toJson(userProfile))
+                result.success(userProfile.profileId)
             }
 
             override fun onError(error: OneginiImplicitTokenRequestError) {

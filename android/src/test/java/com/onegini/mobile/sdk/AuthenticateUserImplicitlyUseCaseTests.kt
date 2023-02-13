@@ -5,9 +5,11 @@ import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiImplicitAuthenticationHandler
+import com.onegini.mobile.sdk.android.handlers.error.OneginiErrorDetails
 import com.onegini.mobile.sdk.android.handlers.error.OneginiImplicitTokenRequestError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserImplicitlyUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -29,76 +31,89 @@ import org.mockito.kotlin.argumentCaptor
 @RunWith(MockitoJUnitRunner::class)
 class AuthenticateUserImplicitlyUseCaseTests {
 
-    @Mock
-    lateinit var clientMock: OneginiClient
+  @Mock
+  lateinit var clientMock: OneginiClient
 
-    @Mock
-    lateinit var oneginiImplicitTokenRequestErrorMock: OneginiImplicitTokenRequestError
+  @Mock
+  lateinit var oneginiImplicitTokenRequestErrorMock: OneginiImplicitTokenRequestError
 
-    @Mock
-    lateinit var userClientMock: UserClient
+  @Mock
+  lateinit var userClientMock: UserClient
 
-    @Mock
-    lateinit var callMock: MethodCall
+  @Mock
+  lateinit var callMock: MethodCall
 
-    @Spy
-    lateinit var resultSpy: MethodChannel.Result
+  @Spy
+  lateinit var resultSpy: MethodChannel.Result
 
-    @Before
-    fun attach() {
-        whenever(clientMock.userClient).thenReturn(userClientMock)
+  @Before
+  fun attach() {
+    whenever(clientMock.userClient).thenReturn(userClientMock)
+  }
+
+  @Test
+  fun `should return error when the sdk returns authentication error`() {
+    whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(null)
+    whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
+
+    whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
+
+    whenever(oneginiImplicitTokenRequestErrorMock.errorType).thenReturn(GENERIC_ERROR.code)
+    whenever(oneginiImplicitTokenRequestErrorMock.message).thenReturn(GENERIC_ERROR.message)
+    whenever(userClientMock.authenticateUserImplicitly(eq(UserProfile("QWERTY")), isNull(), any())).thenAnswer {
+      it.getArgument<OneginiImplicitAuthenticationHandler>(2).onError(oneginiImplicitTokenRequestErrorMock)
     }
 
-    @Test
-    fun `should return error when the sdk returns authentication error`() {
-        whenever(callMock.argument<ArrayList<String>>("scope")).thenReturn(null)
-        whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
-        whenever(oneginiImplicitTokenRequestErrorMock.errorType).thenReturn(OneginiImplicitTokenRequestError.GENERAL_ERROR)
-        whenever(oneginiImplicitTokenRequestErrorMock.message).thenReturn("General error")
-        whenever(userClientMock.authenticateUserImplicitly(eq(UserProfile("QWERTY")), isNull(), any())).thenAnswer {
-            it.getArgument<OneginiImplicitAuthenticationHandler>(2).onError(oneginiImplicitTokenRequestErrorMock)
-        }
+    AuthenticateUserImplicitlyUseCase(clientMock)(callMock, resultSpy)
 
-        AuthenticateUserImplicitlyUseCase(clientMock)(callMock, resultSpy)
+    verify(resultSpy).error(
+      GENERIC_ERROR.code.toString(), GENERIC_ERROR.message,
+      mutableMapOf("code" to GENERIC_ERROR.code.toString(), "message" to GENERIC_ERROR.message)
+    )
+  }
 
-        verify(resultSpy).error(oneginiImplicitTokenRequestErrorMock.errorType.toString(), oneginiImplicitTokenRequestErrorMock.message, null)
+  @Test
+  fun `should return error when the userProfileId is not a registered users`() {
+    whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(null)
+    whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
+    whenever(userClientMock.userProfiles).thenReturn(setOf())
+
+    AuthenticateUserImplicitlyUseCase(clientMock)(callMock, resultSpy)
+
+    verify(resultSpy).error(
+      USER_PROFILE_IS_NULL.code.toString(), USER_PROFILE_IS_NULL.message,
+      mutableMapOf("code" to USER_PROFILE_IS_NULL.code.toString(), "message" to USER_PROFILE_IS_NULL.message)
+    )
+  }
+
+  @Test
+  fun `should return success when the SDK returns success`() {
+    whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("test"))
+    whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
+
+    whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
+    whenever(userClientMock.authenticateUserImplicitly(eq(UserProfile("QWERTY")), eq(arrayOf("test")), any())).thenAnswer {
+      it.getArgument<OneginiImplicitAuthenticationHandler>(2).onSuccess(UserProfile("QWERTY"))
     }
 
-    @Test
-    fun `should return error when there are no registered users`() {
-        whenever(callMock.argument<ArrayList<String>>("scope")).thenReturn(null)
-        whenever(userClientMock.userProfiles).thenReturn(setOf())
+    AuthenticateUserImplicitlyUseCase(clientMock)(callMock, resultSpy)
 
-        AuthenticateUserImplicitlyUseCase(clientMock)(callMock, resultSpy)
+    verify(resultSpy).success(eq("QWERTY"))
+  }
 
-        verify(resultSpy).error(USER_PROFILE_IS_NULL.code.toString(), USER_PROFILE_IS_NULL.message, null)
+  @Test
+  fun `should scopes param be array of two scopes when given scopes contains two strings`() {
+    whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read", "write"))
+    whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
+
+    whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
+
+    AuthenticateUserImplicitlyUseCase(clientMock)(callMock, resultSpy)
+
+    argumentCaptor<Array<String>> {
+      Mockito.verify(userClientMock).authenticateUserImplicitly(eq(UserProfile("QWERTY")), capture(), ArgumentMatchers.any())
+      Truth.assertThat(firstValue.size).isEqualTo(2)
+      Truth.assertThat(firstValue).isEqualTo(arrayOf("read", "write"))
     }
-
-    @Test
-    fun `should return success when the SDK returns success`() {
-        whenever(callMock.argument<ArrayList<String>>("scope")).thenReturn(arrayListOf("test"))
-        whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
-        whenever(userClientMock.authenticateUserImplicitly(eq(UserProfile("QWERTY")), eq(arrayOf("test")), any())).thenAnswer {
-            it.getArgument<OneginiImplicitAuthenticationHandler>(2).onSuccess(UserProfile("QWERTY"))
-        }
-
-        AuthenticateUserImplicitlyUseCase(clientMock)(callMock, resultSpy)
-
-        verify(resultSpy).success(eq(Gson().toJson(UserProfile("QWERTY"))))
-    }
-
-    @Test
-    fun `should scopes param be array of two scopes when given scopes contains two strings`() {
-        whenever(callMock.argument<ArrayList<String>>("scope")).thenReturn(arrayListOf("read", "write"))
-        whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
-
-        AuthenticateUserImplicitlyUseCase(clientMock)(callMock, resultSpy)
-
-        argumentCaptor<Array<String>> {
-            Mockito.verify(userClientMock).authenticateUserImplicitly(eq(UserProfile("QWERTY")), capture(), ArgumentMatchers.any())
-            Truth.assertThat(firstValue.size).isEqualTo(2)
-            Truth.assertThat(firstValue).isEqualTo(arrayOf("read", "write"))
-        }
-    }
-
+  }
 }
