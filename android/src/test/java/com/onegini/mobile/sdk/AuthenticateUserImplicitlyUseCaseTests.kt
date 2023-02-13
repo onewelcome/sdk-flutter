@@ -1,15 +1,12 @@
 package com.onegini.mobile.sdk
 
 import com.google.common.truth.Truth
-import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiImplicitAuthenticationHandler
-import com.onegini.mobile.sdk.android.handlers.error.OneginiErrorDetails
 import com.onegini.mobile.sdk.android.handlers.error.OneginiImplicitTokenRequestError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserImplicitlyUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel

@@ -6,7 +6,6 @@ import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiInitializationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
-import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.models.Config

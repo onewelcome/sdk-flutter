@@ -10,7 +10,6 @@ import 'package:onegini/model/registration_response.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini_example/screens/user_screen.dart';
 
-
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
