@@ -29,7 +29,7 @@ extension OneginiModuleSwift {
         
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
-            callback(SdkError.convertToFlutter(SdkError(.userProfileIsNull)))
+            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
             return
         }
 
@@ -50,13 +50,13 @@ extension OneginiModuleSwift {
     public func authenticateUserImplicitly(_ profileId: String, _ scopes: [String]?,
                                            _ callback: @escaping FlutterResult) {
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first(where: { $0.profileId == profileId }) else {
-            callback(SdkError.convertToFlutter(SdkError(.userProfileIsNull)))
+            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
             return
         }
 
         bridgeConnector.toResourceFetchHandler.authenticateUserImplicitly(profile, scopes: scopes, completion: {
             (userProfileId, error) -> Void in
-            error != nil ? callback(error?.flutterError()) : callback(userProfileId)
+            callback(error != nil ? error?.flutterError() : userProfileId)
         })
     }
 
@@ -79,7 +79,7 @@ extension OneginiModuleSwift {
         }
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
-            callback(SdkError.convertToFlutter(SdkError(.userProfileIsNull)))
+            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
             return
         }
         
@@ -113,7 +113,7 @@ extension OneginiModuleSwift {
         }
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
-            callback(SdkError.convertToFlutter(SdkError(.userProfileIsNull)))
+            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
             return
         }
         
@@ -135,7 +135,7 @@ extension OneginiModuleSwift {
         }
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
-            callback(SdkError.convertToFlutter(SdkError(.userProfileIsNull)))
+            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
             return
         }
         

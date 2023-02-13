@@ -35,7 +35,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             if success {
                 completion(profile.profileId, nil)
             } else {
-                let mappedError = error != nil ? ErrorMapper().mapError(error!) : SdkError(.genericError)
+                let mappedError = error.flatMap { ErrorMapper().mapError($0) } ?? SdkError(.genericError)
                 completion(nil, mappedError)
             }
         }
@@ -60,7 +60,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         Logger.log("authenticateProfileImplicitly", sender: self)
         ONGUserClient.sharedInstance().implicitlyAuthenticateUser(profile, scopes: scopes) { success, error in
             if !success {
-                let mappedError = error != nil ? ErrorMapper().mapError(error!) : SdkError(.genericError)
+                let mappedError = error.flatMap { ErrorMapper().mapError($0) } ?? SdkError(.genericError)
                 completion(success, mappedError)
                 return
             }
@@ -168,12 +168,8 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         let newParameters = generateParameters(from: parameters, path: path)
         let scopes = newParameters["scope"] as? [String]
         
-        OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: true, parameters: newParameters) { (_data, error) in
-            if let data = _data {
-                completion(data)
-            } else {
-                completion(error)
-            }
+        OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: true, parameters: newParameters) { (data, error) in
+            completion(data ?? error)
         }
     }
 

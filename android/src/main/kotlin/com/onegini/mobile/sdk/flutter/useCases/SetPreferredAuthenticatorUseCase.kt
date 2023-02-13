@@ -13,7 +13,7 @@ class SetPreferredAuthenticatorUseCase(private val oneginiClient: OneginiClient)
         val authenticatorId = call.argument<String>("authenticatorId")
         val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
         if (userProfile == null) {
-            SdkError(USER_PROFILE_IS_NULL).flutterError(result)
+            SdkError(USER_PROFILE_DOES_NOT_EXIST).flutterError(result)
             return
         }
         val authenticator = getAuthenticatorById(authenticatorId, userProfile)

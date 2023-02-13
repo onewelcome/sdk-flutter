@@ -4,12 +4,13 @@ import OneginiCrypto
 enum OneWelcomeWrapperError: Int {
     // iOS and Android
     case genericError = 8000
-    case userProfileIsNull = 8001
+    case userProfileDoesNotExist = 8001
     case authenticatedUserProfileIsNull = 8002
     case authenticatorNotFound = 8004
     case httpRequestError = 8011
     case errorCodeHttpRequest = 8013
     case unauthenticatedImplicitly = 8035
+    case mappedMethodArgumentIsMissing = 8036
     
     // iOS only
     case providedUrlIncorrect = 8014
@@ -36,12 +37,12 @@ enum OneWelcomeWrapperError: Int {
         switch self {
         case .genericError:
             message = "Something went wrong."
-        case .userProfileIsNull:
-            message = "User profile is null."
+        case .userProfileDoesNotExist:
+            message = "The requested User profile does not exist."
         case .authenticatedUserProfileIsNull:
             message = "User authenticated profile is null."
         case .authenticatorNotFound:
-            message = "The requested authenticator is not found"
+            message = "The requested authenticator is not found."
         case .providedUrlIncorrect:
             message = "Provided url is incorrect."
         case .enrollmentFailed:
@@ -82,6 +83,8 @@ enum OneWelcomeWrapperError: Int {
             message = "The authenticator-registration was cancelled."
         case .unauthenticatedImplicitly:
             message = "The requested action requires you to be authenticated implicitly"
+        case .mappedMethodArgumentIsMissing:
+            message = "One or more arguments that are expected were not passed to the method"
         default:
             message = "Something went wrong."
         }

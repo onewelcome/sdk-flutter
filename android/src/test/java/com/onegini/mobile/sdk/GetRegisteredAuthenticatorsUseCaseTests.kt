@@ -58,7 +58,7 @@ class GetRegisteredAuthenticatorsUseCaseTests {
 
         GetRegisteredAuthenticatorsUseCase(clientMock)(resultSpy)
 
-        verify(resultSpy).error(USER_PROFILE_IS_NULL.code.toString(), USER_PROFILE_IS_NULL.message, null)
+        verify(resultSpy).error(USER_PROFILE_DOES_NOT_EXIST.code.toString(), USER_PROFILE_DOES_NOT_EXIST.message, null)
     }
 
     @Test

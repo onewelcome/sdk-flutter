@@ -78,8 +78,8 @@ class AuthenticateUserImplicitlyUseCaseTests {
     AuthenticateUserImplicitlyUseCase(clientMock)(callMock, resultSpy)
 
     verify(resultSpy).error(
-      USER_PROFILE_IS_NULL.code.toString(), USER_PROFILE_IS_NULL.message,
-      mutableMapOf("code" to USER_PROFILE_IS_NULL.code.toString(), "message" to USER_PROFILE_IS_NULL.message)
+      USER_PROFILE_DOES_NOT_EXIST.code.toString(), USER_PROFILE_DOES_NOT_EXIST.message,
+      mutableMapOf("code" to USER_PROFILE_DOES_NOT_EXIST.code.toString(), "message" to USER_PROFILE_DOES_NOT_EXIST.message)
     )
   }
 

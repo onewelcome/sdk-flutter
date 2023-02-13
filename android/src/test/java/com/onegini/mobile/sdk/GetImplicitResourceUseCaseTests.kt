@@ -5,7 +5,7 @@ import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.UNAUTHENTICATED_IMPLICITLY
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.USER_NOT_AUTHENTICATED_IMPLICITLY
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.useCases.GetImplicitResourceUseCase
 import com.onegini.mobile.sdk.utils.RxSchedulerRule
@@ -69,8 +69,8 @@ class GetImplicitResourceUseCaseTests {
         GetImplicitResourceUseCase(clientMock)(callMock, resultSpy, resourceHelper)
 
         verify(resultSpy).error(
-            UNAUTHENTICATED_IMPLICITLY.code.toString(), UNAUTHENTICATED_IMPLICITLY.message,
-            mutableMapOf("code" to UNAUTHENTICATED_IMPLICITLY.code.toString(), "message" to UNAUTHENTICATED_IMPLICITLY.message)
+            USER_NOT_AUTHENTICATED_IMPLICITLY.code.toString(), USER_NOT_AUTHENTICATED_IMPLICITLY.message,
+            mutableMapOf("code" to USER_NOT_AUTHENTICATED_IMPLICITLY.code.toString(), "message" to USER_NOT_AUTHENTICATED_IMPLICITLY.message)
         )
     }
 
