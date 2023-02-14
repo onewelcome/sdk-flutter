@@ -171,7 +171,7 @@ class _LoginScreenState extends State<LoginScreen> {
       var profiles = await Onegini.instance.userClient.getUserProfiles();
       return profiles;
     } catch (err) {
-      print("caught error in fetchProfiles: $err");
+      print("caught error in getUserProfiles: $err");
       return [];
     }
   }
