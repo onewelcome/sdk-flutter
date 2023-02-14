@@ -562,16 +562,16 @@ void main() {
     );
   });
 
-  group('UserClient fetchUserProfiles', () {
+  group('UserClient getUserProfiles', () {
     test(
       'return List<UserProfile>',
       () async {
         //arrange
-        setupMethodChannel(Constants.fetchUserProfiles,
+        setupMethodChannel(Constants.getUserProfiles,
             Future.value('[{"profileId":"1234","isDefault":true}]'));
 
         //act
-        var result = await userClient.fetchUserProfiles();
+        var result = await userClient.getUserProfiles();
 
         //assert
         expect(result.first.profileId, '1234');
@@ -582,10 +582,10 @@ void main() {
       'return null, handle TypeError and throw PlatformException',
       () async {
         //arrange
-        setupMethodChannel(Constants.fetchUserProfiles, Future.value(null));
+        setupMethodChannel(Constants.getUserProfiles, Future.value(null));
 
         //assert
-        expect(() async => await userClient.fetchUserProfiles(),
+        expect(() async => await userClient.getUserProfiles(),
             throwsA(isA<PlatformException>()));
       },
     );
@@ -595,10 +595,10 @@ void main() {
       () async {
         //arrange
         setupMethodChannel(
-            Constants.fetchUserProfiles, Future.error(PlatformException(code: '1')));
+            Constants.getUserProfiles, Future.error(PlatformException(code: '1')));
 
         //assert
-        expect(() async => await userClient.fetchUserProfiles(),
+        expect(() async => await userClient.getUserProfiles(),
             throwsA(isA<PlatformException>()));
       },
     );

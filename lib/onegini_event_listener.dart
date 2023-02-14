@@ -55,7 +55,7 @@ abstract class OneginiEventListener {
         case Constants.eventCloseAuthOTP:
           closeAuthOtp(_context);
           break;
-        case Constants.fetchUserProfiles:
+        case Constants.getUserProfiles:
         default:
           if (event != null) {
             Event _event = eventFromJson(event);

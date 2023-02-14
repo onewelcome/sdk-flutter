@@ -119,7 +119,7 @@ class Constants {
   static const String validatePinWithPolicy = "validatePinWithPolicy";
 
   /// Get User Profiles
-  static const String fetchUserProfiles = "fetchUserProfiles";
+  static const String getUserProfiles = "getUserProfiles";
 
   // CustomRegistration
   // Submit CustomRegistration Action success method
