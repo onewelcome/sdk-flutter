@@ -6,7 +6,7 @@ typealias FlutterDataCallback = (Any?, SdkError?) -> Void
 
 protocol FetchResourcesHandlerProtocol: AnyObject {
     func authenticateDevice(_ scopes: [String]?, completion: @escaping (Bool, SdkError?) -> Void)
-    func authenticateUserImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (String?, SdkError?) -> Void)
+    func authenticateUserImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Result<String, SdkError>) -> Void)
     func resourceRequest(isImplicit: Bool, isAnonymousCall: Bool, parameters: [String: Any], completion: @escaping FlutterDataCallback)
     func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
     func fetchAnonymousResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
@@ -29,14 +29,14 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         }
     }
 
-    func authenticateUserImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (String?, SdkError?) -> Void) {
+    func authenticateUserImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Result<String, SdkError>) -> Void) {
         Logger.log("authenticateImplicitly", sender: self)
         ONGUserClient.sharedInstance().implicitlyAuthenticateUser(profile, scopes: scopes) { success, error in
             if success {
-                completion(profile.profileId, nil)
+                completion(.success(profile.profileId))
             } else {
                 let mappedError = error.flatMap { ErrorMapper().mapError($0) } ?? SdkError(.genericError)
-                completion(nil, mappedError)
+                completion(.failure(mappedError))
             }
         }
     }

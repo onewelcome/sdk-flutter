@@ -20,7 +20,7 @@ class AuthenticateUserImplicitlyUseCase(private var oneginiClient: OneginiClient
             SdkError(USER_PROFILE_DOES_NOT_EXIST).flutterError(result)
             return
         }
-        oneginiClient.userClient.authenticateUserImplicitly(userProfile, scopes?.toArray(arrayOfNulls<String>(scopes.size)), object : OneginiImplicitAuthenticationHandler {
+        oneginiClient.userClient.authenticateUserImplicitly(userProfile, scopes?.toTypedArray(), object : OneginiImplicitAuthenticationHandler {
             override fun onSuccess(profile: UserProfile) {
                 result.success(userProfile.profileId)
             }

@@ -50,13 +50,18 @@ extension OneginiModuleSwift {
     public func authenticateUserImplicitly(_ profileId: String, _ scopes: [String]?,
                                            _ callback: @escaping FlutterResult) {
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first(where: { $0.profileId == profileId }) else {
-            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
+            callback(SdkError(.userProfileDoesNotExist).flutterError())
             return
         }
 
         bridgeConnector.toResourceFetchHandler.authenticateUserImplicitly(profile, scopes: scopes, completion: {
-            (userProfileId, error) -> Void in
-            callback(error != nil ? error?.flutterError() : userProfileId)
+            (result) -> Void in
+            switch result {
+            case .success(let response):
+                callback(response)
+            case .failure(let error):
+                callback(error.flutterError())
+            }
         })
     }
 

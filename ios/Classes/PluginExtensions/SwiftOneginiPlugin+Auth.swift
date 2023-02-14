@@ -47,17 +47,17 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
     }
 
     func authenticateUserImplicitly(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        guard let arg = call.arguments as? [String: Any]? else {
+        guard let arg = call.arguments as? [String: Any] else {
             result(SdkError(.mappedMethodArgumentIsMissing).flutterError());
             return;
         }
 
-        guard let profileId = arg?["profileId"] as? String else {
+        guard let profileId = arg["profileId"] as? String else {
             result(SdkError(.mappedMethodArgumentIsMissing).flutterError());
             return;
         }
 
-        let scopes = arg?["scopes"] as? [String]
+        let scopes = arg["scopes"] as? [String]
 
         OneginiModuleSwift.sharedInstance.authenticateUserImplicitly(profileId, scopes, result)
     }
