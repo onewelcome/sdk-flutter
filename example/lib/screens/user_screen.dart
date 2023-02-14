@@ -180,7 +180,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   deregister(BuildContext context) async {
     Navigator.pop(context);
-    var profiles = await Onegini.instance.userClient.fetchUserProfiles();
+    var profiles = await Onegini.instance.userClient.getUserProfiles();
     var profileId = profiles.first?.profileId;
     if (profileId == null) {
       return;
@@ -390,7 +390,7 @@ class Home extends StatelessWidget {
   }
 
   userProfiles(BuildContext context) async {
-    var data = await Onegini.instance.userClient.fetchUserProfiles();
+    var data = await Onegini.instance.userClient.getUserProfiles();
     var msg = "";
     data.forEach((element) {
       msg = msg + element.profileId + ", ";
@@ -482,24 +482,10 @@ class _InfoState extends State<Info> {
             backgroundColor: Colors.black38,
             textColor: Colors.white,
             fontSize: 16.0);
-
-        return;
       });
 
     var res = json.decode(response);
     return clientResourceFromJson(res["body"]);
-  }
-
-  Future<String> getImplicitUserDetails() async {
-    var returnString = "";
-    var user = await Onegini.instance.userClient.authenticateUserImplicitly(["read"]);
-    if(user!=null && user.profileId != null){
-      var response = await Onegini.instance.resourcesMethods
-          .getResourceImplicit("user-id-decorated");
-      var res = json.decode(response);
-      returnString = json.decode(res["body"])["decorated_user_id"];
-    }
-    return returnString;
   }
 
   Future<String> makeUnaunthenticatedRequest() async {
@@ -520,39 +506,6 @@ class _InfoState extends State<Info> {
           margin: EdgeInsets.all(20),
           child: Column(
             children: [
-              SizedBox(
-                height: 20,
-              ),
-              Row(
-                children: [
-                  Text(
-                    "User profile id => ",
-                    style: TextStyle(fontSize: 20),
-                  ),
-                  Text(widget.userProfileId, style: TextStyle(fontSize: 20)),
-                ],
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              FutureBuilder<String>(
-                  //implicit
-                  future: getImplicitUserDetails(),
-                  builder: (context, snapshot) {
-                    return snapshot.hasData
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "Decorated profile id:",
-                                style: TextStyle(fontSize: 20),
-                              ),
-                              Text(snapshot.data,
-                                  style: TextStyle(fontSize: 20)),
-                            ],
-                          )
-                        : SizedBox.shrink();
-                  }),
               SizedBox(
                 height: 20,
               ),

@@ -72,7 +72,7 @@ class AuthenticateUserUseCaseTests {
 
         AuthenticateUserUseCase(clientMock)(callMock, resultSpy)
 
-        Mockito.verify(resultSpy).error(USER_PROFILE_IS_NULL.code.toString(), USER_PROFILE_IS_NULL.message, null)
+        Mockito.verify(resultSpy).error(USER_PROFILE_DOES_NOT_EXIST.code.toString(), USER_PROFILE_DOES_NOT_EXIST.message, null)
     }
 
     @Test

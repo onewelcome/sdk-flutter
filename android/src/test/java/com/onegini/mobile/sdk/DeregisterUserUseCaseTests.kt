@@ -47,7 +47,7 @@ class DeregisterUserUseCaseTests {
     fun `should return error when user not authenticated`() {
         DeregisterUserUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(USER_PROFILE_IS_NULL.code.toString(), USER_PROFILE_IS_NULL.message, null)
+        verify(resultSpy).error(USER_PROFILE_DOES_NOT_EXIST.code.toString(), USER_PROFILE_DOES_NOT_EXIST.message, null)
     }
 
     @Test

@@ -48,6 +48,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     // auth
     case Constants.Routes.registerAuthenticator: registerAuthenticator(call, result)
     case Constants.Routes.authenticateUser: authenticateUser(call, result)
+    case Constants.Routes.authenticateUserImplicitly: authenticateUserImplicitly(call, result)
     case Constants.Routes.authenticateDevice: authenticateDevice(call, result)
     
     case Constants.Routes.getRegisteredAuthenticators: getRegisteredAuthenticators(call, result)
@@ -81,7 +82,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     // other
     case Constants.Routes.changePin: changePin(call, result)
     case Constants.Routes.getAppToWebSingleSignOn: getAppToWebSingleSignOn(call, result)
-    case Constants.Routes.userProfiles: fetchUserProfiles(result)
+    case Constants.Routes.getUserProfiles: getUserProfiles(result)
     
     default: do {
         Logger.log("Method wasn't handled: " + call.method)

@@ -75,7 +75,7 @@ extension OneginiModuleSwift {
     
     func registerAuthenticator(_ authenticatorId: String, callback: @escaping FlutterResult) {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first else {
-            callback(SdkError.convertToFlutter(SdkError(.userProfileIsNull)))
+            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
             return
         }
         
@@ -101,7 +101,7 @@ extension OneginiModuleSwift {
     
     func fetchRegisteredAuthenticators(callback: @escaping FlutterResult) {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first else {
-            callback(SdkError.convertToFlutter(SdkError(.userProfileIsNull)))
+            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
             return
         }
         

@@ -2,7 +2,7 @@ import Flutter
 import Foundation
 import OneginiSDKiOS
 
-class SdkError {
+class SdkError: Error {
     var code: Int
     var errorDescription: String
     var details: Dictionary<String, Any?> = [:]
@@ -63,9 +63,9 @@ class SdkError {
 
     private func setInfoDetails(_ info: [String: Any?]?) {
         if (info == nil) {
-            details["userInfo"] = info
-        } else {
             details["userInfo"] = [:]
+        } else {
+            details["userInfo"] = info
         }
     }
 

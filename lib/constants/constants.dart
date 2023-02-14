@@ -116,9 +116,12 @@ class Constants {
 
   /// Change pin method name
   static const String changePin = "changePin";
-  static const String userProfiles = "userProfiles";
   static const String validatePinWithPolicy = "validatePinWithPolicy";
 
+  /// Get User Profiles
+  static const String getUserProfiles = "getUserProfiles";
+
+  // CustomRegistration
   // Submit CustomRegistration Action success method
   static const String submitCustomRegistrationAction =
     "submitCustomRegistrationAction";

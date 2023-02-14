@@ -19,7 +19,7 @@ object AuthenticationObject {
         var authenticator: OneginiAuthenticator? = null
         val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
         if (userProfile == null) {
-            SdkError(USER_PROFILE_IS_NULL).flutterError(result)
+            SdkError(USER_PROFILE_DOES_NOT_EXIST).flutterError(result)
             return
         }
         val registeredAuthenticators = userProfile.let { oneginiClient.userClient.getRegisteredAuthenticators(it) }
@@ -81,7 +81,7 @@ object AuthenticationObject {
         var authenticator: OneginiAuthenticator? = null
         val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
         if (userProfile == null) {
-            SdkError(USER_PROFILE_IS_NULL).flutterError(result)
+            SdkError(USER_PROFILE_DOES_NOT_EXIST).flutterError(result)
             return
         }
         val registeredAuthenticators = userProfile.let { oneginiClient.userClient.getRegisteredAuthenticators(it) }
@@ -116,7 +116,7 @@ object AuthenticationObject {
         var authenticator: OneginiAuthenticator? = null
         val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
         if (userProfile == null) {
-            SdkError(USER_PROFILE_IS_NULL).flutterError(result)
+            SdkError(USER_PROFILE_DOES_NOT_EXIST).flutterError(result)
             return
         }
         val registeredAuthenticators = userProfile.let { oneginiClient.userClient.getRegisteredAuthenticators(it) }

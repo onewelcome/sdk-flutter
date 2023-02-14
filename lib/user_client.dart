@@ -36,6 +36,7 @@ class UserClient {
     }
   }
 
+  /// Start browser Registration logic
   Future<void> handleRegisteredUserUrl(BuildContext? context, String? url,
       {WebSignInType signInType = WebSignInType.insideApp}) async {
     Onegini.instance.setEventContext(context);
@@ -248,12 +249,12 @@ class UserClient {
   }
 
   /// User profiles
-  Future<List<UserProfile>> fetchUserProfiles() async {
+  Future<List<UserProfile>> getUserProfiles() async {
     try {
       var profiles =
-          await Onegini.instance.channel.invokeMethod(Constants.userProfiles);
+          await Onegini.instance.channel.invokeMethod(Constants.getUserProfiles);
       return List<UserProfile>.from(
-          json.decode(profiles).map((x) => UserProfile.fromJson(x)));
+          json.decode(profiles).map((profile) => UserProfile.fromJson(profile)));
     } on TypeError catch (error) {
       throw PlatformException(
           code: Constants.wrapperTypeError.code.toString(),
@@ -289,12 +290,11 @@ class UserClient {
     }
   }
 
-  Future<UserProfile> authenticateUserImplicitly(List<String>? scopes) async {
+  Future<String> authenticateUserImplicitly(String profileId, List<String>? scopes) async {
     try {
-      var userProfile = await Onegini.instance.channel.invokeMethod(
-          Constants.authenticateDevice, <String, dynamic>{'scope': scopes});
-
-      return UserProfile.fromJson(json.decode(userProfile));
+      var userProfileId = await Onegini.instance.channel.invokeMethod(
+          Constants.authenticateUserImplicitly, <String, dynamic>{'profileId': profileId, 'scopes': scopes});
+      return userProfileId;
     } on TypeError catch (error) {
       throw PlatformException(
           code: Constants.wrapperTypeError.code.toString(),

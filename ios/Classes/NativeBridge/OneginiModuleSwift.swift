@@ -62,7 +62,7 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
         }
     }
     
-    func fetchUserProfiles(callback: @escaping FlutterResult) {
+    func getUserProfiles(callback: @escaping FlutterResult) {
         let profiles = ONGUserClient.sharedInstance().userProfiles()
         let value: [[String: String?]] = profiles.compactMap({ ["profileId": $0.profileId] })
 
