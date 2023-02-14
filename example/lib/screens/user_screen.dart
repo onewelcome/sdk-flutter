@@ -180,7 +180,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   deregister(BuildContext context) async {
     Navigator.pop(context);
-    var profiles = await Onegini.instance.userClient.fetchUserProfiles();
+    var profiles = await Onegini.instance.userClient.getUserProfiles();
     var profileId = profiles.first?.profileId;
     if (profileId == null) {
       return;
@@ -390,7 +390,7 @@ class Home extends StatelessWidget {
   }
 
   userProfiles(BuildContext context) async {
-    var data = await Onegini.instance.userClient.fetchUserProfiles();
+    var data = await Onegini.instance.userClient.getUserProfiles();
     var msg = "";
     data.forEach((element) {
       msg = msg + element.profileId + ", ";

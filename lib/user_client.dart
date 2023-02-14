@@ -249,10 +249,10 @@ class UserClient {
   }
 
   /// User profiles
-  Future<List<UserProfile>> fetchUserProfiles() async {
+  Future<List<UserProfile>> getUserProfiles() async {
     try {
       var profiles =
-          await Onegini.instance.channel.invokeMethod(Constants.fetchUserProfiles);
+          await Onegini.instance.channel.invokeMethod(Constants.getUserProfiles);
       return List<UserProfile>.from(
           json.decode(profiles).map((profile) => UserProfile.fromJson(profile)));
     } on TypeError catch (error) {

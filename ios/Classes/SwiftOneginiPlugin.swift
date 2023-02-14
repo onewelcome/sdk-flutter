@@ -82,7 +82,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     // other
     case Constants.Routes.changePin: changePin(call, result)
     case Constants.Routes.getAppToWebSingleSignOn: getAppToWebSingleSignOn(call, result)
-    case Constants.Routes.fetchUserProfiles: fetchUserProfiles(result)
+    case Constants.Routes.getUserProfiles: getUserProfiles(result)
     
     default: do {
         Logger.log("Method wasn't handled: " + call.method)

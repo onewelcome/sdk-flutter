@@ -87,7 +87,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             // Other
             Constants.METHOD_CHANGE_PIN -> startChangePinFlow(result, client)
             Constants.METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON -> getAppToWebSingleSignOn(call.argument<String>("url"), result, client)
-            Constants.METHOD_FETCH_USER_PROFILES -> oneginiMethodsWrapper.fetchUserProfiles(result, client)
+            Constants.METHOD_GET_USER_PROFILES -> oneginiMethodsWrapper.getUserProfiles(result, client)
             Constants.METHOD_GET_ACCESS_TOKEN -> oneginiMethodsWrapper.getAccessToken(result, client)
             Constants.METHOD_GET_AUTHENTICATED_USER_PROFILE -> oneginiMethodsWrapper.getAuthenticatedUserProfile(result, client)
             Constants.METHOD_GET_REDIRECT_URL -> oneginiMethodsWrapper.getRedirectUrl(result, client)

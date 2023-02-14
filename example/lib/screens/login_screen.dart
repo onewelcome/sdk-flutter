@@ -166,9 +166,9 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  Future<List<UserProfile>> fetchUserProfiles() async {
+  Future<List<UserProfile>> getUserProfiles() async {
     try {
-      var profiles = await Onegini.instance.userClient.fetchUserProfiles();
+      var profiles = await Onegini.instance.userClient.getUserProfiles();
       return profiles;
     } catch (err) {
       print("caught error in fetchProfiles: $err");
@@ -238,7 +238,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   FutureBuilder<List<UserProfile>>(
                     //userProfiles
-                    future: fetchUserProfiles(),
+                    future: getUserProfiles(),
                     builder: (context, snapshot) {
                       return (snapshot.hasData && snapshot.data.length > 0)
                         ? Column(
