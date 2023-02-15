@@ -8,6 +8,7 @@ import 'package:onegini/callbacks/onegini_registration_callback.dart';
 import 'package:onegini/model/onegini_list_response.dart';
 import 'package:onegini/model/registration_response.dart';
 import 'package:onegini/onegini.dart';
+import 'package:onegini/pigeon.dart';
 import 'package:onegini_example/screens/user_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -168,6 +169,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<List<UserProfile>> getUserProfiles() async {
     try {
+      var userApi = UserClientApi();
+      var derp = await userApi.fetchUserProfiles();
+      print(derp[0].profileId);
+
       var profiles = await Onegini.instance.userClient.getUserProfiles();
       return profiles;
     } catch (err) {
