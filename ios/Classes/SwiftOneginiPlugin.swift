@@ -1,7 +1,9 @@
 import Flutter
 import UIKit
 
-public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
+extension FlutterError: Error {}
+
+public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "onegini", binaryMessenger: registrar.messenger())
     let eventChannel = FlutterEventChannel(name: "onegini_events",
@@ -9,6 +11,11 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     let instance = SwiftOneginiPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
     eventChannel.setStreamHandler(OneginiModuleSwift.sharedInstance)
+      
+    // Init Pigeon communication
+    let messenger : FlutterBinaryMessenger = registrar.messenger()
+    let api : UserClientApi & NSObjectProtocol = SwiftOneginiPlugin.init()
+    UserClientApiSetup.setUp(binaryMessenger: messenger, api: api)
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -90,4 +97,11 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     }
     }
   }
+    
+    func fetchUserProfiles(completion: @escaping (Result<[PigeonUserProfile], Error>) -> Void) {
+//        let a = .success([PigeonUserProfile(profileId: "boopios", isDefault: true)])
+        completion(.failure(SdkError(.userProfileDoesNotExist).flutterError()))
+
+//        completion(.success([PigeonUserProfile(profileId: "boopios", isDefault: true)]))
+    }
 }

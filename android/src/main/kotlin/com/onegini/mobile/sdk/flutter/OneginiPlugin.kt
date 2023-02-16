@@ -1,11 +1,14 @@
 package com.onegini.mobile.sdk.flutter
 
 import androidx.annotation.NonNull
+import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
+import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.PigeonUserProfile
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.FlutterException
 import io.flutter.plugin.common.MethodChannel
 
 
@@ -43,8 +46,12 @@ class OneginiPlugin : FlutterPlugin, UserClientApi {
 
     override fun fetchUserProfiles(callback: (Result<List<PigeonUserProfile>>) -> Unit) {
         val a = Result.success(listOf(PigeonUserProfile("ghalo", true)))
-//        val b = Result.failure<SdkError>(SdkError(OneWelcomeWrapperErrors.GENERIC_ERROR))
+//        throw SdkError(OneWelcomeWrapperErrors.GENERIC_ERROR)
+//        val b = Result.failure<List<PigeonUserProfile>>(Exception("meee", Throwable("boop")))
+//        a.onFailure { Throwable("meee", Throwable("boop")) }
+//        a.i
         callback(a)
+//        throw Throwable("meee", Throwable("boop"))
 //        callback.onSuccess { listOf(UserProfile("ghalo", true)) }
 //        callback?.onFailure { throw Exc }
 //        { listOf(UserProfile("ghalo", true)) }
