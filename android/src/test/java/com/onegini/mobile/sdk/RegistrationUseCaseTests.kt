@@ -9,12 +9,14 @@ import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.useCases.RegistrationUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Answers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.Spy
@@ -25,11 +27,13 @@ import org.mockito.kotlin.*
 @RunWith(MockitoJUnitRunner::class)
 class RegistrationUseCaseTests {
 
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    lateinit var oneginiSdk: OneginiSDK
+
     @Mock
     lateinit var clientMock: OneginiClient
 
-    @Mock
-    lateinit var userClientMock: UserClient
+
 
     @Spy
     lateinit var resultSpy: MethodChannel.Result
@@ -40,20 +44,22 @@ class RegistrationUseCaseTests {
     @Mock
     lateinit var oneginiIdentityProviderMock: OneginiIdentityProvider
 
+    lateinit var registrationUseCase: RegistrationUseCase
+
     @Before
     fun attach() {
-        whenever(clientMock.userClient).thenReturn(userClientMock)
+        registrationUseCase = RegistrationUseCase(oneginiSdk)
     }
 
     @Test
     fun `should call result success with identity provider id as a param when given identity provider id is null`() {
         whenever(callMock.argument<String>("identityProviderId")).thenReturn(null)
         whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
-        whenever(userClientMock.registerUser(isNull(), eq(arrayOf("read")), any())).thenAnswer {
+        whenever(oneginiSdk.oneginiClient.userClient.registerUser(isNull(), eq(arrayOf("read")), any())).thenAnswer {
             it.getArgument<OneginiRegistrationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0, ""))
         }
 
-        RegistrationUseCase(clientMock)(callMock, resultSpy)
+        registrationUseCase(callMock, resultSpy)
 
         val userProfileJson = mapOf("profileId" to "QWERTY", "isDefault" to false)
         val customInfoJson = mapOf("data" to "", "status" to 0)
@@ -69,12 +75,12 @@ class RegistrationUseCaseTests {
         whenever(oneginiIdentityProviderMock.id).thenReturn("testId")
         whenever(callMock.argument<String>("identityProviderId")).thenReturn("testId")
         whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
-        whenever(userClientMock.identityProviders).thenReturn(setOfIdentityProviders)
+        whenever(oneginiSdk.oneginiClient.userClient.identityProviders).thenReturn(setOfIdentityProviders)
 
-        RegistrationUseCase(clientMock)(callMock, resultSpy)
+        registrationUseCase(callMock, resultSpy)
 
         argumentCaptor<OneginiIdentityProvider> {
-            verify(clientMock.userClient).registerUser(capture(), eq(arrayOf("read")), any())
+            verify(oneginiSdk.oneginiClient.userClient).registerUser(capture(), eq(arrayOf("read")), any())
             assertThat(firstValue.id).isEqualTo("testId")
         }
     }
@@ -86,9 +92,9 @@ class RegistrationUseCaseTests {
         whenever(oneginiIdentityProviderMock.id).thenReturn("test")
         whenever(callMock.argument<String>("identityProviderId")).thenReturn("testId")
         whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
-        whenever(userClientMock.identityProviders).thenReturn(setOfIdentityProviders)
+        whenever(oneginiSdk.oneginiClient.userClient.identityProviders).thenReturn(setOfIdentityProviders)
 
-        RegistrationUseCase(clientMock)(callMock, resultSpy)
+        registrationUseCase(callMock, resultSpy)
 
         verify(resultSpy).error(eq(IDENTITY_PROVIDER_NOT_FOUND.code.toString()), eq(IDENTITY_PROVIDER_NOT_FOUND.message), any())
     }
@@ -100,12 +106,12 @@ class RegistrationUseCaseTests {
         whenever(oneginiIdentityProviderMock.id).thenReturn("testId")
         whenever(callMock.argument<String>("identityProviderId")).thenReturn("testId")
         whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
-        whenever(userClientMock.identityProviders).thenReturn(setOfIdentityProviders)
-        whenever(userClientMock.registerUser(isNotNull(), eq(arrayOf("read")), any())).thenAnswer {
+        whenever(oneginiSdk.oneginiClient.userClient.identityProviders).thenReturn(setOfIdentityProviders)
+        whenever(oneginiSdk.oneginiClient.userClient.registerUser(isNotNull(), eq(arrayOf("read")), any())).thenAnswer {
             it.getArgument<OneginiRegistrationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0, ""))
         }
 
-        RegistrationUseCase(clientMock)(callMock, resultSpy)
+        registrationUseCase(callMock, resultSpy)
 
         val userProfileJson = mapOf("profileId" to "QWERTY", "isDefault" to false)
         val customInfoJson = mapOf("data" to "", "status" to 0)
@@ -118,19 +124,19 @@ class RegistrationUseCaseTests {
         whenever(callMock.argument<String>("identityProviderId")).thenReturn(null)
         whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
 
-        RegistrationUseCase(clientMock)(callMock, resultSpy)
+        registrationUseCase(callMock, resultSpy)
 
-        verify(clientMock.userClient).registerUser(isNull(), eq(arrayOf("read")), any())
+        verify(oneginiSdk.oneginiClient.userClient).registerUser(isNull(), eq(arrayOf("read")), any())
     }
 
     @Test
     fun `should scopes param be array of two scopes when given scopes contains two strings`() {
         whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read", "write"))
 
-        RegistrationUseCase(clientMock)(callMock, resultSpy)
+        registrationUseCase(callMock, resultSpy)
 
         argumentCaptor<Array<String>> {
-            verify(clientMock.userClient).registerUser(isNull(), capture(), any())
+            verify(oneginiSdk.oneginiClient.userClient).registerUser(isNull(), capture(), any())
             assertThat(firstValue.size).isEqualTo(2)
             assertThat(firstValue).isEqualTo(arrayOf("read", "write"))
         }
@@ -140,10 +146,10 @@ class RegistrationUseCaseTests {
     fun `should scopes param be array of zero lengths when given scopes is null`() {
         whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(null)
 
-        RegistrationUseCase(clientMock)(callMock, resultSpy)
+        registrationUseCase(callMock, resultSpy)
 
         argumentCaptor<Array<String>> {
-            verify(clientMock.userClient).registerUser(isNull(), capture(), any())
+            verify(oneginiSdk.oneginiClient.userClient).registerUser(isNull(), capture(), any())
             assertThat(firstValue).isEmpty()
         }
     }

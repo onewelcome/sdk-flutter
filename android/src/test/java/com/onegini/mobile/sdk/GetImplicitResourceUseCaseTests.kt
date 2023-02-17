@@ -6,6 +6,7 @@ import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.USER_NOT_AUTHENTICATED_IMPLICITLY
+import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.useCases.GetImplicitResourceUseCase
 import com.onegini.mobile.sdk.utils.RxSchedulerRule
@@ -17,6 +18,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Answers
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Spy
@@ -29,23 +31,17 @@ import org.mockito.kotlin.whenever
 @RunWith(MockitoJUnitRunner::class)
 class GetImplicitResourceUseCaseTests {
 
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    lateinit var oneginiSdk: OneginiSDK
+
     @get:Rule
     val schedulerRule = RxSchedulerRule()
-
-    @Mock
-    lateinit var clientMock: OneginiClient
-
-    @Mock
-    lateinit var userClientMock: UserClient
 
     @Mock
     lateinit var callMock: MethodCall
 
     @Mock
     lateinit var configModelMock: OneginiClientConfigModel
-
-    @Mock
-    lateinit var implicitResourceOkHttpClientMock: OkHttpClient
 
     @Mock
     lateinit var requestMock: Request
@@ -56,17 +52,16 @@ class GetImplicitResourceUseCaseTests {
     @Mock
     lateinit var resourceHelper: ResourceHelper
 
+    lateinit var getImplicitResourceUseCase: GetImplicitResourceUseCase
     @Before
     fun attach() {
-        whenever(clientMock.userClient).thenReturn(userClientMock)
-        whenever(userClientMock.implicitResourceOkHttpClient).thenReturn(implicitResourceOkHttpClientMock)
-        whenever(clientMock.configModel).thenReturn(configModelMock)
-        whenever(configModelMock.resourceBaseUrl).thenReturn("https://token-mobile.test.onegini.com/resources/")
+        getImplicitResourceUseCase = GetImplicitResourceUseCase(oneginiSdk)
+        whenever(oneginiSdk.oneginiClient.configModel.resourceBaseUrl).thenReturn("https://token-mobile.test.onegini.com/resources/")
     }
 
     @Test
     fun `should return error when the user is not implicitly authenticated`() {
-        GetImplicitResourceUseCase(clientMock)(callMock, resultSpy, resourceHelper)
+        getImplicitResourceUseCase(callMock, resultSpy, resourceHelper)
 
         verify(resultSpy).error(
             USER_NOT_AUTHENTICATED_IMPLICITLY.code.toString(), USER_NOT_AUTHENTICATED_IMPLICITLY.message,
@@ -76,9 +71,9 @@ class GetImplicitResourceUseCaseTests {
 
     @Test
     fun `should call getRequest with correct params`() {
-        whenever(userClientMock.implicitlyAuthenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
+        whenever(oneginiSdk.oneginiClient.userClient.implicitlyAuthenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
 
-        GetImplicitResourceUseCase(clientMock)(callMock, resultSpy, resourceHelper)
+        getImplicitResourceUseCase(callMock, resultSpy, resourceHelper)
 
         verify(resourceHelper).getRequest(callMock, "https://token-mobile.test.onegini.com/resources/")
     }
@@ -86,14 +81,13 @@ class GetImplicitResourceUseCaseTests {
     @Test
     fun `should call request with correct HTTP client`() {
         whenever(resourceHelper.getRequest(callMock, "https://token-mobile.test.onegini.com/resources/")).thenReturn(requestMock)
-        whenever(userClientMock.implicitlyAuthenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
+        whenever(oneginiSdk.oneginiClient.userClient.implicitlyAuthenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
 
-        GetImplicitResourceUseCase(clientMock)(callMock, resultSpy, resourceHelper)
-
+        getImplicitResourceUseCase(callMock, resultSpy, resourceHelper)
 
         argumentCaptor<OkHttpClient> {
             verify(resourceHelper).callRequest(capture(), eq(requestMock), eq(resultSpy))
-            Truth.assertThat(firstValue).isEqualTo(implicitResourceOkHttpClientMock)
+            Truth.assertThat(firstValue).isEqualTo(oneginiSdk.oneginiClient.userClient.implicitResourceOkHttpClient)
         }
     }
 }

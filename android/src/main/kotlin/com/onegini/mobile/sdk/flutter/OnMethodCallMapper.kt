@@ -83,10 +83,10 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
             // Resources
             Constants.METHOD_AUTHENTICATE_USER_IMPLICITLY -> oneginiMethodsWrapper.authenticateUserImplicitly(call, result, client)
             Constants.METHOD_AUTHENTICATE_DEVICE -> oneginiMethodsWrapper.authenticateDevice(call, result, client)
-            Constants.METHOD_GET_RESOURCE_ANONYMOUS -> oneginiMethodsWrapper.getResourceAnonymous(call, result, client, ResourceHelper())
-            Constants.METHOD_GET_RESOURCE -> oneginiMethodsWrapper.getResource(call, result, client, ResourceHelper())
-            Constants.METHOD_GET_IMPLICIT_RESOURCE -> oneginiMethodsWrapper.getImplicitResource(call, result, client, ResourceHelper())
-            Constants.METHOD_GET_UNAUTHENTICATED_RESOURCE -> oneginiMethodsWrapper.getUnauthenticatedResource(call, result, client, ResourceHelper())
+            Constants.METHOD_GET_RESOURCE_ANONYMOUS -> oneginiMethodsWrapper.getResourceAnonymous(call, result, client)
+            Constants.METHOD_GET_RESOURCE -> oneginiMethodsWrapper.getResource(call, result, client)
+            Constants.METHOD_GET_IMPLICIT_RESOURCE -> oneginiMethodsWrapper.getImplicitResource(call, result, client)
+            Constants.METHOD_GET_UNAUTHENTICATED_RESOURCE -> oneginiMethodsWrapper.getUnauthenticatedResource(call, result, client)
 
             // Other
             Constants.METHOD_CHANGE_PIN -> startChangePinFlow(result, client)

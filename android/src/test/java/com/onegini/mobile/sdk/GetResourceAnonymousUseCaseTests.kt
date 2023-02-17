@@ -4,6 +4,7 @@ import com.google.common.truth.Truth
 import com.onegini.mobile.sdk.android.client.DeviceClient
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
+import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.useCases.GetResourceAnonymousUseCase
 import com.onegini.mobile.sdk.utils.RxSchedulerRule
@@ -15,6 +16,7 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Answers
 import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.Spy
@@ -26,6 +28,10 @@ import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
 class GetResourceAnonymousUseCaseTests {
+
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    lateinit var oneginiSdk: OneginiSDK
+
     @get:Rule
     val schedulerRule = RxSchedulerRule()
 
@@ -33,16 +39,7 @@ class GetResourceAnonymousUseCaseTests {
     lateinit var clientMock: OneginiClient
 
     @Mock
-    lateinit var deviceClientMock: DeviceClient
-
-    @Mock
     lateinit var callMock: MethodCall
-
-    @Mock
-    lateinit var configModelMock: OneginiClientConfigModel
-
-    @Mock
-    lateinit var anonymousResourceOkHttpClientMock: OkHttpClient
 
     @Spy
     lateinit var resultSpy: MethodChannel.Result
@@ -53,17 +50,16 @@ class GetResourceAnonymousUseCaseTests {
     @Mock
     lateinit var resourceHelper: ResourceHelper
 
+    lateinit var getResourceAnonymousUseCase: GetResourceAnonymousUseCase
     @Before
     fun attach() {
-        whenever(clientMock.deviceClient).thenReturn(deviceClientMock)
-        whenever(deviceClientMock.anonymousResourceOkHttpClient).thenReturn(anonymousResourceOkHttpClientMock)
-        whenever(clientMock.configModel).thenReturn(configModelMock)
-        whenever(configModelMock.resourceBaseUrl).thenReturn("https://token-mobile.test.onegini.com/resources/")
+        getResourceAnonymousUseCase = GetResourceAnonymousUseCase(oneginiSdk)
+        whenever(oneginiSdk.oneginiClient.configModel.resourceBaseUrl).thenReturn("https://token-mobile.test.onegini.com/resources/")
     }
 
     @Test
     fun `should call getRequest with correct params`() {
-        GetResourceAnonymousUseCase(clientMock)(callMock, resultSpy, resourceHelper)
+        getResourceAnonymousUseCase(callMock, resultSpy, resourceHelper)
 
         verify(resourceHelper).getRequest(callMock, "https://token-mobile.test.onegini.com/resources/")
     }
@@ -72,11 +68,11 @@ class GetResourceAnonymousUseCaseTests {
     fun `should call request with correct HTTP client`() {
         whenever(resourceHelper.getRequest(callMock, "https://token-mobile.test.onegini.com/resources/")).thenReturn(requestMock)
 
-        GetResourceAnonymousUseCase(clientMock)(callMock, resultSpy, resourceHelper)
+        getResourceAnonymousUseCase(callMock, resultSpy, resourceHelper)
 
         argumentCaptor<OkHttpClient> {
             verify(resourceHelper).callRequest(capture(), eq(requestMock), eq(resultSpy))
-            Truth.assertThat(firstValue).isEqualTo(anonymousResourceOkHttpClientMock)
+            Truth.assertThat(firstValue).isEqualTo(oneginiSdk.oneginiClient.deviceClient.anonymousResourceOkHttpClient)
         }
     }
 

@@ -36,6 +36,7 @@ class OneginiMethodsWrapper @Inject constructor(
     private val logoutUseCase: LogoutUseCase,
     private val registerAuthenticatorUseCase: RegisterAuthenticatorUseCase,
     private val registrationUseCase: RegistrationUseCase,
+    private val resourceHelper: ResourceHelper,
     private val setPreferredAuthenticatorUseCase: SetPreferredAuthenticatorUseCase,
     private val startAppUseCase: StartAppUseCase,
     private val submitCustomRegistrationActionUseCase: SubmitCustomRegistrationActionUseCase
@@ -129,19 +130,19 @@ class OneginiMethodsWrapper @Inject constructor(
         authenticateUserImplicitlyUseCase(call, result)
     }
 
-    fun getResourceAnonymous(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient, resourceHelper: ResourceHelper){
+    fun getResourceAnonymous(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient){
         getResourceAnonymousUseCase(call, result, resourceHelper)
     }
 
-    fun getResource(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient, resourceHelper: ResourceHelper){
+    fun getResource(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient){
         getResourceUseCase(call, result, resourceHelper)
     }
 
-    fun getImplicitResource(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient, resourceHelper: ResourceHelper){
+    fun getImplicitResource(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient){
         getImplicitResourceUseCase(call, result, resourceHelper)
     }
 
-    fun getUnauthenticatedResource(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient, resourceHelper: ResourceHelper){
+    fun getUnauthenticatedResource(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient){
         getUnauthenticatedResourceUseCase(call, result, resourceHelper)
     }
 
