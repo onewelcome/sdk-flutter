@@ -20,7 +20,7 @@ class GetUserProfilesUseCase @Inject constructor (private val oneginiSDK: Onegin
         val userProfileArray: ArrayList<Map<String, Any>> = ArrayList()
         if (userProfiles != null) {
             for (userProfile in userProfiles) {
-                if (userProfile != null && userProfile.profileId != null) {
+                if (userProfile != null) {
                     val map = mutableMapOf<String, Any>()
                     map["isDefault"] = userProfile.isDefault
                     map["profileId"] = userProfile.profileId

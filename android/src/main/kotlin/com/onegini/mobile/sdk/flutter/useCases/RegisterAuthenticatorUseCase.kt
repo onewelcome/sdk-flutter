@@ -47,11 +47,9 @@ class RegisterAuthenticatorUseCase @Inject constructor(private val oneginiSDK: O
     private fun getAuthenticatorById(authenticatorId: String?, authenticatedUserProfile: UserProfile): OneginiAuthenticator? {
         var authenticator: OneginiAuthenticator? = null
         val notRegisteredAuthenticators = oneginiSDK.oneginiClient.userClient.getNotRegisteredAuthenticators(authenticatedUserProfile)
-        if (notRegisteredAuthenticators != null) {
-            for (auth in notRegisteredAuthenticators) {
-                if (auth.id == authenticatorId) {
-                    authenticator = auth
-                }
+        for (auth in notRegisteredAuthenticators) {
+            if (auth.id == authenticatorId) {
+                authenticator = auth
             }
         }
         return authenticator

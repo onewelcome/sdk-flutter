@@ -20,13 +20,11 @@ class GetAllAuthenticatorsUseCase @Inject constructor(private val oneginiSDK: On
         }
         val allAuthenticators = oneginiSDK.oneginiClient.userClient.getAllAuthenticators(authenticatedUserProfile)
         val authenticators: ArrayList<Map<String, String>> = ArrayList()
-        if (allAuthenticators != null) {
-            for (auth in allAuthenticators) {
-                val map = mutableMapOf<String, String>()
-                map["id"] = auth.id
-                map["name"] = auth.name
-                authenticators.add(map)
-            }
+        for (auth in allAuthenticators) {
+            val map = mutableMapOf<String, String>()
+            map["id"] = auth.id
+            map["name"] = auth.name
+            authenticators.add(map)
         }
         result.success(gson.toJson(authenticators))
     }
