@@ -8,8 +8,11 @@ import com.onegini.mobile.sdk.flutter.providers.CustomRegistrationAction
 import com.onegini.mobile.sdk.flutter.useCases.*
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class OneginiMethodsWrapper {
+@Singleton
+class OneginiMethodsWrapper @Inject constructor(private val handleRegisteredUrlUseCase: HandleRegisteredUrlUseCase){
 
     fun registerUser(call: MethodCall, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         RegistrationUseCase(oneginiClient)(call, result)
@@ -29,8 +32,8 @@ class OneginiMethodsWrapper {
         CancelCustomRegistrationActionUseCase(customRegistrationActions)(result, call)
     }
 
-    fun handleRegisteredUrl(call: MethodCall, context: Context, oneginiClient: OneginiClient) {
-        HandleRegisteredUrlUseCase(oneginiClient)(call, context)
+    fun handleRegisteredUrl(call: MethodCall, oneginiClient: OneginiClient) {
+        handleRegisteredUrlUseCase(call)
     }
 
     fun getIdentityProviders(result: MethodChannel.Result, oneginiClient: OneginiClient) {
@@ -53,8 +56,8 @@ class OneginiMethodsWrapper {
         GetUserProfilesUseCase(oneginiClient)(result)
     }
 
-    fun startApp(call: MethodCall, result: MethodChannel.Result, oneginiSDK: OneginiSDK, context: Context) {
-        StartAppUseCase(context, oneginiSDK)(call, result)
+    fun startApp(call: MethodCall, result: MethodChannel.Result, oneginiSDK: OneginiSDK) {
+        StartAppUseCase(oneginiSDK)(call, result)
     }
 
     fun getRegisteredAuthenticators(result: MethodChannel.Result, oneginiClient: OneginiClient) {

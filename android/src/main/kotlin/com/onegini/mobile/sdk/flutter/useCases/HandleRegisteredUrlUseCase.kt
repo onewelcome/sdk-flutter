@@ -4,14 +4,18 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import com.onegini.mobile.sdk.android.client.OneginiClient
+import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.activity.ActivityWebView
 import io.flutter.plugin.common.MethodCall
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class HandleRegisteredUrlUseCase(private var oneginiClient: OneginiClient) {
-    operator fun invoke(call: MethodCall, context: Context) {
+@Singleton
+class HandleRegisteredUrlUseCase @Inject constructor(private val context: Context, private val oneginiSDK: OneginiSDK) {
+    operator fun invoke(call: MethodCall) {
         val url = call.argument<String>("url") ?: ""
         val isInAppBrowser = call.argument<Int>("type")
-        val intent = prepareIntentBasedOnType(isInAppBrowser, context, url, oneginiClient)
+        val intent = prepareIntentBasedOnType(isInAppBrowser, context, url, oneginiSDK.getOneginiClient())
         context.startActivity(intent)
     }
 

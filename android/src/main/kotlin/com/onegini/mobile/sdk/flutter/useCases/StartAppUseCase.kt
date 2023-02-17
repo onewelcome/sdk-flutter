@@ -14,7 +14,7 @@ import com.onegini.mobile.sdk.flutter.models.CustomIdentityProviderConfig
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 
-class StartAppUseCase(private val context: Context, private val oneginiSDK: OneginiSDK) {
+class StartAppUseCase(private val oneginiSDK: OneginiSDK) {
     operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
         val customIdentityProviderConfigs = ArrayList<CustomIdentityProviderConfig>()
         call.argument<ArrayList<String>>("customIdentityProviderConfigs")?.forEach {
@@ -27,7 +27,7 @@ class StartAppUseCase(private val context: Context, private val oneginiSDK: Oneg
         val configModelClassName = call.argument<String>("configModelClassName")
         val config = Config(configModelClassName, securityControllerClassName, connectionTimeout, readTimeout, customIdentityProviderConfigs)
 
-        oneginiSDK.buildSDK(context, config, result)
+        oneginiSDK.buildSDK(config, result)
         start(oneginiSDK.getOneginiClient(), result)
     }
 

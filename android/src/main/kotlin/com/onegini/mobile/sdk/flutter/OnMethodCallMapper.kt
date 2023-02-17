@@ -25,16 +25,20 @@ import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
+import javax.inject.Inject
 
-class OnMethodCallMapper(private var context: Context, private val oneginiMethodsWrapper: OneginiMethodsWrapper, private val oneginiSDK: OneginiSDK) : MethodChannel.MethodCallHandler {
+class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: OneginiMethodsWrapper, private val oneginiSDK: OneginiSDK) : MethodChannel.MethodCallHandler {
 
-    override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
-        val client = oneginiSDK.getOneginiClient()
-
-        when {
-            call.method == Constants.METHOD_START_APP -> oneginiMethodsWrapper.startApp(call, result, oneginiSDK, context)
-            client != null -> onSDKMethodCall(call, client, result, oneginiSDK.getCustomRegistrationActions())
-            else -> SdkError(ONEWELCOME_SDK_NOT_INITIALIZED).flutterError(result)
+    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+        try {
+            when {
+                call.method == Constants.METHOD_START_APP -> oneginiMethodsWrapper.startApp(call, result, oneginiSDK)
+                else -> onSDKMethodCall(call, oneginiSDK.getOneginiClient(), result, oneginiSDK.getCustomRegistrationActions())
+            }
+        } catch (err: FlutterPluginException) {
+            // FIXME: This can be done better with an extension function for MethodChannel.Result.error
+            SdkError(ONEWELCOME_SDK_NOT_INITIALIZED).flutterError(result)
         }
     }
 
@@ -46,7 +50,7 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
 
             //Register
             Constants.METHOD_REGISTER_USER -> oneginiMethodsWrapper.registerUser(call, result, client)
-            Constants.METHOD_HANDLE_REGISTERED_URL -> oneginiMethodsWrapper.handleRegisteredUrl(call, context, client)
+            Constants.METHOD_HANDLE_REGISTERED_URL -> oneginiMethodsWrapper.handleRegisteredUrl(call, client)
             Constants.METHOD_GET_IDENTITY_PROVIDERS -> oneginiMethodsWrapper.getIdentityProviders(result, client)
             Constants.METHOD_CANCEL_BROWSER_REGISTRATION -> oneginiMethodsWrapper.cancelBrowserRegistration()
             Constants.METHOD_ACCEPT_PIN_REGISTRATION_REQUEST -> PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())

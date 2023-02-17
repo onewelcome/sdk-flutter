@@ -15,6 +15,7 @@ import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationActionI
 import io.flutter.plugin.common.MethodChannel
 import java.util.concurrent.TimeUnit
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -26,7 +27,7 @@ class OneginiSDK @Inject constructor(
     private var oneginiClient: OneginiClient? = null
     private var customRegistrationActions = ArrayList<CustomRegistrationAction>()
 
-    fun buildSDK(context: Context, config: Config, result: MethodChannel.Result) {
+    fun buildSDK(config: Config, result: MethodChannel.Result) {
         val registrationRequestHandler = BrowserRegistrationRequestHandler()
         val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
         val pinAuthenticationRequestHandler = PinAuthenticationRequestHandler()
@@ -57,8 +58,10 @@ class OneginiSDK @Inject constructor(
         oneginiClient = clientBuilder.build()
     }
 
-    fun getOneginiClient(): OneginiClient? {
-        return oneginiClient
+    fun getOneginiClient(): OneginiClient {
+        oneginiClient?.let {
+            return it
+        } ?: throw FlutterPluginException(ONEWELCOME_SDK_NOT_INITIALIZED)
     }
 
     fun getCustomRegistrationActions(): ArrayList<CustomRegistrationAction> {
