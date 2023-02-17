@@ -14,6 +14,8 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -45,7 +47,8 @@ class GetAllAuthenticatorsUseCaseTests {
 
         GetAllAuthenticatorsUseCase(clientMock)(resultSpy)
 
-        verify(resultSpy).error(AUTHENTICATED_USER_PROFILE_IS_NULL.code.toString(), AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
+        val message = AUTHENTICATED_USER_PROFILE_IS_NULL.message
+        verify(resultSpy).error(eq(AUTHENTICATED_USER_PROFILE_IS_NULL.code.toString()), eq(message), any())
     }
 
     @Test

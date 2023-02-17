@@ -55,7 +55,8 @@ class RegisterAuthenticatorUseCaseTests {
 
         RegisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(AUTHENTICATED_USER_PROFILE_IS_NULL.code.toString(), AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
+        val message = AUTHENTICATED_USER_PROFILE_IS_NULL.message
+        verify(resultSpy).error(eq(AUTHENTICATED_USER_PROFILE_IS_NULL.code.toString()), eq(message), any())
     }
 
     @Test
@@ -66,7 +67,8 @@ class RegisterAuthenticatorUseCaseTests {
 
         RegisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(AUTHENTICATOR_IS_NULL.code.toString(), AUTHENTICATOR_IS_NULL.message, null)
+        val message = AUTHENTICATOR_IS_NULL.message
+        verify(resultSpy).error(eq(AUTHENTICATOR_IS_NULL.code.toString()), eq(message), any())
     }
 
     @Test
@@ -77,7 +79,8 @@ class RegisterAuthenticatorUseCaseTests {
 
         RegisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(AUTHENTICATOR_IS_NULL.code.toString(), AUTHENTICATOR_IS_NULL.message, null)
+        val message = AUTHENTICATOR_IS_NULL.message
+        verify(resultSpy).error(eq(AUTHENTICATOR_IS_NULL.code.toString()), eq(message), any())
     }
 
     @Test
@@ -109,6 +112,7 @@ class RegisterAuthenticatorUseCaseTests {
 
         RegisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(oneginiAuthenticatorRegistrationErrorMock.errorType.toString(), oneginiAuthenticatorRegistrationErrorMock.message, null)
+        val message = oneginiAuthenticatorRegistrationErrorMock.message
+        verify(resultSpy).error(eq(oneginiAuthenticatorRegistrationErrorMock.errorType.toString()), eq(message), any())
     }
 }

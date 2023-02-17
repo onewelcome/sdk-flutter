@@ -17,7 +17,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
-import org.mockito.Mockito.verify
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.*
@@ -91,7 +90,7 @@ class RegistrationUseCaseTests {
 
         RegistrationUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(eq(IDENTITY_PROVIDER_NOT_FOUND.code.toString()), eq(IDENTITY_PROVIDER_NOT_FOUND.message), isNull())
+        verify(resultSpy).error(eq(IDENTITY_PROVIDER_NOT_FOUND.code.toString()), eq(IDENTITY_PROVIDER_NOT_FOUND.message), any())
     }
 
     @Test

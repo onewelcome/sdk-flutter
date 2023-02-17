@@ -12,6 +12,7 @@ import org.mockito.Mockito
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
@@ -37,7 +38,7 @@ class GetRedirectUrlUseCaseTests {
 
         GetRedirectUrlUseCase(clientMock)(resultSpy)
 
-        Mockito.verify(resultSpy).success("")
+        verify(resultSpy).success("")
     }
 
     @Test
@@ -46,6 +47,6 @@ class GetRedirectUrlUseCaseTests {
 
         GetRedirectUrlUseCase(clientMock)(resultSpy)
 
-        Mockito.verify(resultSpy).success("http://test.com")
+        verify(resultSpy).success("http://test.com")
     }
 }

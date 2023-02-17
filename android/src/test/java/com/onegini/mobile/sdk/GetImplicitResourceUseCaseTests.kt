@@ -92,7 +92,7 @@ class GetImplicitResourceUseCaseTests {
 
 
         argumentCaptor<OkHttpClient> {
-            Mockito.verify(resourceHelper).callRequest(capture(), eq(requestMock), eq(resultSpy))
+            verify(resourceHelper).callRequest(capture(), eq(requestMock), eq(resultSpy))
             Truth.assertThat(firstValue).isEqualTo(implicitResourceOkHttpClientMock)
         }
     }

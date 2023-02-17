@@ -14,6 +14,7 @@ import org.mockito.Mockito
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
@@ -39,7 +40,7 @@ class GetUserProfileUseCaseTests {
 
         GetUserProfilesUseCase(clientMock)(resultSpy)
 
-        Mockito.verify(resultSpy).success(Gson().toJson(emptySet<UserProfile>()))
+        verify(resultSpy).success(Gson().toJson(emptySet<UserProfile>()))
     }
 
     @Test
@@ -49,7 +50,7 @@ class GetUserProfileUseCaseTests {
         GetUserProfilesUseCase(clientMock)(resultSpy)
 
         val expectedResult = Gson().toJson(setOf(mapOf( "isDefault" to false, "profileId" to "QWERTY")))
-        Mockito.verify(resultSpy).success(eq(expectedResult))
+        verify(resultSpy).success(eq(expectedResult))
     }
 
     @Test
@@ -59,6 +60,6 @@ class GetUserProfileUseCaseTests {
         GetUserProfilesUseCase(clientMock)(resultSpy)
 
         val expectedResult = Gson().toJson(setOf(mapOf("isDefault" to false, "profileId" to "QWERTY"),mapOf("isDefault" to false, "profileId" to "ASDFGH")))
-        Mockito.verify(resultSpy).success(eq(expectedResult))
+        verify(resultSpy).success(eq(expectedResult))
     }
 }

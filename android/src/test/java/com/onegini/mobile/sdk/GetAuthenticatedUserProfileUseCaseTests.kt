@@ -15,6 +15,7 @@ import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
@@ -40,7 +41,7 @@ class GetAuthenticatedUserProfileUseCaseTests {
 
         GetAuthenticatedUserProfileUseCase(clientMock)(resultSpy)
 
-        Mockito.verify(resultSpy).success(isNull())
+        verify(resultSpy).success(isNull())
     }
 
     @Test
@@ -51,6 +52,6 @@ class GetAuthenticatedUserProfileUseCaseTests {
 
         val expectedResult = Gson().toJson(mapOf("profileId" to "QWERTY", "isDefault" to false))
         
-        Mockito.verify(resultSpy).success(eq(expectedResult))
+        verify(resultSpy).success(eq(expectedResult))
     }
 }
