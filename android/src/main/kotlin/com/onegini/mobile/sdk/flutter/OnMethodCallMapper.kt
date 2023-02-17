@@ -34,7 +34,7 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
         try {
             when {
                 call.method == Constants.METHOD_START_APP -> oneginiMethodsWrapper.startApp(call, result, oneginiSDK)
-                else -> onSDKMethodCall(call, oneginiSDK.getOneginiClient(), result, oneginiSDK.getCustomRegistrationActions())
+                else -> onSDKMethodCall(call, oneginiSDK.oneginiClient, result)
             }
         } catch (err: FlutterPluginException) {
             // FIXME: This can be done better with an extension function for MethodChannel.Result.error
@@ -42,14 +42,14 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
         }
     }
 
-    private fun onSDKMethodCall(call: MethodCall, client: OneginiClient, result: MethodChannel.Result, customRegistrationActions: ArrayList<CustomRegistrationAction>) {
+    private fun onSDKMethodCall(call: MethodCall, client: OneginiClient, result: MethodChannel.Result) {
         when (call.method) {
             // Custom Registration Callbacks
-            Constants.METHOD_SUBMIT_CUSTOM_REGISTRATION_ACTION -> oneginiMethodsWrapper.respondCustomRegistrationAction(call, result, customRegistrationActions)
-            Constants.METHOD_CANCEL_CUSTOM_REGISTRATION_ACTION -> oneginiMethodsWrapper.cancelCustomRegistrationAction(call, result, customRegistrationActions)
+            Constants.METHOD_SUBMIT_CUSTOM_REGISTRATION_ACTION -> oneginiMethodsWrapper.respondCustomRegistrationAction(call, result)
+            Constants.METHOD_CANCEL_CUSTOM_REGISTRATION_ACTION -> oneginiMethodsWrapper.cancelCustomRegistrationAction(call, result)
 
             //Register
-            Constants.METHOD_REGISTER_USER -> oneginiMethodsWrapper.registerUser(call, result, client)
+            Constants.METHOD_REGISTER_USER -> oneginiMethodsWrapper.registerUser(call, result)
             Constants.METHOD_HANDLE_REGISTERED_URL -> oneginiMethodsWrapper.handleRegisteredUrl(call, client)
             Constants.METHOD_GET_IDENTITY_PROVIDERS -> oneginiMethodsWrapper.getIdentityProviders(result, client)
             Constants.METHOD_CANCEL_BROWSER_REGISTRATION -> oneginiMethodsWrapper.cancelBrowserRegistration()

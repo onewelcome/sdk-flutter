@@ -13,8 +13,11 @@ import com.onegini.mobile.sdk.flutter.models.Config
 import com.onegini.mobile.sdk.flutter.models.CustomIdentityProviderConfig
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class StartAppUseCase(private val oneginiSDK: OneginiSDK) {
+@Singleton
+class StartAppUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
     operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
         val customIdentityProviderConfigs = ArrayList<CustomIdentityProviderConfig>()
         call.argument<ArrayList<String>>("customIdentityProviderConfigs")?.forEach {
@@ -28,14 +31,14 @@ class StartAppUseCase(private val oneginiSDK: OneginiSDK) {
         val config = Config(configModelClassName, securityControllerClassName, connectionTimeout, readTimeout, customIdentityProviderConfigs)
 
         oneginiSDK.buildSDK(config, result)
-        start(oneginiSDK.getOneginiClient(), result)
+        start(oneginiSDK.oneginiClient, result)
     }
 
     private fun start(oneginiClient: OneginiClient?, result: MethodChannel.Result) {
         if (oneginiClient == null) {
             SdkError(ONEWELCOME_SDK_NOT_INITIALIZED).flutterError(result)
         } else {
-            oneginiClient.start(object : OneginiInitializationHandler {
+            oneginiSDK.oneginiClient.start(object : OneginiInitializationHandler {
                 override fun onSuccess(removedUserProfiles: Set<UserProfile>) {
                     val removedUserProfileArray = getRemovedUserProfileArray(removedUserProfiles)
                     result.success(Gson().toJson(removedUserProfileArray))

@@ -24,7 +24,11 @@ class OneginiSDK @Inject constructor(
     private val applicationContext: Context,
 ){
 
-    private var oneginiClient: OneginiClient? = null
+    val oneginiClient: OneginiClient
+        get() = OneginiClient.getInstance()?.let {client ->
+                return client
+            } ?: throw FlutterPluginException(ONEWELCOME_SDK_NOT_INITIALIZED)
+
     private var customRegistrationActions = ArrayList<CustomRegistrationAction>()
 
     fun buildSDK(config: Config, result: MethodChannel.Result) {
@@ -55,13 +59,7 @@ class OneginiSDK @Inject constructor(
 
         setSecurityController(clientBuilder, config, result)
 
-        oneginiClient = clientBuilder.build()
-    }
-
-    fun getOneginiClient(): OneginiClient {
-        oneginiClient?.let {
-            return it
-        } ?: throw FlutterPluginException(ONEWELCOME_SDK_NOT_INITIALIZED)
+        clientBuilder.build()
     }
 
     fun getCustomRegistrationActions(): ArrayList<CustomRegistrationAction> {

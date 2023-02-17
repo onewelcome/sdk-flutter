@@ -2,12 +2,16 @@ package com.onegini.mobile.sdk.flutter.useCases
 
 import com.google.gson.GsonBuilder
 import com.onegini.mobile.sdk.android.client.OneginiClient
+import com.onegini.mobile.sdk.flutter.OneginiSDK
 import io.flutter.plugin.common.MethodChannel
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class GetIdentityProvidersUseCase(private val oneginiClient: OneginiClient) {
+@Singleton
+class GetIdentityProvidersUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
     operator fun invoke(result: MethodChannel.Result) {
         val gson = GsonBuilder().serializeNulls().create()
-        val identityProviders = oneginiClient.userClient.identityProviders
+        val identityProviders = oneginiSDK.oneginiClient.userClient.identityProviders
         val providers: ArrayList<Map<String, String>> = ArrayList()
         if (identityProviders != null) {
             for (identityProvider in identityProviders) {

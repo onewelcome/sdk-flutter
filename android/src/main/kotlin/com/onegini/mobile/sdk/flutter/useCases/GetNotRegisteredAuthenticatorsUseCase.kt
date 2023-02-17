@@ -3,18 +3,22 @@ package com.onegini.mobile.sdk.flutter.useCases
 import com.google.gson.GsonBuilder
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodChannel
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class GetNotRegisteredAuthenticatorsUseCase(private val oneginiClient: OneginiClient) {
+@Singleton
+class GetNotRegisteredAuthenticatorsUseCase @Inject constructor (private val oneginiSDK: OneginiSDK) {
     operator fun invoke(result: MethodChannel.Result) {
         val gson = GsonBuilder().serializeNulls().create()
-        val authenticatedUserProfile = oneginiClient.userClient.authenticatedUserProfile
+        val authenticatedUserProfile = oneginiSDK.oneginiClient.userClient.authenticatedUserProfile
         if (authenticatedUserProfile == null) {
             SdkError(AUTHENTICATED_USER_PROFILE_IS_NULL).flutterError(result)
             return
         }
-        val notRegisteredAuthenticators = oneginiClient.userClient.getNotRegisteredAuthenticators(authenticatedUserProfile)
+        val notRegisteredAuthenticators = oneginiSDK.oneginiClient.userClient.getNotRegisteredAuthenticators(authenticatedUserProfile)
         val authenticators: ArrayList<Map<String, String>> = ArrayList()
         if (notRegisteredAuthenticators != null) {
             for (auth in notRegisteredAuthenticators) {
