@@ -3,6 +3,7 @@ package com.onegini.mobile.sdk.flutter
 import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
+import com.onegini.mobile.sdk.android.handlers.request.OneginiMobileAuthWithPushFingerprintRequestHandler
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 import com.onegini.mobile.sdk.flutter.handlers.*
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
@@ -22,6 +23,11 @@ import javax.inject.Singleton
 @Singleton
 class OneginiSDK @Inject constructor(
     private val applicationContext: Context,
+    private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
+    private val fingerprintRequestHandler: FingerprintAuthenticationRequestHandler,
+    private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler,
+    private val createPinRequestHandler: PinRequestHandler,
+    private val mobileAuthWithOtpRequestHandler: MobileAuthOtpRequestHandler,
 ){
 
     val oneginiClient: OneginiClient
@@ -32,13 +38,8 @@ class OneginiSDK @Inject constructor(
     private var customRegistrationActions = ArrayList<CustomRegistrationAction>()
 
     fun buildSDK(config: Config, result: MethodChannel.Result) {
-        val registrationRequestHandler = BrowserRegistrationRequestHandler()
-        val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
-        val pinAuthenticationRequestHandler = PinAuthenticationRequestHandler()
-        val createPinRequestHandler = PinRequestHandler()
-        val mobileAuthWithOtpRequestHandler = MobileAuthOtpRequestHandler()
         val clientBuilder = OneginiClientBuilder(applicationContext, createPinRequestHandler, pinAuthenticationRequestHandler) // handlers for optional functionalities
-                .setBrowserRegistrationRequestHandler(registrationRequestHandler)
+                .setBrowserRegistrationRequestHandler(browserRegistrationRequestHandler)
                 .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler)
                 .setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
 

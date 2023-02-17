@@ -7,8 +7,11 @@ import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthenticationRe
 import com.onegini.mobile.sdk.flutter.constants.Constants
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class MobileAuthOtpRequestHandler : OneginiMobileAuthWithOtpRequestHandler {
+@Singleton
+class MobileAuthOtpRequestHandler @Inject constructor(): OneginiMobileAuthWithOtpRequestHandler {
     private var userProfileId: String? = null
     private var message: String? = null
     override fun startAuthentication(

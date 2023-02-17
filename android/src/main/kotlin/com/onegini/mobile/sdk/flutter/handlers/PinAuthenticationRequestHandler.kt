@@ -8,8 +8,11 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.constants.Constants
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class PinAuthenticationRequestHandler : OneginiPinAuthenticationRequestHandler {
+@Singleton
+class PinAuthenticationRequestHandler @Inject constructor(): OneginiPinAuthenticationRequestHandler {
     companion object {
         var CALLBACK: OneginiPinCallback? = null
     }

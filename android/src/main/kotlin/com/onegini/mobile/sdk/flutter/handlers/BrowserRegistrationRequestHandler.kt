@@ -12,7 +12,7 @@ import javax.inject.Singleton
 
 // TODO Put functions into use cases; https://onewelcome.atlassian.net/browse/FP-35
 @Singleton
-class BrowserRegistrationRequestHandler @Inject constructor() : OneginiBrowserRegistrationRequestHandler {
+class BrowserRegistrationRequestHandler @Inject constructor(): OneginiBrowserRegistrationRequestHandler {
 
     companion object {
         private var CALLBACK: OneginiBrowserRegistrationCallback? = null
