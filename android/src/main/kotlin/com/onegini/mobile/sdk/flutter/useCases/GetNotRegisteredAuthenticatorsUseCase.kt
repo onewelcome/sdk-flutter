@@ -20,13 +20,11 @@ class GetNotRegisteredAuthenticatorsUseCase @Inject constructor (private val one
         }
         val notRegisteredAuthenticators = oneginiSDK.oneginiClient.userClient.getNotRegisteredAuthenticators(authenticatedUserProfile)
         val authenticators: ArrayList<Map<String, String>> = ArrayList()
-        if (notRegisteredAuthenticators != null) {
-            for (auth in notRegisteredAuthenticators) {
-                val map = mutableMapOf<String, String>()
-                map["id"] = auth.id
-                map["name"] = auth.name
-                authenticators.add(map)
-            }
+        for (auth in notRegisteredAuthenticators) {
+            val map = mutableMapOf<String, String>()
+            map["id"] = auth.id
+            map["name"] = auth.name
+            authenticators.add(map)
         }
         result.success(gson.toJson(authenticators))
     }
