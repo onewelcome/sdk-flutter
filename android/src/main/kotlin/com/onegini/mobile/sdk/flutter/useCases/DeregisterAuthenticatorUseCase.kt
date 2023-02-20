@@ -24,7 +24,7 @@ class DeregisterAuthenticatorUseCase @Inject constructor(private val oneginiSDK:
         }
         val authenticator = getAuthenticatorById(authenticatorId, userProfile)
         if (authenticator == null) {
-            SdkError(AUTHENTICATOR_IS_NULL).flutterError(result)
+            SdkError(AUTHENTICATOR_NOT_FOUND).flutterError(result)
             return
         }
         oneginiSDK.oneginiClient.userClient.deregisterAuthenticator(authenticator, object : OneginiAuthenticatorDeregistrationHandler {

@@ -62,8 +62,8 @@ class SetPreferredAuthenticatorUseCaseTests {
 
         setPreferredAuthenticatorUseCase(callMock, resultSpy)
 
-        val message = AUTHENTICATOR_IS_NULL.message
-        verify(resultSpy).error(eq(AUTHENTICATOR_IS_NULL.code.toString()), eq(message), any())
+        val message = AUTHENTICATOR_NOT_FOUND.message
+        verify(resultSpy).error(eq(AUTHENTICATOR_NOT_FOUND.code.toString()), eq(message), any())
     }
 
     @Test
@@ -74,8 +74,8 @@ class SetPreferredAuthenticatorUseCaseTests {
 
         setPreferredAuthenticatorUseCase(callMock, resultSpy)
 
-        val message = AUTHENTICATOR_IS_NULL.message
-        verify(resultSpy).error(eq(AUTHENTICATOR_IS_NULL.code.toString()), eq(message), any())
+        val message = AUTHENTICATOR_NOT_FOUND.message
+        verify(resultSpy).error(eq(AUTHENTICATOR_NOT_FOUND.code.toString()), eq(message), any())
     }
 
     @Test
