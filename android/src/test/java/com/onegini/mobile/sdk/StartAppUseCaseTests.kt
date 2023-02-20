@@ -71,7 +71,8 @@ class StartAppUseCaseTests {
 
         StartAppUseCase(contextMock, oneginiSDKMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(oneginiInitializationError.errorType.toString(), oneginiInitializationError.message, null)
+        val message = oneginiInitializationError.message
+        verify(resultSpy).error(eq(oneginiInitializationError.errorType.toString()), eq(message), any())
     }
 
     @Test

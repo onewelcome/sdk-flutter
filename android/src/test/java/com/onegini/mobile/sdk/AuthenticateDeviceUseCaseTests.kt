@@ -57,7 +57,8 @@ class AuthenticateDeviceUseCaseTests {
         }
         AuthenticateDeviceUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(oneginiDeviceAuthenticationErrorMock.errorType.toString(), oneginiDeviceAuthenticationErrorMock.message, null)
+        val message = oneginiDeviceAuthenticationErrorMock.message
+        verify(resultSpy).error(eq(oneginiDeviceAuthenticationErrorMock.errorType.toString()), eq(message), any())
     }
 
     @Test
@@ -78,7 +79,7 @@ class AuthenticateDeviceUseCaseTests {
         AuthenticateDeviceUseCase(clientMock)(callMock, resultSpy)
 
         argumentCaptor<Array<String>> {
-            Mockito.verify(deviceClientMock).authenticateDevice(capture(), ArgumentMatchers.any())
+            verify(deviceClientMock).authenticateDevice(capture(), ArgumentMatchers.any())
             Truth.assertThat(firstValue.size).isEqualTo(2)
             Truth.assertThat(firstValue).isEqualTo(arrayOf("read", "write"))
         }

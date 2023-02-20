@@ -47,7 +47,8 @@ class DeregisterUserUseCaseTests {
     fun `should return error when user not authenticated`() {
         DeregisterUserUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(USER_PROFILE_DOES_NOT_EXIST.code.toString(), USER_PROFILE_DOES_NOT_EXIST.message, null)
+        val message = USER_PROFILE_DOES_NOT_EXIST.message
+        verify(resultSpy).error(eq(USER_PROFILE_DOES_NOT_EXIST.code.toString()), eq(message), any())
     }
 
     @Test
@@ -76,6 +77,7 @@ class DeregisterUserUseCaseTests {
 
         DeregisterUserUseCase(clientMock)(callMock, resultSpy)
 
-        verify(resultSpy).error(oneginiDeregistrationErrorMock.errorType.toString(), oneginiDeregistrationErrorMock.message, null)
+        val message = oneginiDeregistrationErrorMock.message
+        verify(resultSpy).error(eq(oneginiDeregistrationErrorMock.errorType.toString()), eq(message), any())
     }
 }

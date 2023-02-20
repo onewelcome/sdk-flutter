@@ -13,6 +13,7 @@ import org.mockito.Mock
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -57,6 +58,7 @@ class LogoutUseCaseTests {
 
         LogoutUseCase(clientMock)(resultSpy)
 
-        verify(resultSpy).error(oneginiLogoutError.errorType.toString(), oneginiLogoutError.message, null)
+        val message = oneginiLogoutError.message
+        verify(resultSpy).error(eq(oneginiLogoutError.errorType.toString()), eq(message), any())
     }
 }

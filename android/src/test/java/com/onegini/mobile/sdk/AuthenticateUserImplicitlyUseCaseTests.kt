@@ -108,7 +108,7 @@ class AuthenticateUserImplicitlyUseCaseTests {
     AuthenticateUserImplicitlyUseCase(clientMock)(callMock, resultSpy)
 
     argumentCaptor<Array<String>> {
-      Mockito.verify(userClientMock).authenticateUserImplicitly(eq(UserProfile("QWERTY")), capture(), ArgumentMatchers.any())
+      verify(userClientMock).authenticateUserImplicitly(eq(UserProfile("QWERTY")), capture(), ArgumentMatchers.any())
       Truth.assertThat(firstValue.size).isEqualTo(2)
       Truth.assertThat(firstValue).isEqualTo(arrayOf("read", "write"))
     }

@@ -21,6 +21,7 @@ import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
@@ -62,7 +63,7 @@ class AuthenticateUserUseCaseTests {
         val userProfileJson = mapOf("profileId" to "QWERTY", "isDefault" to false)
         val customInfoJson = mapOf("data" to "", "status" to 0)
         val expectedResult = Gson().toJson(mapOf("userProfile" to userProfileJson, "customInfo" to customInfoJson))
-        Mockito.verify(resultSpy).success(expectedResult)
+        verify(resultSpy).success(expectedResult)
     }
 
     @Test
@@ -72,7 +73,8 @@ class AuthenticateUserUseCaseTests {
 
         AuthenticateUserUseCase(clientMock)(callMock, resultSpy)
 
-        Mockito.verify(resultSpy).error(USER_PROFILE_DOES_NOT_EXIST.code.toString(), USER_PROFILE_DOES_NOT_EXIST.message, null)
+        val message = USER_PROFILE_DOES_NOT_EXIST.message
+        verify(resultSpy).error(eq(USER_PROFILE_DOES_NOT_EXIST.code.toString()), eq(message), any())
     }
 
     @Test
@@ -83,7 +85,8 @@ class AuthenticateUserUseCaseTests {
 
         AuthenticateUserUseCase(clientMock)(callMock, resultSpy)
 
-        Mockito.verify(resultSpy).error(AUTHENTICATOR_NOT_FOUND.code.toString(), AUTHENTICATOR_NOT_FOUND.message, null)
+        val message = AUTHENTICATOR_NOT_FOUND.message
+        verify(resultSpy).error(eq(AUTHENTICATOR_NOT_FOUND.code.toString()), eq(message), any())
     }
 
     @Test
@@ -101,7 +104,7 @@ class AuthenticateUserUseCaseTests {
         val userProfileJson = mapOf("profileId" to "QWERTY", "isDefault" to false)
         val customInfoJson = mapOf("data" to "", "status" to 0)
         val expectedResult = Gson().toJson(mapOf("userProfile" to userProfileJson, "customInfo" to customInfoJson))
-        Mockito.verify(resultSpy).success(expectedResult)
+        verify(resultSpy).success(expectedResult)
     }
 
     @Test
@@ -116,7 +119,8 @@ class AuthenticateUserUseCaseTests {
 
         AuthenticateUserUseCase(clientMock)(callMock, resultSpy)
 
-        Mockito.verify(resultSpy).error(oneginiAuthenticationErrorMock.errorType.toString(), oneginiAuthenticationErrorMock.message, null)
+        val message = oneginiAuthenticationErrorMock.message
+        verify(resultSpy).error(eq(oneginiAuthenticationErrorMock.errorType.toString()), eq(message), any())
     }
 
 }

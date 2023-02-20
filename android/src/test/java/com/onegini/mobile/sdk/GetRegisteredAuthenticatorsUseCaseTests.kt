@@ -14,6 +14,7 @@ import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
@@ -58,7 +59,8 @@ class GetRegisteredAuthenticatorsUseCaseTests {
 
         GetRegisteredAuthenticatorsUseCase(clientMock)(resultSpy)
 
-        verify(resultSpy).error(USER_PROFILE_DOES_NOT_EXIST.code.toString(), USER_PROFILE_DOES_NOT_EXIST.message, null)
+        val message = USER_PROFILE_DOES_NOT_EXIST.message
+        verify(resultSpy).error(eq(USER_PROFILE_DOES_NOT_EXIST.code.toString()), eq(message), any())
     }
 
     @Test

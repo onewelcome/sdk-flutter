@@ -75,7 +75,7 @@ class GetUnauthenticatedResourceUseCaseTests {
         GetUnauthenticatedResourceUseCase(clientMock)(callMock, resultSpy, resourceHelper)
 
         argumentCaptor<OkHttpClient> {
-            Mockito.verify(resourceHelper).callRequest(capture(), eq(requestMock), eq(resultSpy))
+            verify(resourceHelper).callRequest(capture(), eq(requestMock), eq(resultSpy))
             Truth.assertThat(firstValue).isEqualTo(unauthenticatedResourceOkHttpClient)
         }
     }

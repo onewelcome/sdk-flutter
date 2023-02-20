@@ -12,6 +12,7 @@ import org.mockito.Mockito
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.eq
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
@@ -37,7 +38,7 @@ class GetAccessTokenUseCaseTests {
 
         GetAccessTokenUseCase(clientMock)(resultSpy)
 
-        Mockito.verify(resultSpy).success(null)
+        verify(resultSpy).success(null)
     }
 
     @Test
@@ -46,6 +47,6 @@ class GetAccessTokenUseCaseTests {
 
         GetAccessTokenUseCase(clientMock)(resultSpy)
 
-        Mockito.verify(resultSpy).success(eq("test access token"))
+        verify(resultSpy).success(eq("test access token"))
     }
 }
