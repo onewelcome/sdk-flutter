@@ -1,7 +1,6 @@
 package com.onegini.mobile.sdk
 
 import com.google.gson.Gson
-import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.useCases.GetIdentityProvidersUseCase
@@ -21,9 +20,7 @@ class GetIdentityProvidersUseCaseTests {
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     lateinit var oneginiSdk: OneginiSDK
-
-
-
+    
     @Mock
     lateinit var oneginiIdentityProviderFirstMock: OneginiIdentityProvider
 

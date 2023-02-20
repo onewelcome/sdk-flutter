@@ -2,7 +2,6 @@ package com.onegini.mobile.sdk
 
 import com.google.common.truth.Truth
 import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.utils.RxSchedulerRule
@@ -32,15 +31,11 @@ class ResourceHelperTests {
 
     @Mock
     lateinit var clientMock: OneginiClient
-
-
-
     @Mock
     lateinit var callMock: MethodCall
 
     @Spy
     lateinit var resultSpy: MethodChannel.Result
-
 
     lateinit var resourceHelper: ResourceHelper
 

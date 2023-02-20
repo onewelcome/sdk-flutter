@@ -1,7 +1,6 @@
 package com.onegini.mobile.sdk
 
 import com.google.gson.Gson
-import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
@@ -20,15 +19,12 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-
 @RunWith(MockitoJUnitRunner::class)
 class GetNotRegisteredAuthenticatorsUseCaseTests {
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     lateinit var oneginiSdk: OneginiSDK
-
-
-
+    
     @Mock
     lateinit var oneginiAuthenticatorFirstMock: OneginiAuthenticator
 

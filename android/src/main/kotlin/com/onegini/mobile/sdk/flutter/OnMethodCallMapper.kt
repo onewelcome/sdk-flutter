@@ -37,7 +37,6 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
                 else -> onSDKMethodCall(call, oneginiSDK.oneginiClient, result)
             }
         } catch (err: FlutterPluginException) {
-            // FIXME: This can be done better with an extension function for MethodChannel.Result.error
             SdkError(ONEWELCOME_SDK_NOT_INITIALIZED).flutterError(result)
         }
     }

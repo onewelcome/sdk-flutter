@@ -2,7 +2,6 @@ package com.onegini.mobile.sdk
 
 import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticatorRegistrationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorRegistrationError
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
@@ -33,9 +32,6 @@ class RegisterAuthenticatorUseCaseTests {
 
     @Mock
     lateinit var clientMock: OneginiClient
-
-
-
     @Mock
     lateinit var callMock: MethodCall
 

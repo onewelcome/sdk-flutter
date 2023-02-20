@@ -1,7 +1,6 @@
 package com.onegini.mobile.sdk
 
 import com.google.common.truth.Truth
-import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
@@ -20,7 +19,6 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Answers
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.argumentCaptor
@@ -36,6 +34,12 @@ class GetImplicitResourceUseCaseTests {
 
     @get:Rule
     val schedulerRule = RxSchedulerRule()
+
+    @Mock
+    lateinit var userClient: UserClient
+
+    @Mock
+    lateinit var implicitResourceOkHttpClient: OkHttpClient
 
     @Mock
     lateinit var callMock: MethodCall
@@ -56,6 +60,8 @@ class GetImplicitResourceUseCaseTests {
     @Before
     fun attach() {
         getImplicitResourceUseCase = GetImplicitResourceUseCase(oneginiSdk)
+        whenever(oneginiSdk.oneginiClient.userClient).thenReturn(userClient)
+        whenever(userClient.implicitResourceOkHttpClient).thenReturn(implicitResourceOkHttpClient)
         whenever(oneginiSdk.oneginiClient.configModel.resourceBaseUrl).thenReturn("https://token-mobile.test.onegini.com/resources/")
     }
 

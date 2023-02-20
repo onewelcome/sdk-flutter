@@ -29,8 +29,6 @@ class AuthenticateUserUseCaseTests {
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     lateinit var oneginiSdk: OneginiSDK
 
-
-
     @Spy
     lateinit var resultSpy: MethodChannel.Result
 

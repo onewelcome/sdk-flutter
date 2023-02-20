@@ -20,10 +20,7 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
-
-
-@RunWith(MockitoJUnitRunner::class)
+import org.mockito.kotlin.whenever@RunWith(MockitoJUnitRunner::class)
 class AuthenticateDeviceUseCaseTests {
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)

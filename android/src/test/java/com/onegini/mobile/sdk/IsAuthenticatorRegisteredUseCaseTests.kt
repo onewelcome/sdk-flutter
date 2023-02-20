@@ -1,7 +1,6 @@
 package com.onegini.mobile.sdk
 
 import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
@@ -29,9 +28,6 @@ class IsAuthenticatorRegisteredUseCaseTests {
 
     @Mock
     lateinit var clientMock: OneginiClient
-
-
-
     @Mock
     lateinit var callMock: MethodCall
 

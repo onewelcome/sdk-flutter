@@ -1,6 +1,5 @@
 package com.onegini.mobile.sdk
 
-import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticatorDeregistrationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorDeregistrationError
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
@@ -21,7 +20,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-
 
 @RunWith(MockitoJUnitRunner::class)
 class DeregisterAuthenticatorUseCaseTests {
@@ -112,7 +110,4 @@ class DeregisterAuthenticatorUseCaseTests {
 
         val message = oneginiAuthenticatorDeregistrationErrorMock.message
         verify(resultSpy).error(eq(oneginiAuthenticatorDeregistrationErrorMock.errorType.toString()), eq(message), any()) 
-    }
-
-
-}
+    }}

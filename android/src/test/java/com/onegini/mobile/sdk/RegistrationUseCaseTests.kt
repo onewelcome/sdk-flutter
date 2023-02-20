@@ -3,7 +3,6 @@ package com.onegini.mobile.sdk
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiRegistrationHandler
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
@@ -23,7 +22,6 @@ import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.*
 
-
 @RunWith(MockitoJUnitRunner::class)
 class RegistrationUseCaseTests {
 
@@ -32,9 +30,6 @@ class RegistrationUseCaseTests {
 
     @Mock
     lateinit var clientMock: OneginiClient
-
-
-
     @Spy
     lateinit var resultSpy: MethodChannel.Result
 

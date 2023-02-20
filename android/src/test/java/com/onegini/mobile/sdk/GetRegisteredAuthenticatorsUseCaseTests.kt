@@ -29,9 +29,6 @@ class GetRegisteredAuthenticatorsUseCaseTests {
 
     @Mock
     lateinit var clientMock: OneginiClient
-
-
-
     @Mock
     lateinit var oneginiAuthenticatorFirstMock: OneginiAuthenticator
 

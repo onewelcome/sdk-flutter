@@ -1,6 +1,5 @@
 package com.onegini.mobile.sdk
 
-import android.content.Context
 import com.google.common.truth.Truth.assertThat
 import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
@@ -20,10 +19,7 @@ import org.mockito.Answers
 import org.mockito.Mock
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.*
-
-
-@RunWith(MockitoJUnitRunner::class)
+import org.mockito.kotlin.*@RunWith(MockitoJUnitRunner::class)
 class StartAppUseCaseTests {
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
@@ -37,9 +33,6 @@ class StartAppUseCaseTests {
 
     @Spy
     lateinit var resultSpy: MethodChannel.Result
-
-    @Mock
-    lateinit var oneginiSDKMock: OneginiSDK
 
     @Mock
     lateinit var oneginiInitializationError: OneginiInitializationError
@@ -115,7 +108,7 @@ class StartAppUseCaseTests {
         startAppUseCase(callMock, resultSpy)
 
         argumentCaptor<Config> {
-            verify(oneginiSDKMock).buildSDK(capture(), eq(resultSpy))
+            verify(oneginiSdk).buildSDK(capture(), eq(resultSpy))
             assertThat(firstValue.customIdentityProviderConfigs.size).isEqualTo(2)
             assertThat(firstValue.customIdentityProviderConfigs[0].providerId).isEqualTo("id1")
             assertThat(firstValue.customIdentityProviderConfigs[0].isTwoStep).isEqualTo(false)
@@ -135,7 +128,7 @@ class StartAppUseCaseTests {
         startAppUseCase(callMock, resultSpy)
 
         argumentCaptor<Config> {
-            verify(oneginiSDKMock).buildSDK(capture(), eq(resultSpy))
+            verify(oneginiSdk).buildSDK(capture(), eq(resultSpy))
             assertThat(firstValue.customIdentityProviderConfigs.size).isEqualTo(1)
             assertThat(firstValue.customIdentityProviderConfigs[0].providerId).isEqualTo("id1")
             assertThat(firstValue.customIdentityProviderConfigs[0].isTwoStep).isEqualTo(false)
@@ -153,7 +146,7 @@ class StartAppUseCaseTests {
         startAppUseCase(callMock, resultSpy)
 
         argumentCaptor<Config> {
-            verify(oneginiSDKMock).buildSDK(capture(), eq(resultSpy))
+            verify(oneginiSdk).buildSDK(capture(), eq(resultSpy))
             assertThat(firstValue.httpConnectionTimeout).isEqualTo(5)
             assertThat(firstValue.httpReadTimeout).isEqualTo(20)
         }
@@ -170,7 +163,7 @@ class StartAppUseCaseTests {
         startAppUseCase(callMock, resultSpy)
 
         argumentCaptor<Config> {
-            verify(oneginiSDKMock).buildSDK(capture(), eq(resultSpy))
+            verify(oneginiSdk).buildSDK(capture(), eq(resultSpy))
             assertThat(firstValue.configModelClassName).isEqualTo("com.onegini.mobile.onegini_example.OneginiConfigModel")
             assertThat(firstValue.securityControllerClassName).isEqualTo("com.onegini.mobile.onegini_example.SecurityController")
         }
@@ -187,7 +180,7 @@ class StartAppUseCaseTests {
         startAppUseCase(callMock, resultSpy)
 
         argumentCaptor<Config> {
-            verify(oneginiSDKMock).buildSDK(capture(), eq(resultSpy))
+            verify(oneginiSdk).buildSDK(capture(), eq(resultSpy))
             assertThat(firstValue.httpConnectionTimeout).isEqualTo(0)
             assertThat(firstValue.httpReadTimeout).isEqualTo(0)
         }

@@ -1,7 +1,6 @@
 package com.onegini.mobile.sdk
 
 import com.google.gson.Gson
-import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.useCases.GetAuthenticatedUserProfileUseCase
@@ -23,9 +22,6 @@ class GetAuthenticatedUserProfileUseCaseTests {
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     lateinit var oneginiSdk: OneginiSDK
-
-
-
     @Spy
     lateinit var resultSpy: MethodChannel.Result
 
