@@ -4,6 +4,7 @@ import androidx.annotation.NonNull
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.PigeonUserProfile
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -22,9 +23,11 @@ class OneginiPlugin : FlutterPlugin, UserClientApi {
     private lateinit var eventChannel: EventChannel
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        // Pigeon setup
         UserClientApi.setUp(flutterPluginBinding.binaryMessenger, this)
+        val nativeApi = NativeCallFlutterApi(flutterPluginBinding.binaryMessenger)
 
-        val oneginiSDK = OneginiSDK()
+        val oneginiSDK = OneginiSDK(nativeApi)
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "onegini")
         channel.setMethodCallHandler(OnMethodCallMapper(flutterPluginBinding.applicationContext, OneginiMethodsWrapper(), oneginiSDK))
         eventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "onegini_events")
@@ -44,18 +47,12 @@ class OneginiPlugin : FlutterPlugin, UserClientApi {
         channel.setMethodCallHandler(null)
     }
 
+    // Example function on how it could be initiated on Flutter send to Native
+    // Fixme limitation on failure platform exception structure; see
+    // https://github.com/flutter/flutter/issues/120861
     override fun fetchUserProfiles(callback: (Result<List<PigeonUserProfile>>) -> Unit) {
         val a = Result.success(listOf(PigeonUserProfile("ghalo", true)))
-//        throw SdkError(OneWelcomeWrapperErrors.GENERIC_ERROR)
-//        val b = Result.failure<List<PigeonUserProfile>>(Exception("meee", Throwable("boop")))
-//        a.onFailure { Throwable("meee", Throwable("boop")) }
-//        a.i
+//        val a = Result.failure<List<PigeonUserProfile>>(Exception("meee", Throwable("boop")))
         callback(a)
-//        throw Throwable("meee", Throwable("boop"))
-//        callback.onSuccess { listOf(UserProfile("ghalo", true)) }
-//        callback?.onFailure { throw Exc }
-//        { listOf(UserProfile("ghalo", true)) }
-//        callback?.onFailure { SdkError(OneWelcomeWrapperErrors.GENERIC_ERROR) }
     }
-
 }

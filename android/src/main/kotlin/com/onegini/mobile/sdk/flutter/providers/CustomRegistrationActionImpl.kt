@@ -10,16 +10,21 @@ import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.models.CustomRegistrationModel
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 import io.flutter.plugin.common.MethodChannel
 
-class CustomRegistrationActionImpl(private val providerId: String) : OneginiCustomRegistrationAction, CustomRegistrationAction {
+class CustomRegistrationActionImpl(private val providerId: String, private val onewelcomeEventApi: NativeCallFlutterApi) : OneginiCustomRegistrationAction, CustomRegistrationAction {
     var callback: OneginiCustomRegistrationCallback? = null
 
     override fun finishRegistration(callback: OneginiCustomRegistrationCallback, info: CustomInfo?) {
         this.callback = callback
 
+        // Example Tell flutter to start this method from native
+        onewelcomeEventApi.testEventFunction("customOneStepOnFinish") { }
+
         val data = Gson().toJson(CustomRegistrationModel(info?.data.orEmpty(), info?.status, providerId))
         OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_FINISH_CUSTOM_REGISTRATION, data)))
+
     }
 
     override fun getCustomRegistrationAction(): OneginiCustomRegistrationAction {

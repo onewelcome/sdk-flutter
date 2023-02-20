@@ -15,8 +15,9 @@ import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationActionI
 import io.flutter.plugin.common.MethodChannel
 import java.util.concurrent.TimeUnit
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 
-class OneginiSDK {
+class OneginiSDK(private var nativeApi: NativeCallFlutterApi) {
 
     private var oneginiClient: OneginiClient? = null
     private var customRegistrationActions = ArrayList<CustomRegistrationAction>()
@@ -64,8 +65,8 @@ class OneginiSDK {
     private fun initProviders(clientBuilder: OneginiClientBuilder, customIdentityProviderConfigs: List<CustomIdentityProviderConfig>) {
         customIdentityProviderConfigs.forEach {
             val action = when (it.isTwoStep) {
-                true -> CustomTwoStepRegistrationActionImpl(it.providerId)
-                false -> CustomRegistrationActionImpl(it.providerId)
+                true -> CustomTwoStepRegistrationActionImpl(it.providerId, nativeApi)
+                false -> CustomRegistrationActionImpl(it.providerId, nativeApi)
             }
 
             customRegistrationActions.add(action)
