@@ -1,13 +1,15 @@
 package com.onegini.mobile.sdk.flutter.handlers
 
-import android.content.Context
 import com.onegini.mobile.sdk.android.handlers.request.OneginiFingerprintAuthenticationRequestHandler
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiFingerprintCallback
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.constants.Constants
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class FingerprintAuthenticationRequestHandler(val context: Context) : OneginiFingerprintAuthenticationRequestHandler {
+@Singleton
+class FingerprintAuthenticationRequestHandler @Inject constructor(): OneginiFingerprintAuthenticationRequestHandler {
 
     override fun startAuthentication(userProfile: UserProfile, oneginiFingerprintCallback: OneginiFingerprintCallback) {
         fingerprintCallback = oneginiFingerprintCallback

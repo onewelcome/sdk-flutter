@@ -2,9 +2,11 @@ package com.onegini.mobile.sdk.flutter
 
 import androidx.annotation.NonNull
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
+import com.onegini.mobile.sdk.flutter.module.FlutterOneWelcomeSdkModule
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
+import javax.inject.Inject
 
 
 /** OneginiPlugin */
@@ -16,10 +18,18 @@ class OneginiPlugin : FlutterPlugin {
     private lateinit var channel: MethodChannel
     private lateinit var eventChannel: EventChannel
 
+    @Inject
+    lateinit var oneginiSDK: OneginiSDK
+
+    @Inject
+    lateinit var onMethodCallMapper: OnMethodCallMapper
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        val oneginiSDK = OneginiSDK()
+        val component = DaggerFlutterOneWelcomeSdkComponent.builder()
+            .flutterOneWelcomeSdkModule(FlutterOneWelcomeSdkModule(flutterPluginBinding.applicationContext))
+            .build()
+        component.inject(this)
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "onegini")
-        channel.setMethodCallHandler(OnMethodCallMapper(flutterPluginBinding.applicationContext, OneginiMethodsWrapper(), oneginiSDK))
+        channel.setMethodCallHandler(onMethodCallMapper)
         eventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "onegini_events")
         eventChannel.setStreamHandler(object : EventChannel.StreamHandler {
             override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
