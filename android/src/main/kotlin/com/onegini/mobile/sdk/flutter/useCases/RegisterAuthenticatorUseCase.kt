@@ -26,7 +26,7 @@ class RegisterAuthenticatorUseCase @Inject constructor(private val oneginiSDK: O
         }
         val authenticator = getAuthenticatorById(authenticatorId, authenticatedUserProfile)
         if (authenticator == null) {
-            SdkError(AUTHENTICATOR_IS_NULL).flutterError(result)
+            SdkError(AUTHENTICATOR_NOT_FOUND).flutterError(result)
             return
         }
         oneginiSDK.oneginiClient.userClient.registerAuthenticator(authenticator, object : OneginiAuthenticatorRegistrationHandler {
