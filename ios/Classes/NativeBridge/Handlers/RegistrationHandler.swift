@@ -22,9 +22,7 @@ protocol CustomRegistrationNotificationReceiverProtocol: class {
 }
 
 class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, PinHandlerToReceiverProtocol, RegistrationHandlerToPinHanlderProtocol {
-    
-    var middleTwoStep: Bool? = nil
-    
+
     var createPinChallenge: ONGCreatePinChallenge?
     var browserRegistrationChallenge: ONGBrowserRegistrationChallenge?
     var customRegistrationChallenge: ONGCustomRegistrationChallenge?
@@ -174,7 +172,7 @@ extension RegistrationHandler: ONGRegistrationDelegate {
 
         var result = Dictionary<String, Any?>()
         result["eventValue"] = challenge.url.absoluteString
-        
+
         sendCustomRegistrationNotification(CustomRegistrationNotification.eventHandleRegisteredUrl, result)
     }
 

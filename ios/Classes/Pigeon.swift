@@ -89,6 +89,8 @@ class UserClientApiCodec: FlutterStandardMessageCodec {
   static let shared = UserClientApiCodec(readerWriter: UserClientApiCodecReaderWriter())
 }
 
+/// Flutter calls native
+///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol UserClientApi {
   func fetchUserProfiles(completion: @escaping (Result<[PigeonUserProfile], Error>) -> Void)
@@ -114,6 +116,22 @@ class UserClientApiSetup {
       }
     } else {
       fetchUserProfilesChannel.setMessageHandler(nil)
+    }
+  }
+}
+/// Native calls Flutter
+///
+/// Generated class from Pigeon that represents Flutter messages that can be called from Swift.
+class NativeCallFlutterApi {
+  private let binaryMessenger: FlutterBinaryMessenger
+  init(binaryMessenger: FlutterBinaryMessenger){
+    self.binaryMessenger = binaryMessenger
+  }
+  func testEventFunction(argument argumentArg: String, completion: @escaping (String) -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.testEventFunction", binaryMessenger: binaryMessenger)
+    channel.sendMessage([argumentArg] as [Any?]) { response in
+      let result = response as! String
+      completion(result)
     }
   }
 }

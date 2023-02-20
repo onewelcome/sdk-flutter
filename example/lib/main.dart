@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/onegini.dart';
+import 'package:onegini/pigeon.dart';
+import 'package:onegini_example/onegini_pigeon_listener.dart';
 import 'package:onegini_example/screens/login_screen.dart';
 
 import 'onegini_listener.dart';
@@ -53,6 +55,9 @@ class _BodyWidgetState extends State<BodyWidget> {
   void initState() {
     _startApplication();
     super.initState();
+
+    // init listener class todo move this to start application
+    NativeCallFlutterApi.setup(OneginiPigeonListenerImpl());
   }
 
   void _startApplication() async {

@@ -68,7 +68,11 @@ private object UserClientApiCodec : StandardMessageCodec() {
   }
 }
 
-/** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+/**
+ * Flutter calls native
+ *
+ * Generated interface from Pigeon that represents a handler of messages from Flutter.
+ */
 interface UserClientApi {
   fun fetchUserProfiles(callback: (Result<List<PigeonUserProfile>>) -> Unit)
 
@@ -99,6 +103,27 @@ interface UserClientApi {
           channel.setMessageHandler(null)
         }
       }
+    }
+  }
+}
+/**
+ * Native calls Flutter
+ *
+ * Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.
+ */
+@Suppress("UNCHECKED_CAST")
+class NativeCallFlutterApi(private val binaryMessenger: BinaryMessenger) {
+  companion object {
+    /** The codec used by NativeCallFlutterApi. */
+    val codec: MessageCodec<Any?> by lazy {
+      StandardMessageCodec()
+    }
+  }
+  fun testEventFunction(argumentArg: String, callback: (String) -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.testEventFunction", codec)
+    channel.send(listOf(argumentArg)) {
+      val result = it as String
+      callback(result)
     }
   }
 }

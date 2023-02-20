@@ -11,9 +11,10 @@ import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.models.CustomRegistrationModel
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 import io.flutter.plugin.common.MethodChannel
 
-class CustomTwoStepRegistrationActionImpl(private val providerId: String) : OneginiCustomTwoStepRegistrationAction, CustomRegistrationAction {
+class CustomTwoStepRegistrationActionImpl(private val providerId: String, private val onewelcomeEventApi: NativeCallFlutterApi) : OneginiCustomTwoStepRegistrationAction, CustomRegistrationAction {
     var callback: OneginiCustomRegistrationCallback? = null
 
     override fun initRegistration(callback: OneginiCustomRegistrationCallback, info: CustomInfo?) {
@@ -25,6 +26,8 @@ class CustomTwoStepRegistrationActionImpl(private val providerId: String) : Oneg
 
     override fun finishRegistration(callback: OneginiCustomRegistrationCallback, customInfo: CustomInfo?) {
         this.callback = callback
+
+        onewelcomeEventApi.testEventFunction("custom2stepOnFinish") { }
 
         val data = Gson().toJson(CustomRegistrationModel(customInfo?.data.orEmpty(), customInfo?.status, providerId))
         OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_FINISH_CUSTOM_REGISTRATION, data)))

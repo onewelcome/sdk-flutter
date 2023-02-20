@@ -21,8 +21,16 @@ class PigeonUserProfile {
   PigeonUserProfile({ required this.profileId, required this.isDefault});
 }
 
+/// Flutter calls native
 @HostApi()
 abstract class UserClientApi {
   @async
-  Result<List<PigeonUserProfile>> fetchUserProfiles();
+  List<PigeonUserProfile> fetchUserProfiles();
+}
+
+/// Native calls Flutter
+@FlutterApi()
+abstract class NativeCallFlutterApi{
+  @async
+  String testEventFunction(String argument);
 }

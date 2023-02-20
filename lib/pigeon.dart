@@ -57,6 +57,7 @@ class _UserClientApiCodec extends StandardMessageCodec {
   }
 }
 
+/// Flutter calls native
 class UserClientApi {
   /// Constructor for [UserClientApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -91,6 +92,35 @@ class UserClientApi {
       );
     } else {
       return (replyList[0] as List<Object?>?)!.cast<PigeonUserProfile?>();
+    }
+  }
+}
+
+/// Native calls Flutter
+abstract class NativeCallFlutterApi {
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
+
+  Future<String> testEventFunction(String argument);
+
+  static void setup(NativeCallFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.testEventFunction', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.NativeCallFlutterApi.testEventFunction was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_argument = (args[0] as String?);
+          assert(arg_argument != null,
+              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.testEventFunction was null, expected non-null String.');
+          final String output = await api.testEventFunction(arg_argument!);
+          return output;
+        });
+      }
     }
   }
 }

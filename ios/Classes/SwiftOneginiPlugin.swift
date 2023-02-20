@@ -4,6 +4,8 @@ import UIKit
 extension FlutterError: Error {}
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
+  static var flutterApi: NativeCallFlutterApi?
+
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "onegini", binaryMessenger: registrar.messenger())
     let eventChannel = FlutterEventChannel(name: "onegini_events",
@@ -11,11 +13,16 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     let instance = SwiftOneginiPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
     eventChannel.setStreamHandler(OneginiModuleSwift.sharedInstance)
-      
+
     // Init Pigeon communication
     let messenger : FlutterBinaryMessenger = registrar.messenger()
     let api : UserClientApi & NSObjectProtocol = SwiftOneginiPlugin.init()
     UserClientApiSetup.setUp(binaryMessenger: messenger, api: api)
+
+    flutterApi = NativeCallFlutterApi(binaryMessenger: registrar.messenger())
+
+    // Example on call flutter function from native during start
+    flutterApi?.testEventFunction(argument: "we initilized the function", completion: {_ in })
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
@@ -98,6 +105,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
   }
     
+    // Example function for Flutter -> Native functions and how to return a response or error
     func fetchUserProfiles(completion: @escaping (Result<[PigeonUserProfile], Error>) -> Void) {
 //        let a = .success([PigeonUserProfile(profileId: "boopios", isDefault: true)])
         completion(.failure(SdkError(.userProfileDoesNotExist).flutterError()))
