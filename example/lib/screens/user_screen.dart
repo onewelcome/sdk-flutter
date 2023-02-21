@@ -71,14 +71,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     Navigator.pop(context);
     await Onegini.instance.userClient.logout().catchError((error) {
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     });
     Navigator.pushReplacement(
@@ -114,14 +107,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
         .registerAuthenticator(context, authenticatorId)
         .catchError((error) {
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     });
     await getAuthenticators();
@@ -140,14 +126,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
         .deregisterAuthenticator(context, authenticatorId)
         .catchError((error) {
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     });
     await getAuthenticators();
@@ -159,14 +138,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
         .setPreferredAuthenticator(context, authenticatorId)
         .catchError((error) {
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     });
     Navigator.pop(context);
@@ -184,14 +156,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
         .deregisterUser(profileId)
         .catchError((error) {
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     });
     if (isLogOut != null && isLogOut) {
@@ -206,14 +171,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     Navigator.pop(context);
     Onegini.instance.userClient.changePin(context).catchError((error) {
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
       Navigator.pushReplacement(
         context,
@@ -337,25 +295,11 @@ class Home extends StatelessWidget {
           .mobileAuthWithOtp(data)
           .catchError((error) {
         if (error is PlatformException) {
-          Fluttertoast.showToast(
-              msg: error.message,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.black38,
-              textColor: Colors.white,
-              fontSize: 16.0);
+          showFlutterToast(error.message);
         }
       });
       if (isSuccess != null && isSuccess.isNotEmpty)
-        Fluttertoast.showToast(
-            msg: isSuccess,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(isSuccess);
     }
   }
 
@@ -365,14 +309,7 @@ class Home extends StatelessWidget {
             "https://login-mobile.test.onegini.com/personal/dashboard")
         .catchError((error) {
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     });
     if (oneginiAppToWebSingleSignOn != null) {
@@ -390,14 +327,7 @@ class Home extends StatelessWidget {
       msg = msg + element.profileId + ", ";
     });
     msg = msg.substring(0, msg.length - 2);
-    Fluttertoast.showToast(
-        msg: msg,
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.black38,
-        textColor: Colors.white,
-        fontSize: 16.0);
+    showFlutterToast(msg);
   }
 
   showAuthenticatedUserProfile(BuildContext context) async {
@@ -485,14 +415,7 @@ class _InfoState extends State<Info> {
         .catchError((error) {
       print('Caught error: $error');
 
-      Fluttertoast.showToast(
-          msg: error.message,
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black38,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      showFlutterToast(error.message);
     });
 
     var res = json.decode(response);

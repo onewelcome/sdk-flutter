@@ -1,8 +1,8 @@
 // @dart = 2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/callbacks/onegini_fingerprint_callback.dart';
+import '../components/display_toast.dart';
 
 class FingerprintScreen extends StatefulWidget {
   @override
@@ -21,14 +21,7 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
         .acceptAuthenticationRequest(context)
         .catchError((error) {
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     });
   }
