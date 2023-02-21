@@ -69,7 +69,7 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
     }
 
     func getRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        OneginiModuleSwift.sharedInstance.fetchRegisteredAuthenticators(callback: result)
+        OneginiModuleSwift.sharedInstance.getRegisteredAuthenticators(callback: result)
     }
 
     func getAllNotRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
@@ -77,7 +77,10 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
     }
 
     func getAllAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        OneginiModuleSwift.sharedInstance.fetchAllAuthenticators(callback: result)
+        guard let arg = call.arguments as! [String: Any]? else { return; }
+        let profileId = arg["profileId"] as? String
+
+        OneginiModuleSwift.sharedInstance.getAllAuthenticators(callback: result)
     }
 
     func setPreferredAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
