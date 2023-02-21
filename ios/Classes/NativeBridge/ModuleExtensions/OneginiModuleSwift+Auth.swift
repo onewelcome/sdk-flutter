@@ -160,8 +160,7 @@ extension OneginiModuleSwift {
             callback(SdkError.convertToFlutter(SdkError(.authenticatedUserProfileIsNull)))
             return
         }
-        let value: [String: String] = ["profileId": profile.profileId]
-        callback(String.stringify(json: value))
+        callback(String.stringify(json: ["profileId": profile.profileId]))
     }
 }
 
