@@ -47,14 +47,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     ];
     super.initState();
     getAuthenticators();
-
-    //testDeregisterAuthenticator();
   }
-
-  // testDeregisterAuthenticator() async {
-  //   var result = await Onegini.instance.userClient.deregisterAuthenticator(context, "com.onegini.authenticator.TouchID");
-  //   print(result);
-  // }
 
   @override
   void didChangeDependencies() {
@@ -406,6 +399,19 @@ class Home extends StatelessWidget {
         fontSize: 16.0);
   }
 
+  authenticatedUserProfile(BuildContext context) async {
+    var profile =
+        await Onegini.instance.userClient.getAuthenticatedUserProfile(context);
+    Fluttertoast.showToast(
+        msg: 'Authenticated Userprofile: ${profile.profileId}',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.black38,
+        textColor: Colors.white,
+        fontSize: 16.0);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -441,6 +447,15 @@ class Home extends StatelessWidget {
               },
               child: Text('User profiles'),
             ),
+            SizedBox(
+              height: 20,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                authenticatedUserProfile(context);
+              },
+              child: Text('Authenticated Userprofile'),
+            ),
           ],
         ),
       ),
@@ -460,8 +475,9 @@ class Info extends StatefulWidget {
 class _InfoState extends State<Info> {
   Future<ApplicationDetails> getApplicationDetails() async {
     var response = "";
-    var success = await Onegini.instance.userClient.authenticateDevice(["read", "write", "application-details"]);
-    if(success!=null && success){
+    var success = await Onegini.instance.userClient
+        .authenticateDevice(["read", "write", "application-details"]);
+    if (success != null && success) {
       response = await Onegini.instance.resourcesMethods
           .getResourceAnonymous("application-details");
     }
@@ -470,19 +486,20 @@ class _InfoState extends State<Info> {
   }
 
   Future<ClientResource> getClientResource() async {
-    var response = await Onegini.instance.resourcesMethods.getResource("devices")
-      .catchError((error) {
-        print('Caught error: $error');
+    var response = await Onegini.instance.resourcesMethods
+        .getResource("devices")
+        .catchError((error) {
+      print('Caught error: $error');
 
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      });
+      Fluttertoast.showToast(
+          msg: error.message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black38,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    });
 
     var res = json.decode(response);
     return clientResourceFromJson(res["body"]);
@@ -491,9 +508,10 @@ class _InfoState extends State<Info> {
   Future<String> makeUnaunthenticatedRequest() async {
     var headers = {'Declareren-Appversion': 'CZ.app'};
     var response = await Onegini.instance.resourcesMethods
-        .getUnauthenticatedResource("devices", headers: headers, method: 'GET').catchError((onError) {
-          debugPrint(onError);
-        });
+        .getUnauthenticatedResource("devices", headers: headers, method: 'GET')
+        .catchError((onError) {
+      debugPrint(onError);
+    });
     var res = json.decode(response);
     return res["body"];
   }
