@@ -64,7 +64,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         
     case Constants.Routes.validatePinWithPolicy:
         validatePinWithPolicy(call, result)
-    
+    case Constants.Routes.getAuthenticatedUserProfile: getAuthenticatedUserProfile(result)
+    case Constants.Routes.getUserProfiles: getUserProfiles(result)
+
     // fingerprint
     case Constants.Routes.acceptFingerprintAuthenticationRequest: acceptFingerprintAuthenticationRequest(call, result)
     case Constants.Routes.denyFingerprintAuthenticationRequest: denyFingerprintAuthenticationRequest(call, result)
@@ -82,8 +84,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     // other
     case Constants.Routes.changePin: changePin(call, result)
     case Constants.Routes.getAppToWebSingleSignOn: getAppToWebSingleSignOn(call, result)
-    case Constants.Routes.getUserProfiles: getUserProfiles(result)
-    
+
     default: do {
         Logger.log("Method wasn't handled: " + call.method)
         result(FlutterMethodNotImplemented)

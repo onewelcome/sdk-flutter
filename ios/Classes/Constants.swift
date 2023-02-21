@@ -56,6 +56,7 @@ enum Constants {
         static let getAppToWebSingleSignOn: String = "getAppToWebSingleSignOn"
         static let changePin: String = "changePin"
         static let getUserProfiles: String = "getUserProfiles"
+        static let getAuthenticatedUserProfile: String = "getAuthenticatedUserProfile";
     }
     
     enum Keys {

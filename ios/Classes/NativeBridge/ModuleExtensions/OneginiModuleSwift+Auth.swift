@@ -154,5 +154,14 @@ extension OneginiModuleSwift {
             callback(value)
         }
     }
+    
+    func getAuthenticatedUserProfile(callback: @escaping FlutterResult) {
+        guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
+            callback(SdkError.convertToFlutter(SdkError(.authenticatedUserProfileIsNull)))
+            return
+        }
+        let value: [String: String] = ["profileId": profile.profileId]
+        callback(String.stringify(json: value))
+    }
 }
 
