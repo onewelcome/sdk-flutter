@@ -29,7 +29,7 @@ extension OneginiModuleSwift {
         
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
-            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
+            callback(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
             return
         }
 
@@ -50,7 +50,7 @@ extension OneginiModuleSwift {
     public func authenticateUserImplicitly(_ profileId: String, _ scopes: [String]?,
                                            _ callback: @escaping FlutterResult) {
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first(where: { $0.profileId == profileId }) else {
-            callback(SdkError(.userProfileDoesNotExist).flutterError())
+            callback(SdkError(.noUserProfileIsAuthenticated).flutterError())
             return
         }
 
@@ -84,7 +84,7 @@ extension OneginiModuleSwift {
         }
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
-            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
+            callback(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
             return
         }
         
@@ -118,7 +118,7 @@ extension OneginiModuleSwift {
         }
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
-            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
+            callback(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
             return
         }
         
@@ -140,7 +140,7 @@ extension OneginiModuleSwift {
         }
         guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
         {
-            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
+            callback(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
             return
         }
         

@@ -16,16 +16,14 @@ import javax.inject.Singleton
 class DeregisterAuthenticatorUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
     operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
         val authenticatorId = call.argument<String>("authenticatorId")
-        val userProfile = oneginiSDK.oneginiClient.userClient.userProfiles.firstOrNull()
-        if (userProfile == null) {
-            SdkError(USER_PROFILE_DOES_NOT_EXIST).flutterError(result)
-            return
-        }
+            ?: return SdkError(METHOD_ARGUMENT_NOT_FOUND).flutterError(result)
+
+        val userProfile = oneginiSDK.oneginiClient.userClient.authenticatedUserProfile
+            ?: return SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).flutterError(result)
+
         val authenticator = getAuthenticatorById(authenticatorId, userProfile)
-        if (authenticator == null) {
-            SdkError(AUTHENTICATOR_NOT_FOUND).flutterError(result)
-            return
-        }
+            ?: return SdkError(AUTHENTICATOR_NOT_FOUND).flutterError(result)
+
         oneginiSDK.oneginiClient.userClient.deregisterAuthenticator(authenticator, object : OneginiAuthenticatorDeregistrationHandler {
             override fun onSuccess() {
                 result.success(true)

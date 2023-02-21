@@ -87,8 +87,8 @@ class OneginiMethodsWrapper @Inject constructor(
         getRegisteredAuthenticatorsUseCase(call, result)
     }
 
-    fun getNotRegisteredAuthenticators(result: MethodChannel.Result) {
-        getNotRegisteredAuthenticatorsUseCase(result)
+    fun getNotRegisteredAuthenticators(call: MethodCall, result: MethodChannel.Result) {
+        getNotRegisteredAuthenticatorsUseCase(call, result)
     }
 
     fun setPreferredAuthenticator(call: MethodCall, result: MethodChannel.Result) {
@@ -107,8 +107,8 @@ class OneginiMethodsWrapper @Inject constructor(
         registerAuthenticatorUseCase(call, result)
     }
 
-    fun getAllAuthenticators(result: MethodChannel.Result) {
-        getAllAuthenticatorsUseCase(result)
+    fun getAllAuthenticators(call: MethodCall, result: MethodChannel.Result) {
+        getAllAuthenticatorsUseCase(call, result)
     }
 
     fun getRedirectUrl(result: MethodChannel.Result) {

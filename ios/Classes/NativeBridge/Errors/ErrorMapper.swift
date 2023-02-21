@@ -4,7 +4,7 @@ import OneginiCrypto
 enum OneWelcomeWrapperError: Int {
     // iOS and Android
     case genericError = 8000
-    case userProfileDoesNotExist = 8001
+    case noUserProfileIsAuthenticated = 8001
     case authenticatedUserProfileIsNull = 8002
     case authenticatorNotFound = 8004
     case httpRequestError = 8011
@@ -37,8 +37,8 @@ enum OneWelcomeWrapperError: Int {
         switch self {
         case .genericError:
             message = "Something went wrong."
-        case .userProfileDoesNotExist:
-            message = "The requested User profile does not exist."
+        case .noUserProfileIsAuthenticated:
+            message = "There is currently no User Profile authenticated."
         case .authenticatedUserProfileIsNull:
             message = "User authenticated profile is null."
         case .authenticatorNotFound:

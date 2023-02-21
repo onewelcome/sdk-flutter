@@ -18,7 +18,7 @@ object MobileAuthenticationObject {
         val userClient = oneginiClient.userClient
         val authenticatedUserProfile = oneginiClient.userClient.authenticatedUserProfile
         if (authenticatedUserProfile == null) {
-            SdkError(AUTHENTICATED_USER_PROFILE_IS_NULL).flutterError(result)
+            SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).flutterError(result)
             return
         }
         if (userClient.isUserEnrolledForMobileAuth(authenticatedUserProfile)) {

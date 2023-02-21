@@ -30,6 +30,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
   bool isContainNotRegisteredAuthenticators = true;
   List<OneginiListResponse> registeredAuthenticators = [];
   List<OneginiListResponse> notRegisteredAuthenticators = [];
+  String profileId = "";
 
   void onTabTapped(int index) {
     setState(() {
@@ -46,8 +47,8 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
       ),
     ];
     super.initState();
+    this.profileId = widget.userProfileId;
     getAuthenticators();
-
     //testDeregisterAuthenticator();
   }
 
@@ -95,14 +96,15 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   Future<void> getAuthenticators() async {
     notRegisteredAuthenticators = await Onegini.instance.userClient
-        .getNotRegisteredAuthenticators(context);
-    registeredAuthenticators =
-        await Onegini.instance.userClient.getRegisteredAuthenticators(context);
+        .getNotRegisteredAuthenticators(context, this.profileId);
+
+    registeredAuthenticators = await Onegini.instance.userClient
+        .getRegisteredAuthenticators(context, this.profileId);
   }
 
   Future<List<OneginiListResponse>> getAllSortAuthenticators() async {
-    var allAuthenticators =
-        await Onegini.instance.userClient.getAllAuthenticators(context);
+    var allAuthenticators = await Onegini.instance.userClient
+        .getAllAuthenticators(context, this.profileId);
     allAuthenticators.sort((a, b) {
       return compareAsciiUpperCase(a.name, b.name);
     });
@@ -111,7 +113,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   Future<List<OneginiListResponse>> getNotRegisteredAuthenticators() async {
     var authenticators = await Onegini.instance.userClient
-        .getNotRegisteredAuthenticators(context);
+        .getNotRegisteredAuthenticators(context, this.profileId);
     return authenticators;
   }
 
@@ -281,7 +283,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
             ),
             FutureBuilder<List<OneginiListResponse>>(
               future: Onegini.instance.userClient
-                  .getRegisteredAuthenticators(context),
+                  .getRegisteredAuthenticators(context, this.profileId),
               builder: (BuildContext context, snapshot) {
                 return PopupMenuButton<String>(
                     child: ListTile(
@@ -460,8 +462,9 @@ class Info extends StatefulWidget {
 class _InfoState extends State<Info> {
   Future<ApplicationDetails> getApplicationDetails() async {
     var response = "";
-    var success = await Onegini.instance.userClient.authenticateDevice(["read", "write", "application-details"]);
-    if(success!=null && success){
+    var success = await Onegini.instance.userClient
+        .authenticateDevice(["read", "write", "application-details"]);
+    if (success != null && success) {
       response = await Onegini.instance.resourcesMethods
           .getResourceAnonymous("application-details");
     }
@@ -470,19 +473,20 @@ class _InfoState extends State<Info> {
   }
 
   Future<ClientResource> getClientResource() async {
-    var response = await Onegini.instance.resourcesMethods.getResource("devices")
-      .catchError((error) {
-        print('Caught error: $error');
+    var response = await Onegini.instance.resourcesMethods
+        .getResource("devices")
+        .catchError((error) {
+      print('Caught error: $error');
 
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
-      });
+      Fluttertoast.showToast(
+          msg: error.message,
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 1,
+          backgroundColor: Colors.black38,
+          textColor: Colors.white,
+          fontSize: 16.0);
+    });
 
     var res = json.decode(response);
     return clientResourceFromJson(res["body"]);
@@ -491,9 +495,10 @@ class _InfoState extends State<Info> {
   Future<String> makeUnaunthenticatedRequest() async {
     var headers = {'Declareren-Appversion': 'CZ.app'};
     var response = await Onegini.instance.resourcesMethods
-        .getUnauthenticatedResource("devices", headers: headers, method: 'GET').catchError((onError) {
-          debugPrint(onError);
-        });
+        .getUnauthenticatedResource("devices", headers: headers, method: 'GET')
+        .catchError((onError) {
+      debugPrint(onError);
+    });
     var res = json.decode(response);
     return res["body"];
   }

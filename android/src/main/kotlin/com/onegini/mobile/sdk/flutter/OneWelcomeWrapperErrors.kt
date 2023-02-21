@@ -3,7 +3,7 @@ package com.onegini.mobile.sdk.flutter
 enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
     GENERIC_ERROR(8000, "Something went wrong"),
     USER_PROFILE_DOES_NOT_EXIST(8001, "The requested User profile does not exist"),
-    AUTHENTICATED_USER_PROFILE_IS_NULL(8002, "Authenticated user profile is null"),
+    NO_USER_PROFILE_IS_AUTHENTICATED(8002, "There is currently no User Profile authenticated"),
     AUTHENTICATOR_NOT_FOUND(8004, "The requested authenticator is not found"),
     HTTP_REQUEST_ERROR(8011, "OneWelcome: HTTP Request failed internally"),
     ERROR_CODE_HTTP_REQUEST(8013, "OneWelcome: HTTP Request returned an error code. Check Response for more info"),
@@ -20,4 +20,5 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
     CONFIG_ERROR(8032, "Something went wrong while setting the configuration"),
     SECURITY_CONTROLLER_NOT_FOUND(8033, "Security controller class not found"),
     REGISTRATION_NOT_IN_PROGRESS(8034, "No registration in progress for the given Identity Provider"),
+    METHOD_ARGUMENT_NOT_FOUND(8035, "The passed argument from Flutter could not be found")
 }
