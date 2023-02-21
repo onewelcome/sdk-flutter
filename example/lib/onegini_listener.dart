@@ -43,12 +43,12 @@ class OneginiListener extends OneginiEventListener {
 
   @override
   void eventError(BuildContext buildContext, PlatformException error) {
-    showFlutterToastError("${error.message} Code: ${error.code} ");
+    showFlutterToast("${error.message} Code: ${error.code} ");
   }
 
   @override
   void showError(BuildContext buildContext, OneginiError error) {
-    showFlutterToastError(
+    showFlutterToast(
         "${error.message} Code: ${error.code} " ?? "Something went wrong");
   }
 
@@ -152,11 +152,11 @@ class OneginiListener extends OneginiEventListener {
             .submitSuccessAction(providerId, null)
             .catchError((error) => {
                   if (error is PlatformException)
-                    {showFlutterToastError(error.message)}
+                    {showFlutterToast(error.message)}
                 });
       }
     } on FormatException catch (error) {
-      showFlutterToastError(error.message);
+      showFlutterToast(error.message);
       return;
     }
   }
@@ -175,7 +175,7 @@ class OneginiListener extends OneginiEventListener {
                   password: response["data"], providerId: providerId)),
         );
     } on FormatException catch (error) {
-      showFlutterToastError(error.message);
+      showFlutterToast(error.message);
       return;
     }
   }

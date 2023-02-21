@@ -25,7 +25,7 @@ class _OtpScreenState extends State<OtpScreen> {
           .submitSuccessAction(widget.providerId, myController.text ?? " ")
           .catchError((error) => {
                 if (error is PlatformException)
-                  {showFlutterToastError(error.message)}
+                  {showFlutterToast(error.message)}
               });
     } else {
       showFlutterToast("Enter code");
@@ -37,7 +37,7 @@ class _OtpScreenState extends State<OtpScreen> {
         .submitErrorAction(widget.providerId, "Registration canceled")
         .catchError((error) {
       if (error is PlatformException) {
-        showFlutterToastError(error.message);
+        showFlutterToast(error.message);
       }
     });
     Navigator.pushReplacement(
