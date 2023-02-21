@@ -400,7 +400,7 @@ class Home extends StatelessWidget {
         fontSize: 16.0);
   }
 
-  authenticatedUserProfile(BuildContext context) async {
+  showAuthenticatedUserProfile(BuildContext context) async {
     var profile =
         await Onegini.instance.userClient.getAuthenticatedUserProfile(context);
     showFlutterToast('Authenticated Userprofile: ${profile.profileId}');
@@ -446,7 +446,7 @@ class Home extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
-                authenticatedUserProfile(context);
+                showAuthenticatedUserProfile(context);
               },
               child: Text('Authenticated Userprofile'),
             ),
