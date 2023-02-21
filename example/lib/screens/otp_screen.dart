@@ -1,7 +1,6 @@
 // @dart = 2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/callbacks/onegini_custom_registration_callback.dart';
 import 'package:onegini_example/components/display_toast.dart';
 
@@ -11,11 +10,7 @@ class OtpScreen extends StatefulWidget {
   final String password;
   final String providerId;
 
-  const OtpScreen({
-    Key key,
-    this.password,
-    this.providerId})
-    : super(key: key);
+  const OtpScreen({Key key, this.password, this.providerId}) : super(key: key);
 
   @override
   _OtpScreenState createState() => _OtpScreenState();
@@ -27,25 +22,24 @@ class _OtpScreenState extends State<OtpScreen> {
   ok() async {
     if (myController.text.isNotEmpty) {
       OneginiCustomRegistrationCallback()
-        .submitSuccessAction(widget.providerId, myController.text ?? " ")
-        .catchError((error) => {
-          if (error is PlatformException) {
-            DisplayToast().error(error.message)
-          }
-        });
+          .submitSuccessAction(widget.providerId, myController.text ?? " ")
+          .catchError((error) => {
+                if (error is PlatformException)
+                  {showFlutterToast(error.message)}
+              });
     } else {
-      DisplayToast().message("Enter code");
+      showFlutterToast("Enter code");
     }
   }
 
   cancel() async {
     OneginiCustomRegistrationCallback()
-      .submitErrorAction(widget.providerId, "Registration canceled")
-      .catchError((error) {
-        if (error is PlatformException) {
-          DisplayToast().error(error.message);
-        }
-      });
+        .submitErrorAction(widget.providerId, "Registration canceled")
+        .catchError((error) {
+      if (error is PlatformException) {
+        showFlutterToast(error.message);
+      }
+    });
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (context) => LoginScreen()),

@@ -110,6 +110,20 @@ class UserClient {
     }
   }
 
+  Future<UserProfile> getAuthenticatedUserProfile(BuildContext? context) async {
+    Onegini.instance.setEventContext(context);
+    try {
+      var userProfile = await Onegini.instance.channel
+          .invokeMethod(Constants.getAuthenticatedUserProfile);
+      return userProfileFromJson(userProfile);
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
+    }
+  }
+
   /// Starts authentication flow.
   ///
   /// If [registeredAuthenticatorId] is null, starts authentication by default authenticator.
@@ -251,10 +265,11 @@ class UserClient {
   /// User profiles
   Future<List<UserProfile>> getUserProfiles() async {
     try {
-      var profiles =
-          await Onegini.instance.channel.invokeMethod(Constants.getUserProfiles);
-      return List<UserProfile>.from(
-          json.decode(profiles).map((profile) => UserProfile.fromJson(profile)));
+      var profiles = await Onegini.instance.channel
+          .invokeMethod(Constants.getUserProfiles);
+      return List<UserProfile>.from(json
+          .decode(profiles)
+          .map((profile) => UserProfile.fromJson(profile)));
     } on TypeError catch (error) {
       throw PlatformException(
           code: Constants.wrapperTypeError.code.toString(),
@@ -290,10 +305,12 @@ class UserClient {
     }
   }
 
-  Future<String> authenticateUserImplicitly(String profileId, List<String>? scopes) async {
+  Future<String> authenticateUserImplicitly(
+      String profileId, List<String>? scopes) async {
     try {
       var userProfileId = await Onegini.instance.channel.invokeMethod(
-          Constants.authenticateUserImplicitly, <String, dynamic>{'profileId': profileId, 'scopes': scopes});
+          Constants.authenticateUserImplicitly,
+          <String, dynamic>{'profileId': profileId, 'scopes': scopes});
       return userProfileId;
     } on TypeError catch (error) {
       throw PlatformException(

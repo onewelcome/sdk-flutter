@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/callbacks/onegini_otp_accept_deny_callback.dart';
 import 'package:onegini/onegini.dart';
+import '../components/display_toast.dart';
 
 class AuthOtpScreen extends StatefulWidget {
   final String message;
@@ -21,14 +22,7 @@ class _AuthOtpScreenState extends State<AuthOtpScreen> {
         .acceptAuthenticationRequest(context)
         .catchError((error) {
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     });
   }
@@ -38,14 +32,7 @@ class _AuthOtpScreenState extends State<AuthOtpScreen> {
         .denyAuthenticationRequest()
         .catchError((error) {
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     });
   }

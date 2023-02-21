@@ -5,6 +5,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/callbacks/onegini_pin_registration_callback.dart';
 import 'package:onegini/onegini.dart';
 
+import '../components/display_toast.dart';
+
 class PinRequestScreen extends StatefulWidget {
   final bool confirmation;
   final String previousCode;
@@ -67,25 +69,11 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
             .acceptAuthenticationRequest(context, pin: pin)
             .catchError((error) {
           if (error is PlatformException) {
-            Fluttertoast.showToast(
-                msg: error.message,
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                timeInSecForIosWeb: 1,
-                backgroundColor: Colors.black38,
-                textColor: Colors.white,
-                fontSize: 16.0);
+            showFlutterToast(error.message);
           }
         });
       } else {
-        Fluttertoast.showToast(
-            msg: "pins don't match, please try again",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast("pins don't match, please try again");
         Navigator.of(context)
           ..pop()
           ..push(
@@ -101,14 +89,7 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
           .catchError((error) {
         if (error is PlatformException) {
           clearAllDigits();
-          Fluttertoast.showToast(
-              msg: error.message,
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Colors.black38,
-              textColor: Colors.white,
-              fontSize: 16.0);
+          showFlutterToast(error.message);
         }
       });
       if (isSuccess != null && isSuccess) {

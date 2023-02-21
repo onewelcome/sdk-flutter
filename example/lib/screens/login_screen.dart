@@ -10,6 +10,8 @@ import 'package:onegini/model/registration_response.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini_example/screens/user_screen.dart';
 
+import '../components/display_toast.dart';
+
 class LoginScreen extends StatefulWidget {
   @override
   _LoginScreenState createState() => _LoginScreenState();
@@ -44,14 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     }
   }
@@ -75,14 +70,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     }
   }
@@ -93,17 +81,11 @@ class _LoginScreenState extends State<LoginScreen> {
         .authenticateUser(
       context,
       null,
-    ).catchError((error) {
+    )
+        .catchError((error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     });
     if (registrationResponse?.userProfile?.profileId != null)
@@ -127,14 +109,7 @@ class _LoginScreenState extends State<LoginScreen> {
         .catchError((error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     });
     if (registrationResponse.userProfile?.profileId != null)
@@ -154,14 +129,7 @@ class _LoginScreenState extends State<LoginScreen> {
         .cancelBrowserRegistration()
         .catchError((error) {
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     });
   }
@@ -179,10 +147,12 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<String> getImplicitUserDetails(String profileId) async {
     var returnString = "";
     try {
-      var userProfileId = await Onegini.instance.userClient.authenticateUserImplicitly(profileId, ["read"]);
+      var userProfileId = await Onegini.instance.userClient
+          .authenticateUserImplicitly(profileId, ["read"]);
 
-      if(userProfileId != null){
-        var response = await Onegini.instance.resourcesMethods.getResourceImplicit("user-id-decorated");
+      if (userProfileId != null) {
+        var response = await Onegini.instance.resourcesMethods
+            .getResourceImplicit("user-id-decorated");
         var res = json.decode(response);
 
         returnString = json.decode(res["body"])["decorated_user_id"];
@@ -237,85 +207,111 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 20,
                   ),
                   FutureBuilder<List<UserProfile>>(
-                    //userProfiles
-                    future: getUserProfiles(),
-                    builder: (context, snapshot) {
-                      return (snapshot.hasData && snapshot.data.length > 0)
-                        ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.center,
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              FutureBuilder<String>(
-                                //implicit
-                                future: getImplicitUserDetails(snapshot.data.first?.profileId),
-                                builder: (context, snapshot) {
-                                  return snapshot.hasData
-                                      ? Column(
-                                          crossAxisAlignment: CrossAxisAlignment.center,
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              "──── Login ────",
-                                              style: TextStyle(fontSize: 30),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            Text(
-                                              snapshot.data,
-                                              style: TextStyle(fontSize: 20),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            SizedBox(
-                                              height: 20,
-                                            ),
-                                            ElevatedButton(
-                                              onPressed: () {
-                                                preferredAuthentication();
-                                              },
-                                              child: Text('Authenticate with preferred authenticator'),
-                                            ),
-                                            SizedBox(
-                                              height: 10,
-                                            ),
-                                            FutureBuilder<List<OneginiListResponse>>(
-                                              future: Onegini.instance.userClient
-                                                  .getRegisteredAuthenticators(context),
-                                              builder: (BuildContext context, snapshot) {
-                                                return snapshot.hasData
-                                                    ? PopupMenuButton<String>(
-                                                        child: Container(
-                                                          padding: EdgeInsets.all(20),
-                                                          color: Colors.blue,
-                                                          child: Text(
-                                                            "Authenticators",
-                                                            style: TextStyle(
-                                                                color: Colors.white,
-                                                                fontSize: 16,
-                                                                fontWeight: FontWeight.w700),
-                                                          ),
-                                                        ),
-                                                        onSelected: (value) {
-                                                          authenticateWithRegisteredAuthenticators(value);
+                      //userProfiles
+                      future: getUserProfiles(),
+                      builder: (context, snapshot) {
+                        return (snapshot.hasData && snapshot.data.length > 0)
+                            ? Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                    FutureBuilder<String>(
+                                        //implicit
+                                        future: getImplicitUserDetails(
+                                            snapshot.data.first?.profileId),
+                                        builder: (context, snapshot) {
+                                          return snapshot.hasData
+                                              ? Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.center,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                      Text(
+                                                        "──── Login ────",
+                                                        style: TextStyle(
+                                                            fontSize: 30),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                      Text(
+                                                        snapshot.data,
+                                                        style: TextStyle(
+                                                            fontSize: 20),
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                      ),
+                                                      SizedBox(
+                                                        height: 20,
+                                                      ),
+                                                      ElevatedButton(
+                                                        onPressed: () {
+                                                          preferredAuthentication();
                                                         },
-                                                        itemBuilder: (context) {
-                                                          return snapshot.data
-                                                              .map((e) => PopupMenuItem<String>(
-                                                                    child: Text(e.name ?? ""),
-                                                                    value: e.id,
-                                                                  ))
-                                                              .toList();
-                                                        })
-                                                    : SizedBox.shrink();
-                                              },
-                                            )
-                                          ]
-                                        )
-                                      : SizedBox.shrink();
-                                })
-                            ]
-                          )
-                        : SizedBox.shrink();
-                    }
-                  ),
+                                                        child: Text(
+                                                            'Authenticate with preferred authenticator'),
+                                                      ),
+                                                      SizedBox(
+                                                        height: 10,
+                                                      ),
+                                                      FutureBuilder<
+                                                          List<
+                                                              OneginiListResponse>>(
+                                                        future: Onegini
+                                                            .instance.userClient
+                                                            .getRegisteredAuthenticators(
+                                                                context),
+                                                        builder: (BuildContext
+                                                                context,
+                                                            snapshot) {
+                                                          return snapshot
+                                                                  .hasData
+                                                              ? PopupMenuButton<
+                                                                      String>(
+                                                                  child:
+                                                                      Container(
+                                                                    padding:
+                                                                        EdgeInsets.all(
+                                                                            20),
+                                                                    color: Colors
+                                                                        .blue,
+                                                                    child: Text(
+                                                                      "Authenticators",
+                                                                      style: TextStyle(
+                                                                          color: Colors
+                                                                              .white,
+                                                                          fontSize:
+                                                                              16,
+                                                                          fontWeight:
+                                                                              FontWeight.w700),
+                                                                    ),
+                                                                  ),
+                                                                  onSelected:
+                                                                      (value) {
+                                                                    authenticateWithRegisteredAuthenticators(
+                                                                        value);
+                                                                  },
+                                                                  itemBuilder:
+                                                                      (context) {
+                                                                    return snapshot
+                                                                        .data
+                                                                        .map((e) =>
+                                                                            PopupMenuItem<String>(
+                                                                              child: Text(e.name ?? ""),
+                                                                              value: e.id,
+                                                                            ))
+                                                                        .toList();
+                                                                  })
+                                                              : SizedBox
+                                                                  .shrink();
+                                                        },
+                                                      )
+                                                    ])
+                                              : SizedBox.shrink();
+                                        })
+                                  ])
+                            : SizedBox.shrink();
+                      }),
                   SizedBox(
                     height: 20,
                   ),
