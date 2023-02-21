@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/model/onegini_list_response.dart';
 import 'package:onegini/onegini.dart';
+import 'package:onegini_example/components/display_toast.dart';
 import 'package:onegini_example/models/application_details.dart';
 import 'package:onegini_example/models/client_resource.dart';
 import 'package:onegini_example/screens/qr_scan_screen.dart';
@@ -402,14 +403,7 @@ class Home extends StatelessWidget {
   authenticatedUserProfile(BuildContext context) async {
     var profile =
         await Onegini.instance.userClient.getAuthenticatedUserProfile(context);
-    Fluttertoast.showToast(
-        msg: 'Authenticated Userprofile: ${profile.profileId}',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.black38,
-        textColor: Colors.white,
-        fontSize: 16.0);
+    showFlutterToast('Authenticated Userprofile: ${profile.profileId}');
   }
 
   @override
