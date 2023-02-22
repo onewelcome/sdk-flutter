@@ -2,7 +2,9 @@ package com.onegini.mobile.sdk
 
 import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.errors.wrapperError
 import com.onegini.mobile.sdk.flutter.useCases.GetAuthenticatedUserProfileUseCase
 import io.flutter.plugin.common.MethodChannel
 import org.junit.Before
@@ -13,7 +15,6 @@ import org.mockito.Mock
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.eq
-import org.mockito.kotlin.isNull
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -32,21 +33,21 @@ class GetAuthenticatedUserProfileUseCaseTests {
     }
 
     @Test
-    fun `should return null UserProfile when user is not authenticated`() {
+    fun `When no user is authenticated, Then should reject with NO_USER_PROFILE_IS_AUTHENTICATED`() {
         whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(null)
 
         getAuthenticatedUserProfileUseCase(resultSpy)
 
-        verify(resultSpy).success(isNull())
+        verify(resultSpy).wrapperError(NO_USER_PROFILE_IS_AUTHENTICATED)
     }
 
     @Test
-    fun `should return right UserProfile when user is authenticated`() {
+    fun `When a user is authenticated, Then should return the userProfile as JSON`() {
         whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
 
         getAuthenticatedUserProfileUseCase(resultSpy)
 
-        val expectedResult = Gson().toJson(mapOf("profileId" to "QWERTY", "isDefault" to false))
+        val expectedResult = Gson().toJson(mapOf("profileId" to "QWERTY"))
         
         verify(resultSpy).success(eq(expectedResult))
     }

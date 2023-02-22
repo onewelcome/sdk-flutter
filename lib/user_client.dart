@@ -114,6 +114,20 @@ class UserClient {
     }
   }
 
+  Future<UserProfile> getAuthenticatedUserProfile(BuildContext? context) async {
+    Onegini.instance.setEventContext(context);
+    try {
+      var userProfile = await Onegini.instance.channel
+          .invokeMethod(Constants.getAuthenticatedUserProfile);
+      return userProfileFromJson(userProfile);
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
+    }
+  }
+
   /// Starts authentication flow.
   ///
   /// If [registeredAuthenticatorId] is null, starts authentication by default authenticator.

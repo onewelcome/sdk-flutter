@@ -3,12 +3,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/callbacks/onegini_registration_callback.dart';
 import 'package:onegini/model/onegini_list_response.dart';
 import 'package:onegini/model/registration_response.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini_example/screens/user_screen.dart';
+
+import '../components/display_toast.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -44,14 +45,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     }
   }
@@ -75,14 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     }
   }
@@ -94,14 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
         .catchError((error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     });
     if (registrationResponse?.userProfile?.profileId != null)
@@ -125,14 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
         .catchError((error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     });
     if (registrationResponse.userProfile?.profileId != null)
@@ -152,14 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
         .cancelBrowserRegistration()
         .catchError((error) {
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     });
   }
