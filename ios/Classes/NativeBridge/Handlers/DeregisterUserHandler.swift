@@ -7,9 +7,7 @@ protocol DeregisterUserHandlerProtocol: AnyObject {
 }
 
 class DeregisterUserHandler: DeregisterUserHandlerProtocol {
-    func deregister(_ profileId: String, completion: @escaping (SdkError?) -> Void){
-        let userClient = ONGUserClient.sharedInstance()
-        
+    func deregister(_ profileId: String, completion: @escaping (SdkError?) -> Void) {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
             return completion(SdkError(.userProfileDoesNotExist))
         }
