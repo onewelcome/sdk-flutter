@@ -74,7 +74,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  preferredAuthentication(String profileId) async {
+  authenticateWithPreferredAuthenticator(String profileId) async {
     setState(() => {isLoading = true});
     var registrationResponse = await Onegini.instance.userClient
         .authenticateUser(context, profileId, null)
@@ -245,7 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                       ),
                                                       ElevatedButton(
                                                         onPressed: () {
-                                                          preferredAuthentication(
+                                                          authenticateWithPreferredAuthenticator(
                                                               userProfiles
                                                                   .data
                                                                   .first

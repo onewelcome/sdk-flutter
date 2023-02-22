@@ -14,40 +14,40 @@ import javax.inject.Singleton
 
 @Singleton
 class DeregisterAuthenticatorUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
-    operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
-        val authenticatorId = call.argument<String>("authenticatorId")
-            ?: return SdkError(METHOD_ARGUMENT_NOT_FOUND).flutterError(result)
+  operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
+    val authenticatorId = call.argument<String>("authenticatorId")
+      ?: return SdkError(METHOD_ARGUMENT_NOT_FOUND).flutterError(result)
 
-        val userProfile = oneginiSDK.oneginiClient.userClient.authenticatedUserProfile
-            ?: return SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).flutterError(result)
+    val userProfile = oneginiSDK.oneginiClient.userClient.authenticatedUserProfile
+      ?: return SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).flutterError(result)
 
-        val authenticator = getAuthenticatorById(authenticatorId, userProfile)
-            ?: return SdkError(AUTHENTICATOR_NOT_FOUND).flutterError(result)
+    val authenticator = getAuthenticatorById(authenticatorId, userProfile)
+      ?: return SdkError(AUTHENTICATOR_NOT_FOUND).flutterError(result)
 
-        oneginiSDK.oneginiClient.userClient.deregisterAuthenticator(authenticator, object : OneginiAuthenticatorDeregistrationHandler {
-            override fun onSuccess() {
-                result.success(true)
-            }
+    oneginiSDK.oneginiClient.userClient.deregisterAuthenticator(authenticator, object : OneginiAuthenticatorDeregistrationHandler {
+      override fun onSuccess() {
+        result.success(true)
+      }
 
-            override fun onError(oneginiAuthenticatorDeregistrationError: OneginiAuthenticatorDeregistrationError) {
-                SdkError(
-                    code = oneginiAuthenticatorDeregistrationError.errorType,
-                    message = oneginiAuthenticatorDeregistrationError.message
-                ).flutterError(result)
-            }
-        }
-        )
+      override fun onError(oneginiAuthenticatorDeregistrationError: OneginiAuthenticatorDeregistrationError) {
+        SdkError(
+          code = oneginiAuthenticatorDeregistrationError.errorType,
+          message = oneginiAuthenticatorDeregistrationError.message
+        ).flutterError(result)
+      }
     }
+    )
+  }
 
-    private fun getAuthenticatorById(authenticatorId: String?, userProfile: UserProfile): OneginiAuthenticator? {
-        var authenticator: OneginiAuthenticator? = null
-        val registeredAuthenticators = oneginiSDK.oneginiClient.userClient.getRegisteredAuthenticators(userProfile)
-        for (registeredAuthenticator in registeredAuthenticators) {
-            if (registeredAuthenticator.id == authenticatorId) {
-                authenticator = registeredAuthenticator
-            }
-        }
-        return authenticator
+  private fun getAuthenticatorById(authenticatorId: String?, userProfile: UserProfile): OneginiAuthenticator? {
+    var authenticator: OneginiAuthenticator? = null
+    val registeredAuthenticators = oneginiSDK.oneginiClient.userClient.getRegisteredAuthenticators(userProfile)
+    for (registeredAuthenticator in registeredAuthenticators) {
+      if (registeredAuthenticator.id == authenticatorId) {
+        authenticator = registeredAuthenticator
+      }
     }
+    return authenticator
+  }
 
 }
