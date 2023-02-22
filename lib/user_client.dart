@@ -262,6 +262,19 @@ class UserClient {
     }
   }
 
+  // Get Access Token
+  Future<String> getAccessToken() async {
+    try {
+      return await Onegini.instance.channel
+          .invokeMethod(Constants.getAccessToken);
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
+    }
+  }
+
   /// User profiles
   Future<List<UserProfile>> getUserProfiles() async {
     try {
