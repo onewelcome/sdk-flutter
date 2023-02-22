@@ -19,31 +19,33 @@ extension OneginiModuleSwift {
     }
 
     func logOut(callback: @escaping FlutterResult) {
-        bridgeConnector.toLogoutUserHandler.logout { (error) in
+        bridgeConnector.toLogoutUserHandler.logout { error in
             error != nil ? callback(error?.flutterError()) : callback(true)
         }
     }
 
-    func authenticateUserPin(_ profileId: String, callback: @escaping FlutterResult) -> Void {
+    func authenticateUserPin(_ profileId: String, completion: @escaping FlutterResult) -> Void {
         guard let profile = ONGClient.sharedInstance().userClient.userProfiles().first(where: { $0.profileId == profileId }) else {
-            callback(SdkError(.noUserProfileIsAuthenticated).flutterError())
+            completion(SdkError(.noUserProfileIsAuthenticated).flutterError())
             return
         }
 
         bridgeConnector.toLoginHandler.authenticateUser(profile, authenticator: nil, completion: {
             (userProfile, error) -> Void in
-            if let _userProfile = userProfile {
-                callback(String.stringify(json: [Constants.Keys.userProfile: [Constants.Keys.profileId: _userProfile.profileId]]))
-            } else {
-                callback(SdkError.convertToFlutter(error))
+            guard let userProfile = userProfile else {
+                completion(SdkError.convertToFlutter(error))
+                return
             }
+
+            completion(String.stringify(json: [Constants.Keys.userProfile: [Constants.Keys.profileId: userProfile.profileId]]))
         })
     }
 
     public func authenticateUserImplicitly(_ profileId: String, _ scopes: [String]?,
                                            _ callback: @escaping FlutterResult) {
         guard let profile = ONGClient.sharedInstance().userClient.userProfiles().first(where: { $0.profileId == profileId }) else {
-            return callback(SdkError(.noUserProfileIsAuthenticated).flutterError())
+            callback(SdkError(.noUserProfileIsAuthenticated).flutterError())
+            return
         }
 
         bridgeConnector.toResourceFetchHandler.authenticateUserImplicitly(profile, scopes: scopes, completion: {
@@ -82,11 +84,12 @@ extension OneginiModuleSwift {
 
         bridgeConnector.toLoginHandler.authenticateUser(profile, authenticator: registeredAuthenticator) {
             (userProfile, error) -> Void in
-            if let _userProfile = userProfile {
-                completion(String.stringify(json: [Constants.Keys.userProfile: [Constants.Keys.profileId: _userProfile.profileId]]))
-            } else {
+            guard let userProfile = userProfile else {
                 completion(SdkError.convertToFlutter(error))
+                return
             }
+
+            completion(String.stringify(json: [Constants.Keys.userProfile: [Constants.Keys.profileId: userProfile.profileId]]))
         }
     }
 
@@ -109,7 +112,8 @@ extension OneginiModuleSwift {
     
     func deregisterAuthenticator(_ identifierId: String, callback: @escaping FlutterResult) {
         guard let profile = ONGClient.sharedInstance().userClient.authenticatedUserProfile() else {
-            return callback(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
+            callback(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
+            return
         }
 
         // Deregister Authenticator

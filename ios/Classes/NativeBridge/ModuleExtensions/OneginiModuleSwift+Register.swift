@@ -6,7 +6,7 @@ import Flutter
 extension OneginiModuleSwift {
 
     func deregisterUser(profileId: String, callback: @escaping FlutterResult) {
-        bridgeConnector.toDeregisterUserHandler.deregister(profileId: profileId) { (error) in
+        bridgeConnector.toDeregisterUserHandler.deregister(profileId: profileId) { error in
             error != nil ? callback(SdkError.convertToFlutter(error)) : callback(true)
         }
     }
@@ -14,19 +14,21 @@ extension OneginiModuleSwift {
     func registerUser(_ identityProviderId: String? = nil, scopes: [String]? = nil, callback: @escaping FlutterResult) -> Void {
 
         bridgeConnector.toRegistrationConnector.registrationHandler.signUp(identityProviderId, scopes: scopes) { (_, userProfile, userInfo, error) -> Void in
-
-            if let _userProfile = userProfile {
-                var result = Dictionary<String, Any?>()
-                result["userProfile"] = ["profileId": _userProfile.profileId]
-                
-                if let userInfo = userInfo {
-                    result["customInfo"] = ["status": userInfo.status, "data": userInfo.data]
-                }
-
-                callback(String.stringify(json: result))
-            } else {
+            guard let userProfile = userProfile else {
                 callback(SdkError.convertToFlutter(error))
+                return
             }
+
+            var result = Dictionary<String, Any?>()
+            result["userProfile"] = ["profileId": userProfile.profileId]
+
+            guard let userInfo = userInfo else {
+                callback(String.stringify(json: result))
+                return
+            }
+
+            result["customInfo"] = ["status": userInfo.status, "data": userInfo.data]
+            callback(String.stringify(json: result))
         }
     }
     
@@ -74,7 +76,8 @@ extension OneginiModuleSwift {
     
     func registerAuthenticator(_ authenticatorId: String, callback: @escaping FlutterResult) {
         guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
-            return callback(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
+            callback(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
+            return
         }
 
         let notRegisteredAuthenticators = ONGUserClient.sharedInstance().nonRegisteredAuthenticators(forUser: profile)

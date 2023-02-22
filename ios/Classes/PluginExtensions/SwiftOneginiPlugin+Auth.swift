@@ -46,7 +46,7 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
         guard let registeredAuthenticatorId = arg["registeredAuthenticatorId"] as? String else {
             // auth with pin
             Logger.log("use pin for auth")
-            OneginiModuleSwift.sharedInstance.authenticateUserPin(profileId, callback: result)
+            OneginiModuleSwift.sharedInstance.authenticateUserPin(profileId, completion: result)
             return
         }
 
