@@ -38,6 +38,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     
     case Constants.Routes.acceptPinRegistrationRequest: acceptPinRegistrationRequest(call, result)
     case Constants.Routes.denyPinRegistrationRequest: denyPinRegistrationRequest(call, result)
+    case Constants.Routes.getRedirectUrl: getRedirectUrl(call, result)
     
     // custom registration
     case Constants.Routes.submitCustomRegistrationAction: submitCustomRegistrationAction(call, result)
