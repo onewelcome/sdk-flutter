@@ -130,7 +130,7 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
             return
         }
 
-        OneginiModuleSwift.sharedInstance.setPreferredAuthenticator(authenticatorId, callback: result)
+        OneginiModuleSwift.sharedInstance.setPreferredAuthenticator(authenticatorId, completion: result)
     }
 
     func deregisterAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void {
@@ -144,7 +144,7 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
             return
         }
 
-        OneginiModuleSwift.sharedInstance.deregisterAuthenticator(authenticatorId, callback: result)
+        OneginiModuleSwift.sharedInstance.deregisterAuthenticator(authenticatorId, completion: result)
     }
 
     func acceptPinAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
