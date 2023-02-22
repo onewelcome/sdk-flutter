@@ -1,7 +1,6 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
 import com.google.gson.Gson
-import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticationError
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
@@ -29,7 +28,7 @@ class AuthenticateUserUseCase @Inject constructor(private val oneginiSDK: Onegin
             return error.flutterError(result)
         }
 
-        val authenticator = getAuthenticatorById(authenticatorId, userProfile)
+        val authenticator = getRegisteredAuthenticatorById(authenticatorId, userProfile)
 
         when {
             authenticatorId != null && authenticator == null -> SdkError(AUTHENTICATOR_NOT_FOUND).flutterError(result)
@@ -37,7 +36,7 @@ class AuthenticateUserUseCase @Inject constructor(private val oneginiSDK: Onegin
         }
     }
 
-    private fun getAuthenticatorById(registeredAuthenticatorsId: String?, userProfile: UserProfile): OneginiAuthenticator? {
+    private fun getRegisteredAuthenticatorById(registeredAuthenticatorsId: String?, userProfile: UserProfile): OneginiAuthenticator? {
         if (registeredAuthenticatorsId == null) return null
         val registeredAuthenticators = oneginiSDK.oneginiClient.userClient.getRegisteredAuthenticators(userProfile)
         for (registeredAuthenticator in registeredAuthenticators) {

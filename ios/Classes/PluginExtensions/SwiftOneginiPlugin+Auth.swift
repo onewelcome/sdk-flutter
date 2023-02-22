@@ -33,28 +33,33 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
     }
 
     func authenticateUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        guard let _arg = call.arguments as! [String: Any]? else { return; }
-        let _id = _arg["registeredAuthenticatorId"] as? String
-        if (_id != nil) {
-            // auth with provider
-            Logger.log("use provider for auth")
-            OneginiModuleSwift.sharedInstance.authenticateWithRegisteredAuthentication(_id, callback: result)
-        } else {
+        guard let arg = call.arguments as? [String: Any] else {
+            return result(SdkError(.methodArgumentNotFound).flutterError());
+        }
+
+        guard let profileId = arg["profileId"] as? String else {
+            return result(SdkError(.methodArgumentNotFound).flutterError());
+        }
+
+        guard let registeredAuthenticatorId = arg["registeredAuthenticatorId"] as? String else {
             // auth with pin
             Logger.log("use pin for auth")
-            OneginiModuleSwift.sharedInstance.authenticateUser(nil, callback: result)
+            OneginiModuleSwift.sharedInstance.authenticateUser(profileId, callback: result)
+            return
         }
+
+        // auth with provider
+        Logger.log("use provider for auth")
+        OneginiModuleSwift.sharedInstance.authenticateWithRegisteredAuthentication(profileId, registeredAuthenticatorId, callback: result)
     }
 
     func authenticateUserImplicitly(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         guard let arg = call.arguments as? [String: Any] else {
-            result(SdkError(.mappedMethodArgumentIsMissing).flutterError());
-            return;
+            return result(SdkError(.methodArgumentNotFound).flutterError());
         }
 
         guard let profileId = arg["profileId"] as? String else {
-            result(SdkError(.mappedMethodArgumentIsMissing).flutterError());
-            return;
+            return result(SdkError(.methodArgumentNotFound).flutterError());
         }
 
         let scopes = arg["scopes"] as? [String]
@@ -69,32 +74,63 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
     }
 
     func getRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        OneginiModuleSwift.sharedInstance.getRegisteredAuthenticators(callback: result)
+        guard let arg = call.arguments as? [String: Any] else {
+            return result(SdkError(.methodArgumentNotFound).flutterError());
+        }
+        
+        guard let profileId = arg["profileId"] as? String else {
+            return result(SdkError(.methodArgumentNotFound).flutterError());
+        }
+
+        OneginiModuleSwift.sharedInstance.getRegisteredAuthenticators(profileId, callback: result)
     }
 
     func getAllNotRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        OneginiModuleSwift.sharedInstance.fetchNotRegisteredAuthenticator(callback: result)
+        guard let arg = call.arguments as? [String: Any] else {
+            return result(SdkError(.methodArgumentNotFound).flutterError());
+        }
+        
+        guard let profileId = arg["profileId"] as? String else {
+            return result(SdkError(.methodArgumentNotFound).flutterError());
+        }
+
+        OneginiModuleSwift.sharedInstance.getNotRegisteredAuthenticators(profileId, callback: result)
     }
 
     func getAllAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        guard let arg = call.arguments as! [String: Any]? else { return; }
-        let profileId = arg["profileId"] as? String
+        guard let arg = call.arguments as? [String: Any] else {
+            return result(SdkError(.methodArgumentNotFound).flutterError());
+        }
+        
+        guard let profileId = arg["profileId"] as? String else {
+            return result(SdkError(.methodArgumentNotFound).flutterError());
+        }
 
-        OneginiModuleSwift.sharedInstance.getAllAuthenticators(callback: result)
+        OneginiModuleSwift.sharedInstance.getAllAuthenticators(profileId, callback: result)
     }
 
     func setPreferredAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        guard let _arg = call.arguments as! [String: Any]? else { return; }
-        let _id = _arg["authenticatorId"] as? String
+        guard let arg = call.arguments as? [String: Any] else {
+            return result(SdkError(.methodArgumentNotFound).flutterError());
+        }
+        
+        guard let authenticatorId = arg["authenticatorId"] as? String else {
+            return result(SdkError(.methodArgumentNotFound).flutterError());
+        }
 
-        OneginiModuleSwift.sharedInstance.setPreferredAuthenticator(_id, callback: result)
+        OneginiModuleSwift.sharedInstance.setPreferredAuthenticator(authenticatorId, callback: result)
     }
 
     func deregisterAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void {
-        guard let _arg = call.arguments as! [String: Any]? else { return }
-        let _id = _arg["authenticatorId"] as? String
+        guard let arg = call.arguments as? [String: Any] else {
+            return result(SdkError(.methodArgumentNotFound).flutterError());
+        }
+        
+        guard let authenticatorId = arg["authenticatorId"] as? String else {
+            return result(SdkError(.methodArgumentNotFound).flutterError());
+        }
 
-        OneginiModuleSwift.sharedInstance.deregisterAuthenticator(_id, callback: result)
+        OneginiModuleSwift.sharedInstance.deregisterAuthenticator(authenticatorId, callback: result)
     }
 
     func acceptPinAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {

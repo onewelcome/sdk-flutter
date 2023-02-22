@@ -6,7 +6,7 @@ protocol RegistrationConnectorToHandlerProtocol: RegistrationHandlerToPinHanlder
     func processRedirectURL(url: String, webSignInType: WebSignInType)
     func cancelBrowserRegistration()
     func logout(completion: @escaping (SdkError?) -> Void)
-    func deregister(userProfileId: String?, completion: @escaping (SdkError?) -> Void)
+    func deregister(userProfileId: String, completion: @escaping (SdkError?) -> Void)
     func identityProviders() -> Array<ONGIdentityProvider>
     func submitCustomRegistrationSuccess(_ data: String)
     func cancelCustomRegistration(_ error: String)
@@ -31,7 +31,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     var browserConntroller: BrowserHandlerProtocol?
     
     var logoutUserHandler = LogoutHandler()
-    var deregisterUserHandler = DisconnectHandler()
+    var deregisterUserHandler = DeregisterUserHandler()
     var signUpCompletion: ((Bool, ONGUserProfile?, ONGCustomInfo?, SdkError?) -> Void)?
     
     unowned var pinHandler: PinConnectorToPinHandler?
@@ -133,8 +133,8 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
         logoutUserHandler.logout(completion: completion)
     }
     
-    func deregister(userProfileId: String?, completion: @escaping (SdkError?) -> Void) {
-        deregisterUserHandler.disconnect(userProfileId: userProfileId, completion: completion)
+    func deregister(userProfileId: String, completion: @escaping (SdkError?) -> Void) {
+        deregisterUserHandler.deregister(userProfileId, completion: completion)
     }
 
     func processRedirectURL(url: String, webSignInType: WebSignInType) {

@@ -1,6 +1,5 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
-import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiLogoutHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiLogoutError
 import com.onegini.mobile.sdk.flutter.OneginiSDK

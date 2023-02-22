@@ -4,17 +4,17 @@ import OneginiCrypto
 import Flutter
 
 extension OneginiModuleSwift {
-    
-    func deregisterUser(userProfileId: String?, callback: @escaping FlutterResult) {
-        bridgeConnector.toDeregisterUserHandler.disconnect(userProfileId: userProfileId) { (error) in
+
+    func deregisterUser(_ userProfileId: String, callback: @escaping FlutterResult) {
+        bridgeConnector.toDeregisterUserHandler.deregister(userProfileId) { (error) in
             error != nil ? callback(SdkError.convertToFlutter(error)) : callback(true)
         }
     }
-    
+
     func registerUser(_ identityProviderId: String? = nil, scopes: [String]? = nil, callback: @escaping FlutterResult) -> Void {
 
         bridgeConnector.toRegistrationConnector.registrationHandler.signUp(identityProviderId, scopes: scopes) { (_, userProfile, userInfo, error) -> Void in
-            
+
             if let _userProfile = userProfile {
                 var result = Dictionary<String, Any?>()
                 result["userProfile"] = ["profileId": _userProfile.profileId]
@@ -22,7 +22,7 @@ extension OneginiModuleSwift {
                 if let userInfo = userInfo {
                     result["customInfo"] = ["status": userInfo.status, "data": userInfo.data]
                 }
-                
+
                 callback(String.stringify(json: result))
             } else {
                 callback(SdkError.convertToFlutter(error))
@@ -31,7 +31,6 @@ extension OneginiModuleSwift {
     }
     
     func handleRegisteredProcessUrl(_ url: String, webSignInType: WebSignInType) -> Void {
-
         bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: url, webSignInType: webSignInType)
     }
     
@@ -74,23 +73,19 @@ extension OneginiModuleSwift {
     }
     
     func registerAuthenticator(_ authenticatorId: String, callback: @escaping FlutterResult) {
-        guard let profile = ONGUserClient.sharedInstance().userProfiles().first else {
-            callback(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
-            return
+        guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
+            return callback(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
         }
-        
+
         let notRegisteredAuthenticators = ONGUserClient.sharedInstance().nonRegisteredAuthenticators(forUser: profile)
-              
-        let authenticator: ONGAuthenticator? = notRegisteredAuthenticators.first(where: { $0.identifier == authenticatorId })
-        
-        guard let _ = authenticator else {
-            callback(SdkError.convertToFlutter(SdkError(.authenticatorNotFound)))
-            return
+
+        guard let authenticator = notRegisteredAuthenticators.first(where: { $0.identifier == authenticatorId }) else {
+            return callback(SdkError.convertToFlutter(SdkError(.authenticatorNotFound)))
         }
-        
-        bridgeConnector.toAuthenticatorsHandler.registerAuthenticator(profile, authenticator!) {
+
+        bridgeConnector.toAuthenticatorsHandler.registerAuthenticator(profile, authenticator) {
             (_ , error) -> Void in
-            
+
             if let _error = error {
                 callback(SdkError.convertToFlutter(_error))
             } else {
@@ -99,47 +94,44 @@ extension OneginiModuleSwift {
         }
     }
     
-    func getRegisteredAuthenticators(callback: @escaping FlutterResult) {
-        guard let profile = ONGUserClient.sharedInstance().userProfiles().first else {
-            callback(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
-            return
+    func getRegisteredAuthenticators(_ profileId: String, callback: @escaping FlutterResult) {
+        guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
+            return callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
         }
-        
+
         let registeredAuthenticators = ONGUserClient.sharedInstance().registeredAuthenticators(forUser: profile)
-        
+
         let authenticators: [[String: String]] = registeredAuthenticators.compactMap({ ["id" : $0.identifier, "name": $0.name] })
-        
+
         let data = String.stringify(json: authenticators)
         callback(data)
     }
     
-    func fetchNotRegisteredAuthenticator(callback: @escaping FlutterResult) -> Void {
-        guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
-            callback(SdkError.convertToFlutter(SdkError(.authenticatedUserProfileIsNull)))
-            return
+    func getNotRegisteredAuthenticators(_ profileId: String, callback: @escaping FlutterResult) -> Void {
+        guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
+            return callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
         }
-        
+
         // get not registered authenticators
         let notRegisteredAuthenticators = ONGUserClient.sharedInstance().nonRegisteredAuthenticators(forUser: profile)
-        
+
         // convert list to list of objects with id and name
         let authenticators: [[String: String]] = notRegisteredAuthenticators.compactMap({ ["id" : $0.identifier, "name": $0.name] })
-        
+
         callback(String.stringify(json: authenticators))
     }
     
-    func getAllAuthenticators(callback: @escaping FlutterResult) -> Void {
-        guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
-            callback(SdkError.convertToFlutter(SdkError(.authenticatedUserProfileIsNull)))
-            return
+    func getAllAuthenticators(_ profileId: String, callback: @escaping FlutterResult) -> Void {
+        guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
+            return callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
         }
-        
+
         // get all authenticators
         let allAuthenticators = ONGUserClient.sharedInstance().allAuthenticators(forUser: profile)
-        
+
         // convert list to list of objects with id and name
         let authenticators: [[String: String]] = allAuthenticators.compactMap({ ["id" : $0.identifier, "name": $0.name] })
-        
+
         callback(String.stringify(json: authenticators))
     }
 }
