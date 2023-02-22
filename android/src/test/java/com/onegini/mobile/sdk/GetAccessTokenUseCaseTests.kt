@@ -1,6 +1,8 @@
 package com.onegini.mobile.sdk
 
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.errors.wrapperError
 import com.onegini.mobile.sdk.flutter.useCases.GetAccessTokenUseCase
 import io.flutter.plugin.common.MethodChannel
 import org.junit.Before
@@ -29,16 +31,16 @@ class GetAccessTokenUseCaseTests {
     }
 
     @Test
-    fun `should return null when access token is null in SDK`() {
+    fun `When the accessToken is null, Then should error with AUTHENTICATED_USER_PROFILE_IS_NULL`() {
         whenever(oneginiSdk.oneginiClient.userClient.accessToken).thenReturn(null)
 
         getAccessTokenUseCase(resultSpy)
 
-        verify(resultSpy).success(null)
+        verify(resultSpy).wrapperError(AUTHENTICATED_USER_PROFILE_IS_NULL)
     }
 
     @Test
-    fun `should return access token when access token exist in SDK`() {
+    fun `When the accessToken exists, Then should return the accessToken`() {
         whenever(oneginiSdk.oneginiClient.userClient.accessToken).thenReturn("test access token")
 
         getAccessTokenUseCase(resultSpy)
