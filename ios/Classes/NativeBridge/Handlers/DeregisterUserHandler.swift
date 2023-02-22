@@ -3,16 +3,17 @@ import OneginiSDKiOS
 import OneginiCrypto
 
 protocol DeregisterUserHandlerProtocol: AnyObject {
-    func deregister(_ profileId: String, completion: @escaping (SdkError?) -> Void)
+    func deregister(profileId: String, completion: @escaping (SdkError?) -> Void)
 }
 
 class DeregisterUserHandler: DeregisterUserHandlerProtocol {
-    func deregister(_ profileId: String, completion: @escaping (SdkError?) -> Void) {
+    func deregister(profileId: String, completion: @escaping (SdkError?) -> Void) {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
-            return completion(SdkError(.userProfileDoesNotExist))
+            completion(SdkError(.userProfileDoesNotExist))
+            return
         }
         
-        userClient.deregisterUser(profile) { _, error in
+        ONGUserClient.sharedInstance().deregisterUser(profile) { _, error in
             if let error = error {
                 let mappedError = ErrorMapper().mapError(error)
                 completion(mappedError)

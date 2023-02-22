@@ -5,8 +5,8 @@ import Flutter
 
 extension OneginiModuleSwift {
 
-    func deregisterUser(_ userProfileId: String, callback: @escaping FlutterResult) {
-        bridgeConnector.toDeregisterUserHandler.deregister(userProfileId) { (error) in
+    func deregisterUser(profileId: String, callback: @escaping FlutterResult) {
+        bridgeConnector.toDeregisterUserHandler.deregister(profileId: profileId) { (error) in
             error != nil ? callback(SdkError.convertToFlutter(error)) : callback(true)
         }
     }
@@ -80,7 +80,8 @@ extension OneginiModuleSwift {
         let notRegisteredAuthenticators = ONGUserClient.sharedInstance().nonRegisteredAuthenticators(forUser: profile)
 
         guard let authenticator = notRegisteredAuthenticators.first(where: { $0.identifier == authenticatorId }) else {
-            return callback(SdkError.convertToFlutter(SdkError(.authenticatorNotFound)))
+            callback(SdkError.convertToFlutter(SdkError(.authenticatorNotFound)))
+            return
         }
 
         bridgeConnector.toAuthenticatorsHandler.registerAuthenticator(profile, authenticator) {
@@ -96,7 +97,8 @@ extension OneginiModuleSwift {
     
     func getRegisteredAuthenticators(_ profileId: String, callback: @escaping FlutterResult) {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
-            return callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
+            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
+            return
         }
 
         let registeredAuthenticators = ONGUserClient.sharedInstance().registeredAuthenticators(forUser: profile)
@@ -109,7 +111,8 @@ extension OneginiModuleSwift {
     
     func getNotRegisteredAuthenticators(_ profileId: String, callback: @escaping FlutterResult) -> Void {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
-            return callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
+            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
+            return
         }
 
         // get not registered authenticators
@@ -123,7 +126,8 @@ extension OneginiModuleSwift {
     
     func getAllAuthenticators(_ profileId: String, callback: @escaping FlutterResult) -> Void {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
-            return callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
+            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
+            return
         }
 
         // get all authenticators

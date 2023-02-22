@@ -69,12 +69,12 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     func registerAuthenticator(_ userProfile: ONGUserProfile, _ authenticator: ONGAuthenticator,_ completion: @escaping (Bool, SdkError?) -> Void) {
         guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticator.identifier}) else {
             completion(false, SdkError(.authenticatorNotFound))
-            return;
+            return
         }
         
         if(authenticator.isRegistered == true) {
             completion(false, SdkError(.authenticatorNotFound))
-            return;
+            return
         }
         
         registrationCompletion = completion;
@@ -84,12 +84,12 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     func deregisterAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String,_ completion: @escaping (Bool, SdkError?) -> Void) {
         guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticatorId}) else {
             completion(false, SdkError(.authenticatorNotFound))
-            return;
+            return
         }
         
         if(authenticator.isRegistered != true) {
             completion(false, SdkError(.authenticatorNotRegistered))
-            return;
+            return
         }
         
         deregistrationCompletion = completion;
@@ -99,12 +99,12 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String,_ completion: @escaping (Bool, SdkError?) -> Void) {
         guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticatorId}) else {
             completion(false, SdkError(.authenticatorNotFound))
-            return;
+            return
         }
         
         if(!authenticator.isRegistered) {
             completion(false, SdkError(.authenticatorNotRegistered))
-            return;
+            return
         }
         
         ONGUserClient.sharedInstance().preferredAuthenticator = authenticator

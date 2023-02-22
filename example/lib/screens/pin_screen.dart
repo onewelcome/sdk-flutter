@@ -1,7 +1,6 @@
 // @dart = 2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/callbacks/onegini_pin_authentication_callback.dart';
 
 import '../components/display_toast.dart';

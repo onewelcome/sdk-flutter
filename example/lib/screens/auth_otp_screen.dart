@@ -1,7 +1,6 @@
 // @dart = 2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/callbacks/onegini_otp_accept_deny_callback.dart';
 import 'package:onegini/onegini.dart';
 import '../components/display_toast.dart';
