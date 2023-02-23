@@ -7,6 +7,7 @@ import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import com.onegini.mobile.sdk.flutter.module.FlutterOneWelcomeSdkModule
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
+import io.flutter.plugin.common.FlutterException
 import io.flutter.plugin.common.MethodChannel
 import javax.inject.Inject
 
@@ -65,6 +66,7 @@ class OneginiPlugin : FlutterPlugin, UserClientApi {
     override fun fetchUserProfiles(callback: (Result<List<PigeonUserProfile>>) -> Unit) {
         val a = Result.success(listOf(PigeonUserProfile("ghalo", true)))
 //        val a = Result.failure<List<PigeonUserProfile>>(Exception("meee", Throwable("boop")))
-        callback(a)
+        callback(Result.failure(FlutterException(CODE, MESSAGE, DETAILS)))
+        callback(Result.failure(Exception("meee", Throwable("boop"))))
     }
 }
