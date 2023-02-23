@@ -31,12 +31,12 @@ class GetAccessTokenUseCaseTests {
     }
 
     @Test
-    fun `When the accessToken is null, Then should error with AUTHENTICATED_USER_PROFILE_IS_NULL`() {
+    fun `When the accessToken is null, Then should error with NO_USER_PROFILE_IS_AUTHENTICATED`() {
         whenever(oneginiSdk.oneginiClient.userClient.accessToken).thenReturn(null)
 
         getAccessTokenUseCase(resultSpy)
 
-        verify(resultSpy).wrapperError(AUTHENTICATED_USER_PROFILE_IS_NULL)
+        verify(resultSpy).wrapperError(NO_USER_PROFILE_IS_AUTHENTICATED)
     }
 
     @Test
