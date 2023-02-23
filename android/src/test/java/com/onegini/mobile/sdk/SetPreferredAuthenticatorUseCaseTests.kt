@@ -59,7 +59,6 @@ class SetPreferredAuthenticatorUseCaseTests {
     fun `When an authenticator id is null then an error should be thrown`() {
         whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
         whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(setOf(oneginiAuthenticatorMock))
-        whenever(oneginiAuthenticatorMock.id).thenReturn("test")
 
         setPreferredAuthenticatorUseCase(callMock, resultSpy)
 
