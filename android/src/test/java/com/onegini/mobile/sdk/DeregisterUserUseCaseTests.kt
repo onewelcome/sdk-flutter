@@ -43,7 +43,9 @@ class DeregisterUserUseCaseTests {
     }
 
     @Test
-    fun `should return error when user not authenticated`() {
+    fun `When the user is not recognised, Then it should return error`() {
+        whenever(callMock.argument<String>("profileId")).thenReturn("ABCDEF")
+        whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
         deregisterUserUseCase(callMock, resultSpy)
 
         val message = USER_PROFILE_DOES_NOT_EXIST.message
@@ -51,7 +53,7 @@ class DeregisterUserUseCaseTests {
     }
 
     @Test
-    fun `should return true when user deregister`() {
+    fun `When user deregisters successfully, Then it should return true`() {
         whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
         whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
 
@@ -65,7 +67,7 @@ class DeregisterUserUseCaseTests {
     }
 
     @Test
-    fun `should return error when deregister method return error`() {
+    fun `When deregister method return an error, Then the wrapper function should return error`() {
         whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
         whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
         whenever(oneginiSdk.oneginiClient.userClient.deregisterUser(eq(UserProfile("QWERTY")), any())).thenAnswer {

@@ -1,7 +1,6 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
 import com.google.gson.Gson
-import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticatorRegistrationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorRegistrationError
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
@@ -19,16 +18,14 @@ import javax.inject.Singleton
 class RegisterAuthenticatorUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
     operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
         val authenticatorId = call.argument<String>("authenticatorId")
+            ?: return SdkError(METHOD_ARGUMENT_NOT_FOUND).flutterError(result)
+
         val authenticatedUserProfile = oneginiSDK.oneginiClient.userClient.authenticatedUserProfile
-        if (authenticatedUserProfile == null) {
-            SdkError(AUTHENTICATED_USER_PROFILE_IS_NULL).flutterError(result)
-            return
-        }
+            ?: return SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).flutterError(result)
+
         val authenticator = getAuthenticatorById(authenticatorId, authenticatedUserProfile)
-        if (authenticator == null) {
-            SdkError(AUTHENTICATOR_NOT_FOUND).flutterError(result)
-            return
-        }
+            ?: return SdkError(AUTHENTICATOR_NOT_FOUND).flutterError(result)
+
         oneginiSDK.oneginiClient.userClient.registerAuthenticator(authenticator, object : OneginiAuthenticatorRegistrationHandler {
             override fun onSuccess(customInfo: CustomInfo?) {
                 result.success(Gson().toJson(customInfo))
@@ -54,5 +51,4 @@ class RegisterAuthenticatorUseCase @Inject constructor(private val oneginiSDK: O
         }
         return authenticator
     }
-
 }

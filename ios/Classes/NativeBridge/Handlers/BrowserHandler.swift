@@ -50,7 +50,7 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
             Logger.log("webAuthSession completionHandler", sender: self)
             guard error == nil, let successURL = callbackURL else {
                 self.cancelButtonPressed()
-                return;
+                return
             }
 
             self.handleSuccessUrl(url: successURL)
@@ -58,7 +58,7 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
 
         if #available(iOS 13.0, *) {
             webAuthSession?.prefersEphemeralWebBrowserSession = true
-            webAuthSession?.presentationContextProvider = self;
+            webAuthSession?.presentationContextProvider = self
         }
         webAuthSession?.start()
     }

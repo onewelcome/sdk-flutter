@@ -11,7 +11,7 @@ class BridgeConnector: BridgeConnectorProtocol {
     let toResourceFetchHandler: FetchResourcesHandlerProtocol = ResourcesHandler()
     let toMobileAuthConnector: BridgeToMobileAuthConnectorProtocol = MobileAuthConnector()
     var toLogoutUserHandler = LogoutHandler()
-    var toDeregisterUserHandler = DisconnectHandler()
+    var toDeregisterUserHandler = DeregisterUserHandler()
     let toAuthenticatorsHandler: AuthenticatorsHandler = AuthenticatorsHandler()
     
     weak var bridge: ConnectorToFlutterBridgeProtocol?

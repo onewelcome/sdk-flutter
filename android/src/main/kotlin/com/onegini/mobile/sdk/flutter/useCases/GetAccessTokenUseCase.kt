@@ -1,6 +1,6 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.AUTHENTICATED_USER_PROFILE_IS_NULL
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NO_USER_PROFILE_IS_AUTHENTICATED
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.errors.wrapperError
 import io.flutter.plugin.common.MethodChannel
@@ -14,6 +14,6 @@ class GetAccessTokenUseCase @Inject constructor(private val oneginiSDK: OneginiS
             result.success(token)
             return
         }
-        result.wrapperError(AUTHENTICATED_USER_PROFILE_IS_NULL)
+        result.wrapperError(NO_USER_PROFILE_IS_AUTHENTICATED)
     }
 }

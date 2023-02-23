@@ -4,7 +4,6 @@ import 'dart:convert';
 import "package:collection/collection.dart";
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/model/onegini_list_response.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini_example/components/display_toast.dart';
@@ -31,6 +30,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
   bool isContainNotRegisteredAuthenticators = true;
   List<OneginiListResponse> registeredAuthenticators = [];
   List<OneginiListResponse> notRegisteredAuthenticators = [];
+  String profileId = "";
 
   void onTabTapped(int index) {
     setState(() {
@@ -47,6 +47,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
       ),
     ];
     super.initState();
+    this.profileId = widget.userProfileId;
     getAuthenticators();
   }
 
@@ -82,14 +83,15 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   Future<void> getAuthenticators() async {
     notRegisteredAuthenticators = await Onegini.instance.userClient
-        .getNotRegisteredAuthenticators(context);
-    registeredAuthenticators =
-        await Onegini.instance.userClient.getRegisteredAuthenticators(context);
+        .getNotRegisteredAuthenticators(context, this.profileId);
+
+    registeredAuthenticators = await Onegini.instance.userClient
+        .getRegisteredAuthenticators(context, this.profileId);
   }
 
   Future<List<OneginiListResponse>> getAllSortAuthenticators() async {
-    var allAuthenticators =
-        await Onegini.instance.userClient.getAllAuthenticators(context);
+    var allAuthenticators = await Onegini.instance.userClient
+        .getAllAuthenticators(context, this.profileId);
     allAuthenticators.sort((a, b) {
       return compareAsciiUpperCase(a.name, b.name);
     });
@@ -98,7 +100,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   Future<List<OneginiListResponse>> getNotRegisteredAuthenticators() async {
     var authenticators = await Onegini.instance.userClient
-        .getNotRegisteredAuthenticators(context);
+        .getNotRegisteredAuthenticators(context, this.profileId);
     return authenticators;
   }
 
@@ -233,7 +235,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
             ),
             FutureBuilder<List<OneginiListResponse>>(
               future: Onegini.instance.userClient
-                  .getRegisteredAuthenticators(context),
+                  .getRegisteredAuthenticators(context, this.profileId),
               builder: (BuildContext context, snapshot) {
                 return PopupMenuButton<String>(
                     child: ListTile(

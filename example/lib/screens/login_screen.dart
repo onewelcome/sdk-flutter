@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/callbacks/onegini_registration_callback.dart';
 import 'package:onegini/model/onegini_list_response.dart';
 import 'package:onegini/model/registration_response.dart';
@@ -75,13 +74,10 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  preferredAuthentication() async {
+  authenticateWithPreferredAuthenticator(String profileId) async {
     setState(() => {isLoading = true});
     var registrationResponse = await Onegini.instance.userClient
-        .authenticateUser(
-      context,
-      null,
-    )
+        .authenticateUser(context, profileId, null)
         .catchError((error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
@@ -99,13 +95,13 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   authenticateWithRegisteredAuthenticators(
-      String registeredAuthenticatorId) async {
+      String registeredAuthenticatorId, String profileId) async {
     setState(() => {isLoading = true});
     // var result = await Onegini.instance.userClient.setPreferredAuthenticator(context, registeredAuthenticatorId);
     // print(result);
 
     var registrationResponse = await Onegini.instance.userClient
-        .authenticateUser(context, registeredAuthenticatorId)
+        .authenticateUser(context, profileId, registeredAuthenticatorId)
         .catchError((error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
@@ -209,8 +205,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   FutureBuilder<List<UserProfile>>(
                       //userProfiles
                       future: getUserProfiles(),
-                      builder: (context, snapshot) {
-                        return (snapshot.hasData && snapshot.data.length > 0)
+                      builder: (context, userProfiles) {
+                        return (userProfiles.hasData &&
+                                userProfiles.data.length > 0)
                             ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
@@ -218,9 +215,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                     FutureBuilder<String>(
                                         //implicit
                                         future: getImplicitUserDetails(
-                                            snapshot.data.first?.profileId),
-                                        builder: (context, snapshot) {
-                                          return snapshot.hasData
+                                            userProfiles.data.first?.profileId),
+                                        builder:
+                                            (context, implicitUserDetails) {
+                                          return implicitUserDetails.hasData
                                               ? Column(
                                                   crossAxisAlignment:
                                                       CrossAxisAlignment.center,
@@ -235,7 +233,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                                             TextAlign.center,
                                                       ),
                                                       Text(
-                                                        snapshot.data,
+                                                        implicitUserDetails
+                                                            .data,
                                                         style: TextStyle(
                                                             fontSize: 20),
                                                         textAlign:
@@ -246,7 +245,11 @@ class _LoginScreenState extends State<LoginScreen> {
                                                       ),
                                                       ElevatedButton(
                                                         onPressed: () {
-                                                          preferredAuthentication();
+                                                          authenticateWithPreferredAuthenticator(
+                                                              userProfiles
+                                                                  .data
+                                                                  .first
+                                                                  ?.profileId);
                                                         },
                                                         child: Text(
                                                             'Authenticate with preferred authenticator'),
@@ -260,11 +263,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                                         future: Onegini
                                                             .instance.userClient
                                                             .getRegisteredAuthenticators(
-                                                                context),
+                                                                context,
+                                                                userProfiles
+                                                                    .data
+                                                                    .first
+                                                                    ?.profileId),
                                                         builder: (BuildContext
                                                                 context,
-                                                            snapshot) {
-                                                          return snapshot
+                                                            registeredAuthenticators) {
+                                                          return registeredAuthenticators
                                                                   .hasData
                                                               ? PopupMenuButton<
                                                                       String>(
@@ -289,11 +296,15 @@ class _LoginScreenState extends State<LoginScreen> {
                                                                   onSelected:
                                                                       (value) {
                                                                     authenticateWithRegisteredAuthenticators(
+                                                                        userProfiles
+                                                                            .data
+                                                                            .first
+                                                                            ?.profileId,
                                                                         value);
                                                                   },
                                                                   itemBuilder:
                                                                       (context) {
-                                                                    return snapshot
+                                                                    return registeredAuthenticators
                                                                         .data
                                                                         .map((e) =>
                                                                             PopupMenuItem<String>(
@@ -334,8 +345,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   FutureBuilder<List<OneginiListResponse>>(
                     future: Onegini.instance.userClient
                         .getIdentityProviders(context),
-                    builder: (BuildContext context, snapshot) {
-                      return snapshot.hasData
+                    builder: (BuildContext context, identityProviders) {
+                      return identityProviders.hasData
                           ? PopupMenuButton<String>(
                               child: Container(
                                 padding: EdgeInsets.all(20),
@@ -352,7 +363,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 registrationWithIdentityProvider(value);
                               },
                               itemBuilder: (context) {
-                                return snapshot.data
+                                return identityProviders.data
                                     .map((e) => PopupMenuItem<String>(
                                           child: Text(e.name ?? ""),
                                           value: e.id,

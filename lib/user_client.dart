@@ -67,7 +67,7 @@ class UserClient {
   Future<bool> deregisterUser(String profileId) async {
     try {
       var isSuccess = await Onegini.instance.channel
-          .invokeMethod(Constants.deregisterUserMethod, <String, String?>{
+          .invokeMethod(Constants.deregisterUserMethod, <String, String>{
         'profileId': profileId,
       });
       return isSuccess ?? false;
@@ -81,11 +81,13 @@ class UserClient {
 
   /// Returns a list of authenticators registered and available to the user.
   Future<List<OneginiListResponse>> getRegisteredAuthenticators(
-      BuildContext? context) async {
+      BuildContext? context, String profileId) async {
     Onegini.instance.setEventContext(context);
     try {
       var authenticators = await Onegini.instance.channel
-          .invokeMethod(Constants.getRegisteredAuthenticators);
+          .invokeMethod(Constants.getRegisteredAuthenticators, <String, String>{
+        'profileId': profileId,
+      });
       return responseFromJson(authenticators);
     } on TypeError catch (error) {
       throw PlatformException(
@@ -96,11 +98,13 @@ class UserClient {
   }
 
   Future<List<OneginiListResponse>> getAllAuthenticators(
-      BuildContext? context) async {
+      BuildContext? context, String profileId) async {
     Onegini.instance.setEventContext(context);
     try {
       var authenticators = await Onegini.instance.channel
-          .invokeMethod(Constants.getAllAuthenticators);
+          .invokeMethod(Constants.getAllAuthenticators, <String, String>{
+        'profileId': profileId,
+      });
       return responseFromJson(authenticators);
     } on TypeError catch (error) {
       throw PlatformException(
@@ -130,6 +134,7 @@ class UserClient {
   /// Usually it is Pin authenticator.
   Future<RegistrationResponse> authenticateUser(
     BuildContext? context,
+    String profileId,
     String? registeredAuthenticatorId,
   ) async {
     Onegini.instance.setEventContext(context);
@@ -137,6 +142,7 @@ class UserClient {
       var response = await Onegini.instance.channel
           .invokeMethod(Constants.authenticateUser, <String, String?>{
         'registeredAuthenticatorId': registeredAuthenticatorId,
+        'profileId': profileId,
       });
       return registrationResponseFromJson(response);
     } on TypeError catch (error) {
@@ -149,10 +155,12 @@ class UserClient {
 
   /// Returns a list of authenticators available to the user, but not yet registered.
   Future<List<OneginiListResponse>> getNotRegisteredAuthenticators(
-      BuildContext? context) async {
+      BuildContext? context, String profileId) async {
     try {
-      var authenticators = await Onegini.instance.channel
-          .invokeMethod(Constants.getAllNotRegisteredAuthenticators);
+      var authenticators = await Onegini.instance.channel.invokeMethod(
+          Constants.getAllNotRegisteredAuthenticators, <String, String>{
+        'profileId': profileId,
+      });
       return responseFromJson(authenticators);
     } on TypeError catch (error) {
       throw PlatformException(
