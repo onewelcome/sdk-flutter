@@ -67,6 +67,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         validatePinWithPolicy(call, result)
     case Constants.Routes.getAuthenticatedUserProfile: getAuthenticatedUserProfile(result)
     case Constants.Routes.getUserProfiles: getUserProfiles(result)
+    case Constants.Routes.getAccessToken: getAccessToken(result)
 
     // fingerprint
     case Constants.Routes.acceptFingerprintAuthenticationRequest: acceptFingerprintAuthenticationRequest(call, result)
