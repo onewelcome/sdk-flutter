@@ -14,11 +14,49 @@ import 'package:pigeon/pigeon.dart';
 //   ),
 // ))
 
+// Error Class
+class OneWelcomeNativeError {
+  String code;
+  String message;
+  Map<String?, Object?> details;
+
+  OneWelcomeNativeError(
+      {required this.code, required this.message, required this.details});
+}
+
+// Return Objects
+class UserProfile {
+  String profileId;
+
+  UserProfile({required this.profileId});
+}
+
+// Results
+enum State {
+  success,
+  error,
+}
+
+// class Result {
+//   State state;
+//   OneWelcomeNativeError? error;
+
+//   Result({required this.state});
+// }
+
+class UserProfilesResult {
+  State state;
+  List<UserProfile?>? success;
+  OneWelcomeNativeError? error;
+
+  UserProfilesResult({required this.state});
+}
+
 class PigeonUserProfile {
   String profileId;
   bool isDefault;
 
-  PigeonUserProfile({ required this.profileId, required this.isDefault});
+  PigeonUserProfile({required this.profileId, required this.isDefault});
 }
 
 /// Flutter calls native
@@ -26,11 +64,14 @@ class PigeonUserProfile {
 abstract class UserClientApi {
   @async
   List<PigeonUserProfile> fetchUserProfiles();
+
+  @async
+  UserProfilesResult testFunction();
 }
 
 /// Native calls Flutter
 @FlutterApi()
-abstract class NativeCallFlutterApi{
+abstract class NativeCallFlutterApi {
   @async
   String testEventFunction(String argument);
 }

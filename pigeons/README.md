@@ -21,6 +21,9 @@ https://github.com/flutter/packages/pull/3084
 Currently, it is not possible to send custom platform exceptions back using the (code, message, details) structure. This PR is requesting it and we hope it gets added soon:
 https://github.com/flutter/flutter/issues/120861
 
+PR Fixing the limitation
+https://github.com/flutter/packages/pull/3234
+
 ### Triggering event functions from Native
 We can use @FlutterApi to call functions on the dart side from the Native parts. However, as always this is not ducumented but there is an open documentation issue that gives some references with more information
 https://github.com/flutter/flutter/issues/108531

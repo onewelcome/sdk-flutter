@@ -12,7 +12,11 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
-  pigeon: ^8.0.0
+  pigeon:
+    git:
+      url: git@github.com:flutter/packages.git
+      path: packages/pigeon
+      ref: 4294185774d8b88989b6a21f9ad9cfc20be4af7b
   flutter_test:
     sdk: flutter
 
