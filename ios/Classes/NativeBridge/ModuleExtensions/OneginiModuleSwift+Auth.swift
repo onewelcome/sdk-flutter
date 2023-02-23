@@ -1,6 +1,5 @@
 import Foundation
 import OneginiSDKiOS
-import OneginiCrypto
 import Flutter
 
 extension OneginiModuleSwift {
@@ -137,7 +136,7 @@ extension OneginiModuleSwift {
     
     func getAccessToken(callback: @escaping FlutterResult) {
         guard let accessToken = ONGUserClient.sharedInstance().accessToken else {
-            callback(SdkError.convertToFlutter(SdkError(.authenticatedUserProfileIsNull)))
+            callback(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
             return
         }
         callback(accessToken)

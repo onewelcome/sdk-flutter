@@ -1,6 +1,5 @@
 import Foundation
 import OneginiSDKiOS
-import OneginiCrypto
 
 //MARK: -
 protocol MobileAuthConnectorToHandlerProtocol: AnyObject {

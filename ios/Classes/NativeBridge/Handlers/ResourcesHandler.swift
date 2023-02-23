@@ -1,6 +1,5 @@
 import Foundation
 import OneginiSDKiOS
-import OneginiCrypto
 
 typealias FlutterDataCallback = (Any?, SdkError?) -> Void
 

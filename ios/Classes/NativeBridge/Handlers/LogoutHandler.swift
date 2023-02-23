@@ -1,6 +1,5 @@
 import UIKit
 import OneginiSDKiOS
-import OneginiCrypto
 
 protocol LogoutHandlerProtocol: AnyObject {
     func logout(completion: @escaping (SdkError?) -> Void)

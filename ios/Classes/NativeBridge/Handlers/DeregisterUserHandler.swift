@@ -1,6 +1,5 @@
 import UIKit
 import OneginiSDKiOS
-import OneginiCrypto
 
 protocol DeregisterUserHandlerProtocol: AnyObject {
     func deregister(profileId: String, completion: @escaping (SdkError?) -> Void)
