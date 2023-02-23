@@ -38,7 +38,7 @@ class GetRedirectUrlUseCaseTests {
     }
 
     @Test
-    fun `should return empty string when redirectUrl is empty string in SDK`() {
+    fun `When redirectUri is an empty string, Then call success with empty string`() {
         whenever(oneginiClientConfigModelMock.redirectUri).thenReturn("")
 
         getRedirectUrlUseCase(resultSpy)
@@ -47,7 +47,7 @@ class GetRedirectUrlUseCaseTests {
     }
 
     @Test
-    fun `should return string when redirectUrl exist in SDK`() {
+    fun `When redirectUri is a non-empty string, Then call sucess with that string`() {
         whenever(oneginiClientConfigModelMock.redirectUri).thenReturn("http://test.com")
 
         getRedirectUrlUseCase(resultSpy)

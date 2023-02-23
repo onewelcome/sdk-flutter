@@ -338,6 +338,11 @@ class Home extends StatelessWidget {
     showFlutterToast('Authenticated Userprofile: ${profile.profileId}');
   }
 
+  showAccessToken(BuildContext context) async {
+    var accessToken = await Onegini.instance.userClient.getAccessToken();
+    showFlutterToast(accessToken);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -381,6 +386,15 @@ class Home extends StatelessWidget {
                 showAuthenticatedUserProfile(context);
               },
               child: Text('Authenticated Userprofile'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                showAccessToken(context);
+              },
+              child: Text('Access Token'),
+            ),
+            SizedBox(
+              height: 20,
             ),
           ],
         ),

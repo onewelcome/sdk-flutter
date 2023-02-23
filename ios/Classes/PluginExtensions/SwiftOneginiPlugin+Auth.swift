@@ -174,4 +174,8 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
     func getAuthenticatedUserProfile(_ result: @escaping FlutterResult) {
         OneginiModuleSwift.sharedInstance.getAuthenticatedUserProfile(callback: result)
     }
+    
+    func getAccessToken(_ result: @escaping FlutterResult) {
+        OneginiModuleSwift.sharedInstance.getAccessToken(callback: result)
+    }
 }
