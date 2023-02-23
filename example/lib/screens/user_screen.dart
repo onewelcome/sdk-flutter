@@ -337,7 +337,7 @@ class Home extends StatelessWidget {
   }
 
   showAccessToken(BuildContext context) async {
-    var accessToken = await Onegini.instance.userClient.getAccessToken(context);
+    var accessToken = await Onegini.instance.userClient.getAccessToken();
     showFlutterToast(accessToken);
   }
 

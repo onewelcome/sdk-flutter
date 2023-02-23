@@ -142,5 +142,9 @@ extension OneginiModuleSwift {
         
         callback(String.stringify(json: authenticators))
     }
+    
+    func getRedirectUrl(callback: @escaping FlutterResult) -> Void {
+        callback(ONGClient.sharedInstance().configModel.redirectURL)
+    }
 }
 

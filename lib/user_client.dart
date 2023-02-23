@@ -275,6 +275,19 @@ class UserClient {
     }
   }
 
+  // Redirect url
+  Future<String> getRedirectUrl() async {
+    try {
+      return await Onegini.instance.channel
+          .invokeMethod(Constants.getRedirectUrl);
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
+    }
+  }
+
   /// User profiles
   Future<List<UserProfile>> getUserProfiles() async {
     try {
