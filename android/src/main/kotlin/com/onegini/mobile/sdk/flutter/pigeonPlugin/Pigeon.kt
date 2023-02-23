@@ -31,88 +31,6 @@ private fun wrapError(exception: Throwable): List<Any?> {
   )
 }
 
-enum class State(val raw: Int) {
-  SUCCESS(0),
-  ERROR(1);
-
-  companion object {
-    fun ofRaw(raw: Int): State? {
-      return values().firstOrNull { it.raw == raw }
-    }
-  }
-}
-
-/** Generated class from Pigeon that represents data sent in messages. */
-data class OneWelcomeNativeError (
-  val code: String,
-  val message: String,
-  val details: Map<String?, Any?>
-
-) {
-  companion object {
-    @Suppress("UNCHECKED_CAST")
-    fun fromList(list: List<Any?>): OneWelcomeNativeError {
-      val code = list[0] as String
-      val message = list[1] as String
-      val details = list[2] as Map<String?, Any?>
-      return OneWelcomeNativeError(code, message, details)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf<Any?>(
-      code,
-      message,
-      details,
-    )
-  }
-}
-
-/** Generated class from Pigeon that represents data sent in messages. */
-data class UserProfile (
-  val profileId: String
-
-) {
-  companion object {
-    @Suppress("UNCHECKED_CAST")
-    fun fromList(list: List<Any?>): UserProfile {
-      val profileId = list[0] as String
-      return UserProfile(profileId)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf<Any?>(
-      profileId,
-    )
-  }
-}
-
-/** Generated class from Pigeon that represents data sent in messages. */
-data class UserProfilesResult (
-  val state: State,
-  val success: List<UserProfile?>? = null,
-  val error: OneWelcomeNativeError? = null
-
-) {
-  companion object {
-    @Suppress("UNCHECKED_CAST")
-    fun fromList(list: List<Any?>): UserProfilesResult {
-      val state = State.ofRaw(list[0] as Int)!!
-      val success = list[1] as? List<UserProfile?>
-      val error: OneWelcomeNativeError? = (list[2] as? List<Any?>)?.let {
-        OneWelcomeNativeError.fromList(it)
-      }
-      return UserProfilesResult(state, success, error)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf<Any?>(
-      state?.raw,
-      success,
-      error?.toList(),
-    )
-  }
-}
-
 /** Generated class from Pigeon that represents data sent in messages. */
 data class PigeonUserProfile (
   val profileId: String,
@@ -141,22 +59,7 @@ private object UserClientApiCodec : StandardMessageCodec() {
     return when (type) {
       128.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          OneWelcomeNativeError.fromList(it)
-        }
-      }
-      129.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
           PigeonUserProfile.fromList(it)
-        }
-      }
-      130.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          UserProfile.fromList(it)
-        }
-      }
-      131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
-          UserProfilesResult.fromList(it)
         }
       }
       else -> super.readValueOfType(type, buffer)
@@ -164,20 +67,8 @@ private object UserClientApiCodec : StandardMessageCodec() {
   }
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
     when (value) {
-      is OneWelcomeNativeError -> {
-        stream.write(128)
-        writeValue(stream, value.toList())
-      }
       is PigeonUserProfile -> {
-        stream.write(129)
-        writeValue(stream, value.toList())
-      }
-      is UserProfile -> {
-        stream.write(130)
-        writeValue(stream, value.toList())
-      }
-      is UserProfilesResult -> {
-        stream.write(131)
+        stream.write(128)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -192,7 +83,6 @@ private object UserClientApiCodec : StandardMessageCodec() {
  */
 interface UserClientApi {
   fun fetchUserProfiles(callback: (Result<List<PigeonUserProfile>>) -> Unit)
-  fun testFunction(callback: (Result<UserProfilesResult>) -> Unit)
 
   companion object {
     /** The codec used by UserClientApi. */
@@ -208,25 +98,6 @@ interface UserClientApi {
           channel.setMessageHandler { _, reply ->
             var wrapped = listOf<Any?>()
             api.fetchUserProfiles() { result: Result<List<PigeonUserProfile>> ->
-              val error = result.exceptionOrNull()
-              if (error != null) {
-                reply.reply(wrapError(error))
-              } else {
-                val data = result.getOrNull()
-                reply.reply(wrapResult(data))
-              }
-            }
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.testFunction", codec)
-        if (api != null) {
-          channel.setMessageHandler { _, reply ->
-            var wrapped = listOf<Any?>()
-            api.testFunction() { result: Result<UserProfilesResult> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

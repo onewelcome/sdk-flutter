@@ -1,18 +1,12 @@
 package com.onegini.mobile.sdk.flutter
 
 import androidx.annotation.NonNull
-import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.PigeonUserProfile
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import com.onegini.mobile.sdk.flutter.module.FlutterOneWelcomeSdkModule
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserProfilesResult
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
-import io.flutter.plugin.common.FlutterException
 import io.flutter.plugin.common.MethodChannel
 import javax.inject.Inject
 
@@ -72,14 +66,5 @@ class OneginiPlugin : FlutterPlugin, UserClientApi {
         val a = Result.success(listOf(PigeonUserProfile("ghalo", true)))
 //        val a = Result.failure<List<PigeonUserProfile>>(Exception("meee", Throwable("boop")))
         callback(a)
-    }
-
-    override fun testFunction(callback: (Result<UserProfilesResult>) -> Unit) {
-//        val a = Result.success(listOf(UserProfilesResult(success = Us, true)))
-//        val b = FlutterException() Exception("meesage").Fl
-
-//        val a = Result.failure<Result<UserProfilesResult>>(Exception("ghallo")
-//            ())
-//        callback(a)
     }
 }

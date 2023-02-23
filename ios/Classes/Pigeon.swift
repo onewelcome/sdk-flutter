@@ -31,84 +31,6 @@ private func wrapError(_ error: Any) -> [Any?] {
   ]
 }
 
-enum State: Int {
-  case success = 0
-  case error = 1
-}
-
-/// Generated class from Pigeon that represents data sent in messages.
-struct OneWelcomeNativeError {
-  var code: String
-  var message: String
-  var details: [String?: Any?]
-
-  static func fromList(_ list: [Any?]) -> OneWelcomeNativeError? {
-    let code = list[0] as! String
-    let message = list[1] as! String
-    let details = list[2] as! [String?: Any?]
-
-    return OneWelcomeNativeError(
-      code: code,
-      message: message,
-      details: details
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      code,
-      message,
-      details,
-    ]
-  }
-}
-
-/// Generated class from Pigeon that represents data sent in messages.
-struct UserProfile {
-  var profileId: String
-
-  static func fromList(_ list: [Any?]) -> UserProfile? {
-    let profileId = list[0] as! String
-
-    return UserProfile(
-      profileId: profileId
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      profileId,
-    ]
-  }
-}
-
-/// Generated class from Pigeon that represents data sent in messages.
-struct UserProfilesResult {
-  var state: State
-  var success: [UserProfile?]? = nil
-  var error: OneWelcomeNativeError? = nil
-
-  static func fromList(_ list: [Any?]) -> UserProfilesResult? {
-    let state = State(rawValue: list[0] as! Int)!
-    let success = list[1] as? [UserProfile?] 
-    var error: OneWelcomeNativeError? = nil
-    if let errorList = list[2] as? [Any?] {
-      error = OneWelcomeNativeError.fromList(errorList)
-    }
-
-    return UserProfilesResult(
-      state: state,
-      success: success,
-      error: error
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      state.rawValue,
-      success,
-      error?.toList(),
-    ]
-  }
-}
-
 /// Generated class from Pigeon that represents data sent in messages.
 struct PigeonUserProfile {
   var profileId: String
@@ -135,13 +57,7 @@ private class UserClientApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
       case 128:
-        return OneWelcomeNativeError.fromList(self.readValue() as! [Any])
-      case 129:
         return PigeonUserProfile.fromList(self.readValue() as! [Any])
-      case 130:
-        return UserProfile.fromList(self.readValue() as! [Any])
-      case 131:
-        return UserProfilesResult.fromList(self.readValue() as! [Any])
       default:
         return super.readValue(ofType: type)
     }
@@ -150,17 +66,8 @@ private class UserClientApiCodecReader: FlutterStandardReader {
 
 private class UserClientApiCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
-    if let value = value as? OneWelcomeNativeError {
+    if let value = value as? PigeonUserProfile {
       super.writeByte(128)
-      super.writeValue(value.toList())
-    } else if let value = value as? PigeonUserProfile {
-      super.writeByte(129)
-      super.writeValue(value.toList())
-    } else if let value = value as? UserProfile {
-      super.writeByte(130)
-      super.writeValue(value.toList())
-    } else if let value = value as? UserProfilesResult {
-      super.writeByte(131)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -187,7 +94,6 @@ class UserClientApiCodec: FlutterStandardMessageCodec {
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol UserClientApi {
   func fetchUserProfiles(completion: @escaping (Result<[PigeonUserProfile], Error>) -> Void)
-  func testFunction(completion: @escaping (Result<UserProfilesResult, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -210,21 +116,6 @@ class UserClientApiSetup {
       }
     } else {
       fetchUserProfilesChannel.setMessageHandler(nil)
-    }
-    let testFunctionChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.testFunction", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      testFunctionChannel.setMessageHandler { _, reply in
-        api.testFunction() { result in
-          switch result {
-            case .success(let res):
-              reply(wrapResult(res))
-            case .failure(let error):
-              reply(wrapError(error))
-          }
-        }
-      }
-    } else {
-      testFunctionChannel.setMessageHandler(nil)
     }
   }
 }
