@@ -25,28 +25,31 @@ import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
+import javax.inject.Inject
 
-class OnMethodCallMapper(private var context: Context, private val oneginiMethodsWrapper: OneginiMethodsWrapper, private val oneginiSDK: OneginiSDK) : MethodChannel.MethodCallHandler {
+class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: OneginiMethodsWrapper, private val oneginiSDK: OneginiSDK) : MethodChannel.MethodCallHandler {
 
-    override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
-        val client = oneginiSDK.getOneginiClient()
-
-        when {
-            call.method == Constants.METHOD_START_APP -> oneginiMethodsWrapper.startApp(call, result, oneginiSDK, context)
-            client != null -> onSDKMethodCall(call, client, result, oneginiSDK.getCustomRegistrationActions())
-            else -> SdkError(ONEWELCOME_SDK_NOT_INITIALIZED).flutterError(result)
+    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+        try {
+            when {
+                call.method == Constants.METHOD_START_APP -> oneginiMethodsWrapper.startApp(call, result, oneginiSDK)
+                else -> onSDKMethodCall(call, oneginiSDK.oneginiClient, result)
+            }
+        } catch (err: FlutterPluginException) {
+            SdkError(ONEWELCOME_SDK_NOT_INITIALIZED).flutterError(result)
         }
     }
 
-    private fun onSDKMethodCall(call: MethodCall, client: OneginiClient, result: MethodChannel.Result, customRegistrationActions: ArrayList<CustomRegistrationAction>) {
+    private fun onSDKMethodCall(call: MethodCall, client: OneginiClient, result: MethodChannel.Result) {
         when (call.method) {
             // Custom Registration Callbacks
-            Constants.METHOD_SUBMIT_CUSTOM_REGISTRATION_ACTION -> oneginiMethodsWrapper.respondCustomRegistrationAction(call, result, customRegistrationActions)
-            Constants.METHOD_CANCEL_CUSTOM_REGISTRATION_ACTION -> oneginiMethodsWrapper.cancelCustomRegistrationAction(call, result, customRegistrationActions)
+            Constants.METHOD_SUBMIT_CUSTOM_REGISTRATION_ACTION -> oneginiMethodsWrapper.respondCustomRegistrationAction(call, result)
+            Constants.METHOD_CANCEL_CUSTOM_REGISTRATION_ACTION -> oneginiMethodsWrapper.cancelCustomRegistrationAction(call, result)
 
             //Register
-            Constants.METHOD_REGISTER_USER -> oneginiMethodsWrapper.registerUser(call, result, client)
-            Constants.METHOD_HANDLE_REGISTERED_URL -> oneginiMethodsWrapper.handleRegisteredUrl(call, context, client)
+            Constants.METHOD_REGISTER_USER -> oneginiMethodsWrapper.registerUser(call, result)
+            Constants.METHOD_HANDLE_REGISTERED_URL -> oneginiMethodsWrapper.handleRegisteredUrl(call, client)
             Constants.METHOD_GET_IDENTITY_PROVIDERS -> oneginiMethodsWrapper.getIdentityProviders(result, client)
             Constants.METHOD_CANCEL_BROWSER_REGISTRATION -> oneginiMethodsWrapper.cancelBrowserRegistration()
             Constants.METHOD_ACCEPT_PIN_REGISTRATION_REQUEST -> PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
@@ -79,10 +82,10 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             // Resources
             Constants.METHOD_AUTHENTICATE_USER_IMPLICITLY -> oneginiMethodsWrapper.authenticateUserImplicitly(call, result, client)
             Constants.METHOD_AUTHENTICATE_DEVICE -> oneginiMethodsWrapper.authenticateDevice(call, result, client)
-            Constants.METHOD_GET_RESOURCE_ANONYMOUS -> oneginiMethodsWrapper.getResourceAnonymous(call, result, client, ResourceHelper())
-            Constants.METHOD_GET_RESOURCE -> oneginiMethodsWrapper.getResource(call, result, client, ResourceHelper())
-            Constants.METHOD_GET_IMPLICIT_RESOURCE -> oneginiMethodsWrapper.getImplicitResource(call, result, client, ResourceHelper())
-            Constants.METHOD_GET_UNAUTHENTICATED_RESOURCE -> oneginiMethodsWrapper.getUnauthenticatedResource(call, result, client, ResourceHelper())
+            Constants.METHOD_GET_RESOURCE_ANONYMOUS -> oneginiMethodsWrapper.getResourceAnonymous(call, result, client)
+            Constants.METHOD_GET_RESOURCE -> oneginiMethodsWrapper.getResource(call, result, client)
+            Constants.METHOD_GET_IMPLICIT_RESOURCE -> oneginiMethodsWrapper.getImplicitResource(call, result, client)
+            Constants.METHOD_GET_UNAUTHENTICATED_RESOURCE -> oneginiMethodsWrapper.getUnauthenticatedResource(call, result, client)
 
             // Other
             Constants.METHOD_CHANGE_PIN -> startChangePinFlow(result, client)

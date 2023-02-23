@@ -8,14 +8,18 @@ import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AuthenticateUserUseCase(private val oneginiClient: OneginiClient) {
+@Singleton
+class AuthenticateUserUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
     operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
         val registeredAuthenticatorsId = call.argument<String>("registeredAuthenticatorId")
-        val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
+        val userProfile = oneginiSDK.oneginiClient.userClient.userProfiles.firstOrNull()
         if (userProfile == null) {
             SdkError(USER_PROFILE_DOES_NOT_EXIST).flutterError(result)
             return
@@ -25,12 +29,12 @@ class AuthenticateUserUseCase(private val oneginiClient: OneginiClient) {
             SdkError(AUTHENTICATOR_NOT_FOUND).flutterError(result)
             return
         }
-        authenticate(userProfile, authenticator, result, oneginiClient)
+        authenticate(userProfile, authenticator, result)
     }
 
     private fun getAuthenticatorById(registeredAuthenticatorsId: String?, userProfile: UserProfile): OneginiAuthenticator? {
         if (registeredAuthenticatorsId == null) return null
-        val registeredAuthenticators = oneginiClient.userClient.getRegisteredAuthenticators(userProfile)
+        val registeredAuthenticators = oneginiSDK.oneginiClient.userClient.getRegisteredAuthenticators(userProfile)
         for (registeredAuthenticator in registeredAuthenticators) {
             if (registeredAuthenticator.id == registeredAuthenticatorsId) {
                 return registeredAuthenticator
@@ -39,11 +43,11 @@ class AuthenticateUserUseCase(private val oneginiClient: OneginiClient) {
         return null
     }
 
-    private fun authenticate(userProfile: UserProfile, authenticator: OneginiAuthenticator?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
+    private fun authenticate(userProfile: UserProfile, authenticator: OneginiAuthenticator?, result: MethodChannel.Result) {
         if (authenticator == null) {
-            oneginiClient.userClient.authenticateUser(userProfile, getOneginiAuthenticationHandler(result))
+            oneginiSDK.oneginiClient.userClient.authenticateUser(userProfile, getOneginiAuthenticationHandler(result))
         } else {
-            oneginiClient.userClient.authenticateUser(userProfile, authenticator, getOneginiAuthenticationHandler(result))
+            oneginiSDK.oneginiClient.userClient.authenticateUser(userProfile, authenticator, getOneginiAuthenticationHandler(result))
         }
     }
 

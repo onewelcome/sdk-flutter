@@ -19,7 +19,6 @@ import 'package:onegini/callbacks/onegini_custom_registration_callback.dart';
 import 'screens/otp_screen.dart';
 
 class OneginiListener extends OneginiEventListener {
-
   final PinScreenController pinScreenController = PinScreenController();
 
   @override
@@ -44,19 +43,21 @@ class OneginiListener extends OneginiEventListener {
 
   @override
   void eventError(BuildContext buildContext, PlatformException error) {
-    DisplayToast().error("${error.message} Code: ${error.code} ");
+    showFlutterToast("${error.message} Code: ${error.code} ");
   }
 
   @override
   void showError(BuildContext buildContext, OneginiError error) {
-    DisplayToast().error("${error.message} Code: ${error.code} " ?? "Something went wrong");
+    showFlutterToast(
+        "${error.message} Code: ${error.code} " ?? "Something went wrong");
   }
 
   @override
   void openPinScreenAuth(BuildContext buildContext) {
     Navigator.push(
       buildContext,
-      MaterialPageRoute(builder: (context) => PinScreen(controller: pinScreenController)),
+      MaterialPageRoute(
+          builder: (context) => PinScreen(controller: pinScreenController)),
     );
   }
 
@@ -75,7 +76,8 @@ class OneginiListener extends OneginiEventListener {
   void nextAuthenticationAttempt(
       BuildContext buildContext, AuthenticationAttempt authenticationAttempt) {
     pinScreenController.clearState();
-    DisplayToast().message("failed attempts ${authenticationAttempt.failedAttempts} from ${authenticationAttempt.maxAttempts}");
+    showFlutterToast(
+        "failed attempts ${authenticationAttempt.failedAttempts} from ${authenticationAttempt.maxAttempts}");
   }
 
   @override
@@ -139,9 +141,7 @@ class OneginiListener extends OneginiEventListener {
   }
 
   @override
-  void eventInitCustomRegistration(
-    BuildContext buildContext, String data) {
-
+  void eventInitCustomRegistration(BuildContext buildContext, String data) {
     try {
       var response = jsonDecode(data);
       var providerId = response["providerId"];
@@ -149,23 +149,20 @@ class OneginiListener extends OneginiEventListener {
       if (providerId == "2-way-otp-api") {
         // a 2-way-otp does not require data for the initialization request
         OneginiCustomRegistrationCallback()
-          .submitSuccessAction(providerId, null)
-          .catchError((error) => {
-            if (error is PlatformException) {
-              DisplayToast().error(error.message)
-            }
-          });
+            .submitSuccessAction(providerId, null)
+            .catchError((error) => {
+                  if (error is PlatformException)
+                    {showFlutterToast(error.message)}
+                });
       }
     } on FormatException catch (error) {
-      DisplayToast().error(error.message);
+      showFlutterToast(error.message);
       return;
     }
   }
 
   @override
-  void eventFinishCustomRegistration(
-      BuildContext buildContext, String data) {
-
+  void eventFinishCustomRegistration(BuildContext buildContext, String data) {
     try {
       var response = jsonDecode(data);
       var providerId = response["providerId"];
@@ -175,12 +172,10 @@ class OneginiListener extends OneginiEventListener {
           buildContext,
           MaterialPageRoute(
               builder: (context) => OtpScreen(
-                    password: response["data"],
-                    providerId: providerId
-                  )),
+                  password: response["data"], providerId: providerId)),
         );
     } on FormatException catch (error) {
-      DisplayToast().error(error.message);
+      showFlutterToast(error.message);
       return;
     }
   }

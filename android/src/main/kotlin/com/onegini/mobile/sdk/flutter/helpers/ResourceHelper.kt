@@ -19,9 +19,12 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.Locale
+import javax.inject.Inject
+import javax.inject.Singleton
 import kotlin.collections.HashMap
 
-class ResourceHelper {
+@Singleton
+class ResourceHelper @Inject constructor() {
 
     fun callRequest(okHttpClient: OkHttpClient, request: Request, result: MethodChannel.Result) {
         Observable.fromCallable { okHttpClient.newCall(request).execute() }

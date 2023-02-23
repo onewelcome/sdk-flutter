@@ -51,6 +51,9 @@ class CustomInfo {
       };
 }
 
+UserProfile userProfileFromJson(String str) =>
+    UserProfile.fromJson(json.decode(str));
+
 class UserProfile {
   UserProfile({
     this.isDefault,

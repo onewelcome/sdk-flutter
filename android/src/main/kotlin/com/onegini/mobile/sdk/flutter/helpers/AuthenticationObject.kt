@@ -30,7 +30,7 @@ object AuthenticationObject {
             }
         }
         if (authenticator == null) {
-            SdkError(AUTHENTICATOR_IS_NULL).flutterError(result)
+            SdkError(AUTHENTICATOR_NOT_FOUND).flutterError(result)
             return
         }
         try {
@@ -57,7 +57,7 @@ object AuthenticationObject {
             }
         }
         if (authenticator == null) {
-            SdkError(AUTHENTICATOR_IS_NULL).flutterError(result)
+            SdkError(AUTHENTICATOR_NOT_FOUND).flutterError(result)
             return
         }
         oneginiClient.userClient.registerAuthenticator(
@@ -92,7 +92,7 @@ object AuthenticationObject {
             }
         }
         if (authenticator == null) {
-            SdkError(AUTHENTICATOR_IS_NULL).flutterError(result)
+            SdkError(AUTHENTICATOR_NOT_FOUND).flutterError(result)
             return
         }
         oneginiClient.userClient.deregisterAuthenticator(

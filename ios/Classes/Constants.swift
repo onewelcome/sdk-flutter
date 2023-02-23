@@ -4,58 +4,59 @@ enum Constants {
     enum Routes {
         
         // onegini methods
-        static let startApp: String = "startApp"
+        static let startApp = "startApp"
 
         // Submit CustomRegistration Actions
-        static let submitCustomRegistrationAction: String = "submitCustomRegistrationAction"
-        static let cancelCustomRegistrationAction: String = "cancelCustomRegistrationAction"
+        static let submitCustomRegistrationAction = "submitCustomRegistrationAction"
+        static let cancelCustomRegistrationAction = "cancelCustomRegistrationAction"
         
         // registration
-        static let registerUser: String = "registerUser"
-        static let cancelBrowserRegistration: String = "cancelBrowserRegistration"
-        static let getIdentityProviders: String = "getIdentityProviders"
-        static let denyPinRegistrationRequest: String = "denyPinRegistrationRequest"
-        static let acceptPinRegistrationRequest: String = "acceptPinRegistrationRequest"
-        static let deregisterUser: String = "deregisterUser"
-        static let handleRegisteredUserUrl: String = "handleRegisteredUserUrl"
+        static let registerUser = "registerUser"
+        static let cancelBrowserRegistration = "cancelBrowserRegistration"
+        static let getIdentityProviders = "getIdentityProviders"
+        static let denyPinRegistrationRequest = "denyPinRegistrationRequest"
+        static let acceptPinRegistrationRequest = "acceptPinRegistrationRequest"
+        static let deregisterUser = "deregisterUser"
+        static let handleRegisteredUserUrl = "handleRegisteredUserUrl"
         
         //authentication
-        static let authenticateUser: String = "authenticateUser"
-        static let authenticateDevice: String = "authenticateDevice"
-        static let authenticateUserImplicitly: String = "authenticateUserImplicitly"
-        static let getAllNotRegisteredAuthenticators: String = "getAllNotRegisteredAuthenticators"
-        static let getRegisteredAuthenticators: String = "getRegisteredAuthenticators"
-        static let getAllAuthenticators: String = "getAllAuthenticators"
-        static let registerAuthenticator: String = "registerAuthenticator"
-        static let denyPinAuthenticationRequest: String = "denyPinAuthenticationRequest"
-        static let acceptPinAuthenticationRequest: String = "acceptPinAuthenticationRequest"
-        static let logout: String = "logout";
-        static let validatePinWithPolicy: String = "validatePinWithPolicy"
-        static let setPreferredAuthenticator: String = "setPreferredAuthenticator"
-        static let deregisterAuthenticator: String = "deregisterAuthenticator"
+        static let authenticateUser = "authenticateUser"
+        static let authenticateDevice = "authenticateDevice"
+        static let authenticateUserImplicitly = "authenticateUserImplicitly"
+        static let getAllNotRegisteredAuthenticators = "getAllNotRegisteredAuthenticators"
+        static let getRegisteredAuthenticators = "getRegisteredAuthenticators"
+        static let getAllAuthenticators = "getAllAuthenticators"
+        static let registerAuthenticator = "registerAuthenticator"
+        static let denyPinAuthenticationRequest = "denyPinAuthenticationRequest"
+        static let acceptPinAuthenticationRequest = "acceptPinAuthenticationRequest"
+        static let logout = "logout";
+        static let validatePinWithPolicy = "validatePinWithPolicy"
+        static let setPreferredAuthenticator = "setPreferredAuthenticator"
+        static let deregisterAuthenticator = "deregisterAuthenticator"
 
         //fingerprint
-        static let acceptFingerprintAuthenticationRequest: String = "acceptFingerprintAuthenticationRequest"
-        static let denyFingerprintAuthenticationRequest: String = "denyFingerprintAuthenticationRequest"
-        static let fingerprintFallbackToPin: String = "fingerprintFallbackToPin"
+        static let acceptFingerprintAuthenticationRequest = "acceptFingerprintAuthenticationRequest"
+        static let denyFingerprintAuthenticationRequest = "denyFingerprintAuthenticationRequest"
+        static let fingerprintFallbackToPin = "fingerprintFallbackToPin"
 
         //otp
-        static let handleMobileAuthWithOtp: String = "handleMobileAuthWithOtp"
-        static let acceptOtpAuthenticationRequest: String = "acceptOtpAuthenticationRequest"
-        static let denyOtpAuthenticationRequest: String = "denyOtpAuthenticationRequest"
+        static let handleMobileAuthWithOtp = "handleMobileAuthWithOtp"
+        static let acceptOtpAuthenticationRequest = "acceptOtpAuthenticationRequest"
+        static let denyOtpAuthenticationRequest = "denyOtpAuthenticationRequest"
 
         //resources
-        static let getResourceAnonymous: String = "getResourceAnonymous"
-        static let getResource: String = "getResource"
-        static let getImplicitResource: String = "getImplicitResource"
-        static let unauthenticatedRequest: String = "getUnauthenticatedResource"
+        static let getResourceAnonymous = "getResourceAnonymous"
+        static let getResource = "getResource"
+        static let getImplicitResource = "getImplicitResource"
+        static let unauthenticatedRequest = "getUnauthenticatedResource"
         
-        static let eventHandleRegisteredUrl: String = "eventHandleRegisteredUrl"
+        static let eventHandleRegisteredUrl = "eventHandleRegisteredUrl"
 
         //Other
-        static let getAppToWebSingleSignOn: String = "getAppToWebSingleSignOn"
-        static let changePin: String = "changePin"
-        static let getUserProfiles: String = "getUserProfiles"
+        static let getAppToWebSingleSignOn = "getAppToWebSingleSignOn"
+        static let changePin = "changePin"
+        static let getUserProfiles = "getUserProfiles"
+        static let getAuthenticatedUserProfile = "getAuthenticatedUserProfile"
     }
     
     enum Keys {

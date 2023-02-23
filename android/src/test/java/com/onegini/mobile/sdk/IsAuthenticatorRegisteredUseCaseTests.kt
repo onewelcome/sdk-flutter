@@ -1,31 +1,33 @@
 package com.onegini.mobile.sdk
 
 import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.useCases.IsAuthenticatorRegisteredUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Answers
 import org.mockito.Mock
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.kotlin.any
+import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
 class IsAuthenticatorRegisteredUseCaseTests {
 
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    lateinit var oneginiSdk: OneginiSDK
+
     @Mock
     lateinit var clientMock: OneginiClient
-
-    @Mock
-    lateinit var userClientMock: UserClient
-
     @Mock
     lateinit var callMock: MethodCall
 
@@ -38,63 +40,68 @@ class IsAuthenticatorRegisteredUseCaseTests {
     @Spy
     lateinit var resultSpy: MethodChannel.Result
 
+    lateinit var isAuthenticatorRegisteredUseCase: IsAuthenticatorRegisteredUseCase
+
     @Before
     fun attach() {
-        whenever(clientMock.userClient).thenReturn(userClientMock)
+        isAuthenticatorRegisteredUseCase = IsAuthenticatorRegisteredUseCase(oneginiSdk)
     }
 
     @Test
     fun `should return error when user is not authenticated`() {
-        whenever(userClientMock.authenticatedUserProfile).thenReturn(null)
+        whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(null)
 
-        IsAuthenticatorRegisteredUseCase(clientMock)(callMock,resultSpy)
+        isAuthenticatorRegisteredUseCase(callMock,resultSpy)
 
-        verify(resultSpy).error(AUTHENTICATED_USER_PROFILE_IS_NULL.code.toString(), AUTHENTICATED_USER_PROFILE_IS_NULL.message, null)
+        val message = AUTHENTICATED_USER_PROFILE_IS_NULL.message
+        verify(resultSpy).error(eq(AUTHENTICATED_USER_PROFILE_IS_NULL.code.toString()), eq(message), any())
     }
 
     @Test
     fun `should return error when authenticator id is null`() {
-        whenever(userClientMock.authenticatedUserProfile).thenReturn(userProfile)
+        whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(userProfile)
 
-        IsAuthenticatorRegisteredUseCase(clientMock)(callMock,resultSpy)
+        isAuthenticatorRegisteredUseCase(callMock,resultSpy)
 
-        verify(resultSpy).error(AUTHENTICATOR_NOT_FOUND.code.toString(), AUTHENTICATOR_NOT_FOUND.message, null)
+        val message = AUTHENTICATOR_NOT_FOUND.message
+        verify(resultSpy).error(eq(AUTHENTICATOR_NOT_FOUND.code.toString()), eq(message), any())
     }
 
     @Test
     fun `should return error when authenticator id is not null but not found in SDK`() {
-        whenever(userClientMock.authenticatedUserProfile).thenReturn(userProfile)
+        whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(userProfile)
         whenever(callMock.argument<String>("authenticatorId")).thenReturn("testId")
-        whenever(userClientMock.getAllAuthenticators(userProfile)).thenReturn(setOf(oneginiAuthenticator))
+        whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(userProfile)).thenReturn(setOf(oneginiAuthenticator))
         whenever(oneginiAuthenticator.id).thenReturn("test")
 
-        IsAuthenticatorRegisteredUseCase(clientMock)(callMock,resultSpy)
+        isAuthenticatorRegisteredUseCase(callMock,resultSpy)
 
-        verify(resultSpy).error(AUTHENTICATOR_NOT_FOUND.code.toString(), AUTHENTICATOR_NOT_FOUND.message, null)
+        val message = AUTHENTICATOR_NOT_FOUND.message
+        verify(resultSpy).error(eq(AUTHENTICATOR_NOT_FOUND.code.toString()), eq(message), any())
     }
 
     @Test
     fun `should return true when authenticator id is registered`() {
-        whenever(userClientMock.authenticatedUserProfile).thenReturn(userProfile)
+        whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(userProfile)
         whenever(callMock.argument<String>("authenticatorId")).thenReturn("testId")
-        whenever(userClientMock.getAllAuthenticators(userProfile)).thenReturn(setOf(oneginiAuthenticator))
+        whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(userProfile)).thenReturn(setOf(oneginiAuthenticator))
         whenever(oneginiAuthenticator.id).thenReturn("testId")
         whenever(oneginiAuthenticator.isRegistered).thenReturn(true)
 
-        IsAuthenticatorRegisteredUseCase(clientMock)(callMock,resultSpy)
+        isAuthenticatorRegisteredUseCase(callMock,resultSpy)
 
         verify(resultSpy).success(true)
     }
 
     @Test
     fun `should return false when authenticator id is not registered`() {
-        whenever(userClientMock.authenticatedUserProfile).thenReturn(userProfile)
+        whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(userProfile)
         whenever(callMock.argument<String>("authenticatorId")).thenReturn("testId")
-        whenever(userClientMock.getAllAuthenticators(userProfile)).thenReturn(setOf(oneginiAuthenticator))
+        whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(userProfile)).thenReturn(setOf(oneginiAuthenticator))
         whenever(oneginiAuthenticator.id).thenReturn("testId")
         whenever(oneginiAuthenticator.isRegistered).thenReturn(false)
 
-        IsAuthenticatorRegisteredUseCase(clientMock)(callMock,resultSpy)
+        isAuthenticatorRegisteredUseCase(callMock,resultSpy)
 
         verify(resultSpy).success(false)
     }

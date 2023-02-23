@@ -1,18 +1,18 @@
 package com.onegini.mobile.sdk
 
-import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticatorDeregistrationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorDeregistrationError
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterAuthenticatorUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Answers
 import org.mockito.Mock
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
@@ -21,15 +21,11 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-
 @RunWith(MockitoJUnitRunner::class)
 class DeregisterAuthenticatorUseCaseTests {
 
-    @Mock
-    lateinit var clientMock: OneginiClient
-
-    @Mock
-    lateinit var userClientMock: UserClient
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    lateinit var oneginiSdk: OneginiSDK
 
     @Mock
     lateinit var callMock: MethodCall
@@ -43,53 +39,57 @@ class DeregisterAuthenticatorUseCaseTests {
     @Spy
     lateinit var resultSpy: MethodChannel.Result
 
+    lateinit var deregisterAuthenticatorUseCase: DeregisterAuthenticatorUseCase
     @Before
     fun attach() {
-        whenever(clientMock.userClient).thenReturn(userClientMock)
+        deregisterAuthenticatorUseCase = DeregisterAuthenticatorUseCase(oneginiSdk)
     }
 
     @Test
     fun `should return error when UserProfiles method returns empty set `() {
-        whenever(userClientMock.userProfiles).thenReturn(emptySet())
+        whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(emptySet())
 
-        DeregisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
+        deregisterAuthenticatorUseCase(callMock, resultSpy)
 
-        verify(resultSpy).error(USER_PROFILE_DOES_NOT_EXIST.code.toString(), USER_PROFILE_DOES_NOT_EXIST.message, null)
+        val message = USER_PROFILE_DOES_NOT_EXIST.message
+        verify(resultSpy).error(eq(USER_PROFILE_DOES_NOT_EXIST.code.toString()), eq(message), any()) 
     }
 
     @Test
     fun `should return error when given authenticator id is null`() {
-        whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
-        whenever(userClientMock.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(setOf(oneginiAuthenticatorMock))
+        whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
+        whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(setOf(oneginiAuthenticatorMock))
         whenever(oneginiAuthenticatorMock.id).thenReturn("test")
 
-        DeregisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
+        deregisterAuthenticatorUseCase(callMock, resultSpy)
 
-        verify(resultSpy).error(AUTHENTICATOR_IS_NULL.code.toString(), AUTHENTICATOR_IS_NULL.message, null)
+        val message = AUTHENTICATOR_NOT_FOUND.message
+        verify(resultSpy).error(eq(AUTHENTICATOR_NOT_FOUND.code.toString()), eq(message), any())
     }
 
     @Test
     fun `should return error when getRegisteredAuthenticators method returns empty set`() {
         whenever(callMock.argument<String>("authenticatorId")).thenReturn("test")
-        whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
-        whenever(userClientMock.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(emptySet())
+        whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
+        whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(emptySet())
 
-        DeregisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
+        deregisterAuthenticatorUseCase(callMock, resultSpy)
 
-        verify(resultSpy).error(AUTHENTICATOR_IS_NULL.code.toString(), AUTHENTICATOR_IS_NULL.message, null)
+        val message = AUTHENTICATOR_NOT_FOUND.message
+        verify(resultSpy).error(eq(AUTHENTICATOR_NOT_FOUND.code.toString()), eq(message), any())
     }
 
     @Test
     fun `should return true when given authenticator id found in getRegisteredAuthenticators method`() {
         whenever(callMock.argument<String>("authenticatorId")).thenReturn("test")
-        whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
-        whenever(userClientMock.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(setOf(oneginiAuthenticatorMock))
+        whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
+        whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(setOf(oneginiAuthenticatorMock))
         whenever(oneginiAuthenticatorMock.id).thenReturn("test")
-        whenever(userClientMock.deregisterAuthenticator(eq(oneginiAuthenticatorMock), any())).thenAnswer {
+        whenever(oneginiSdk.oneginiClient.userClient.deregisterAuthenticator(eq(oneginiAuthenticatorMock), any())).thenAnswer {
             it.getArgument<OneginiAuthenticatorDeregistrationHandler>(1).onSuccess()
         }
 
-        DeregisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
+        deregisterAuthenticatorUseCase(callMock, resultSpy)
 
         verify(resultSpy).success(eq(true))
     }
@@ -97,19 +97,17 @@ class DeregisterAuthenticatorUseCaseTests {
     @Test
     fun `should return error when deregisterAuthenticator method returns error`() {
         whenever(callMock.argument<String>("authenticatorId")).thenReturn("test")
-        whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
-        whenever(userClientMock.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(setOf(oneginiAuthenticatorMock))
+        whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
+        whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(setOf(oneginiAuthenticatorMock))
         whenever(oneginiAuthenticatorMock.id).thenReturn("test")
         whenever(oneginiAuthenticatorDeregistrationErrorMock.errorType).thenReturn(OneginiAuthenticatorDeregistrationError.GENERAL_ERROR)
         whenever(oneginiAuthenticatorDeregistrationErrorMock.message).thenReturn("General error")
-        whenever(userClientMock.deregisterAuthenticator(eq(oneginiAuthenticatorMock), any())).thenAnswer {
+        whenever(oneginiSdk.oneginiClient.userClient.deregisterAuthenticator(eq(oneginiAuthenticatorMock), any())).thenAnswer {
             it.getArgument<OneginiAuthenticatorDeregistrationHandler>(1).onError(oneginiAuthenticatorDeregistrationErrorMock)
         }
 
-        DeregisterAuthenticatorUseCase(clientMock)(callMock, resultSpy)
+        deregisterAuthenticatorUseCase(callMock, resultSpy)
 
-        verify(resultSpy).error(oneginiAuthenticatorDeregistrationErrorMock.errorType.toString(), oneginiAuthenticatorDeregistrationErrorMock.message, null)
-    }
-
-
-}
+        val message = oneginiAuthenticatorDeregistrationErrorMock.message
+        verify(resultSpy).error(eq(oneginiAuthenticatorDeregistrationErrorMock.errorType.toString()), eq(message), any()) 
+    }}

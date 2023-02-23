@@ -117,4 +117,8 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
     func logout(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         OneginiModuleSwift.sharedInstance.logOut(callback:result)
     }
+    
+    func getAuthenticatedUserProfile(_ result: @escaping FlutterResult) {
+        OneginiModuleSwift.sharedInstance.getAuthenticatedUserProfile(callback: result)
+    }
 }

@@ -10,7 +10,6 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
     USER_NOT_AUTHENTICATED_IMPLICITLY(8035, "The requested action requires you to be authenticated implicitly"),
 
     // Errors that only occur on Android
-    AUTHENTICATOR_IS_NULL(8003, "Authenticator is null"),
     IDENTITY_PROVIDER_NOT_FOUND(8005, "The requested identity provider is not found"),
     QR_CODE_HAS_NO_DATA(8006, "QR-code does not have data"),
     METHOD_TO_CALL_NOT_FOUND(8007, "Method to call not found"),

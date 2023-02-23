@@ -3,6 +3,7 @@ package com.onegini.mobile.sdk.flutter
 import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
+import com.onegini.mobile.sdk.android.handlers.request.OneginiMobileAuthWithPushFingerprintRequestHandler
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 import com.onegini.mobile.sdk.flutter.handlers.*
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
@@ -16,21 +17,31 @@ import io.flutter.plugin.common.MethodChannel
 import java.util.concurrent.TimeUnit
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
+import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class OneginiSDK(private var nativeApi: NativeCallFlutterApi) {
+@Singleton
+class OneginiSDK @Inject constructor(
+    private val applicationContext: Context,
+    private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
+    private val fingerprintRequestHandler: FingerprintAuthenticationRequestHandler,
+    private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler,
+    private val createPinRequestHandler: PinRequestHandler,
+    private val mobileAuthWithOtpRequestHandler: MobileAuthOtpRequestHandler,
+//    private var nativeApi: NativeCallFlutterApi,
+){
 
-    private var oneginiClient: OneginiClient? = null
+    val oneginiClient: OneginiClient
+        get() = OneginiClient.getInstance()?.let {client ->
+                return client
+            } ?: throw FlutterPluginException(ONEWELCOME_SDK_NOT_INITIALIZED)
+
     private var customRegistrationActions = ArrayList<CustomRegistrationAction>()
 
-    fun buildSDK(context: Context, config: Config, result: MethodChannel.Result) {
-        val applicationContext = context.applicationContext
-        val registrationRequestHandler = BrowserRegistrationRequestHandler()
-        val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
-        val pinAuthenticationRequestHandler = PinAuthenticationRequestHandler()
-        val createPinRequestHandler = PinRequestHandler()
-        val mobileAuthWithOtpRequestHandler = MobileAuthOtpRequestHandler()
+    fun buildSDK(config: Config, result: MethodChannel.Result) {
         val clientBuilder = OneginiClientBuilder(applicationContext, createPinRequestHandler, pinAuthenticationRequestHandler) // handlers for optional functionalities
-                .setBrowserRegistrationRequestHandler(registrationRequestHandler)
+                .setBrowserRegistrationRequestHandler(browserRegistrationRequestHandler)
                 .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler)
                 .setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
 
@@ -51,11 +62,7 @@ class OneginiSDK(private var nativeApi: NativeCallFlutterApi) {
 
         setSecurityController(clientBuilder, config, result)
 
-        oneginiClient = clientBuilder.build()
-    }
-
-    fun getOneginiClient(): OneginiClient? {
-        return oneginiClient
+        clientBuilder.build()
     }
 
     fun getCustomRegistrationActions(): ArrayList<CustomRegistrationAction> {
@@ -65,8 +72,8 @@ class OneginiSDK(private var nativeApi: NativeCallFlutterApi) {
     private fun initProviders(clientBuilder: OneginiClientBuilder, customIdentityProviderConfigs: List<CustomIdentityProviderConfig>) {
         customIdentityProviderConfigs.forEach {
             val action = when (it.isTwoStep) {
-                true -> CustomTwoStepRegistrationActionImpl(it.providerId, nativeApi)
-                false -> CustomRegistrationActionImpl(it.providerId, nativeApi)
+                true -> CustomTwoStepRegistrationActionImpl(it.providerId)
+                false -> CustomRegistrationActionImpl(it.providerId)
             }
 
             customRegistrationActions.add(action)

@@ -7,10 +7,12 @@ import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.PigeonUserProfile
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
+import com.onegini.mobile.sdk.flutter.module.FlutterOneWelcomeSdkModule
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.FlutterException
 import io.flutter.plugin.common.MethodChannel
+import javax.inject.Inject
 
 
 /** OneginiPlugin */
@@ -22,14 +24,28 @@ class OneginiPlugin : FlutterPlugin, UserClientApi {
     private lateinit var channel: MethodChannel
     private lateinit var eventChannel: EventChannel
 
+    @Inject
+    lateinit var oneginiSDK: OneginiSDK
+
+//    @Inject
+//    lateinit var nativeApi: NativeCallFlutterApi
+
+    @Inject
+    lateinit var onMethodCallMapper: OnMethodCallMapper
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         // Pigeon setup
         UserClientApi.setUp(flutterPluginBinding.binaryMessenger, this)
-        val nativeApi = NativeCallFlutterApi(flutterPluginBinding.binaryMessenger)
+//        nativeApi = NativeCallFlutterApi(flutterPluginBinding.binaryMessenger)
 
-        val oneginiSDK = OneginiSDK(nativeApi)
+        // fixme what is the new way to do this?
+//        val oneginiSDK = OneginiSDK(nativeApi)
+
+        val component = DaggerFlutterOneWelcomeSdkComponent.builder()
+            .flutterOneWelcomeSdkModule(FlutterOneWelcomeSdkModule(flutterPluginBinding.applicationContext))
+            .build()
+        component.inject(this)
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "onegini")
-        channel.setMethodCallHandler(OnMethodCallMapper(flutterPluginBinding.applicationContext, OneginiMethodsWrapper(), oneginiSDK))
+        channel.setMethodCallHandler(onMethodCallMapper)
         eventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "onegini_events")
         eventChannel.setStreamHandler(object : EventChannel.StreamHandler {
             override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {

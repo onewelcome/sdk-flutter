@@ -5,11 +5,15 @@ import com.onegini.mobile.sdk.android.handlers.OneginiDeregisterUserProfileHandl
 import com.onegini.mobile.sdk.android.handlers.error.OneginiDeregistrationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class DeregisterUserUseCase(private val oneginiClient: OneginiClient) {
+@Singleton
+class DeregisterUserUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
     operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
         val userProfileId = call.argument<String>("profileId")
         if (userProfileId == null) {
@@ -17,7 +21,7 @@ class DeregisterUserUseCase(private val oneginiClient: OneginiClient) {
             return
         }
         var userProfile: UserProfile? = null
-        val userProfiles = oneginiClient.userClient.userProfiles
+        val userProfiles = oneginiSDK.oneginiClient.userClient.userProfiles
         for (profile in userProfiles) {
             if (profile.profileId == userProfileId) {
                 userProfile = profile
@@ -28,7 +32,7 @@ class DeregisterUserUseCase(private val oneginiClient: OneginiClient) {
             SdkError(USER_PROFILE_DOES_NOT_EXIST).flutterError(result)
             return
         }
-        oneginiClient.userClient.deregisterUser(userProfile, object : OneginiDeregisterUserProfileHandler {
+        oneginiSDK.oneginiClient.userClient.deregisterUser(userProfile, object : OneginiDeregisterUserProfileHandler {
             override fun onSuccess() {
                 result.success(true)
             }
