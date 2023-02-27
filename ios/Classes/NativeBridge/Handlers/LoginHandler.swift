@@ -1,5 +1,4 @@
 import OneginiSDKiOS
-import OneginiCrypto
 import Flutter
 
 //MARK: -

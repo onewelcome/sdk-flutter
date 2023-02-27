@@ -7,6 +7,7 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.useCases.GetRegisteredAuthenticatorsUseCase
+import com.onegini.mobile.sdk.flutter.useCases.GetUserProfileUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.junit.Before
@@ -45,7 +46,8 @@ class GetRegisteredAuthenticatorsUseCaseTests {
     lateinit var getRegisteredAuthenticatorsUseCase: GetRegisteredAuthenticatorsUseCase
     @Before
     fun attach() {
-        getRegisteredAuthenticatorsUseCase = GetRegisteredAuthenticatorsUseCase(oneginiSdk)
+        val getUserProfileUseCase = GetUserProfileUseCase(oneginiSdk)
+        getRegisteredAuthenticatorsUseCase = GetRegisteredAuthenticatorsUseCase(oneginiSdk, getUserProfileUseCase)
     }
 
     @Test

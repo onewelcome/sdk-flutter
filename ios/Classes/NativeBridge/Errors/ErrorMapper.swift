@@ -1,5 +1,4 @@
 import OneginiSDKiOS
-import OneginiCrypto
 
 enum OneWelcomeWrapperError: Int {
     // iOS and Android

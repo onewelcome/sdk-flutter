@@ -28,8 +28,8 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         try {
-            when {
-                call.method == Constants.METHOD_START_APP -> oneginiMethodsWrapper.startApp(call, result)
+            when (call.method) {
+                Constants.METHOD_START_APP -> oneginiMethodsWrapper.startApp(call, result)
                 else -> onSDKMethodCall(call, oneginiSDK.oneginiClient, result)
             }
         } catch (err: FlutterPluginException) {
@@ -98,8 +98,10 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
     }
 
     private fun validatePinWithPolicy(pin: CharArray?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
+        val nonNullPin = pin ?: return SdkError(ARGUMENT_NOT_CORRECT.code, ARGUMENT_NOT_CORRECT.message + " pin is null").flutterError(result)
+
         oneginiClient.userClient.validatePinWithPolicy(
-            pin,
+            nonNullPin,
             object : OneginiPinValidationHandler {
                 override fun onSuccess() {
                     result.success(true)

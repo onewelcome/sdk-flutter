@@ -6,6 +6,7 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterUserUseCase
+import com.onegini.mobile.sdk.flutter.useCases.GetUserProfileUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.junit.Before
@@ -39,7 +40,8 @@ class DeregisterUserUseCaseTests {
 
     @Before
     fun attach() {
-        deregisterUserUseCase = DeregisterUserUseCase(oneginiSdk)
+        val getUserProfileUseCase = GetUserProfileUseCase(oneginiSdk)
+        deregisterUserUseCase = DeregisterUserUseCase(oneginiSdk, getUserProfileUseCase)
     }
 
     @Test

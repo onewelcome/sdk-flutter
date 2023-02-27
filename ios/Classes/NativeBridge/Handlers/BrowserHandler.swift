@@ -1,6 +1,5 @@
 import AuthenticationServices
 import OneginiSDKiOS
-import OneginiCrypto
 
 protocol BrowserHandlerProtocol {
     func handleUrl(url: URL, webSignInType: WebSignInType)
