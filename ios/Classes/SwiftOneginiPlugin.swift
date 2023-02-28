@@ -52,6 +52,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     
     case Constants.Routes.acceptPinRegistrationRequest: acceptPinRegistrationRequest(call, result)
     case Constants.Routes.denyPinRegistrationRequest: denyPinRegistrationRequest(call, result)
+    case Constants.Routes.getRedirectUrl: getRedirectUrl(call, result)
     
     // custom registration
     case Constants.Routes.submitCustomRegistrationAction: submitCustomRegistrationAction(call, result)
@@ -80,6 +81,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
         validatePinWithPolicy(call, result)
     case Constants.Routes.getAuthenticatedUserProfile: getAuthenticatedUserProfile(result)
     case Constants.Routes.getUserProfiles: getUserProfiles(result)
+    case Constants.Routes.getAccessToken: getAccessToken(result)
 
     // fingerprint
     case Constants.Routes.acceptFingerprintAuthenticationRequest: acceptFingerprintAuthenticationRequest(call, result)

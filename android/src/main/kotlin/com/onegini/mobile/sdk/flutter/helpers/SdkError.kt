@@ -9,9 +9,9 @@ import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_URL
 import io.flutter.plugin.common.MethodChannel
 import okhttp3.Response
 
-class SdkError {
+class SdkError: Exception {
     private val code: Int
-    private val message: String
+    override val message: String
     private val details: MutableMap<String, Any> = mutableMapOf()
 
     // Only error codes

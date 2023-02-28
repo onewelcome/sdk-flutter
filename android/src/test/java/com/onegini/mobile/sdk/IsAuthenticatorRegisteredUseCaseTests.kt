@@ -49,16 +49,18 @@ class IsAuthenticatorRegisteredUseCaseTests {
 
     @Test
     fun `should return error when user is not authenticated`() {
+        whenever(callMock.argument<String>("authenticatorId")).thenReturn("TEST")
         whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(null)
 
         isAuthenticatorRegisteredUseCase(callMock,resultSpy)
 
-        val message = AUTHENTICATED_USER_PROFILE_IS_NULL.message
-        verify(resultSpy).error(eq(AUTHENTICATED_USER_PROFILE_IS_NULL.code.toString()), eq(message), any())
+        val message = NO_USER_PROFILE_IS_AUTHENTICATED.message
+        verify(resultSpy).error(eq(NO_USER_PROFILE_IS_AUTHENTICATED.code.toString()), eq(message), any())
     }
 
     @Test
     fun `should return error when authenticator id is null`() {
+        whenever(callMock.argument<String>("authenticatorId")).thenReturn("TEST")
         whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(userProfile)
 
         isAuthenticatorRegisteredUseCase(callMock,resultSpy)

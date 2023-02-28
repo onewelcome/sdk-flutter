@@ -2,7 +2,6 @@ import UIKit
 import Flutter
 import onegini
 import OneginiSDKiOS
-import OneginiCrypto
 
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {

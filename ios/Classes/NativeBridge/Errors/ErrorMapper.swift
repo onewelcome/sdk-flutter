@@ -1,16 +1,15 @@
 import OneginiSDKiOS
-import OneginiCrypto
 
 enum OneWelcomeWrapperError: Int {
     // iOS and Android
     case genericError = 8000
     case userProfileDoesNotExist = 8001
-    case authenticatedUserProfileIsNull = 8002
+    case noUserProfileIsAuthenticated = 8002
     case authenticatorNotFound = 8004
     case httpRequestError = 8011
     case errorCodeHttpRequest = 8013
     case unauthenticatedImplicitly = 8035
-    case mappedMethodArgumentIsMissing = 8036
+    case methodArgumentNotFound = 8036
     
     // iOS only
     case providedUrlIncorrect = 8014
@@ -39,8 +38,8 @@ enum OneWelcomeWrapperError: Int {
             message = "Something went wrong."
         case .userProfileDoesNotExist:
             message = "The requested User profile does not exist."
-        case .authenticatedUserProfileIsNull:
-            message = "User authenticated profile is null."
+        case .noUserProfileIsAuthenticated:
+            message = "There is currently no User Profile authenticated."
         case .authenticatorNotFound:
             message = "The requested authenticator is not found."
         case .providedUrlIncorrect:
@@ -83,8 +82,8 @@ enum OneWelcomeWrapperError: Int {
             message = "The authenticator-registration was cancelled."
         case .unauthenticatedImplicitly:
             message = "The requested action requires you to be authenticated implicitly"
-        case .mappedMethodArgumentIsMissing:
-            message = "One or more arguments that are expected were not passed to the method"
+        case .methodArgumentNotFound:
+            message = "The passed argument from Flutter could not be found"
         default:
             message = "Something went wrong."
         }

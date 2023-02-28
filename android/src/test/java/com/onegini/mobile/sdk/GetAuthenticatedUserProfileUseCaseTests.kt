@@ -33,12 +33,12 @@ class GetAuthenticatedUserProfileUseCaseTests {
     }
 
     @Test
-    fun `When no user is authenticated, Then should reject with AUTHENTICATED_USER_PROFILE_IS_NULL`() {
+    fun `When no user is authenticated, Then should reject with NO_USER_PROFILE_IS_AUTHENTICATED`() {
         whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(null)
 
         getAuthenticatedUserProfileUseCase(resultSpy)
 
-        verify(resultSpy).wrapperError(AUTHENTICATED_USER_PROFILE_IS_NULL)
+        verify(resultSpy).wrapperError(NO_USER_PROFILE_IS_AUTHENTICATED)
     }
 
     @Test

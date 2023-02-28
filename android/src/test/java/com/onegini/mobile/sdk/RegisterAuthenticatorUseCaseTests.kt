@@ -52,19 +52,21 @@ class RegisterAuthenticatorUseCaseTests {
 
     @Test
     fun `should return error when authenticatedUserProfile is null`() {
+        whenever(callMock.argument<String>("authenticatorId")).thenReturn("test")
         whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(null)
 
         registerAuthenticatorUseCase(callMock, resultSpy)
 
-        val message = AUTHENTICATED_USER_PROFILE_IS_NULL.message
-        verify(resultSpy).error(eq(AUTHENTICATED_USER_PROFILE_IS_NULL.code.toString()), eq(message), any())
+        val message = NO_USER_PROFILE_IS_AUTHENTICATED.message
+        verify(resultSpy).error(eq(NO_USER_PROFILE_IS_AUTHENTICATED.code.toString()), eq(message), any())
     }
 
     @Test
-    fun `should return error when given authenticator id is null`() {
+    fun `When authenticator id is not recognised, Then it should return error`() {
+        whenever(callMock.argument<String>("authenticatorId")).thenReturn("test")
         whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
         whenever(oneginiSdk.oneginiClient.userClient.getNotRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(setOf(oneginiAuthenticatorMock))
-        whenever(oneginiAuthenticatorMock.id).thenReturn("test")
+        whenever(oneginiAuthenticatorMock.id).thenReturn("other_test")
 
         registerAuthenticatorUseCase(callMock, resultSpy)
 

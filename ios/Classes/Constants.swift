@@ -18,11 +18,13 @@ enum Constants {
         static let acceptPinRegistrationRequest = "acceptPinRegistrationRequest"
         static let deregisterUser = "deregisterUser"
         static let handleRegisteredUserUrl = "handleRegisteredUserUrl"
+        static let getRedirectUrl = "getRedirectUrl"
         
         //authentication
         static let authenticateUser = "authenticateUser"
         static let authenticateDevice = "authenticateDevice"
         static let authenticateUserImplicitly = "authenticateUserImplicitly"
+        static let getAccessToken = "getAccessToken"
         static let getAllNotRegisteredAuthenticators = "getAllNotRegisteredAuthenticators"
         static let getRegisteredAuthenticators = "getRegisteredAuthenticators"
         static let getAllAuthenticators = "getAllAuthenticators"

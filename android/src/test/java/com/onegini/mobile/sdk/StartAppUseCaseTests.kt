@@ -19,7 +19,10 @@ import org.mockito.Answers
 import org.mockito.Mock
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.*@RunWith(MockitoJUnitRunner::class)
+
+import org.mockito.kotlin.*
+
+@RunWith(MockitoJUnitRunner::class)
 class StartAppUseCaseTests {
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)

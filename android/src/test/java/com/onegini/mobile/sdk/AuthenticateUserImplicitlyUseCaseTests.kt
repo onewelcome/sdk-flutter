@@ -7,6 +7,7 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserImplicitlyUseCase
+import com.onegini.mobile.sdk.flutter.useCases.GetUserProfileUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.junit.Before
@@ -23,6 +24,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import java.util.ArrayList
 
 @RunWith(MockitoJUnitRunner::class)
 class AuthenticateUserImplicitlyUseCaseTests {
@@ -42,7 +44,8 @@ class AuthenticateUserImplicitlyUseCaseTests {
   lateinit var authenticateUserImplicitlyUseCase: AuthenticateUserImplicitlyUseCase
   @Before
   fun attach() {
-    authenticateUserImplicitlyUseCase = AuthenticateUserImplicitlyUseCase(oneginiSdk)
+    val getUserProfileUseCase = GetUserProfileUseCase(oneginiSdk)
+    authenticateUserImplicitlyUseCase = AuthenticateUserImplicitlyUseCase(oneginiSdk, getUserProfileUseCase)
   }
 
   @Test

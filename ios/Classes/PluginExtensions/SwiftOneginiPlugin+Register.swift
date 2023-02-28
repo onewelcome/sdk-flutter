@@ -1,6 +1,5 @@
 import Foundation
 import OneginiSDKiOS
-import OneginiCrypto
 import Flutter
 
 enum WebSignInType: Int {
@@ -24,9 +23,15 @@ protocol OneginiPluginRegisterProtocol {
     func cancelCustomRegistrationAction(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 
     func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
+    func getRedirectUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
+    
 }
 
 extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
+    func getRedirectUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
+        OneginiModuleSwift.sharedInstance.getRedirectUrl(callback: result)
+    }
+    
     func getIdentityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         OneginiModuleSwift.sharedInstance.identityProviders(callback: result)
     }
@@ -76,12 +81,17 @@ extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
     }
 
     func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        var profileId: String?
-        if let arguments = call.arguments as? [String: Any], let userProfileId = arguments["profileId"] as? String {
-            profileId = userProfileId
+        guard let arg = call.arguments as? [String: Any] else {
+            result(SdkError(.methodArgumentNotFound).flutterError())
+            return
         }
 
-        OneginiModuleSwift.sharedInstance.deregisterUser(userProfileId: profileId,callback:result)
+        guard let profileId = arg["profileId"] as? String else {
+            result(SdkError(.methodArgumentNotFound).flutterError())
+            return
+        }
+
+        OneginiModuleSwift.sharedInstance.deregisterUser(profileId: profileId, callback:result)
     }
 }
 
