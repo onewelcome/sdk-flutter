@@ -114,8 +114,7 @@ class UserClient {
     }
   }
 
-  Future<UserProfile> getAuthenticatedUserProfile(BuildContext? context) async {
-    Onegini.instance.setEventContext(context);
+  Future<UserProfile> getAuthenticatedUserProfile() async {
     try {
       var userProfile = await Onegini.instance.channel
           .invokeMethod(Constants.getAuthenticatedUserProfile);

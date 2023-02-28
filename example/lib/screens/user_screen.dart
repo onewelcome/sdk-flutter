@@ -334,7 +334,7 @@ class Home extends StatelessWidget {
 
   showAuthenticatedUserProfile(BuildContext context) async {
     var profile =
-        await Onegini.instance.userClient.getAuthenticatedUserProfile(context);
+        await Onegini.instance.userClient.getAuthenticatedUserProfile();
     showFlutterToast('Authenticated Userprofile: ${profile.profileId}');
   }
 
