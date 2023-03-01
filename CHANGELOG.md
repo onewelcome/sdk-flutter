@@ -6,7 +6,7 @@ You can find the full changelog [here](https://developer.onewelcome.com/flutter/
 
 [iOS] Wrapper SDK now uses the latest iOS native SDK 12.1.0
 
-[iOS & Android] The Error Structure has been reworked and extended, the updated documentation containing the details can be found in the chapter Error handling. This rework introduces:
+[iOS & Android] The Error Structure has been reworked and extended. This rework introduces:
 
 - More consistency between iOS and Android errors using our Flutter Plugin.
 - More specific error codes to give more details on what the error caused.
@@ -15,21 +15,14 @@ You can find the full changelog [here](https://developer.onewelcome.com/flutter/
 
 [iOS & Android] Full support for Registration with Custom IdP.
 
-[Documentation] The User registration documentation has been updated and extended.
-
 [iOS & Android] Renamed fetchUserProfiles to getUserProfiles to better reflect the functionality from the function.
 
 [iOS & Android] Support for multiple registered users on one device.
 
-[Documentation] There is now documentation describing getAllAuthenticators, getRegisteredAuthenticators, getNotRegisteredAuthenticators, deregisterAuthenticator, setPreferredAuthenticator.
-
 [iOS & Android] Reworked deregisterUser function and updated the documentation.
-
-[Documentation] Clarified the usage of registerAuthenticator.
 
 [iOS & Android] Added getAccessToken getAuthenticatedUserProfile and getRedirectUrl methods.
 
-[Documentation] Added function signatures to the reference guide methods.
 
 ### Bug Fixes
 [iOS] deregisterUser now successfully deregisters the profile based on the given Id instead of the first registered user on the device.
