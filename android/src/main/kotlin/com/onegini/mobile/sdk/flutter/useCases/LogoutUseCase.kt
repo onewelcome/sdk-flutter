@@ -3,7 +3,7 @@ package com.onegini.mobile.sdk.flutter.useCases
 import com.onegini.mobile.sdk.android.handlers.OneginiLogoutHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiLogoutError
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.errors.oneginiError
 import io.flutter.plugin.common.MethodChannel
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -17,10 +17,7 @@ class LogoutUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
             }
 
             override fun onError(error: OneginiLogoutError) {
-                SdkError(
-                    code = error.errorType,
-                    message = error.message
-                ).flutterError(result)
+                result.oneginiError(error)
             }
         })
     }

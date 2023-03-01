@@ -2,7 +2,7 @@ package com.onegini.mobile.sdk.flutter.useCases
 
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.IDENTITY_PROVIDER_NOT_FOUND
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.errors.wrapperError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import javax.inject.Inject
@@ -15,7 +15,7 @@ class SubmitCustomRegistrationActionUseCase @Inject constructor(private val oneg
     val token: String? = call.argument("token")
 
     when (val action = oneginiSDK.getCustomRegistrationActions().find { it.getIdProvider() == idProvider }) {
-      null -> SdkError(IDENTITY_PROVIDER_NOT_FOUND).flutterError(result)
+      null -> result.wrapperError(IDENTITY_PROVIDER_NOT_FOUND)
       else -> action.returnSuccess(token, result)
     }
   }

@@ -3,7 +3,7 @@ package com.onegini.mobile.sdk.flutter.useCases
 import com.onegini.mobile.sdk.android.handlers.OneginiDeviceAuthenticationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiDeviceAuthenticationError
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.errors.oneginiError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import javax.inject.Inject
@@ -19,10 +19,7 @@ class AuthenticateDeviceUseCase @Inject constructor(private val oneginiSDK: Oneg
             }
 
             override fun onError(error: OneginiDeviceAuthenticationError) {
-                SdkError(
-                    code = error.errorType,
-                    message = error.message
-                ).flutterError(result)
+                result.oneginiError(error)
             }
         }
         )

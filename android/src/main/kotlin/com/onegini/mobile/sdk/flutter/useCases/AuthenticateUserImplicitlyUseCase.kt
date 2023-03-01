@@ -5,7 +5,9 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiImplicitTokenRequest
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.METHOD_ARGUMENT_NOT_FOUND
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
+import com.onegini.mobile.sdk.flutter.errors.oneginiError
+import com.onegini.mobile.sdk.flutter.errors.wrapperError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import javax.inject.Inject
@@ -16,13 +18,13 @@ class AuthenticateUserImplicitlyUseCase @Inject constructor(private val oneginiS
                                                             private val getUserProfileUseCase: GetUserProfileUseCase) {
   operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
     val profileId = call.argument<String>("profileId")
-      ?: return SdkError(METHOD_ARGUMENT_NOT_FOUND).flutterError(result)
+      ?: return result.wrapperError(METHOD_ARGUMENT_NOT_FOUND)
     val scopes = call.argument<ArrayList<String>>("scopes")
 
     val userProfile = try {
       getUserProfileUseCase(profileId)
-    } catch (error: SdkError) {
-      return error.flutterError(result)
+    } catch (error: FlutterPluginException) {
+      return result.wrapperError(error)
     }
 
     oneginiSDK.oneginiClient.userClient.authenticateUserImplicitly(
@@ -34,10 +36,7 @@ class AuthenticateUserImplicitlyUseCase @Inject constructor(private val oneginiS
         }
 
         override fun onError(error: OneginiImplicitTokenRequestError) {
-          SdkError(
-            code = error.errorType,
-            message = error.message
-          ).flutterError(result)
+          result.oneginiError(error)
         }
       }
     )

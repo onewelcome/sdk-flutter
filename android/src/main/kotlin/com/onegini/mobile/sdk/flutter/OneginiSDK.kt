@@ -3,10 +3,18 @@ package com.onegini.mobile.sdk.flutter
 import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
-import com.onegini.mobile.sdk.android.handlers.request.OneginiMobileAuthWithPushFingerprintRequestHandler
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
-import com.onegini.mobile.sdk.flutter.handlers.*
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.CONFIG_ERROR
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ONEWELCOME_SDK_NOT_INITIALIZED
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.SECURITY_CONTROLLER_NOT_FOUND
+import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
+import com.onegini.mobile.sdk.flutter.errors.errorDefaultDetails
+import com.onegini.mobile.sdk.flutter.errors.wrapperError
+import com.onegini.mobile.sdk.flutter.handlers.BrowserRegistrationRequestHandler
+import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
+import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
+import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
+import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import com.onegini.mobile.sdk.flutter.models.Config
 import com.onegini.mobile.sdk.flutter.models.CustomIdentityProviderConfig
 import com.onegini.mobile.sdk.flutter.providers.CustomIdentityProvider
@@ -15,8 +23,6 @@ import com.onegini.mobile.sdk.flutter.providers.CustomRegistrationActionImpl
 import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationActionImpl
 import io.flutter.plugin.common.MethodChannel
 import java.util.concurrent.TimeUnit
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
-import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -92,11 +98,8 @@ class OneginiSDK @Inject constructor(
             }
         } catch (e: Exception) {
             e.message?.let { message ->
-                SdkError(
-                    code = CONFIG_ERROR.code,
-                    message = message
-                ).flutterError(result)
-            } ?: SdkError(CONFIG_ERROR).flutterError(result)
+                result.errorDefaultDetails(CONFIG_ERROR.code, message)
+            } ?: result.wrapperError(CONFIG_ERROR)
         }
     }
 
@@ -109,11 +112,8 @@ class OneginiSDK @Inject constructor(
             clientBuilder.setSecurityController(securityController)
         } catch (e: ClassNotFoundException) {
             e.message?.let { message ->
-                SdkError(
-                    code = SECURITY_CONTROLLER_NOT_FOUND.code,
-                    message = message
-                ).flutterError(result)
-            } ?: SdkError(SECURITY_CONTROLLER_NOT_FOUND).flutterError(result)
+                result.errorDefaultDetails(SECURITY_CONTROLLER_NOT_FOUND.code, message)
+            } ?: result.wrapperError(SECURITY_CONTROLLER_NOT_FOUND)
         }
     }
 }

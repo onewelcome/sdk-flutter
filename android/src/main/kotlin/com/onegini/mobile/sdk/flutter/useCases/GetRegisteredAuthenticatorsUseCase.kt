@@ -1,9 +1,10 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
 import com.google.gson.GsonBuilder
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.METHOD_ARGUMENT_NOT_FOUND
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
+import com.onegini.mobile.sdk.flutter.errors.wrapperError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import javax.inject.Inject
@@ -16,12 +17,12 @@ class GetRegisteredAuthenticatorsUseCase @Inject constructor(
 ) {
   operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
     val profileId = call.argument<String>("profileId")
-      ?: return SdkError(METHOD_ARGUMENT_NOT_FOUND).flutterError(result)
+      ?: return result.wrapperError(METHOD_ARGUMENT_NOT_FOUND)
 
     val userProfile = try {
       getUserProfileUseCase(profileId)
-    } catch (error: SdkError) {
-      return error.flutterError(result)
+    } catch (error: FlutterPluginException) {
+      return result.wrapperError(error)
     }
 
     val gson = GsonBuilder().serializeNulls().create()

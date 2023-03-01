@@ -3,7 +3,6 @@ package com.onegini.mobile.sdk.flutter.useCases
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.activity.ActivityWebView
 import io.flutter.plugin.common.MethodCall

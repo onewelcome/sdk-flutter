@@ -1,12 +1,15 @@
 package com.onegini.mobile.sdk.flutter.helpers
 
+import android.annotation.SuppressLint
 import com.google.gson.Gson
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_BODY
 import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_HEADERS
 import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_STATUS_CODE
 import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_URL
-
+import com.onegini.mobile.sdk.flutter.errors.errorDefaultDetails
+import com.onegini.mobile.sdk.flutter.errors.errorWithDetails
+import com.onegini.mobile.sdk.flutter.errors.wrapperError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
@@ -18,14 +21,15 @@ import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.collections.HashMap
 
 @Singleton
 class ResourceHelper @Inject constructor() {
 
+    @SuppressLint("CheckResult")
     fun callRequest(okHttpClient: OkHttpClient, request: Request, result: MethodChannel.Result) {
         Observable.fromCallable { okHttpClient.newCall(request).execute() }
                 .subscribeOn(Schedulers.io())
@@ -33,10 +37,8 @@ class ResourceHelper @Inject constructor() {
                 .subscribe(
                         { data ->
                             if (data.code >= 400) {
-                                    SdkError(
-                                        wrapperError = ERROR_CODE_HTTP_REQUEST,
-                                        httpResponse = data
-                                    ).flutterError(result)
+                                val details = createDetailsWithHttpResponse(data)
+                                result.errorWithDetails(ERROR_CODE_HTTP_REQUEST.code, ERROR_CODE_HTTP_REQUEST.message, details)
                             } else {
                                 val response = Gson().toJson(mapOf(
                                     RESPONSE_STATUS_CODE to data.code,
@@ -48,12 +50,9 @@ class ResourceHelper @Inject constructor() {
                         },
                         {
                             if (it.message != null) {
-                                SdkError(
-                                    code = HTTP_REQUEST_ERROR.code,
-                                    message = it.message.toString()
-                                ).flutterError(result)
+                                result.errorDefaultDetails(HTTP_REQUEST_ERROR.code, it.message.toString())
                             } else {
-                                SdkError(HTTP_REQUEST_ERROR).flutterError(result)
+                                result.wrapperError(HTTP_REQUEST_ERROR)
                             }
                         }
                 )
@@ -104,5 +103,21 @@ class ResourceHelper @Inject constructor() {
         } else {
             builder.url(url)
         }
+    }
+
+    private fun createDetailsWithHttpResponse(httpResponse: Response): Map<String, Any> {
+        val response: MutableMap<String, Any> = mutableMapOf()
+        response[RESPONSE_URL] = httpResponse.request.url.toString()
+        response[RESPONSE_STATUS_CODE] = httpResponse.code.toString()
+        response[RESPONSE_HEADERS] = httpResponse.headers.toMap()
+
+        val bodyString = httpResponse.body?.string()
+
+        response[RESPONSE_BODY] = when (bodyString) {
+            null -> ""
+            else -> bodyString
+        }
+
+        return mutableMapOf("response" to response)
     }
 }

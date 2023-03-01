@@ -6,9 +6,12 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorRegistr
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.AUTHENTICATOR_NOT_FOUND
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.METHOD_ARGUMENT_NOT_FOUND
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NO_USER_PROFILE_IS_AUTHENTICATED
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.errors.oneginiError
+import com.onegini.mobile.sdk.flutter.errors.wrapperError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import javax.inject.Inject
@@ -18,24 +21,21 @@ import javax.inject.Singleton
 class RegisterAuthenticatorUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
     operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
         val authenticatorId = call.argument<String>("authenticatorId")
-            ?: return SdkError(METHOD_ARGUMENT_NOT_FOUND).flutterError(result)
+            ?: return result.wrapperError(METHOD_ARGUMENT_NOT_FOUND)
 
         val authenticatedUserProfile = oneginiSDK.oneginiClient.userClient.authenticatedUserProfile
-            ?: return SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).flutterError(result)
+            ?: return result.wrapperError(NO_USER_PROFILE_IS_AUTHENTICATED)
 
         val authenticator = getAuthenticatorById(authenticatorId, authenticatedUserProfile)
-            ?: return SdkError(AUTHENTICATOR_NOT_FOUND).flutterError(result)
+            ?: return result.wrapperError(AUTHENTICATOR_NOT_FOUND)
 
         oneginiSDK.oneginiClient.userClient.registerAuthenticator(authenticator, object : OneginiAuthenticatorRegistrationHandler {
             override fun onSuccess(customInfo: CustomInfo?) {
                 result.success(Gson().toJson(customInfo))
             }
 
-            override fun onError(oneginiAuthenticatorRegistrationError: OneginiAuthenticatorRegistrationError) {
-                SdkError(
-                    code = oneginiAuthenticatorRegistrationError.errorType,
-                    message = oneginiAuthenticatorRegistrationError.message
-                ).flutterError(result)
+            override fun onError(error: OneginiAuthenticatorRegistrationError) {
+                result.oneginiError(error)
             }
         }
         )

@@ -2,9 +2,11 @@ package com.onegini.mobile.sdk.flutter.useCases
 
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.AUTHENTICATOR_NOT_FOUND
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.METHOD_ARGUMENT_NOT_FOUND
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NO_USER_PROFILE_IS_AUTHENTICATED
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.errors.wrapperError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import javax.inject.Inject
@@ -14,13 +16,13 @@ import javax.inject.Singleton
 class SetPreferredAuthenticatorUseCase @Inject constructor (private val oneginiSDK: OneginiSDK) {
     operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
         val authenticatorId = call.argument<String>("authenticatorId")
-            ?: return SdkError(METHOD_ARGUMENT_NOT_FOUND).flutterError(result)
+            ?: return result.wrapperError(METHOD_ARGUMENT_NOT_FOUND)
 
         val userProfile = oneginiSDK.oneginiClient.userClient.authenticatedUserProfile
-            ?: return SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).flutterError(result)
+            ?: return result.wrapperError(NO_USER_PROFILE_IS_AUTHENTICATED)
 
         val authenticator = getAuthenticatorById(authenticatorId, userProfile)
-            ?: return SdkError(AUTHENTICATOR_NOT_FOUND).flutterError(result)
+            ?: return result.wrapperError(AUTHENTICATOR_NOT_FOUND)
 
         oneginiSDK.oneginiClient.userClient.setPreferredAuthenticator(authenticator)
         result.success(true)

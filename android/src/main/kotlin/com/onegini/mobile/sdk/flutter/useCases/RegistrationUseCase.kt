@@ -1,15 +1,15 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
 import com.google.gson.Gson
-import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiRegistrationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiRegistrationError
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.IDENTITY_PROVIDER_NOT_FOUND
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.errors.oneginiError
+import com.onegini.mobile.sdk.flutter.errors.wrapperError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import javax.inject.Inject
@@ -22,7 +22,7 @@ class RegistrationUseCase @Inject constructor(private val oneginiSDK: OneginiSDK
         val scopes = call.argument<ArrayList<String>>("scopes") ?: ArrayList()
         val identityProvider = getIdentityProviderById(identityProviderId)
         if (identityProviderId != null && identityProvider == null) {
-            SdkError(IDENTITY_PROVIDER_NOT_FOUND).flutterError(result)
+            result.wrapperError(IDENTITY_PROVIDER_NOT_FOUND)
             return
         }
         register(identityProvider, scopes.toArray(arrayOfNulls<String>(scopes.size)), result)
@@ -50,11 +50,8 @@ class RegistrationUseCase @Inject constructor(private val oneginiSDK: OneginiSDK
                 result.success(returnedResult)
             }
 
-            override fun onError(oneginiRegistrationError: OneginiRegistrationError) {
-                SdkError(
-                    code = oneginiRegistrationError.errorType,
-                    message = oneginiRegistrationError.message
-                ).flutterError(result)
+            override fun onError(error: OneginiRegistrationError) {
+                result.oneginiError(error)
             }
         })
     }

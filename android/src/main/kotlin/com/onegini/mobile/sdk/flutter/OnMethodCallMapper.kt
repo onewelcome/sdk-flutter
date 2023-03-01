@@ -11,17 +11,23 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiAppToWebSingleSignOn
 import com.onegini.mobile.sdk.android.handlers.error.OneginiChangePinError
 import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
 import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ARGUMENT_NOT_CORRECT
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.MALFORMED_URL
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.METHOD_TO_CALL_NOT_FOUND
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ONEWELCOME_SDK_NOT_INITIALIZED
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.URL_CANT_BE_NULL
 import com.onegini.mobile.sdk.flutter.constants.Constants
+import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
+import com.onegini.mobile.sdk.flutter.errors.errorDefaultDetails
+import com.onegini.mobile.sdk.flutter.errors.oneginiError
+import com.onegini.mobile.sdk.flutter.errors.wrapperError
 import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.MobileAuthenticationObject
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
-import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
 import javax.inject.Inject
 
 class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: OneginiMethodsWrapper, private val oneginiSDK: OneginiSDK) : MethodChannel.MethodCallHandler {
@@ -33,7 +39,7 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
                 else -> onSDKMethodCall(call, oneginiSDK.oneginiClient, result)
             }
         } catch (err: FlutterPluginException) {
-            SdkError(ONEWELCOME_SDK_NOT_INITIALIZED).flutterError(result)
+            result.wrapperError(ONEWELCOME_SDK_NOT_INITIALIZED)
         }
     }
 
@@ -93,12 +99,12 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
 
             Constants.METHOD_VALIDATE_PIN_WITH_POLICY -> validatePinWithPolicy(call.argument<String>("pin")?.toCharArray(), result, client)
 
-            else -> SdkError(METHOD_TO_CALL_NOT_FOUND).flutterError(result)
+            else -> result.wrapperError(METHOD_TO_CALL_NOT_FOUND)
         }
     }
 
     private fun validatePinWithPolicy(pin: CharArray?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        val nonNullPin = pin ?: return SdkError(ARGUMENT_NOT_CORRECT.code, ARGUMENT_NOT_CORRECT.message + " pin is null").flutterError(result)
+        val nonNullPin = pin ?: return result.errorDefaultDetails(ARGUMENT_NOT_CORRECT.code, ARGUMENT_NOT_CORRECT.message + " pin is null")
 
         oneginiClient.userClient.validatePinWithPolicy(
             nonNullPin,
@@ -107,11 +113,8 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
                     result.success(true)
                 }
 
-                override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
-                    SdkError(
-                        code = oneginiPinValidationError.errorType,
-                        message = oneginiPinValidationError.message
-                    ).flutterError(result)
+                override fun onError(error: OneginiPinValidationError) {
+                    result.oneginiError(error)
                 }
             }
         )
@@ -119,11 +122,11 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
 
     fun getAppToWebSingleSignOn(url: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         if (url == null) {
-            SdkError(URL_CANT_BE_NULL).flutterError(result)
+            result.wrapperError(URL_CANT_BE_NULL)
             return
         }
         if (!Patterns.WEB_URL.matcher(url).matches()) {
-            SdkError(MALFORMED_URL).flutterError(result)
+            result.wrapperError(MALFORMED_URL)
             return
         }
         val targetUri: Uri = Uri.parse(url)
@@ -134,11 +137,8 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
                         result.success(Gson().toJson(mapOf("token" to oneginiAppToWebSingleSignOn.token, "redirectUrl" to oneginiAppToWebSingleSignOn.redirectUrl.toString())))
                     }
 
-                    override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
-                        SdkError(
-                            code = oneginiSingleSignOnError.errorType,
-                            message = oneginiSingleSignOnError.message
-                        ).flutterError(result)
+                    override fun onError(error: OneginiAppToWebSingleSignOnError) {
+                        result.oneginiError(error)
                     }
                 }
         )
@@ -151,10 +151,7 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
             }
 
             override fun onError(error: OneginiChangePinError) {
-                SdkError(
-                    code = error.errorType,
-                    message = error.message
-                ).flutterError(result)
+                result.oneginiError(error)
             }
         })
     }

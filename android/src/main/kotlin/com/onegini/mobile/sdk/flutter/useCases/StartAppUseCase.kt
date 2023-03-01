@@ -5,9 +5,10 @@ import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiInitializationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ONEWELCOME_SDK_NOT_INITIALIZED
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.errors.oneginiError
+import com.onegini.mobile.sdk.flutter.errors.wrapperError
 import com.onegini.mobile.sdk.flutter.models.Config
 import com.onegini.mobile.sdk.flutter.models.CustomIdentityProviderConfig
 import io.flutter.plugin.common.MethodCall
@@ -35,7 +36,7 @@ class StartAppUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
 
     private fun start(oneginiClient: OneginiClient?, result: MethodChannel.Result) {
         if (oneginiClient == null) {
-            SdkError(ONEWELCOME_SDK_NOT_INITIALIZED).flutterError(result)
+            result.wrapperError(ONEWELCOME_SDK_NOT_INITIALIZED)
         } else {
             oneginiSDK.oneginiClient.start(object : OneginiInitializationHandler {
                 override fun onSuccess(removedUserProfiles: Set<UserProfile>) {
@@ -44,10 +45,7 @@ class StartAppUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
                 }
 
                 override fun onError(error: OneginiInitializationError) {
-                    SdkError(
-                        code = error.errorType,
-                        message = error.message
-                    ).flutterError(result)
+                    result.oneginiError(error)
                 }
             })    
         }

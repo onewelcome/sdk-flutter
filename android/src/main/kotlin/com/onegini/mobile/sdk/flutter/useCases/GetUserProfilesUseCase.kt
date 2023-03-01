@@ -1,7 +1,6 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
 import com.google.gson.Gson
-import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import io.flutter.plugin.common.MethodChannel

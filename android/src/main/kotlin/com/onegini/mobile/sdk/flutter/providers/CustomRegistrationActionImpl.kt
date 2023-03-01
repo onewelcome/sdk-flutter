@@ -6,8 +6,8 @@ import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiCustomReg
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS
 import com.onegini.mobile.sdk.flutter.constants.Constants
+import com.onegini.mobile.sdk.flutter.errors.wrapperError
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.models.CustomRegistrationModel
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
 import io.flutter.plugin.common.MethodChannel
@@ -32,7 +32,7 @@ class CustomRegistrationActionImpl(private val providerId: String) : OneginiCust
 
     override fun returnSuccess(result: String?, resultChannel: MethodChannel.Result) {
         when (callback) {
-            null -> SdkError(REGISTRATION_NOT_IN_PROGRESS).flutterError(resultChannel)
+            null -> resultChannel.wrapperError(REGISTRATION_NOT_IN_PROGRESS)
             else -> this.callback?.returnSuccess(result)
         }
 
@@ -41,7 +41,7 @@ class CustomRegistrationActionImpl(private val providerId: String) : OneginiCust
 
     override fun returnError(exception: Exception?, resultChannel: MethodChannel.Result) {
         when (callback) {
-            null -> SdkError(REGISTRATION_NOT_IN_PROGRESS).flutterError(resultChannel)
+            null -> resultChannel.wrapperError(REGISTRATION_NOT_IN_PROGRESS)
             else -> this.callback?.returnError(exception)
         }
 
