@@ -71,8 +71,8 @@ extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
     }
 
     func submitCustomRegistrationAction(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        guard let _arg = call.arguments as! [String: Any]?, let _data = _arg["data"] as! String? else { return; }
-        OneginiModuleSwift.sharedInstance.submitCustomRegistrationSuccess(_data)
+        guard let args = call.arguments as? [String: Any] else { return; } // FIXME: Throw exception here
+        OneginiModuleSwift.sharedInstance.submitCustomRegistrationSuccess(args["data"] as? String)
     }
 
     func cancelCustomRegistrationAction(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {

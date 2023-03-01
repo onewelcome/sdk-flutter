@@ -7,7 +7,7 @@ protocol RegistrationConnectorToHandlerProtocol: RegistrationHandlerToPinHanlder
     func logout(completion: @escaping (SdkError?) -> Void)
     func deregister(profileId: String, completion: @escaping (SdkError?) -> Void)
     func identityProviders() -> Array<ONGIdentityProvider>
-    func submitCustomRegistrationSuccess(_ data: String)
+    func submitCustomRegistrationSuccess(_ data: String?)
     func cancelCustomRegistration(_ error: String)
     func currentChallenge() -> ONGCustomRegistrationChallenge?
 }
@@ -150,7 +150,7 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
         presentBrowserUserRegistrationView(registrationUserURL: url, webSignInType: webSignInType)
     }
     
-    func submitCustomRegistrationSuccess(_ data: String) {
+    func submitCustomRegistrationSuccess(_ data: String?) {
         guard let customRegistrationChallenge = self.customRegistrationChallenge else { return }
         customRegistrationChallenge.sender.respond(withData: data, challenge: customRegistrationChallenge)
     }
@@ -226,16 +226,11 @@ extension RegistrationHandler: ONGRegistrationDelegate {
     
     private func makeCustomInfoResponse(_ challenge: ONGCustomRegistrationChallenge) -> Dictionary<String, Any?> {
         var result = Dictionary<String, Any?>()
-
-        if let info = challenge.info {
-            var customInfo = Dictionary<String, Any?>()
-
-            customInfo["status"] = info.status
-            customInfo["data"] = info.data
-            customInfo["providerId"] = challenge.identityProvider.identifier
-
-            result["eventValue"] = String.stringify(json: customInfo)
-        }
+        var customInfo = Dictionary<String, Any?>()
+        customInfo["status"] = challenge.info?.status
+        customInfo["data"] = challenge.info?.data
+        customInfo["providerId"] = challenge.identityProvider.identifier
+        result["eventValue"] = String.stringify(json: customInfo)
 
         return result
     }
