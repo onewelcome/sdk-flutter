@@ -1,3 +1,6 @@
+## 2.0.0, March 1, 2023
+You can find the full changelog [here](https://developer.onewelcome.com/flutter/plugin/v2-x) and an overview containing the upgrade instructions [here](https://developer.onewelcome.com/flutter/plugin/v2-0).
+
 ## 1.2.0, January 17, 2023
 * Update the Android SDK version version to 11.8.1. See [the release notes](https://developer.onewelcome.com/android/android-sdk/11-x) and [upgrade notes](https://developer.onewelcome.com/android/android-sdk/v11-8.1) for more information.
 * [Breaking] Bump the compile- and target-SDK of the plugin to version 32 as a consequence of the new Android SDK version.

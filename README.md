@@ -6,7 +6,7 @@ in pubspec.yaml add this:
 
 dependencies:
 
-    onegini: 1.0.0
+    onegini: 2.0.0
 
 `flutter clean`
 
@@ -17,7 +17,7 @@ Onegini class - main class for comunication between flutter and Native platforms
 
 ## SDK Configuration
 
-1. Get access to https://repo.onegini.com/artifactory/onegini-sdk
+1. Get access to https://repo.onewelcome.com/artifactory/onegini-sdk
 2. Use https://github.com/Onegini/onegini-sdk-configurator on your application (instructions can be found there)
 
 ## Onegini Documentation
@@ -105,12 +105,12 @@ Onegini class - main class for comunication between flutter and Native platforms
 
 3. The Onegini CocoaPods repository must be added to your local machine using the following command:
     ```
-    pod repo-art add onegini https://repo.onegini.com/artifactory/api/pods/cocoapods-public
+    pod repo-art add onegini https://repo.onewelcome.com/artifactory/api/pods/cocoapods-public
     ```
 
 4. In order to update the Repository you must manually perform an update:
     ```
-    pod repo-art add onegini https://repo.onegini.com/artifactory/api/pods/cocoapods-public
+    pod repo-art add onegini https://repo.onewelcome.com/artifactory/api/pods/cocoapods-public
     ```
 
 5. In the `pod` file has to be added at the beginning this part `ios/Podfile`:
