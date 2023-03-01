@@ -1,6 +1,5 @@
 import Foundation
 import OneginiSDKiOS
-import OneginiCrypto
 import Flutter
 
 extension OneginiModuleSwift {
@@ -19,7 +18,7 @@ extension OneginiModuleSwift {
             ONGUserClient.sharedInstance().enroll { [weak self] (value, error) in
                 
                 if let _error = error {
-                    callback(SdkError.init(errorDescription: _error.localizedDescription, code: _error.code).flutterError())
+                    callback(SdkError(code: _error.code, errorDescription: _error.localizedDescription).flutterError())
                     return
                 }
                 

@@ -1,44 +1,47 @@
 import OneginiSDKiOS
-import OneginiCrypto
 
-enum OneginiErrorCustomType: Int {
-    case userProfileIsNull = 8002
-    case userAuthenticatedProfileIsNull
-    case registeredAuthenticatorsIsNull
-    case notRegisteredAuthenticatorsIsNull
-    case identityProvidersIsNull
-    case providedUrlIncorrect
-    case loginCanceled
-    case enrollmentFailed
-    case authenticationCancelled
-    case changingCancelled
-    case registrationCancelled
-    case cantHandleOTP
-    case incrorrectResourcesAccess
-    case authenticatorNotAvailable
-    case authenticatorNotRegistered
-    case authenticatorDeregistrationCancelled
-    case failedParseData
-    case responseIsNull
-    case authenticatorIdIsNull
-    case emptyInputValue
-    // Default case
-    case somethingWentWrong = 400
+enum OneWelcomeWrapperError: Int {
+    // iOS and Android
+    case genericError = 8000
+    case userProfileDoesNotExist = 8001
+    case noUserProfileIsAuthenticated = 8002
+    case authenticatorNotFound = 8004
+    case httpRequestError = 8011
+    case errorCodeHttpRequest = 8013
+    case unauthenticatedImplicitly = 8035
+    case methodArgumentNotFound = 8036
     
+    // iOS only
+    case providedUrlIncorrect = 8014
+    case loginCanceled = 8015
+    case enrollmentFailed = 8016
+    case authenticationCancelled = 8017
+    case changingPinCancelled = 8018
+    case registrationCancelled = 8020
+    case cantHandleOTP = 8021
+    case incorrectResourcesAccess = 8022
+    case authenticatorNotRegistered = 8023
+    case authenticatorDeregistrationCancelled = 8024
+    case failedToParseData = 8025
+    case responseIsNull = 8026
+    case authenticatorIdIsNull = 8027
+    case emptyInputValue = 8028
+    case unsupportedPinAction = 8029
+    case unsupportedCustomRegistrationAction = 8030
+    case authenticatorRegistrationCancelled = 8031
+
     func message() -> String {
         var message = ""
         
         switch self {
-        case .userProfileIsNull:
-            message = "User profile is empty."
-        case .userAuthenticatedProfileIsNull:
-            message = "User authenticated profile is empty."
-        case .registeredAuthenticatorsIsNull:
-            message = "List Registered authenticators is empty."
-        case .notRegisteredAuthenticatorsIsNull:
-            message = "List Not Registered authenticators is empty."
-        case .identityProvidersIsNull:
-            message = "Identity providers is empty."
+        case .genericError:
+            message = "Something went wrong."
+        case .userProfileDoesNotExist:
+            message = "The requested User profile does not exist."
+        case .noUserProfileIsAuthenticated:
+            message = "There is currently no User Profile authenticated."
+        case .authenticatorNotFound:
+            message = "The requested authenticator is not found."
         case .providedUrlIncorrect:
             message = "Provided url is incorrect."
         case .enrollmentFailed:
@@ -49,19 +52,17 @@ enum OneginiErrorCustomType: Int {
             message = "Authentication cancelled."
         case .authenticatorDeregistrationCancelled:
             message = "Authenticator deregistration cancelled."
-        case .changingCancelled:
-            message = "Changing cancelled."
+        case .changingPinCancelled:
+            message = "Changing pin cancelled."
         case .registrationCancelled:
-            message = "Registration  cancelled."
+            message = "Registration cancelled."
         case .cantHandleOTP:
             message = "Can't handle otp authentication request."
-        case .incrorrectResourcesAccess:
+        case .incorrectResourcesAccess:
             message = "Incorrect access to resources."
-        case .authenticatorNotAvailable:
-            message = "This authenticator is not available."
         case .authenticatorNotRegistered:
             message = "This authenticator is not registered."
-        case .failedParseData:
+        case .failedToParseData:
             message = "Failed to parse data."
         case .responseIsNull:
             message = "Response doesn't contain data."
@@ -69,6 +70,20 @@ enum OneginiErrorCustomType: Int {
             message = "Authenticator ID is empty."
         case .emptyInputValue:
             message = "Empty input value."
+        case .errorCodeHttpRequest:
+            message = "OneWelcome: HTTP Request failed. Check Response for more info."
+        case .httpRequestError:
+            message = "OneWelcome: HTTP Request failed. Check iosCode and iosMessage for more info."
+        case .unsupportedPinAction:
+            message = "Unsupported pin action. Contact SDK maintainer."
+        case .unsupportedCustomRegistrationAction:
+            message = "Unsupported custom registration action. Contact SDK maintainer."
+        case .authenticatorRegistrationCancelled:
+            message = "The authenticator-registration was cancelled."
+        case .unauthenticatedImplicitly:
+            message = "The requested action requires you to be authenticated implicitly"
+        case .methodArgumentNotFound:
+            message = "The passed argument from Flutter could not be found"
         default:
             message = "Something went wrong."
         }
@@ -81,7 +96,7 @@ class ErrorMapper {
     func mapError(_ error: Error, pinChallenge: ONGPinChallenge? = nil, customInfo: ONGCustomInfo? = nil) -> SdkError {
         Logger.log("Error domain: \(error.domain)")
         
-        return SdkError(errorDescription: error.localizedDescription, code: error.code)
+        return SdkError(code: error.code, errorDescription: error.localizedDescription)
     }
     
     func mapErrorFromPinChallenge(_ challenge: ONGPinChallenge?) -> SdkError? {
@@ -91,7 +106,7 @@ class ErrorMapper {
                   maxAttempts != previousCount else {
                 return ErrorMapper().mapError(error, pinChallenge: challenge)
             }
-            return SdkError(errorDescription: "Failed attempts", code: error.code, info: ["failedAttempts": previousCount, "maxAttempts": maxAttempts])
+            return SdkError(code: error.code, errorDescription: "Failed attempts", info: ["failedAttempts": previousCount, "maxAttempts": maxAttempts])
         } else {
             return nil
         }

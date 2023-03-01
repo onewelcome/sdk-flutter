@@ -173,7 +173,7 @@ void main() {
             Future.value('[{"id" : "1234", "name" : "name"}]'));
 
         //act
-        var result = await userClient.getRegisteredAuthenticators(null);
+        var result = await userClient.getRegisteredAuthenticators(null, "1234");
 
         //assert
         expect(result.first.id, '1234');
@@ -201,7 +201,8 @@ void main() {
             Future.error(PlatformException(code: '1')));
 
         //assert
-        expect(() async => await userClient.getRegisteredAuthenticators(null),
+        expect(
+            () async => await userClient.getRegisteredAuthenticators(null, ""),
             throwsA(isA<PlatformException>()));
       },
     );
@@ -216,7 +217,7 @@ void main() {
             Future.value('[{"id" : "1234", "name" : "name"}]'));
 
         //act
-        var result = await userClient.getAllAuthenticators(null);
+        var result = await userClient.getAllAuthenticators(null, "1234");
 
         //assert
         expect(result.first.id, '1234');
@@ -230,7 +231,7 @@ void main() {
         setupMethodChannel(Constants.getAllAuthenticators, Future.value(null));
 
         //assert
-        expect(() async => await userClient.getAllAuthenticators(null),
+        expect(() async => await userClient.getAllAuthenticators(null, ""),
             throwsA(isA<PlatformException>()));
       },
     );
@@ -243,7 +244,7 @@ void main() {
             Future.error(PlatformException(code: '1')));
 
         //assert
-        expect(() async => await userClient.getAllAuthenticators(null),
+        expect(() async => await userClient.getAllAuthenticators(null, ""),
             throwsA(isA<PlatformException>()));
       },
     );
@@ -258,7 +259,7 @@ void main() {
             Future.value('{"userProfile":{"profileId":"1234"}}'));
 
         //act
-        var result = await userClient.authenticateUser(null, '');
+        var result = await userClient.authenticateUser(null, "1234", '');
 
         //assert
         expect(result.userProfile?.profileId, '1234');
@@ -272,7 +273,7 @@ void main() {
         setupMethodChannel(Constants.authenticateUser, Future.value(null));
 
         //assert
-        expect(() async => await userClient.authenticateUser(null, ''),
+        expect(() async => await userClient.authenticateUser(null, "1234", ''),
             throwsA(isA<PlatformException>()));
       },
     );
@@ -285,7 +286,7 @@ void main() {
             Future.error(PlatformException(code: '1')));
 
         //assert
-        expect(() async => await userClient.authenticateUser(null, ''),
+        expect(() async => await userClient.authenticateUser(null, "1234", ''),
             throwsA(isA<PlatformException>()));
       },
     );
@@ -300,7 +301,8 @@ void main() {
             Future.value('[{"id" : "1234", "name" : "name"}]'));
 
         //act
-        var result = await userClient.getNotRegisteredAuthenticators(null);
+        var result =
+            await userClient.getNotRegisteredAuthenticators(null, "1234");
 
         //assert
         expect(result.first.id, '1234');
@@ -316,7 +318,8 @@ void main() {
 
         //assert
         expect(
-            () async => await userClient.getNotRegisteredAuthenticators(null),
+            () async =>
+                await userClient.getNotRegisteredAuthenticators(null, ""),
             throwsA(isA<PlatformException>()));
       },
     );
@@ -330,7 +333,8 @@ void main() {
 
         //assert
         expect(
-            () async => await userClient.getNotRegisteredAuthenticators(null),
+            () async =>
+                await userClient.getNotRegisteredAuthenticators(null, ""),
             throwsA(isA<PlatformException>()));
       },
     );
@@ -562,16 +566,16 @@ void main() {
     );
   });
 
-  group('UserClient fetchUserProfiles', () {
+  group('UserClient getUserProfiles', () {
     test(
       'return List<UserProfile>',
       () async {
         //arrange
-        setupMethodChannel(Constants.userProfiles,
+        setupMethodChannel(Constants.getUserProfiles,
             Future.value('[{"profileId":"1234","isDefault":true}]'));
 
         //act
-        var result = await userClient.fetchUserProfiles();
+        var result = await userClient.getUserProfiles();
 
         //assert
         expect(result.first.profileId, '1234');
@@ -582,10 +586,10 @@ void main() {
       'return null, handle TypeError and throw PlatformException',
       () async {
         //arrange
-        setupMethodChannel(Constants.userProfiles, Future.value(null));
+        setupMethodChannel(Constants.getUserProfiles, Future.value(null));
 
         //assert
-        expect(() async => await userClient.fetchUserProfiles(),
+        expect(() async => await userClient.getUserProfiles(),
             throwsA(isA<PlatformException>()));
       },
     );
@@ -594,11 +598,11 @@ void main() {
       'handle PlatformException',
       () async {
         //arrange
-        setupMethodChannel(
-            Constants.userProfiles, Future.error(PlatformException(code: '1')));
+        setupMethodChannel(Constants.getUserProfiles,
+            Future.error(PlatformException(code: '1')));
 
         //assert
-        expect(() async => await userClient.fetchUserProfiles(),
+        expect(() async => await userClient.getUserProfiles(),
             throwsA(isA<PlatformException>()));
       },
     );
@@ -724,13 +728,13 @@ void main() {
       'return UserProfile',
       () async {
         //arrange
-        setupMethodChannel(
-            Constants.authenticateDevice, Future.value('{"profileId":"1234"}'));
+        setupMethodChannel(Constants.authenticateUserImplicitly,
+            Future.value('{"profileId":"1234"}'));
 
-        var result = await userClient.authenticateUserImplicitly(null);
+        var result = await userClient.authenticateUserImplicitly("1234", null);
 
         //assert
-        expect(result.profileId, '1234');
+        expect(result, '1234');
       },
     );
 
@@ -738,10 +742,12 @@ void main() {
       'return null, handle TypeError and throw PlatformException',
       () async {
         //arrange
-        setupMethodChannel(Constants.authenticateDevice, Future.value(null));
+        setupMethodChannel(
+            Constants.authenticateUserImplicitly, Future.value(null));
 
         //assert
-        expect(() async => await userClient.authenticateUserImplicitly(null),
+        expect(
+            () async => await userClient.authenticateUserImplicitly("", null),
             throwsA(isA<PlatformException>()));
       },
     );
@@ -750,11 +756,12 @@ void main() {
       'handle PlatformException',
       () async {
         //arrange
-        setupMethodChannel(Constants.authenticateDevice,
+        setupMethodChannel(Constants.authenticateUserImplicitly,
             Future.error(PlatformException(code: '1')));
 
         //assert
-        expect(() async => await userClient.authenticateUserImplicitly(null),
+        expect(
+            () async => await userClient.authenticateUserImplicitly("", null),
             throwsA(isA<PlatformException>()));
       },
     );

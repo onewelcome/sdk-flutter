@@ -1,6 +1,5 @@
 import Foundation
 import OneginiSDKiOS
-import OneginiCrypto
 import Flutter
 
 extension OneginiModuleSwift {
@@ -40,7 +39,7 @@ extension OneginiModuleSwift {
             Logger.log("super params4 \(parameters)")
             bridgeConnector.toResourceFetchHandler.unauthenticatedRequest(path, parameters: parameters, callback: callback)
         default:
-            callback(SdkError.convertToFlutter(SdkError(customType: .incrorrectResourcesAccess)))
+            callback(SdkError.convertToFlutter(SdkError(.incorrectResourcesAccess)))
         }
     }
 }

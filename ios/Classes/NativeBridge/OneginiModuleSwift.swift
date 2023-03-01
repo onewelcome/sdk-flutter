@@ -1,6 +1,5 @@
 import Foundation
 import OneginiSDKiOS
-import OneginiCrypto
 import Flutter
 
 protocol ConnectorToFlutterBridgeProtocol: NSObject {
@@ -49,7 +48,7 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
             }
             
             if !result {
-                callback(SdkError(customType: .somethingWentWrong).flutterError())
+                callback(SdkError(.genericError).flutterError())
                 return
             }
             
@@ -62,7 +61,7 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
         }
     }
     
-    func fetchUserProfiles(callback: @escaping FlutterResult) {
+    func getUserProfiles(callback: @escaping FlutterResult) {
         let profiles = ONGUserClient.sharedInstance().userProfiles()
         let value: [[String: String?]] = profiles.compactMap({ ["profileId": $0.profileId] })
 

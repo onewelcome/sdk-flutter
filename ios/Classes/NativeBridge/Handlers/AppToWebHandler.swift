@@ -1,6 +1,5 @@
 import Foundation
 import OneginiSDKiOS
-import OneginiCrypto
 
 //MARK: -
 protocol AppToWebHandlerProtocol: AnyObject {
@@ -11,7 +10,7 @@ protocol AppToWebHandlerProtocol: AnyObject {
 class AppToWebHandler: AppToWebHandlerProtocol {
     func signInAppToWeb(targetURL: URL?, completion: @escaping (Dictionary<String, Any>?, SdkError?) -> Void) {
         guard let _targetURL = targetURL else {
-            completion(nil, SdkError.init(customType: .providedUrlIncorrect))
+            completion(nil, SdkError(.providedUrlIncorrect))
             return
         }
 
@@ -21,7 +20,7 @@ class AppToWebHandler: AppToWebHandlerProtocol {
                 completion(["token": _token, "redirectUrl": _url.absoluteString ], nil)
             } else if let _error = error {
                 // Handle error
-                let sdkError = SdkError(errorDescription: _error.localizedDescription)
+                let sdkError = SdkError(code: OneWelcomeWrapperError.genericError.rawValue, errorDescription: _error.localizedDescription)
                 completion(nil, sdkError)
             }
         }

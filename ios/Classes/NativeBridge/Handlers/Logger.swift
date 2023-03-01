@@ -30,7 +30,7 @@ class Logger {
             m = "\(m)[\(type(of: s))]"
         }
         m = "\(m) \(message)"
-        
+
 #if DEBUG
         // prints all while in development
         print(m)

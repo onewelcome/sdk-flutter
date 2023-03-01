@@ -1,17 +1,18 @@
 package com.onegini.mobile.sdk
 
-import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.android.handlers.OneginiDeregisterUserProfileHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiDeregistrationError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterUserUseCase
+import com.onegini.mobile.sdk.flutter.useCases.GetUserProfileUseCase
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Answers
 import org.mockito.Mock
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
@@ -23,12 +24,9 @@ import org.mockito.kotlin.whenever
 @RunWith(MockitoJUnitRunner::class)
 class DeregisterUserUseCaseTests {
 
-    @Mock
-    lateinit var clientMock: OneginiClient
-
-    @Mock
-    lateinit var userClientMock: UserClient
-
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    lateinit var oneginiSdk: OneginiSDK
+    
     @Mock
     lateinit var oneginiDeregistrationErrorMock: OneginiDeregistrationError
 
@@ -38,44 +36,51 @@ class DeregisterUserUseCaseTests {
     @Spy
     lateinit var resultSpy: MethodChannel.Result
 
+    lateinit var deregisterUserUseCase: DeregisterUserUseCase
+
     @Before
     fun attach() {
-        whenever(clientMock.userClient).thenReturn(userClientMock)
+        val getUserProfileUseCase = GetUserProfileUseCase(oneginiSdk)
+        deregisterUserUseCase = DeregisterUserUseCase(oneginiSdk, getUserProfileUseCase)
     }
 
     @Test
-    fun `should return error when user not authenticated`() {
-        DeregisterUserUseCase(clientMock)(callMock, resultSpy)
+    fun `When the user is not recognised, Then it should return error`() {
+        whenever(callMock.argument<String>("profileId")).thenReturn("ABCDEF")
+        whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
+        deregisterUserUseCase(callMock, resultSpy)
 
-        verify(resultSpy).error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
+        val message = USER_PROFILE_DOES_NOT_EXIST.message
+        verify(resultSpy).error(eq(USER_PROFILE_DOES_NOT_EXIST.code.toString()), eq(message), any())
     }
 
     @Test
-    fun `should return true when user deregister`() {
+    fun `When user deregisters successfully, Then it should return true`() {
         whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
-        whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
+        whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
 
-        whenever(userClientMock.deregisterUser(eq(UserProfile("QWERTY")), any())).thenAnswer {
+        whenever(oneginiSdk.oneginiClient.userClient.deregisterUser(eq(UserProfile("QWERTY")), any())).thenAnswer {
             it.getArgument<OneginiDeregisterUserProfileHandler>(1).onSuccess()
         }
 
-        DeregisterUserUseCase(clientMock)(callMock, resultSpy)
+        deregisterUserUseCase(callMock, resultSpy)
 
         verify(resultSpy).success(true)
     }
 
     @Test
-    fun `should return error when deregister method return error`() {
+    fun `When deregister method return an error, Then the wrapper function should return error`() {
         whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
-        whenever(userClientMock.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
-        whenever(userClientMock.deregisterUser(eq(UserProfile("QWERTY")), any())).thenAnswer {
+        whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
+        whenever(oneginiSdk.oneginiClient.userClient.deregisterUser(eq(UserProfile("QWERTY")), any())).thenAnswer {
             it.getArgument<OneginiDeregisterUserProfileHandler>(1).onError(oneginiDeregistrationErrorMock)
         }
         whenever(oneginiDeregistrationErrorMock.errorType).thenReturn(OneginiDeregistrationError.GENERAL_ERROR)
         whenever(oneginiDeregistrationErrorMock.message).thenReturn("General error")
 
-        DeregisterUserUseCase(clientMock)(callMock, resultSpy)
+        deregisterUserUseCase(callMock, resultSpy)
 
-        verify(resultSpy).error(oneginiDeregistrationErrorMock.errorType.toString(), oneginiDeregistrationErrorMock.message, null)
+        val message = oneginiDeregistrationErrorMock.message
+        verify(resultSpy).error(eq(oneginiDeregistrationErrorMock.errorType.toString()), eq(message), any())
     }
 }

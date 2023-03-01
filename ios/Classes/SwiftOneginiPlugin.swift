@@ -32,21 +32,24 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     case Constants.Routes.handleRegisteredUserUrl: handleRegisteredProcessUrl(call, result)
     
     case Constants.Routes.getIdentityProviders: getIdentityProviders(call, result)
-    case Constants.Routes.cancelRegistration: cancelRegistration(call, result)
+    case Constants.Routes.cancelBrowserRegistration: cancelBrowserRegistration(call, result)
     case Constants.Routes.setPreferredAuthenticator:
         setPreferredAuthenticator(call, result)
     
     case Constants.Routes.acceptPinRegistrationRequest: acceptPinRegistrationRequest(call, result)
     case Constants.Routes.denyPinRegistrationRequest: denyPinRegistrationRequest(call, result)
+    case Constants.Routes.getRedirectUrl: getRedirectUrl(call, result)
     
-    case Constants.Routes.customTwoStepRegistrationReturnSuccess: customTwoStepRegistrationReturnSuccess(call, result)
-    case Constants.Routes.customTwoStepRegistrationReturnError: customTwoStepRegistrationReturnError(call, result)
+    // custom registration
+    case Constants.Routes.submitCustomRegistrationAction: submitCustomRegistrationAction(call, result)
+    case Constants.Routes.cancelCustomRegistrationAction: cancelCustomRegistrationAction(call, result)
         
     case Constants.Routes.deregisterUser: deregisterUser(call, result)
         
     // auth
     case Constants.Routes.registerAuthenticator: registerAuthenticator(call, result)
     case Constants.Routes.authenticateUser: authenticateUser(call, result)
+    case Constants.Routes.authenticateUserImplicitly: authenticateUserImplicitly(call, result)
     case Constants.Routes.authenticateDevice: authenticateDevice(call, result)
     
     case Constants.Routes.getRegisteredAuthenticators: getRegisteredAuthenticators(call, result)
@@ -62,7 +65,10 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
         
     case Constants.Routes.validatePinWithPolicy:
         validatePinWithPolicy(call, result)
-    
+    case Constants.Routes.getAuthenticatedUserProfile: getAuthenticatedUserProfile(result)
+    case Constants.Routes.getUserProfiles: getUserProfiles(result)
+    case Constants.Routes.getAccessToken: getAccessToken(result)
+
     // fingerprint
     case Constants.Routes.acceptFingerprintAuthenticationRequest: acceptFingerprintAuthenticationRequest(call, result)
     case Constants.Routes.denyFingerprintAuthenticationRequest: denyFingerprintAuthenticationRequest(call, result)
@@ -80,8 +86,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     // other
     case Constants.Routes.changePin: changePin(call, result)
     case Constants.Routes.getAppToWebSingleSignOn: getAppToWebSingleSignOn(call, result)
-    case Constants.Routes.userProfiles: fetchUserProfiles(result)
-    
+
     default: do {
         Logger.log("Method wasn't handled: " + call.method)
         result(FlutterMethodNotImplemented)

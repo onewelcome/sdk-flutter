@@ -1,9 +1,7 @@
 package com.onegini.mobile.sdk.flutter
 
-import android.content.Context
 import android.net.Uri
 import android.util.Patterns
-import androidx.annotation.NonNull
 import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiAppToWebSingleSignOnHandler
@@ -19,51 +17,53 @@ import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.MobileAuthenticationObject
-import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
-import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationAction
+import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
+import javax.inject.Inject
 
-class OnMethodCallMapper(private var context: Context, private val oneginiMethodsWrapper: OneginiMethodsWrapper, private val oneginiSDK: OneginiSDK) : MethodChannel.MethodCallHandler {
+class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: OneginiMethodsWrapper, private val oneginiSDK: OneginiSDK) : MethodChannel.MethodCallHandler {
 
-
-    override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
-        val client = oneginiSDK.getOneginiClient()
-        if (call.method == Constants.METHOD_START_APP) {
-            oneginiMethodsWrapper.startApp(call, result, oneginiSDK, context)
-        } else if (client != null) {
-            onSDKMethodCall(call, client, result)
-        } else {
-            result.error(OneginiWrapperErrors.ONEGINI_SDK_NOT_INITIALIZED.code, OneginiWrapperErrors.ONEGINI_SDK_NOT_INITIALIZED.message, null)
+    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+        try {
+            when (call.method) {
+                Constants.METHOD_START_APP -> oneginiMethodsWrapper.startApp(call, result)
+                else -> onSDKMethodCall(call, oneginiSDK.oneginiClient, result)
+            }
+        } catch (err: FlutterPluginException) {
+            SdkError(ONEWELCOME_SDK_NOT_INITIALIZED).flutterError(result)
         }
     }
 
-   private fun onSDKMethodCall(call: MethodCall, client: OneginiClient, result: MethodChannel.Result) {
+    private fun onSDKMethodCall(call: MethodCall, client: OneginiClient, result: MethodChannel.Result) {
         when (call.method) {
-            Constants.METHOD_CUSTOM_TWO_STEP_REGISTRATION_RETURN_SUCCESS -> CustomTwoStepRegistrationAction.CALLBACK?.returnSuccess(call.argument("data"))
-            Constants.METHOD_CUSTOM_TWO_STEP_REGISTRATION_RETURN_ERROR -> CustomTwoStepRegistrationAction.CALLBACK?.returnError(Exception(call.argument<String>("error")))
+            // Custom Registration Callbacks
+            Constants.METHOD_SUBMIT_CUSTOM_REGISTRATION_ACTION -> oneginiMethodsWrapper.respondCustomRegistrationAction(call, result)
+            Constants.METHOD_CANCEL_CUSTOM_REGISTRATION_ACTION -> oneginiMethodsWrapper.cancelCustomRegistrationAction(call, result)
 
             //Register
-            Constants.METHOD_REGISTER_USER -> oneginiMethodsWrapper.registerUser(call, result, client)
-            Constants.METHOD_HANDLE_REGISTERED_URL -> oneginiMethodsWrapper.handleRegisteredUrl(call, context, client)
-            Constants.METHOD_GET_IDENTITY_PROVIDERS -> oneginiMethodsWrapper.getIdentityProviders(result, client)
-            Constants.METHOD_CANCEL_REGISTRATION -> oneginiMethodsWrapper.cancelRegistration()
+            Constants.METHOD_REGISTER_USER -> oneginiMethodsWrapper.registerUser(call, result)
+            Constants.METHOD_HANDLE_REGISTERED_URL -> oneginiMethodsWrapper.handleRegisteredUrl(call)
+            Constants.METHOD_GET_IDENTITY_PROVIDERS -> oneginiMethodsWrapper.getIdentityProviders(result)
+            Constants.METHOD_CANCEL_BROWSER_REGISTRATION -> oneginiMethodsWrapper.cancelBrowserRegistration()
             Constants.METHOD_ACCEPT_PIN_REGISTRATION_REQUEST -> PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
             Constants.METHOD_DENY_PIN_REGISTRATION_REQUEST -> PinRequestHandler.CALLBACK?.denyAuthenticationRequest()
-            Constants.METHOD_DEREGISTER_USER -> oneginiMethodsWrapper.deregisterUser(call, result, client)
+            Constants.METHOD_DEREGISTER_USER -> oneginiMethodsWrapper.deregisterUser(call, result)
 
             // Authenticate
-            Constants.METHOD_REGISTER_AUTHENTICATOR -> oneginiMethodsWrapper.registerAuthenticator(call, result, client)
-            Constants.METHOD_GET_REGISTERED_AUTHENTICATORS -> oneginiMethodsWrapper.getRegisteredAuthenticators(result, client)
-            Constants.METHOD_AUTHENTICATE_USER -> oneginiMethodsWrapper.authenticateUser(call, result, client)
-            Constants.METHOD_GET_ALL_AUTHENTICATORS -> oneginiMethodsWrapper.getAllAuthenticators(result, client)
-            Constants.METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS -> oneginiMethodsWrapper.getNotRegisteredAuthenticators(result, client)
-            Constants.METHOD_SET_PREFERRED_AUTHENTICATOR -> oneginiMethodsWrapper.setPreferredAuthenticator(call, result, client)
-            Constants.METHOD_DEREGISTER_AUTHENTICATOR -> oneginiMethodsWrapper.deregisterAuthenticator(call, result, client)
-            Constants.METHOD_LOGOUT -> oneginiMethodsWrapper.logout(result, client)
+            Constants.METHOD_REGISTER_AUTHENTICATOR -> oneginiMethodsWrapper.registerAuthenticator(call, result)
+            Constants.METHOD_GET_REGISTERED_AUTHENTICATORS -> oneginiMethodsWrapper.getRegisteredAuthenticators(call, result)
+            Constants.METHOD_AUTHENTICATE_USER -> oneginiMethodsWrapper.authenticateUser(call, result)
+            Constants.METHOD_GET_ALL_AUTHENTICATORS -> oneginiMethodsWrapper.getAllAuthenticators(call, result)
+            Constants.METHOD_GET_ALL_NOT_REGISTERED_AUTHENTICATORS -> oneginiMethodsWrapper.getNotRegisteredAuthenticators(call, result)
+            Constants.METHOD_SET_PREFERRED_AUTHENTICATOR -> oneginiMethodsWrapper.setPreferredAuthenticator(call, result)
+            Constants.METHOD_DEREGISTER_AUTHENTICATOR -> oneginiMethodsWrapper.deregisterAuthenticator(call, result)
+            Constants.METHOD_LOGOUT -> oneginiMethodsWrapper.logout(result)
             Constants.METHOD_ACCEPT_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
             Constants.METHOD_DENY_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.denyAuthenticationRequest()
-            Constants.METHOD_IS_AUTHENTICATOR_REGISTERED -> oneginiMethodsWrapper.isAuthenticatorRegistered(call, result, client)
+            Constants.METHOD_IS_AUTHENTICATOR_REGISTERED -> oneginiMethodsWrapper.isAuthenticatorRegistered(call, result)
 
             // Fingerprint
             Constants.METHOD_ACCEPT_FINGERPRINT_AUTHENTICATION_REQUEST -> FingerprintAuthenticationRequestHandler.fingerprintCallback?.acceptAuthenticationRequest()
@@ -76,35 +76,54 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             Constants.METHOD_DENY_OTP_AUTHENTICATION_REQUEST -> MobileAuthOtpRequestHandler.CALLBACK?.denyAuthenticationRequest()
 
             // Resources
-            Constants.METHOD_AUTHENTICATE_USER_IMPLICITLY -> oneginiMethodsWrapper.authenticateUserImplicitly(call, result, client)
-            Constants.METHOD_AUTHENTICATE_DEVICE -> oneginiMethodsWrapper.authenticateDevice(call, result, client)
-            Constants.METHOD_GET_RESOURCE_ANONYMOUS -> oneginiMethodsWrapper.getResourceAnonymous(call, result, client, ResourceHelper())
-            Constants.METHOD_GET_RESOURCE -> oneginiMethodsWrapper.getResource(call, result, client, ResourceHelper())
-            Constants.METHOD_GET_IMPLICIT_RESOURCE -> oneginiMethodsWrapper.getImplicitResource(call, result, client, ResourceHelper())
-            Constants.METHOD_GET_UNAUTHENTICATED_RESOURCE -> oneginiMethodsWrapper.getUnauthenticatedResource(call, result, client, ResourceHelper())
+            Constants.METHOD_AUTHENTICATE_USER_IMPLICITLY -> oneginiMethodsWrapper.authenticateUserImplicitly(call, result)
+            Constants.METHOD_AUTHENTICATE_DEVICE -> oneginiMethodsWrapper.authenticateDevice(call, result)
+            Constants.METHOD_GET_RESOURCE_ANONYMOUS -> oneginiMethodsWrapper.getResourceAnonymous(call, result)
+            Constants.METHOD_GET_RESOURCE -> oneginiMethodsWrapper.getResource(call, result)
+            Constants.METHOD_GET_IMPLICIT_RESOURCE -> oneginiMethodsWrapper.getImplicitResource(call, result)
+            Constants.METHOD_GET_UNAUTHENTICATED_RESOURCE -> oneginiMethodsWrapper.getUnauthenticatedResource(call, result)
 
             // Other
             Constants.METHOD_CHANGE_PIN -> startChangePinFlow(result, client)
             Constants.METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON -> getAppToWebSingleSignOn(call.argument<String>("url"), result, client)
-            Constants.METHOD_GET_USER_PROFILES -> oneginiMethodsWrapper.getUserProfiles(result, client)
-            Constants.METHOD_GET_ACCESS_TOKEN -> oneginiMethodsWrapper.getAccessToken(result, client)
-            Constants.METHOD_GET_AUTHENTICATED_USER_PROFILE -> oneginiMethodsWrapper.getAuthenticatedUserProfile(result, client)
-            Constants.METHOD_GET_REDIRECT_URL -> oneginiMethodsWrapper.getRedirectUrl(result, client)
+            Constants.METHOD_GET_USER_PROFILES -> oneginiMethodsWrapper.getUserProfiles(result)
+            Constants.METHOD_GET_ACCESS_TOKEN -> oneginiMethodsWrapper.getAccessToken(result)
+            Constants.METHOD_GET_AUTHENTICATED_USER_PROFILE -> oneginiMethodsWrapper.getAuthenticatedUserProfile(result)
+            Constants.METHOD_GET_REDIRECT_URL -> oneginiMethodsWrapper.getRedirectUrl(result)
 
             Constants.METHOD_VALIDATE_PIN_WITH_POLICY -> validatePinWithPolicy(call.argument<String>("pin")?.toCharArray(), result, client)
 
-            else -> result.error(OneginiWrapperErrors.METHOD_TO_CALL_NOT_FOUND.code, OneginiWrapperErrors.METHOD_TO_CALL_NOT_FOUND.message, null)
+            else -> SdkError(METHOD_TO_CALL_NOT_FOUND).flutterError(result)
         }
     }
 
-    // "https://login-mobile.test.onegini.com/personal/dashboard"
+    private fun validatePinWithPolicy(pin: CharArray?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
+        val nonNullPin = pin ?: return SdkError(ARGUMENT_NOT_CORRECT.code, ARGUMENT_NOT_CORRECT.message + " pin is null").flutterError(result)
+
+        oneginiClient.userClient.validatePinWithPolicy(
+            nonNullPin,
+            object : OneginiPinValidationHandler {
+                override fun onSuccess() {
+                    result.success(true)
+                }
+
+                override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
+                    SdkError(
+                        code = oneginiPinValidationError.errorType,
+                        message = oneginiPinValidationError.message
+                    ).flutterError(result)
+                }
+            }
+        )
+    }
+
     fun getAppToWebSingleSignOn(url: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
         if (url == null) {
-            result.error(OneginiWrapperErrors.URL_CANT_BE_NULL.code, OneginiWrapperErrors.URL_CANT_BE_NULL.message, null)
+            SdkError(URL_CANT_BE_NULL).flutterError(result)
             return
         }
         if (!Patterns.WEB_URL.matcher(url).matches()) {
-            result.error(OneginiWrapperErrors.URL_IS_NOT_WEB_PATH.code, OneginiWrapperErrors.URL_IS_NOT_WEB_PATH.message, null)
+            SdkError(MALFORMED_URL).flutterError(result)
             return
         }
         val targetUri: Uri = Uri.parse(url)
@@ -116,22 +135,10 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
                     }
 
                     override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
-                        result.error(oneginiSingleSignOnError.errorType.toString(), oneginiSingleSignOnError.message, null)
-                    }
-                }
-        )
-    }
-
-    private fun validatePinWithPolicy(pin: CharArray?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        oneginiClient.userClient.validatePinWithPolicy(
-                pin,
-                object : OneginiPinValidationHandler {
-                    override fun onSuccess() {
-                        result.success(true)
-                    }
-
-                    override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
-                        result.error(oneginiPinValidationError.errorType.toString(), oneginiPinValidationError.message, null)
+                        SdkError(
+                            code = oneginiSingleSignOnError.errorType,
+                            message = oneginiSingleSignOnError.message
+                        ).flutterError(result)
                     }
                 }
         )
@@ -144,7 +151,10 @@ class OnMethodCallMapper(private var context: Context, private val oneginiMethod
             }
 
             override fun onError(error: OneginiChangePinError) {
-                result.error(error.errorType.toString(), error.message, null)
+                SdkError(
+                    code = error.errorType,
+                    message = error.message
+                ).flutterError(result)
             }
         })
     }

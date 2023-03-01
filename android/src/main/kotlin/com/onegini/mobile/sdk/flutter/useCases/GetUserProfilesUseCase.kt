@@ -3,11 +3,15 @@ package com.onegini.mobile.sdk.flutter.useCases
 import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
+import com.onegini.mobile.sdk.flutter.OneginiSDK
 import io.flutter.plugin.common.MethodChannel
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class GetUserProfilesUseCase(private val oneginiClient: OneginiClient) {
+@Singleton
+class GetUserProfilesUseCase @Inject constructor (private val oneginiSDK: OneginiSDK) {
     operator fun invoke(result: MethodChannel.Result) {
-        val userProfiles = oneginiClient.userClient.userProfiles
+        val userProfiles = oneginiSDK.oneginiClient.userClient.userProfiles
         val userProfileArray = getUserProfileArray(userProfiles)
         result.success(Gson().toJson(userProfileArray))
     }
@@ -16,7 +20,7 @@ class GetUserProfilesUseCase(private val oneginiClient: OneginiClient) {
         val userProfileArray: ArrayList<Map<String, Any>> = ArrayList()
         if (userProfiles != null) {
             for (userProfile in userProfiles) {
-                if (userProfile != null && userProfile.profileId != null) {
+                if (userProfile != null) {
                     val map = mutableMapOf<String, Any>()
                     map["isDefault"] = userProfile.isDefault
                     map["profileId"] = userProfile.profileId

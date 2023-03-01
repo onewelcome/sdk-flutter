@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.platform = :ios, '13.0'
 
   # ***************************
-  s.dependency 'OneginiSDKiOS', '~> 11.0.0'
+  s.dependency 'OneginiSDKiOS', '~> 12.1.0'
   # ***************************
 
   # Flutter.framework does not contain a i386 slice.

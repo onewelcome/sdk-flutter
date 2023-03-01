@@ -1,5 +1,4 @@
 import OneginiSDKiOS
-import OneginiCrypto
 import Flutter
 
 //MARK: -
@@ -110,7 +109,7 @@ extension LoginHandler: ONGAuthenticationDelegate {
         pinHandler?.closeFlow()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            loginCompletion?(nil, SdkError.init(customType: .loginCanceled))
+            loginCompletion?(nil, SdkError(.loginCanceled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
             loginCompletion?(nil, mappedError)

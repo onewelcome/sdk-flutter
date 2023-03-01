@@ -14,7 +14,7 @@ class Constants {
   /// Register user method name
   static const String registerUser = 'registerUser';
   static const String handleRegisteredUserUrl = 'handleRegisteredUserUrl';
-  static const String cancelRegistrationMethod = "cancelRegistration";
+  static const String cancelRegistrationMethod = "cancelBrowserRegistration";
 
   /// Get identity providers method name
   static const String getIdentityProvidersMethod = "getIdentityProviders";
@@ -116,18 +116,19 @@ class Constants {
 
   /// Change pin method name
   static const String changePin = "changePin";
-  static const String userProfiles = "userProfiles";
   static const String validatePinWithPolicy = "validatePinWithPolicy";
 
+  /// Get User Profiles
+  static const String getUserProfiles = "getUserProfiles";
+
   // CustomRegistration
+  // Submit CustomRegistration Action success method
+  static const String submitCustomRegistrationAction =
+    "submitCustomRegistrationAction";
 
-  /// Custom two step registration return success method name
-  static const String customTwoStepRegistrationReturnSuccess =
-      "customTwoStepRegistrationReturnSuccess";
-
-  /// Custom two step registration return error method name
-  static const String customTwoStepRegistrationReturnError =
-      "customTwoStepRegistrationReturnError";
+  // Submit CustomRegistration Action error method to cancel custom registration
+  static const String cancelCustomRegistrationAction =
+    "cancelCustomRegistrationAction";
 
   //#endregion Onegini methods
 
@@ -184,11 +185,13 @@ class Constants {
   /// Close auth OTP event name
   static const String eventCloseAuthOTP = "eventCloseAuthOtp";
 
-  // Custom
+  // Custom events
 
-  /// Open custom two step registration screen event name
-  static const String openCustomTwoStepRegistrationScreen =
-      "openCustomTwoStepRegistrationScreen";
+  /// Event triggered by the initRegistration needs to be responded (only used by two-step)
+  static const String eventInitCustomRegistration = "eventInitCustomRegistration";
+
+  /// Event triggered by the finishRegistration needs to be responded
+  static const String eventFinishCustomRegistration = "eventFinishCustomRegistration";
 
   /// Error event name
   static const String eventError = "eventError";

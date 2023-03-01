@@ -1,22 +1,8 @@
 import Foundation
 import OneginiSDKiOS
-import OneginiCrypto
 import Flutter
 
 extension OneginiModuleSwift {
-    
-    public func authenticateUserImplicitly(_ profileId: String, scopes: [String]?,
-                                           callback: @escaping (Bool, FlutterError?) -> Void) {
-        guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first(where: { $0.profileId == profileId }) else {
-            callback(false, SdkError.convertToFlutter(SdkError(customType: .userProfileIsNull)))
-            return
-        }
-
-        bridgeConnector.toResourceFetchHandler.authenticateImplicitly(profile, scopes: scopes) {
-            (data, error) -> Void in
-            error != nil ? callback(data, error?.flutterError()) : callback(data, nil)
-        }
-    }
 
     func identityProviders(callback: @escaping FlutterResult) {
         let _providers = ONGClient.sharedInstance().userClient.identityProviders()
@@ -26,44 +12,56 @@ extension OneginiModuleSwift {
             data["name"] = identityProvider.name
             return data
         }
-        
+
         let data = String.stringify(json: jsonData)
         callback(data)
     }
-    
+
     func logOut(callback: @escaping FlutterResult) {
-        bridgeConnector.toLogoutUserHandler.logout { (error) in
+        bridgeConnector.toLogoutUserHandler.logout { error in
             error != nil ? callback(error?.flutterError()) : callback(true)
         }
     }
-    
-    func authenticateUser(_ profileId: String?,
-                          callback: @escaping FlutterResult) -> Void {
-        
-        guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
-        {
-            callback(SdkError.convertToFlutter(SdkError.init(customType: .userProfileIsNull)))
+
+    func authenticateUserPin(_ profileId: String, completion: @escaping FlutterResult) -> Void {
+        guard let profile = ONGClient.sharedInstance().userClient.userProfiles().first(where: { $0.profileId == profileId }) else {
+            completion(SdkError(.noUserProfileIsAuthenticated).flutterError())
             return
         }
 
         bridgeConnector.toLoginHandler.authenticateUser(profile, authenticator: nil, completion: {
             (userProfile, error) -> Void in
-
-            if let _userProfile = userProfile {
-                var result = Dictionary<String, Any?>()
-                result[Constants.Keys.userProfile] = [Constants.Keys.profileId: _userProfile.profileId]
-                
-                callback(String.stringify(json: result))
-            } else {
-                callback(SdkError.convertToFlutter(error))
+            guard let userProfile = userProfile else {
+                completion(SdkError.convertToFlutter(error))
+                return
             }
+
+            completion(String.stringify(json: [Constants.Keys.userProfile: [Constants.Keys.profileId: userProfile.profileId]]))
         })
     }
-    
+
+    public func authenticateUserImplicitly(_ profileId: String, _ scopes: [String]?,
+                                           _ completion: @escaping FlutterResult) {
+        guard let profile = ONGClient.sharedInstance().userClient.userProfiles().first(where: { $0.profileId == profileId }) else {
+            completion(SdkError(.noUserProfileIsAuthenticated).flutterError())
+            return
+        }
+
+        bridgeConnector.toResourceFetchHandler.authenticateUserImplicitly(profile, scopes: scopes) {
+            result -> Void in
+            switch result {
+            case .success(let response):
+                completion(response)
+            case .failure(let error):
+                completion(error.flutterError())
+            }
+        }
+    }
+
     func runSingleSignOn(_ path: String?, callback: @escaping FlutterResult) -> Void {
         
         guard let _path = path, let _url = URL(string: _path) else {
-            callback(SdkError(customType: .providedUrlIncorrect))
+            callback(SdkError(.providedUrlIncorrect))
             return
         }
         
@@ -71,83 +69,76 @@ extension OneginiModuleSwift {
             error != nil ? callback(SdkError.convertToFlutter(error)) : callback(String.stringify(json: result ?? []))
         })
     }
-    
-    func authenticateWithRegisteredAuthentication(_ identifierId: String?, callback: @escaping FlutterResult) {
-        guard let _identifierId = identifierId else {
-            callback(SdkError.convertToFlutter(SdkError.init(customType: .authenticatorIdIsNull)))
+
+    func authenticateWithRegisteredAuthentication(profileId: String, registeredAuthenticatorId: String, completion: @escaping FlutterResult) {
+        guard let profile = ONGClient.sharedInstance().userClient.userProfiles().first(where: { $0.profileId == profileId }) else {
+            completion(SdkError(.noUserProfileIsAuthenticated).flutterError())
             return
         }
-        guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
-        {
-            callback(SdkError.convertToFlutter(SdkError.init(customType: .userProfileIsNull)))
+
+        guard let registeredAuthenticator = ONGUserClient.sharedInstance().registeredAuthenticators(forUser: profile).first(where: { $0.identifier == registeredAuthenticatorId }) else {
+            completion(SdkError(.authenticatorNotFound).flutterError())
             return
         }
-        
-        let registeredAuthenticator = Array(ONGUserClient.sharedInstance().registeredAuthenticators(forUser: profile)).first(where: { $0.identifier == identifierId })
-        
-        // Preferred Authenticator
-        bridgeConnector.toAuthenticatorsHandler.setPreferredAuthenticator(profile, _identifierId) { [weak self] (value, error) in
-            
-            guard error == nil else { callback(SdkError.convertToFlutter(error))
+
+        bridgeConnector.toLoginHandler.authenticateUser(profile, authenticator: registeredAuthenticator) {
+            (userProfile, error) -> Void in
+            guard let userProfile = userProfile else {
+                completion(SdkError.convertToFlutter(error))
                 return
             }
-            
-            self?.bridgeConnector.toLoginHandler.authenticateUser(profile, authenticator: registeredAuthenticator, completion: {
-                (userProfile, error) -> Void in
-                if let _userProfile = userProfile {
-                    var result = Dictionary<String, Any?>()
-                    result[Constants.Keys.userProfile] = [Constants.Keys.profileId: _userProfile.profileId]
-                    
-                    callback(String.stringify(json: result))
-                } else {
-                    callback(SdkError.convertToFlutter(error))
-                }
-            })
+
+            completion(String.stringify(json: [Constants.Keys.userProfile: [Constants.Keys.profileId: userProfile.profileId]]))
+        }
+    }
+
+    func setPreferredAuthenticator(_ identifierId: String, completion: @escaping FlutterResult) {
+        guard let profile = ONGClient.sharedInstance().userClient.authenticatedUserProfile() else {
+            completion(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
+            return
+        }
+
+        // Preferred Authenticator
+        bridgeConnector.toAuthenticatorsHandler.setPreferredAuthenticator(profile, identifierId) { value, error in
+            guard error == nil else {
+                completion(SdkError.convertToFlutter(error))
+                return
+            }
+
+            completion(value)
         }
     }
     
-    func setPreferredAuthenticator(_ identifierId: String?, callback: @escaping FlutterResult) {
-        guard let _identifierId = identifierId else {
-            callback(SdkError.convertToFlutter(SdkError.init(customType: .authenticatorIdIsNull)))
+    func deregisterAuthenticator(_ identifierId: String, completion: @escaping FlutterResult) {
+        guard let profile = ONGClient.sharedInstance().userClient.authenticatedUserProfile() else {
+            completion(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
             return
         }
-        guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
-        {
-            callback(SdkError.convertToFlutter(SdkError.init(customType: .userProfileIsNull)))
-            return
-        }
-        
-        // Preferred Authenticator
-        bridgeConnector.toAuthenticatorsHandler.setPreferredAuthenticator(profile, _identifierId) { (value, error) in
-            
-            guard error == nil else { callback(SdkError.convertToFlutter(error))
+
+        // Deregister Authenticator
+        bridgeConnector.toAuthenticatorsHandler.deregisterAuthenticator(profile, identifierId) { value, error in
+            guard error == nil else {
+                completion(SdkError.convertToFlutter(error))
                 return
             }
-            
-            callback(value)
+
+            completion(value)
         }
     }
+
+    func getAuthenticatedUserProfile(callback: @escaping FlutterResult) {
+        guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
+            callback(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
+            return
+        }
+        callback(String.stringify(json: ["profileId": profile.profileId]))
+    }
     
-    func deregisterAuthenticator(_ identifierId: String?, callback: @escaping FlutterResult) {
-        guard let _identifierId = identifierId else {
-            callback(SdkError.convertToFlutter(SdkError.init(customType: .authenticatorIdIsNull)))
+    func getAccessToken(callback: @escaping FlutterResult) {
+        guard let accessToken = ONGUserClient.sharedInstance().accessToken else {
+            callback(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
             return
         }
-        guard let profile: ONGUserProfile = ONGClient.sharedInstance().userClient.userProfiles().first else
-        {
-            callback(SdkError.convertToFlutter(SdkError.init(customType: .userProfileIsNull)))
-            return
-        }
-        
-        // DeregisterA Authenticator
-        bridgeConnector.toAuthenticatorsHandler.deregisterAuthenticator(profile, _identifierId) { (value, error) in
-            
-            guard error == nil else { callback(SdkError.convertToFlutter(error))
-                return
-            }
-            
-            callback(value)
-        }
+        callback(accessToken)
     }
 }
-

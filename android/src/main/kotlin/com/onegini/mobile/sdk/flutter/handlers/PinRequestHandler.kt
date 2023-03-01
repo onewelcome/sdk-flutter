@@ -9,8 +9,11 @@ import com.onegini.mobile.sdk.flutter.constants.Constants
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.models.Error
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class PinRequestHandler : OneginiCreatePinRequestHandler {
+@Singleton
+class PinRequestHandler @Inject constructor(): OneginiCreatePinRequestHandler {
 
     companion object {
         var CALLBACK: OneginiPinCallback? = null
