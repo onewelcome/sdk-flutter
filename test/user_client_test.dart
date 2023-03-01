@@ -729,7 +729,7 @@ void main() {
       () async {
         //arrange
         setupMethodChannel(Constants.authenticateUserImplicitly,
-            Future.value('{"profileId":"1234"}'));
+            Future.value('1234'));
 
         var result = await userClient.authenticateUserImplicitly("1234", null);
 
