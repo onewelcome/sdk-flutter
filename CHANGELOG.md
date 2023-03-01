@@ -1,6 +1,40 @@
 ## 2.0.0, March 1, 2023
 You can find the full changelog [here](https://developer.onewelcome.com/flutter/plugin/v2-x) and an overview containing the upgrade instructions [here](https://developer.onewelcome.com/flutter/plugin/v2-0).
 
+### Improvement
+[Android] Wrapper SDK now uses the latest Android Native SDK 11.9.0
+
+[iOS] Wrapper SDK now uses the latest iOS native SDK 12.1.0
+
+[iOS & Android] The Error Structure has been reworked and extended, the updated documentation containing the details can be found in the chapter Error handling. This rework introduces:
+
+- More consistency between iOS and Android errors using our Flutter Plugin.
+- More specific error codes to give more details on what the error caused.
+- Consistent usage of the details property of PlatformExceptions containing an overview and potentially additional information regarding the error.
+- Change of error codes
+
+[iOS & Android] Full support for Registration with Custom IdP.
+
+[Documentation] The User registration documentation has been updated and extended.
+
+[iOS & Android] Renamed fetchUserProfiles to getUserProfiles to better reflect the functionality from the function.
+
+[iOS & Android] Support for multiple registered users on one device.
+
+[Documentation] There is now documentation describing getAllAuthenticators, getRegisteredAuthenticators, getNotRegisteredAuthenticators, deregisterAuthenticator, setPreferredAuthenticator.
+
+[iOS & Android] Reworked deregisterUser function and updated the documentation.
+
+[Documentation] Clarified the usage of registerAuthenticator.
+
+[iOS & Android] Added getAccessToken getAuthenticatedUserProfile and getRedirectUrl methods.
+
+[Documentation] Added function signatures to the reference guide methods.
+
+### Bug Fixes
+[iOS] deregisterUser now successfully deregisters the profile based on the given Id instead of the first registered user on the device.
+[iOS] authenticateUser will now properly return an error when an unregistered or unknown authenticatorId is given instead of starting pin authentication.
+
 ## 1.2.0, January 17, 2023
 * Update the Android SDK version version to 11.8.1. See [the release notes](https://developer.onewelcome.com/android/android-sdk/11-x) and [upgrade notes](https://developer.onewelcome.com/android/android-sdk/v11-8.1) for more information.
 * [Breaking] Bump the compile- and target-SDK of the plugin to version 32 as a consequence of the new Android SDK version.
