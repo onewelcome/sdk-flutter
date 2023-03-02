@@ -14,6 +14,7 @@ class OneginiMethodsWrapper @Inject constructor(
     private val authenticateUserImplicitlyUseCase: AuthenticateUserImplicitlyUseCase,
     private val authenticateUserUseCase: AuthenticateUserUseCase,
     private val cancelCustomRegistrationActionUseCase: CancelCustomRegistrationActionUseCase,
+    private val changePinUseCase: ChangePinUseCase,
     private val deregisterAuthenticatorUseCase: DeregisterAuthenticatorUseCase,
     private val deregisterUserUseCase: DeregisterUserUseCase,
     private val getAccessTokenUseCase: GetAccessTokenUseCase,
@@ -149,5 +150,9 @@ class OneginiMethodsWrapper @Inject constructor(
 
     fun logout(result: MethodChannel.Result) {
         logoutUseCase(result)
+    }
+
+    fun changePin(result: MethodChannel.Result) {
+        changePinUseCase(result)
     }
 }

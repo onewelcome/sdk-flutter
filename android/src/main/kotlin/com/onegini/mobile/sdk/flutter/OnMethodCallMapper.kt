@@ -84,7 +84,7 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
             Constants.METHOD_GET_UNAUTHENTICATED_RESOURCE -> oneginiMethodsWrapper.getUnauthenticatedResource(call, result)
 
             // Other
-            Constants.METHOD_CHANGE_PIN -> startChangePinFlow(result, client)
+            Constants.METHOD_CHANGE_PIN -> oneginiMethodsWrapper.changePin(result)
             Constants.METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON -> getAppToWebSingleSignOn(call.argument<String>("url"), result, client)
             Constants.METHOD_GET_USER_PROFILES -> oneginiMethodsWrapper.getUserProfiles(result)
             Constants.METHOD_GET_ACCESS_TOKEN -> oneginiMethodsWrapper.getAccessToken(result)
@@ -142,20 +142,5 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
                     }
                 }
         )
-    }
-
-    fun startChangePinFlow(result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        oneginiClient.userClient.changePin(object : OneginiChangePinHandler {
-            override fun onSuccess() {
-                result.success("Pin change successfully")
-            }
-
-            override fun onError(error: OneginiChangePinError) {
-                SdkError(
-                    code = error.errorType,
-                    message = error.message
-                ).flutterError(result)
-            }
-        })
     }
 }
