@@ -311,7 +311,7 @@ class UserClient {
     }
   }
 
-  Future<bool> validatePinWithPolicy(String pin) async {
+  Future<void> validatePinWithPolicy(String pin) async {
     try {
       var success = await Onegini.instance.channel.invokeMethod(
           Constants.validatePinWithPolicy, <String, String?>{'pin': pin});
