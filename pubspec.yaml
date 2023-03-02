@@ -16,7 +16,7 @@ dev_dependencies:
     git:
       url: git@github.com:flutter/packages.git
       path: packages/pigeon
-      ref: 4294185774d8b88989b6a21f9ad9cfc20be4af7b
+      ref: 43bfaaf55c0bd6b550bf2cb9af940a00b046bd07
   flutter_test:
     sdk: flutter
 

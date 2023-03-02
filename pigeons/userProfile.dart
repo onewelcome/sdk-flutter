@@ -1,3 +1,4 @@
+import 'package:onegini/model/registration_response.dart';
 import 'package:pigeon/pigeon.dart';
 
 // @ConfigurePigeon(PigeonOptions(
@@ -14,8 +15,7 @@ import 'package:pigeon/pigeon.dart';
 //   ),
 // ))
 
-// Error Class
-
+/// Result objects
 class PigeonUserProfile {
   String profileId;
   bool isDefault;
@@ -23,9 +23,30 @@ class PigeonUserProfile {
   PigeonUserProfile({required this.profileId, required this.isDefault});
 }
 
+class PigeonCustomInfo {
+  int status;
+  String data;
+
+  PigeonCustomInfo({required this.status, required this.data});
+}
+
+// class PigeonRegistrationResponse
+
 /// Flutter calls native
 @HostApi()
 abstract class UserClientApi {
+  // example one
+  @async
+  List<PigeonUserProfile> fetchUserProfiles();
+
+  // todo removed buildcontext
+  RegistrationResponse registerUser(String? identityProviderId, List<String>? scopes);
+
+  
+}
+
+@HostApi()
+abstract class ResourceMethodApi {
   @async
   List<PigeonUserProfile> fetchUserProfiles();
 }

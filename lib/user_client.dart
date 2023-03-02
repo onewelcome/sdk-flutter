@@ -1,10 +1,8 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/model/registration_response.dart';
-import 'package:onegini/pigeon.dart';
 
 import 'constants/constants.dart';
 import 'model/oneginiAppToWebSingleSignOn.dart';
