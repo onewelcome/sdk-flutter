@@ -17,7 +17,7 @@ allprojects {
         def (artifactoryUser, artifactoryPassword) = getArtifactoryCredentials()
         if (artifactoryUser?.trim() && artifactoryPassword?.trim()) {
             maven {
-                url "https://repo.onegini.com/artifactory/onegini-sdk"
+                url "https://repo.onewelcome.com/artifactory/onegini-sdk"
                 credentials {
                     username artifactoryUser.trim()
                     password artifactoryPassword.trim()

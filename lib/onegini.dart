@@ -48,7 +48,7 @@ class Onegini {
   }) async {
     _eventListener = eventListener;
     try {
-      var customIdentityProviderConfigsJson = null;
+      var customIdentityProviderConfigsJson;
       if (customIdentityProviderConfigs != null) {
         customIdentityProviderConfigsJson = [for (var customIdentityProviderConfig in customIdentityProviderConfigs) json.encode(customIdentityProviderConfig)];
       }
