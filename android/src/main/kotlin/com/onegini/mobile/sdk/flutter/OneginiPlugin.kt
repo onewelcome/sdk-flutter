@@ -2,19 +2,16 @@ package com.onegini.mobile.sdk.flutter
 
 import androidx.annotation.NonNull
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.PigeonUserProfile
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import com.onegini.mobile.sdk.flutter.module.FlutterOneWelcomeSdkModule
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
-import io.flutter.plugin.common.FlutterException
 import io.flutter.plugin.common.MethodChannel
 import javax.inject.Inject
 
 
 /** OneginiPlugin */
-class OneginiPlugin : FlutterPlugin, UserClientApi {
+class OneginiPlugin : FlutterPlugin, PigeonInterface() {
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -59,17 +56,5 @@ class OneginiPlugin : FlutterPlugin, UserClientApi {
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         UserClientApi.setUp(binding.binaryMessenger, null)
         channel.setMethodCallHandler(null)
-    }
-
-    // Example function on how it could be initiated on Flutter send to Native
-    // Fixme limitation on failure platform exception structure; see
-    // https://github.com/flutter/flutter/issues/120861
-    override fun fetchUserProfiles(callback: (Result<List<PigeonUserProfile>>) -> Unit) {
-//        val a = Result.success(listOf(PigeonUserProfile("ghalo", true)))
-//        val a = Result.failure<List<PigeonUserProfile>>(Exception("meee", Throwable("boop")))
-//        callback(Result.failure(FlutterException(CODE, MESSAGE, DETAILS)))
-        val b = mutableMapOf<String, String>()
-        b["lol"] = "derp"
-        callback(Result.failure(FlutterError("meee", "", b)))
     }
 }

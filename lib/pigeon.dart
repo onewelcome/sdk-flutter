@@ -8,8 +8,9 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
-class PigeonUserProfile {
-  PigeonUserProfile({
+/// Result objects
+class OneWelcomeUserProfile {
+  OneWelcomeUserProfile({
     required this.profileId,
     required this.isDefault,
   });
@@ -25,9 +26,9 @@ class PigeonUserProfile {
     ];
   }
 
-  static PigeonUserProfile decode(Object result) {
+  static OneWelcomeUserProfile decode(Object result) {
     result as List<Object?>;
-    return PigeonUserProfile(
+    return OneWelcomeUserProfile(
       profileId: result[0]! as String,
       isDefault: result[1]! as bool,
     );
@@ -38,7 +39,7 @@ class _UserClientApiCodec extends StandardMessageCodec {
   const _UserClientApiCodec();
   @override
   void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is PigeonUserProfile) {
+    if (value is OneWelcomeUserProfile) {
       buffer.putUint8(128);
       writeValue(buffer, value.encode());
     } else {
@@ -50,7 +51,7 @@ class _UserClientApiCodec extends StandardMessageCodec {
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
       case 128: 
-        return PigeonUserProfile.decode(readValue(buffer)!);
+        return OneWelcomeUserProfile.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
     }
@@ -68,7 +69,7 @@ class UserClientApi {
 
   static const MessageCodec<Object?> codec = _UserClientApiCodec();
 
-  Future<List<PigeonUserProfile?>> fetchUserProfiles() async {
+  Future<List<OneWelcomeUserProfile?>> fetchUserProfiles() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.fetchUserProfiles', codec,
         binaryMessenger: _binaryMessenger);
@@ -91,12 +92,117 @@ class UserClientApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as List<Object?>?)!.cast<PigeonUserProfile?>();
+      return (replyList[0] as List<Object?>?)!.cast<OneWelcomeUserProfile?>();
+    }
+  }
+
+  Future<void> voidFunction() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.UserClientApi.voidFunction', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<String?> nullableStringFunction() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.UserClientApi.nullableStringFunction', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as String?);
     }
   }
 }
 
-/// Native calls Flutter
+class _ResourceMethodApiCodec extends StandardMessageCodec {
+  const _ResourceMethodApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is OneWelcomeUserProfile) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128: 
+        return OneWelcomeUserProfile.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
+class ResourceMethodApi {
+  /// Constructor for [ResourceMethodApi].  The [binaryMessenger] named argument is
+  /// available for dependency injection.  If it is left null, the default
+  /// BinaryMessenger will be used which routes to the host platform.
+  ResourceMethodApi({BinaryMessenger? binaryMessenger})
+      : _binaryMessenger = binaryMessenger;
+  final BinaryMessenger? _binaryMessenger;
+
+  static const MessageCodec<Object?> codec = _ResourceMethodApiCodec();
+
+  Future<List<OneWelcomeUserProfile?>> fetchUserProfiles() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.ResourceMethodApi.fetchUserProfiles', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as List<Object?>?)!.cast<OneWelcomeUserProfile?>();
+    }
+  }
+}
+
+/// Native calls to Flutter
 abstract class NativeCallFlutterApi {
   static const MessageCodec<Object?> codec = StandardMessageCodec();
 

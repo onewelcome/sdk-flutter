@@ -31,16 +31,18 @@ private func wrapError(_ error: Any) -> [Any?] {
   ]
 }
 
+/// Result objects
+///
 /// Generated class from Pigeon that represents data sent in messages.
-struct PigeonUserProfile {
+struct OneWelcomeUserProfile {
   var profileId: String
   var isDefault: Bool
 
-  static func fromList(_ list: [Any?]) -> PigeonUserProfile? {
+  static func fromList(_ list: [Any?]) -> OneWelcomeUserProfile? {
     let profileId = list[0] as! String
     let isDefault = list[1] as! Bool
 
-    return PigeonUserProfile(
+    return OneWelcomeUserProfile(
       profileId: profileId,
       isDefault: isDefault
     )
@@ -57,7 +59,7 @@ private class UserClientApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
       case 128:
-        return PigeonUserProfile.fromList(self.readValue() as! [Any])
+        return OneWelcomeUserProfile.fromList(self.readValue() as! [Any])
       default:
         return super.readValue(ofType: type)
     }
@@ -66,7 +68,7 @@ private class UserClientApiCodecReader: FlutterStandardReader {
 
 private class UserClientApiCodecWriter: FlutterStandardWriter {
   override func writeValue(_ value: Any) {
-    if let value = value as? PigeonUserProfile {
+    if let value = value as? OneWelcomeUserProfile {
       super.writeByte(128)
       super.writeValue(value.toList())
     } else {
@@ -93,7 +95,9 @@ class UserClientApiCodec: FlutterStandardMessageCodec {
 ///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol UserClientApi {
-  func fetchUserProfiles(completion: @escaping (Result<[PigeonUserProfile], Error>) -> Void)
+  func fetchUserProfiles(completion: @escaping (Result<[OneWelcomeUserProfile], Error>) -> Void)
+  func voidFunction(completion: @escaping (Result<Void, Error>) -> Void)
+  func nullableStringFunction(completion: @escaping (Result<String?, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -117,9 +121,103 @@ class UserClientApiSetup {
     } else {
       fetchUserProfilesChannel.setMessageHandler(nil)
     }
+    let voidFunctionChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.voidFunction", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      voidFunctionChannel.setMessageHandler { _, reply in
+        api.voidFunction() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      voidFunctionChannel.setMessageHandler(nil)
+    }
+    let nullableStringFunctionChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.nullableStringFunction", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      nullableStringFunctionChannel.setMessageHandler { _, reply in
+        api.nullableStringFunction() { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      nullableStringFunctionChannel.setMessageHandler(nil)
+    }
   }
 }
-/// Native calls Flutter
+private class ResourceMethodApiCodecReader: FlutterStandardReader {
+  override func readValue(ofType type: UInt8) -> Any? {
+    switch type {
+      case 128:
+        return OneWelcomeUserProfile.fromList(self.readValue() as! [Any])
+      default:
+        return super.readValue(ofType: type)
+    }
+  }
+}
+
+private class ResourceMethodApiCodecWriter: FlutterStandardWriter {
+  override func writeValue(_ value: Any) {
+    if let value = value as? OneWelcomeUserProfile {
+      super.writeByte(128)
+      super.writeValue(value.toList())
+    } else {
+      super.writeValue(value)
+    }
+  }
+}
+
+private class ResourceMethodApiCodecReaderWriter: FlutterStandardReaderWriter {
+  override func reader(with data: Data) -> FlutterStandardReader {
+    return ResourceMethodApiCodecReader(data: data)
+  }
+
+  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
+    return ResourceMethodApiCodecWriter(data: data)
+  }
+}
+
+class ResourceMethodApiCodec: FlutterStandardMessageCodec {
+  static let shared = ResourceMethodApiCodec(readerWriter: ResourceMethodApiCodecReaderWriter())
+}
+
+/// Generated protocol from Pigeon that represents a handler of messages from Flutter.
+protocol ResourceMethodApi {
+  func fetchUserProfiles(completion: @escaping (Result<[OneWelcomeUserProfile], Error>) -> Void)
+}
+
+/// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
+class ResourceMethodApiSetup {
+  /// The codec used by ResourceMethodApi.
+  static var codec: FlutterStandardMessageCodec { ResourceMethodApiCodec.shared }
+  /// Sets up an instance of `ResourceMethodApi` to handle messages through the `binaryMessenger`.
+  static func setUp(binaryMessenger: FlutterBinaryMessenger, api: ResourceMethodApi?) {
+    let fetchUserProfilesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ResourceMethodApi.fetchUserProfiles", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      fetchUserProfilesChannel.setMessageHandler { _, reply in
+        api.fetchUserProfiles() { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      fetchUserProfilesChannel.setMessageHandler(nil)
+    }
+  }
+}
+/// Native calls to Flutter
 ///
 /// Generated class from Pigeon that represents Flutter messages that can be called from Swift.
 class NativeCallFlutterApi {

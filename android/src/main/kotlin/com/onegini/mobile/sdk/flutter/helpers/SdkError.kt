@@ -10,9 +10,9 @@ import io.flutter.plugin.common.MethodChannel
 import okhttp3.Response
 
 class SdkError: Exception {
-    private val code: Int
+    val code: Int
     override val message: String
-    private val details: MutableMap<String, Any> = mutableMapOf()
+    val details: MutableMap<String, Any> = mutableMapOf()
 
     // Only error codes
     constructor(
