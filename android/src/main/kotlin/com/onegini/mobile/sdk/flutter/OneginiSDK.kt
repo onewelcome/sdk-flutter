@@ -3,52 +3,80 @@ package com.onegini.mobile.sdk.flutter
 import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
+import com.onegini.mobile.sdk.android.handlers.request.OneginiMobileAuthWithPushFingerprintRequestHandler
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
-import com.onegini.mobile.sdk.android.model.OneginiCustomIdentityProvider
 import com.onegini.mobile.sdk.flutter.handlers.*
+import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.models.Config
+import com.onegini.mobile.sdk.flutter.models.CustomIdentityProviderConfig
+import com.onegini.mobile.sdk.flutter.providers.CustomIdentityProvider
+import com.onegini.mobile.sdk.flutter.providers.CustomRegistrationAction
+import com.onegini.mobile.sdk.flutter.providers.CustomRegistrationActionImpl
+import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationActionImpl
 import io.flutter.plugin.common.MethodChannel
-import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.TimeUnit
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class OneginiSDK {
+@Singleton
+class OneginiSDK @Inject constructor(
+    private val applicationContext: Context,
+    private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
+    private val fingerprintRequestHandler: FingerprintAuthenticationRequestHandler,
+    private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler,
+    private val createPinRequestHandler: PinRequestHandler,
+    private val mobileAuthWithOtpRequestHandler: MobileAuthOtpRequestHandler,
+){
 
-    private var oneginiClient: OneginiClient? = null
+    val oneginiClient: OneginiClient
+        get() = OneginiClient.getInstance()?.let {client ->
+                return client
+            } ?: throw FlutterPluginException(ONEWELCOME_SDK_NOT_INITIALIZED)
 
-    fun buildSDK(context: Context, oneginiCustomIdentityProviders: List<OneginiCustomIdentityProvider>, config: Config, result: MethodChannel.Result) {
-        val applicationContext = context.applicationContext
-        val registrationRequestHandler = RegistrationRequestHandler()
-        val fingerprintRequestHandler = FingerprintAuthenticationRequestHandler(applicationContext)
-        val pinAuthenticationRequestHandler = PinAuthenticationRequestHandler()
-        val createPinRequestHandler = PinRequestHandler()
-        val mobileAuthWithOtpRequestHandler = MobileAuthOtpRequestHandler()
+    private var customRegistrationActions = ArrayList<CustomRegistrationAction>()
+
+    fun buildSDK(config: Config, result: MethodChannel.Result) {
         val clientBuilder = OneginiClientBuilder(applicationContext, createPinRequestHandler, pinAuthenticationRequestHandler) // handlers for optional functionalities
-                .setBrowserRegistrationRequestHandler(registrationRequestHandler)
+                .setBrowserRegistrationRequestHandler(browserRegistrationRequestHandler)
                 .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler)
                 .setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
 
-        oneginiCustomIdentityProviders.map { clientBuilder.addCustomIdentityProvider(it) }
+        initProviders(clientBuilder, config.customIdentityProviderConfigs)
 
         val httpConnectionTimeout = config.httpConnectionTimeout
         val httpReadTimeout = config.httpReadTimeout
 
         if (httpConnectionTimeout != null) {
-            clientBuilder.setHttpConnectTimeout(TimeUnit.SECONDS.toMillis(httpConnectionTimeout).toInt())
+            clientBuilder.setHttpConnectTimeout(TimeUnit.SECONDS.toMillis(httpConnectionTimeout.toLong()).toInt())
         }
 
         if (httpReadTimeout != null) {
-            clientBuilder.setHttpReadTimeout(TimeUnit.SECONDS.toMillis(httpReadTimeout).toInt())
+            clientBuilder.setHttpReadTimeout(TimeUnit.SECONDS.toMillis(httpReadTimeout.toLong()).toInt())
         }
 
         setConfigModel(clientBuilder, config, result)
 
         setSecurityController(clientBuilder, config, result)
 
-        oneginiClient = clientBuilder.build()
+        clientBuilder.build()
     }
 
-    fun getOneginiClient(): OneginiClient? {
-        return oneginiClient
+    fun getCustomRegistrationActions(): ArrayList<CustomRegistrationAction> {
+        return customRegistrationActions
+    }
+
+    private fun initProviders(clientBuilder: OneginiClientBuilder, customIdentityProviderConfigs: List<CustomIdentityProviderConfig>) {
+        customIdentityProviderConfigs.forEach {
+            val action = when (it.isTwoStep) {
+                true -> CustomTwoStepRegistrationActionImpl(it.providerId)
+                false -> CustomRegistrationActionImpl(it.providerId)
+            }
+
+            customRegistrationActions.add(action)
+            clientBuilder.addCustomIdentityProvider(CustomIdentityProvider(action))
+        }
     }
 
     private fun setConfigModel(clientBuilder: OneginiClientBuilder, config: Config, result: MethodChannel.Result) {
@@ -63,7 +91,12 @@ class OneginiSDK {
                 clientBuilder.setConfigModel(`object`)
             }
         } catch (e: Exception) {
-           result.error("10000",e.message, null)
+            e.message?.let { message ->
+                SdkError(
+                    code = CONFIG_ERROR.code,
+                    message = message
+                ).flutterError(result)
+            } ?: SdkError(CONFIG_ERROR).flutterError(result)
         }
     }
 
@@ -75,7 +108,12 @@ class OneginiSDK {
             val securityController = Class.forName(config.securityControllerClassName)
             clientBuilder.setSecurityController(securityController)
         } catch (e: ClassNotFoundException) {
-            result.error("10000",e.message, null)
+            e.message?.let { message ->
+                SdkError(
+                    code = SECURITY_CONTROLLER_NOT_FOUND.code,
+                    message = message
+                ).flutterError(result)
+            } ?: SdkError(SECURITY_CONTROLLER_NOT_FOUND).flutterError(result)
         }
     }
 }

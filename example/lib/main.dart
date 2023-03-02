@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/onegini.dart';
+import 'package:onegini_example/components/display_toast.dart';
 import 'package:onegini_example/screens/login_screen.dart';
 
 import 'onegini_listener.dart';
@@ -59,21 +60,18 @@ class _BodyWidgetState extends State<BodyWidget> {
     /// init Onegini sdk on native side
     var removedUserProfiles = await Onegini.instance
         .startApplication(OneginiListener(),
-        securityControllerClassName: "com.onegini.mobile.onegini_example.SecurityController",
-        configModelClassName: "com.onegini.mobile.onegini_example.OneginiConfigModel",
-        twoStepCustomIdentityProviderIds: ["2-way-otp-api"],
+            securityControllerClassName:
+                "com.onegini.mobile.onegini_example.SecurityController",
+            configModelClassName:
+                "com.onegini.mobile.onegini_example.OneginiConfigModel",
+            customIdentityProviderConfigs: [
+              {"providerId": "2-way-otp-api", "isTwoStep": true}
+            ],
             connectionTimeout: 5,
             readTimeout: 25)
         .catchError((error) {
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     });
     _appStarted = removedUserProfiles != null;

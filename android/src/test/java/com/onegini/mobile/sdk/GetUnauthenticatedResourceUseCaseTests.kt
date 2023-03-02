@@ -4,6 +4,7 @@ import com.google.common.truth.Truth
 import com.onegini.mobile.sdk.android.client.DeviceClient
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
+import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.useCases.GetUnauthenticatedResourceUseCase
 import com.onegini.mobile.sdk.utils.RxSchedulerRule
@@ -15,8 +16,8 @@ import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.mockito.Answers
 import org.mockito.Mock
-import org.mockito.Mockito
 import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.argumentCaptor
@@ -26,6 +27,10 @@ import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
 class GetUnauthenticatedResourceUseCaseTests {
+
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    lateinit var oneginiSdk: OneginiSDK
+
     @get:Rule
     val schedulerRule = RxSchedulerRule()
 
@@ -53,17 +58,20 @@ class GetUnauthenticatedResourceUseCaseTests {
     @Mock
     lateinit var resourceHelper: ResourceHelper
 
+    lateinit var getUnauthenticatedResourceUseCase: GetUnauthenticatedResourceUseCase
+
     @Before
     fun attach() {
-        whenever(clientMock.deviceClient).thenReturn(deviceClient)
+        getUnauthenticatedResourceUseCase = GetUnauthenticatedResourceUseCase(oneginiSdk)
+        whenever(oneginiSdk.oneginiClient.deviceClient).thenReturn(deviceClient)
         whenever(deviceClient.unauthenticatedResourceOkHttpClient).thenReturn(unauthenticatedResourceOkHttpClient)
-        whenever(clientMock.configModel).thenReturn(configModelMock)
+        whenever(oneginiSdk.oneginiClient.configModel).thenReturn(configModelMock)
         whenever(configModelMock.resourceBaseUrl).thenReturn("https://token-mobile.test.onegini.com/resources/")
     }
 
     @Test
     fun `should call getRequest with correct params`() {
-        GetUnauthenticatedResourceUseCase(clientMock)(callMock, resultSpy, resourceHelper)
+        getUnauthenticatedResourceUseCase(callMock, resultSpy, resourceHelper)
 
         verify(resourceHelper).getRequest(callMock, "https://token-mobile.test.onegini.com/resources/")
     }
@@ -72,10 +80,10 @@ class GetUnauthenticatedResourceUseCaseTests {
     fun `should call request with correct HTTP client`() {
         whenever(resourceHelper.getRequest(callMock, "https://token-mobile.test.onegini.com/resources/")).thenReturn(requestMock)
 
-        GetUnauthenticatedResourceUseCase(clientMock)(callMock, resultSpy, resourceHelper)
+        getUnauthenticatedResourceUseCase(callMock, resultSpy, resourceHelper)
 
         argumentCaptor<OkHttpClient> {
-            Mockito.verify(resourceHelper).callRequest(capture(), eq(requestMock), eq(resultSpy))
+            verify(resourceHelper).callRequest(capture(), eq(requestMock), eq(resultSpy))
             Truth.assertThat(firstValue).isEqualTo(unauthenticatedResourceOkHttpClient)
         }
     }

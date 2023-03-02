@@ -1,5 +1,4 @@
 import OneginiSDKiOS
-import OneginiCrypto
 import Flutter
 
 //MARK: -
@@ -145,7 +144,7 @@ extension PinHandler : PinConnectorToPinHandler {
                 return
             }
             
-            completion(false, SdkError.init(errorDescription: _error.localizedDescription, code: _error.code))
+            completion(false, SdkError(code: _error.code, errorDescription: _error.localizedDescription))
         }
     }
  }
@@ -216,7 +215,7 @@ extension PinHandler: ONGChangePinDelegate {
         let mappedError = ErrorMapper().mapError(error)
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            changePinCompletion?(false, SdkError(customType: .changingCancelled))
+            changePinCompletion?(false, SdkError(.changingPinCancelled))
         } else if error.code == ONGGenericError.userDeregistered.rawValue {
             changePinCompletion?(false, mappedError)
         } else {

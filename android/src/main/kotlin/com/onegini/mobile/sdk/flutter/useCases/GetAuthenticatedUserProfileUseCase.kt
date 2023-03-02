@@ -1,17 +1,22 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
 import com.google.gson.Gson
-import com.onegini.mobile.sdk.android.client.OneginiClient
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NO_USER_PROFILE_IS_AUTHENTICATED
+import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.errors.wrapperError
 import io.flutter.plugin.common.MethodChannel
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class GetAuthenticatedUserProfileUseCase(private val oneginiClient: OneginiClient) {
+@Singleton
+class GetAuthenticatedUserProfileUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
     operator fun invoke(result: MethodChannel.Result) {
-        val authenticatedUserProfile = oneginiClient.userClient.authenticatedUserProfile
+        val authenticatedUserProfile = oneginiSDK.oneginiClient.userClient.authenticatedUserProfile
         if (authenticatedUserProfile != null) {
-            val json = Gson().toJson(mapOf("profileId" to authenticatedUserProfile.profileId, "isDefault" to authenticatedUserProfile.isDefault))
+            val json = Gson().toJson(mapOf("profileId" to authenticatedUserProfile.profileId))
             result.success(json)
         } else {
-            result.success(null)
+            result.wrapperError(NO_USER_PROFILE_IS_AUTHENTICATED)
         }
     }
 }

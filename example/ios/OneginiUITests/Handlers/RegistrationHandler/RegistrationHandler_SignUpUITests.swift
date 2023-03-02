@@ -8,7 +8,6 @@
 import XCTest
 @testable import onegini
 import OneginiSDKiOS
-import OneginiCrypto
 
 class RegistrationHandler_SignUpUITests: XCTestCase {
 

@@ -1,8 +1,9 @@
 // @dart = 2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/callbacks/onegini_pin_authentication_callback.dart';
+
+import '../components/display_toast.dart';
 
 class PinScreen extends StatefulWidget {
   final PinScreenController controller;
@@ -69,14 +70,7 @@ class _PinScreenState extends State<PinScreen> {
         .catchError((error) {
       if (error is PlatformException) {
         setState(() => {isLoading = false});
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     });
   }

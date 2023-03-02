@@ -1,6 +1,5 @@
 import Foundation
 import OneginiSDKiOS
-import OneginiCrypto
 
 //MARK: -
 protocol MobileAuthConnectorToHandlerProtocol: AnyObject {
@@ -51,7 +50,7 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
                 completion(false, mappedError)
               } else {
                 if(enrolled == false){
-                    completion(false, SdkError(customType: .enrollmentFailed))
+                    completion(false, SdkError(.enrollmentFailed))
                     return;
                 }
                 
@@ -102,7 +101,7 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
     func handleQrOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Any?, SdkError?) -> Void) {
         mobileAuthCompletion = completion
         guard ONGUserClient.sharedInstance().canHandleOTPMobileAuthRequest(otp) else {
-            completion(false, SdkError(customType: .cantHandleOTP))
+            completion(false, SdkError(.cantHandleOTP))
             return
         }
         ONGUserClient.sharedInstance().handleOTPMobileAuthRequest(otp, delegate: self)
@@ -134,7 +133,7 @@ extension MobileAuthHandler: ONGMobileAuthRequestDelegate {
 
     func userClient(_ userClient: ONGUserClient, didFailToHandle request: ONGMobileAuthRequest, authenticator: ONGAuthenticator?, error: Error) {
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            mobileAuthCompletion?(false, SdkError(customType: .authenticationCancelled))
+            mobileAuthCompletion?(false, SdkError(.authenticationCancelled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
             mobileAuthCompletion?(false, mappedError)

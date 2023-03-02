@@ -1,15 +1,16 @@
 // @dart = 2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:onegini/callbacks/onegini_custom_two_step_registration_callback.dart';
+import 'package:onegini/callbacks/onegini_custom_registration_callback.dart';
+import 'package:onegini_example/components/display_toast.dart';
 
 import 'login_screen.dart';
 
 class OtpScreen extends StatefulWidget {
   final String password;
+  final String providerId;
 
-  const OtpScreen({Key key, this.password}) : super(key: key);
+  const OtpScreen({Key key, this.password, this.providerId}) : super(key: key);
 
   @override
   _OtpScreenState createState() => _OtpScreenState();
@@ -20,46 +21,23 @@ class _OtpScreenState extends State<OtpScreen> {
 
   ok() async {
     if (myController.text.isNotEmpty) {
-      OneginiCustomTwoStepRegistrationCallback()
-          .returnSuccess(myController.text ?? " ")
+      OneginiCustomRegistrationCallback()
+          .submitSuccessAction(widget.providerId, myController.text ?? " ")
           .catchError((error) => {
                 if (error is PlatformException)
-                  {
-                    Fluttertoast.showToast(
-                        msg: error.message,
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.black38,
-                        textColor: Colors.white,
-                        fontSize: 16.0)
-                  }
+                  {showFlutterToast(error.message)}
               });
     } else {
-      Fluttertoast.showToast(
-          msg: "Enter code",
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          timeInSecForIosWeb: 1,
-          backgroundColor: Colors.black38,
-          textColor: Colors.white,
-          fontSize: 16.0);
+      showFlutterToast("Enter code");
     }
   }
 
   cancel() async {
-    OneginiCustomTwoStepRegistrationCallback()
-        .returnError("Registration canceled")
+    OneginiCustomRegistrationCallback()
+        .submitErrorAction(widget.providerId, "Registration canceled")
         .catchError((error) {
       if (error is PlatformException) {
-        Fluttertoast.showToast(
-            msg: error.message,
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 1,
-            backgroundColor: Colors.black38,
-            textColor: Colors.white,
-            fontSize: 16.0);
+        showFlutterToast(error.message);
       }
     });
     Navigator.pushReplacement(

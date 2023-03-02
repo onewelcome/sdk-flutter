@@ -2,42 +2,98 @@ import Flutter
 import Foundation
 import OneginiSDKiOS
 
-class SdkError {
-    var title: String
-    var errorDescription: String
-    var recoverySuggestion: String
+class SdkError: Error {
     var code: Int
-    var info: [String: Any?] = [:]
-    var ongResponse: ONGResourceResponse? = nil
+    var errorDescription: String
+    var details: Dictionary<String, Any?> = [:]
 
-    init(title: String = "Error", errorDescription: String, recoverySuggestion: String = "Please try again.", code: Int = 400, info: [String: Any?] = [:], response: ONGResourceResponse? = nil) {
-        self.title = title
-        self.errorDescription = errorDescription
-        self.recoverySuggestion = recoverySuggestion
+    // Only error codes
+    init(code: Int, errorDescription: String) {
         self.code = code
-        self.info = info
-        self.ongResponse = response
+        self.errorDescription = errorDescription
+
+        setGenericDetails()
     }
-    
-    init(customType: OneginiErrorCustomType, title: String = "Error", recoverySuggestion: String = "Please try again.") {
-        self.title = title
-        self.errorDescription = customType.message()
-        self.recoverySuggestion = recoverySuggestion
-        self.code = customType.rawValue
+
+    init(_ wrapperError: OneWelcomeWrapperError) {
+        self.code = wrapperError.rawValue
+        self.errorDescription = wrapperError.message()
+
+        setGenericDetails()
     }
-    
-    func toJSON() -> Dictionary<String, Any?>? {
-        return ["title": title, "message": errorDescription, "recoverySuggestion": recoverySuggestion, "code": code, "userInfo": info, "response": ongResponse?.toJSON()]
+
+    // Error codes with userInfo
+    init(code: Int, errorDescription: String, info: [String: Any?]?) {
+        self.code = code
+        self.errorDescription = errorDescription
+
+        setGenericDetails()
+        setInfoDetails(info)
     }
-    
+
+    init(_ wrapperError: OneWelcomeWrapperError, info: [String: Any?]?) {
+        self.code = wrapperError.rawValue
+        self.errorDescription = wrapperError.message()
+
+        setGenericDetails()
+        setInfoDetails(info)
+    }
+
+    // Error codes with httResponse information
+    init(code: Int, errorDescription: String, response: ONGResourceResponse?, iosCode: Int? = nil, iosMessage: String? = nil) {
+        self.code = code
+        self.errorDescription = errorDescription
+
+        setGenericDetails()
+        setResponseDetails(response, iosCode, iosMessage)
+    }
+
+    init(_ wrapperError: OneWelcomeWrapperError, response: ONGResourceResponse?, iosCode: Int? = nil, iosMessage: String? = nil) {
+        self.code = wrapperError.rawValue
+        self.errorDescription = wrapperError.message()
+
+        setGenericDetails()
+        setResponseDetails(response, iosCode, iosMessage)
+    }
+
+    private func setGenericDetails() {
+        details["code"] = String(code)
+        details["message"] = errorDescription
+    }
+
+    private func setInfoDetails(_ info: [String: Any?]?) {
+        if (info == nil) {
+            details["userInfo"] = [:]
+        } else {
+            details["userInfo"] = info
+        }
+    }
+
+    private func setResponseDetails(_ response: ONGResourceResponse?, _ iosCode: Int?, _ iosMessage: String?) {
+        if (response == nil) {
+            details["response"] = Dictionary<String, Any?>()
+        } else {
+            details["response"] = response?.toJSON()
+        }
+
+        // Add potential native error information on top of wrapper error
+        if iosCode != nil {
+            details["iosCode"] = iosCode
+        }
+
+        if iosMessage != nil {
+            details["iosMessage"] = iosMessage
+        }
+    }
+
     func flutterError() -> FlutterError {
-        let _error = FlutterError(code: "\(self.code)", message: self.errorDescription, details: self.toJSON())
+        let _error = FlutterError(code: "\(self.code)", message: self.errorDescription, details: details)
 
         return _error
     }
-    
+
     static func convertToFlutter(_ error: SdkError?) -> FlutterError {
-        let _error = error ?? SdkError(customType: .somethingWentWrong)
+        let _error = error ?? SdkError(.genericError)
         return _error.flutterError()
     }
 }

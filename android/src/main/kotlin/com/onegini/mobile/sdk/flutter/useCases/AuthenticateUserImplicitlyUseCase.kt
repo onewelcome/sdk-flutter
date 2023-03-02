@@ -1,31 +1,45 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
-import com.google.gson.Gson
-import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiImplicitAuthenticationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiImplicitTokenRequestError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneginiWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.METHOD_ARGUMENT_NOT_FOUND
+import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
+import javax.inject.Inject
+import javax.inject.Singleton
 
-class AuthenticateUserImplicitlyUseCase(private var oneginiClient: OneginiClient) {
-    operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
-        val scope = call.argument<ArrayList<String>>("scope")
-        val userProfile = oneginiClient.userClient.userProfiles.firstOrNull()
-        if (userProfile == null) {
-            result.error(OneginiWrapperErrors.USER_PROFILE_IS_NULL.code, OneginiWrapperErrors.USER_PROFILE_IS_NULL.message, null)
-            return
-        }
-        oneginiClient.userClient.authenticateUserImplicitly(userProfile, scope?.toArray(arrayOfNulls<String>(scope.size)), object : OneginiImplicitAuthenticationHandler {
-            override fun onSuccess(profile: UserProfile) {
-                result.success(Gson().toJson(userProfile))
-            }
+@Singleton
+class AuthenticateUserImplicitlyUseCase @Inject constructor(private val oneginiSDK: OneginiSDK,
+                                                            private val getUserProfileUseCase: GetUserProfileUseCase) {
+  operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
+    val profileId = call.argument<String>("profileId")
+      ?: return SdkError(METHOD_ARGUMENT_NOT_FOUND).flutterError(result)
+    val scopes = call.argument<ArrayList<String>>("scopes")
 
-            override fun onError(error: OneginiImplicitTokenRequestError) {
-                result.error(error.errorType.toString(), error.message, null)
-            }
-        }
-        )
+    val userProfile = try {
+      getUserProfileUseCase(profileId)
+    } catch (error: SdkError) {
+      return error.flutterError(result)
     }
+
+    oneginiSDK.oneginiClient.userClient.authenticateUserImplicitly(
+      userProfile,
+      scopes?.toTypedArray(),
+      object : OneginiImplicitAuthenticationHandler {
+        override fun onSuccess(profile: UserProfile) {
+          result.success(userProfile.profileId)
+        }
+
+        override fun onError(error: OneginiImplicitTokenRequestError) {
+          SdkError(
+            code = error.errorType,
+            message = error.message
+          ).flutterError(result)
+        }
+      }
+    )
+  }
 }
