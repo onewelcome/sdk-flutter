@@ -86,7 +86,7 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
 
             // Other
             Constants.METHOD_CHANGE_PIN -> oneginiMethodsWrapper.changePin(result)
-            Constants.METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON -> getAppToWebSingleSignOn(call.argument<String>("url"), result, client)
+            Constants.METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON -> oneginiMethodsWrapper.getAppToWebSingleSignOn(call, result)
             Constants.METHOD_GET_USER_PROFILES -> oneginiMethodsWrapper.getUserProfiles(result)
             Constants.METHOD_GET_ACCESS_TOKEN -> oneginiMethodsWrapper.getAccessToken(result)
             Constants.METHOD_GET_AUTHENTICATED_USER_PROFILE -> oneginiMethodsWrapper.getAuthenticatedUserProfile(result)
@@ -94,32 +94,5 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
 
             else -> SdkError(METHOD_TO_CALL_NOT_FOUND).flutterError(result)
         }
-    }
-
-    fun getAppToWebSingleSignOn(url: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        if (url == null) {
-            SdkError(URL_CANT_BE_NULL).flutterError(result)
-            return
-        }
-        if (!Patterns.WEB_URL.matcher(url).matches()) {
-            SdkError(MALFORMED_URL).flutterError(result)
-            return
-        }
-        val targetUri: Uri = Uri.parse(url)
-        oneginiClient.userClient.getAppToWebSingleSignOn(
-                targetUri,
-                object : OneginiAppToWebSingleSignOnHandler {
-                    override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {
-                        result.success(Gson().toJson(mapOf("token" to oneginiAppToWebSingleSignOn.token, "redirectUrl" to oneginiAppToWebSingleSignOn.redirectUrl.toString())))
-                    }
-
-                    override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
-                        SdkError(
-                            code = oneginiSingleSignOnError.errorType,
-                            message = oneginiSingleSignOnError.message
-                        ).flutterError(result)
-                    }
-                }
-        )
     }
 }

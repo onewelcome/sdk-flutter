@@ -27,6 +27,7 @@ class OneginiMethodsWrapper @Inject constructor(
     private val getRegisteredAuthenticatorsUseCase: GetRegisteredAuthenticatorsUseCase,
     private val getResourceAnonymousUseCase: GetResourceAnonymousUseCase,
     private val getResourceUseCase: GetResourceUseCase,
+    private val getAppToWebSingleSignOnUseCase: GetAppToWebSingleSignOnUseCase,
     private val getUnauthenticatedResourceUseCase: GetUnauthenticatedResourceUseCase,
     private val getUserProfilesUseCase: GetUserProfilesUseCase,
     private val handleRegisteredUrlUseCase: HandleRegisteredUrlUseCase,
@@ -159,5 +160,9 @@ class OneginiMethodsWrapper @Inject constructor(
 
     fun changePin(result: MethodChannel.Result) {
         changePinUseCase(result)
+    }
+
+    fun getAppToWebSingleSignOn(call: MethodCall, result: MethodChannel.Result) {
+        getAppToWebSingleSignOnUseCase(call, result)
     }
 }
