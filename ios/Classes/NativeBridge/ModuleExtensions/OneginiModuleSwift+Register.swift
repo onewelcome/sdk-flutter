@@ -61,7 +61,7 @@ extension OneginiModuleSwift {
         OneginiModuleSwift.sharedInstance.sendBridgeEvent(eventName: OneginiBridgeEvents.pinNotification, data: data)
     }
     
-    func submitCustomRegistrationSuccess(_ data: String) {
+    func submitCustomRegistrationSuccess(_ data: String?) {
         bridgeConnector.toRegistrationConnector.registrationHandler.submitCustomRegistrationSuccess(data)
     }
     
