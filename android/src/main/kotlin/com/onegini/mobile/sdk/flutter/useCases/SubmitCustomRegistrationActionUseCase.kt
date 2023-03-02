@@ -12,7 +12,7 @@ import javax.inject.Singleton
 class SubmitCustomRegistrationActionUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
   operator fun invoke(result: MethodChannel.Result, call: MethodCall) {
     val idProvider: String? = call.argument("identityProviderId")
-    val token: String? = call.argument("token")
+    val token: String? = call.argument("data")
 
     when (val action = oneginiSDK.getCustomRegistrationActions().find { it.getIdProvider() == idProvider }) {
       null -> SdkError(IDENTITY_PROVIDER_NOT_FOUND).flutterError(result)
