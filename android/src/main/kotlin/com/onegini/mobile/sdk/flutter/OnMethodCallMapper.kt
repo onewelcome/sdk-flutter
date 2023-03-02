@@ -64,6 +64,7 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
             Constants.METHOD_ACCEPT_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(call.argument<String>("pin")?.toCharArray())
             Constants.METHOD_DENY_PIN_AUTHENTICATION_REQUEST -> PinAuthenticationRequestHandler.CALLBACK?.denyAuthenticationRequest()
             Constants.METHOD_IS_AUTHENTICATOR_REGISTERED -> oneginiMethodsWrapper.isAuthenticatorRegistered(call, result)
+            Constants.METHOD_VALIDATE_PIN_WITH_POLICY -> oneginiMethodsWrapper.validatePinWithPolicy(call, result)
 
             // Fingerprint
             Constants.METHOD_ACCEPT_FINGERPRINT_AUTHENTICATION_REQUEST -> FingerprintAuthenticationRequestHandler.fingerprintCallback?.acceptAuthenticationRequest()
@@ -91,30 +92,8 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
             Constants.METHOD_GET_AUTHENTICATED_USER_PROFILE -> oneginiMethodsWrapper.getAuthenticatedUserProfile(result)
             Constants.METHOD_GET_REDIRECT_URL -> oneginiMethodsWrapper.getRedirectUrl(result)
 
-            Constants.METHOD_VALIDATE_PIN_WITH_POLICY -> validatePinWithPolicy(call.argument<String>("pin")?.toCharArray(), result, client)
-
             else -> SdkError(METHOD_TO_CALL_NOT_FOUND).flutterError(result)
         }
-    }
-
-    private fun validatePinWithPolicy(pin: CharArray?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        val nonNullPin = pin ?: return SdkError(ARGUMENT_NOT_CORRECT.code, ARGUMENT_NOT_CORRECT.message + " pin is null").flutterError(result)
-
-        oneginiClient.userClient.validatePinWithPolicy(
-            nonNullPin,
-            object : OneginiPinValidationHandler {
-                override fun onSuccess() {
-                    result.success(true)
-                }
-
-                override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
-                    SdkError(
-                        code = oneginiPinValidationError.errorType,
-                        message = oneginiPinValidationError.message
-                    ).flutterError(result)
-                }
-            }
-        )
     }
 
     fun getAppToWebSingleSignOn(url: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
