@@ -11,6 +11,7 @@ import 'package:onegini_example/models/application_details.dart';
 import 'package:onegini_example/models/client_resource.dart';
 import 'package:onegini_example/screens/qr_scan_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:onegini/pigeon.dart';
 
 import '../main.dart';
 import 'login_screen.dart';
@@ -28,8 +29,8 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
   int _currentIndex = 0;
   List<Widget> _children;
   bool isContainNotRegisteredAuthenticators = true;
-  List<OneginiListResponse> registeredAuthenticators = [];
-  List<OneginiListResponse> notRegisteredAuthenticators = [];
+  List<OWAuthenticator> registeredAuthenticators = [];
+  List<OWAuthenticator> notRegisteredAuthenticators = [];
   String profileId = "";
 
   void onTabTapped(int index) {
@@ -89,7 +90,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
         .getRegisteredAuthenticators(context, this.profileId);
   }
 
-  Future<List<OneginiListResponse>> getAllSortAuthenticators() async {
+  Future<List<OWAuthenticator>> getAllSortAuthenticators() async {
     var allAuthenticators = await Onegini.instance.userClient
         .getAllAuthenticators(context, this.profileId);
     allAuthenticators.sort((a, b) {
@@ -98,7 +99,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     return allAuthenticators;
   }
 
-  Future<List<OneginiListResponse>> getNotRegisteredAuthenticators() async {
+  Future<List<OWAuthenticator>> getNotRegisteredAuthenticators() async {
     var authenticators = await Onegini.instance.userClient
         .getNotRegisteredAuthenticators(context, this.profileId);
     return authenticators;
@@ -154,19 +155,17 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
       return;
     }
 
-    var isLogOut = await Onegini.instance.userClient
+    await Onegini.instance.userClient
         .deregisterUser(profileId)
         .catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);
       }
     });
-    if (isLogOut != null && isLogOut) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => LoginScreen()),
-      );
-    }
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => LoginScreen()),
+    );
   }
 
   changePin(BuildContext context) {
@@ -203,7 +202,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
             DrawerHeader(
               child: Container(),
             ),
-            FutureBuilder<List<OneginiListResponse>>(
+            FutureBuilder<List<OWAuthenticator>>(
               future: getAllSortAuthenticators(),
               builder: (BuildContext context, snapshot) {
                 return ListView.builder(
@@ -233,7 +232,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
                     });
               },
             ),
-            FutureBuilder<List<OneginiListResponse>>(
+            FutureBuilder<List<OWAuthenticator>>(
               future: Onegini.instance.userClient
                   .getRegisteredAuthenticators(context, this.profileId),
               builder: (BuildContext context, snapshot) {
@@ -415,12 +414,10 @@ class Info extends StatefulWidget {
 class _InfoState extends State<Info> {
   Future<ApplicationDetails> getApplicationDetails() async {
     var response = "";
-    var success = await Onegini.instance.userClient
+    await Onegini.instance.userClient
         .authenticateDevice(["read", "write", "application-details"]);
-    if (success != null && success) {
-      response = await Onegini.instance.resourcesMethods
-          .getResourceAnonymous("application-details");
-    }
+    response = await Onegini.instance.resourcesMethods
+        .getResourceAnonymous("application-details");
     var res = json.decode(response);
     return applicationDetailsFromJson(res["body"]);
   }
