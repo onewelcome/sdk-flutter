@@ -126,7 +126,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.validatePinWithPolicy(pin) { result in
+            completion(result)
+        }
     }
 
     func authenticateDevice(scopes: [String]?, completion: @escaping (Result<Void, Error>) -> Void) {

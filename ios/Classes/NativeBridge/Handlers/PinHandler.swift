@@ -7,7 +7,7 @@ protocol PinConnectorToPinHandler: AnyObject {
     func onCancel()
     func handleFlowUpdate(_ flow: PinFlow, _ error: SdkError?, receiver: PinHandlerToReceiverProtocol)
     func closeFlow()
-    func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, SdkError>) -> Void)
+    func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 protocol PinHandlerToReceiverProtocol: class {
@@ -136,7 +136,7 @@ extension PinHandler: PinConnectorToPinHandler{
         processCancelAction()
     }
     
-    func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, SdkError>) -> Void) {
+    func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
         ONGUserClient.sharedInstance().validatePin(withPolicy: pin) { (value, error) in
             guard let error = error else {
                 completion(.success(()))
