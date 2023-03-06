@@ -133,11 +133,10 @@ extension OneginiModuleSwift {
         return .success(FPUserProfile(profile))
     }
     
-    func getAccessToken(callback: @escaping FlutterResult) {
+    func getAccessToken() -> Result<String, Error> {
         guard let accessToken = ONGUserClient.sharedInstance().accessToken else {
-            callback(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
-            return
+            return .failure(SdkError(.noUserProfileIsAuthenticated))
         }
-        callback(accessToken)
+        return .success(accessToken)
     }
 }
