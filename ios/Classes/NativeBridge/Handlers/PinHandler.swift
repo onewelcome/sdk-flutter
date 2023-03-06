@@ -1,16 +1,6 @@
 import OneginiSDKiOS
 import Flutter
 
-//MARK: -
-protocol PinConnectorToPinHandler: AnyObject {
-    func onPinProvided(pin: String)
-    func onChangePinCalled(completion: @escaping (Bool, SdkError?) -> Void)
-    func onCancel()
-    func handleFlowUpdate(_ flow: PinFlow, _ error: SdkError?, receiver: PinHandlerToReceiverProtocol)
-    func closeFlow()
-    func validatePinWithPolicy(pin: String, completion: @escaping (Bool, SdkError?) -> Void)
-}
-
 protocol PinHandlerToReceiverProtocol: class {
     func handlePin(pin: String?)
 }
@@ -67,7 +57,7 @@ class PinHandler: NSObject {
 }
 
 //MARK: -
-extension PinHandler : PinConnectorToPinHandler {
+extension PinHandler {
     func handleFlowUpdate(_ flow: PinFlow, _ error: SdkError?, receiver: PinHandlerToReceiverProtocol) {
         if(self.flow == nil){
             self.flow = flow
@@ -137,14 +127,13 @@ extension PinHandler : PinConnectorToPinHandler {
         processCancelAction()
     }
     
-    func validatePinWithPolicy(pin: String, completion: @escaping (Bool, SdkError?) -> Void) {
+    func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, SdkError>) -> Void) {
         ONGUserClient.sharedInstance().validatePin(withPolicy: pin) { (value, error) in
-            guard let _error = error else {
-                completion(value, nil)
+            guard let error = error else {
+                completion(.success(()))
                 return
             }
-            
-            completion(false, SdkError(code: _error.code, errorDescription: _error.localizedDescription))
+            completion(.failure(SdkError(code: error.code, errorDescription: error.localizedDescription)))
         }
     }
  }

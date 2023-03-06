@@ -20,11 +20,9 @@ extension OneginiModuleSwift {
         }
     }
     
-    func validatePinWithPolicy(_ pin: String, callback: @escaping FlutterResult) -> Void {
-        bridgeConnector.toPinHandlerConnector.pinHandler.validatePinWithPolicy(pin: pin, completion: {
-            (value, error) -> Void in
-
-            error != nil ? callback(SdkError.convertToFlutter(error)) : callback(value)
+    func validatePinWithPolicy(_ pin: String, completion: (Result<Void, SdkError>) -> Void) {
+        bridgeConnector.toPinHandlerConnector.pinHandler.validatePinWithPolicy(pin: pin, completion: { result in
+            completion(result)
         })
     }
 }
