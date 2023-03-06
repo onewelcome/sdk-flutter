@@ -75,7 +75,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func getNotRegisteredAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void) {
-        
+        completion(OneginiModuleSwift.sharedInstance.getNotRegisteredAuthenticators(profileId))
     }
 
     func changePin(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -197,7 +197,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
         case Constants.Routes.authenticateUserImplicitly: authenticateUserImplicitly(call, result)
         case Constants.Routes.authenticateDevice: authenticateDevice(call, result)
             
-        case Constants.Routes.getAllNotRegisteredAuthenticators: getAllNotRegisteredAuthenticators(call, result)
         case Constants.Routes.deregisterAuthenticator:
             deregisterAuthenticator(call, result)
             
