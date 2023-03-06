@@ -59,7 +59,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func getRegisteredAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void) {
-        
+        completion(OneginiModuleSwift.sharedInstance.getRegisteredAuthenticators(profileId))
     }
 
     func getAllAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void) {
@@ -197,7 +197,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
         case Constants.Routes.authenticateUserImplicitly: authenticateUserImplicitly(call, result)
         case Constants.Routes.authenticateDevice: authenticateDevice(call, result)
             
-        case Constants.Routes.getRegisteredAuthenticators: getRegisteredAuthenticators(call, result)
         case Constants.Routes.getAllNotRegisteredAuthenticators: getAllNotRegisteredAuthenticators(call, result)
         case Constants.Routes.deregisterAuthenticator:
             deregisterAuthenticator(call, result)

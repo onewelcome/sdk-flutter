@@ -97,18 +97,12 @@ extension OneginiModuleSwift {
         }
     }
     
-    func getRegisteredAuthenticators(_ profileId: String, callback: @escaping FlutterResult) {
+    func getRegisteredAuthenticators(_ profileId: String) -> Result<[OWAuthenticator], Error> {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
-            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
-            return
+            return .failure(SdkError(.userProfileDoesNotExist))
         }
-
         let registeredAuthenticators = ONGUserClient.sharedInstance().registeredAuthenticators(forUser: profile)
-
-        let authenticators: [[String: String]] = registeredAuthenticators.compactMap({ ["id" : $0.identifier, "name": $0.name] })
-
-        let data = String.stringify(json: authenticators)
-        callback(data)
+        return .success(registeredAuthenticators.compactMap({OWAuthenticator($0)}))
     }
     
     func getNotRegisteredAuthenticators(_ profileId: String, callback: @escaping FlutterResult) -> Void {
@@ -130,9 +124,7 @@ extension OneginiModuleSwift {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
             return .failure(SdkError(.userProfileDoesNotExist))
         }
-
         let allAuthenticators = ONGUserClient.sharedInstance().allAuthenticators(forUser: profile)
-        
         return .success(allAuthenticators.compactMap({OWAuthenticator($0)}))
     }
     
