@@ -61,13 +61,9 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
         }
     }
     
-    func getUserProfiles(callback: @escaping FlutterResult) {
+    func getUserProfiles() -> Result<[OWUserProfile], Error> {
         let profiles = ONGUserClient.sharedInstance().userProfiles()
-        let value: [[String: String?]] = profiles.compactMap({ ["profileId": $0.profileId] })
-
-        let data = String.stringify(json: value)
-        
-        callback(data)
+        return .success(profiles.compactMap({OWUserProfile($0)}))
     }
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {

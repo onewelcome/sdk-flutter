@@ -105,7 +105,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func getUserProfiles(completion: @escaping (Result<[OWUserProfile], Error>) -> Void) {
-        
+        completion(OneginiModuleSwift.sharedInstance.getUserProfiles())
     }
 
     func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -197,10 +197,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
         case Constants.Routes.denyPinAuthenticationRequest: denyPinAuthenticationRequest(call, result)
             
         case Constants.Routes.logout: logout(call, result)
-            
-//        case Constants.Routes.getAuthenticatedUserProfile: getAuthenticatedUserProfile(result)
-        case Constants.Routes.getUserProfiles: getUserProfiles(result)
-//        case Constants.Routes.getAccessToken: getAccessToken(result)
             
             // fingerprint
         case Constants.Routes.acceptFingerprintAuthenticationRequest: acceptFingerprintAuthenticationRequest(call, result)
