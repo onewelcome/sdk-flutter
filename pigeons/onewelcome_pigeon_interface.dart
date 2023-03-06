@@ -17,9 +17,8 @@ import 'package:pigeon/pigeon.dart';
 /// Result objects
 class OWUserProfile {
   String profileId;
-  bool isDefault;
 
-  OWUserProfile({required this.profileId, required this.isDefault});
+  OWUserProfile({required this.profileId});
 }
 
 class OWCustomInfo {
@@ -60,7 +59,7 @@ class OWRegistrationResponse {
 /// Flutter calls native
 @HostApi()
 abstract class UserClientApi {
-  // example one
+  // example function
   @async
   List<OWUserProfile> fetchUserProfiles();
 
@@ -140,7 +139,16 @@ abstract class UserClientApi {
 @HostApi()
 abstract class ResourceMethodApi {
   @async
-  List<OWUserProfile> fetchUserProfiles();
+  String? getResourceAnonymous();
+
+  @async
+  String? getResource();
+
+  @async
+  String? getResourceImplicit();
+
+  @async
+  String? getUnauthenticatedResource();
 }
 
 /// Native calls to Flutter

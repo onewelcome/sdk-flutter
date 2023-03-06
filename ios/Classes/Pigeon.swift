@@ -36,21 +36,17 @@ private func wrapError(_ error: Any) -> [Any?] {
 /// Generated class from Pigeon that represents data sent in messages.
 struct OWUserProfile {
   var profileId: String
-  var isDefault: Bool
 
   static func fromList(_ list: [Any?]) -> OWUserProfile? {
     let profileId = list[0] as! String
-    let isDefault = list[1] as! Bool
 
     return OWUserProfile(
-      profileId: profileId,
-      isDefault: isDefault
+      profileId: profileId
     )
   }
   func toList() -> [Any?] {
     return [
       profileId,
-      isDefault,
     ]
   }
 }
@@ -645,57 +641,23 @@ class UserClientApiSetup {
     }
   }
 }
-private class ResourceMethodApiCodecReader: FlutterStandardReader {
-  override func readValue(ofType type: UInt8) -> Any? {
-    switch type {
-      case 128:
-        return OWUserProfile.fromList(self.readValue() as! [Any])
-      default:
-        return super.readValue(ofType: type)
-    }
-  }
-}
-
-private class ResourceMethodApiCodecWriter: FlutterStandardWriter {
-  override func writeValue(_ value: Any) {
-    if let value = value as? OWUserProfile {
-      super.writeByte(128)
-      super.writeValue(value.toList())
-    } else {
-      super.writeValue(value)
-    }
-  }
-}
-
-private class ResourceMethodApiCodecReaderWriter: FlutterStandardReaderWriter {
-  override func reader(with data: Data) -> FlutterStandardReader {
-    return ResourceMethodApiCodecReader(data: data)
-  }
-
-  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
-    return ResourceMethodApiCodecWriter(data: data)
-  }
-}
-
-class ResourceMethodApiCodec: FlutterStandardMessageCodec {
-  static let shared = ResourceMethodApiCodec(readerWriter: ResourceMethodApiCodecReaderWriter())
-}
-
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol ResourceMethodApi {
-  func fetchUserProfiles(completion: @escaping (Result<[OWUserProfile], Error>) -> Void)
+  func getResourceAnonymous(completion: @escaping (Result<String?, Error>) -> Void)
+  func getResource(completion: @escaping (Result<String?, Error>) -> Void)
+  func getResourceImplicit(completion: @escaping (Result<String?, Error>) -> Void)
+  func getUnauthenticatedResource(completion: @escaping (Result<String?, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
 class ResourceMethodApiSetup {
   /// The codec used by ResourceMethodApi.
-  static var codec: FlutterStandardMessageCodec { ResourceMethodApiCodec.shared }
   /// Sets up an instance of `ResourceMethodApi` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: ResourceMethodApi?) {
-    let fetchUserProfilesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ResourceMethodApi.fetchUserProfiles", binaryMessenger: binaryMessenger, codec: codec)
+    let getResourceAnonymousChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ResourceMethodApi.getResourceAnonymous", binaryMessenger: binaryMessenger)
     if let api = api {
-      fetchUserProfilesChannel.setMessageHandler { _, reply in
-        api.fetchUserProfiles() { result in
+      getResourceAnonymousChannel.setMessageHandler { _, reply in
+        api.getResourceAnonymous() { result in
           switch result {
             case .success(let res):
               reply(wrapResult(res))
@@ -705,7 +667,52 @@ class ResourceMethodApiSetup {
         }
       }
     } else {
-      fetchUserProfilesChannel.setMessageHandler(nil)
+      getResourceAnonymousChannel.setMessageHandler(nil)
+    }
+    let getResourceChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ResourceMethodApi.getResource", binaryMessenger: binaryMessenger)
+    if let api = api {
+      getResourceChannel.setMessageHandler { _, reply in
+        api.getResource() { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      getResourceChannel.setMessageHandler(nil)
+    }
+    let getResourceImplicitChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ResourceMethodApi.getResourceImplicit", binaryMessenger: binaryMessenger)
+    if let api = api {
+      getResourceImplicitChannel.setMessageHandler { _, reply in
+        api.getResourceImplicit() { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      getResourceImplicitChannel.setMessageHandler(nil)
+    }
+    let getUnauthenticatedResourceChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ResourceMethodApi.getUnauthenticatedResource", binaryMessenger: binaryMessenger)
+    if let api = api {
+      getUnauthenticatedResourceChannel.setMessageHandler { _, reply in
+        api.getUnauthenticatedResource() { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      getUnauthenticatedResourceChannel.setMessageHandler(nil)
     }
   }
 }

@@ -12,17 +12,13 @@ import 'package:flutter/services.dart';
 class OWUserProfile {
   OWUserProfile({
     required this.profileId,
-    required this.isDefault,
   });
 
   String profileId;
 
-  bool isDefault;
-
   Object encode() {
     return <Object?>[
       profileId,
-      isDefault,
     ];
   }
 
@@ -30,7 +26,6 @@ class OWUserProfile {
     result as List<Object?>;
     return OWUserProfile(
       profileId: result[0]! as String,
-      isDefault: result[1]! as bool,
     );
   }
 }
@@ -793,29 +788,6 @@ class UserClientApi {
   }
 }
 
-class _ResourceMethodApiCodec extends StandardMessageCodec {
-  const _ResourceMethodApiCodec();
-  @override
-  void writeValue(WriteBuffer buffer, Object? value) {
-    if (value is OWUserProfile) {
-      buffer.putUint8(128);
-      writeValue(buffer, value.encode());
-    } else {
-      super.writeValue(buffer, value);
-    }
-  }
-
-  @override
-  Object? readValueOfType(int type, ReadBuffer buffer) {
-    switch (type) {
-      case 128: 
-        return OWUserProfile.decode(readValue(buffer)!);
-      default:
-        return super.readValueOfType(type, buffer);
-    }
-  }
-}
-
 class ResourceMethodApi {
   /// Constructor for [ResourceMethodApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -824,11 +796,11 @@ class ResourceMethodApi {
       : _binaryMessenger = binaryMessenger;
   final BinaryMessenger? _binaryMessenger;
 
-  static const MessageCodec<Object?> codec = _ResourceMethodApiCodec();
+  static const MessageCodec<Object?> codec = StandardMessageCodec();
 
-  Future<List<OWUserProfile?>> fetchUserProfiles() async {
+  Future<String?> getResourceAnonymous() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.ResourceMethodApi.fetchUserProfiles', codec,
+        'dev.flutter.pigeon.ResourceMethodApi.getResourceAnonymous', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(null) as List<Object?>?;
@@ -843,13 +815,74 @@ class ResourceMethodApi {
         message: replyList[1] as String?,
         details: replyList[2],
       );
-    } else if (replyList[0] == null) {
+    } else {
+      return (replyList[0] as String?);
+    }
+  }
+
+  Future<String?> getResource() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.ResourceMethodApi.getResource', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
       throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
       );
     } else {
-      return (replyList[0] as List<Object?>?)!.cast<OWUserProfile?>();
+      return (replyList[0] as String?);
+    }
+  }
+
+  Future<String?> getResourceImplicit() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.ResourceMethodApi.getResourceImplicit', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as String?);
+    }
+  }
+
+  Future<String?> getUnauthenticatedResource() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.ResourceMethodApi.getUnauthenticatedResource', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return (replyList[0] as String?);
     }
   }
 }
