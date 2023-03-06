@@ -121,8 +121,8 @@ extension OneginiModuleSwift {
         return .success(allAuthenticators.compactMap({OWAuthenticator($0)}))
     }
     
-    func getRedirectUrl(callback: @escaping FlutterResult) -> Void {
-        callback(ONGClient.sharedInstance().configModel.redirectURL)
+    func getRedirectUrl() -> Result<String, Error> {
+        return .success(ONGClient.sharedInstance().configModel.redirectURL)
     }
 }
 

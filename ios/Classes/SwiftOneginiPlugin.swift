@@ -118,7 +118,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func getRedirectUrl(completion: @escaping (Result<String, Error>) -> Void) {
-        
+        completion(OneginiModuleSwift.sharedInstance.getRedirectUrl())
     }
 
     func getUserProfiles(completion: @escaping (Result<[OWUserProfile], Error>) -> Void) {
@@ -191,7 +191,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             
         case Constants.Routes.acceptPinRegistrationRequest: acceptPinRegistrationRequest(call, result)
         case Constants.Routes.denyPinRegistrationRequest: denyPinRegistrationRequest(call, result)
-        case Constants.Routes.getRedirectUrl: getRedirectUrl(call, result)
             
             // custom registration
         case Constants.Routes.submitCustomRegistrationAction: submitCustomRegistrationAction(call, result)

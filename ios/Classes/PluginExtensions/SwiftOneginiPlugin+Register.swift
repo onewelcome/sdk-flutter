@@ -21,14 +21,10 @@ protocol OneginiPluginRegisterProtocol {
     func cancelCustomRegistrationAction(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 
     func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
-    func getRedirectUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     
 }
 
 extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
-    func getRedirectUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        OneginiModuleSwift.sharedInstance.getRedirectUrl(callback: result)
-    }
 
     func registerUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         guard let arg = call.arguments as? [String: Any] else { return; }
