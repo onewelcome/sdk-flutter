@@ -4,7 +4,7 @@ import Flutter
 
 extension OneginiModuleSwift {
 
-    func getIdentityProviders() -> Result<[OWIdentityProvider], Error> {
+    func getIdentityProviders() -> Result<[OWIdentityProvider], FlutterError> {
         let providers = ONGClient.sharedInstance().userClient.identityProviders()
         return .success(providers.compactMap({OWIdentityProvider($0)}))
     }
@@ -86,6 +86,7 @@ extension OneginiModuleSwift {
         // Deregister Authenticator
         bridgeConnector.toAuthenticatorsHandler.deregisterAuthenticator(profile, identifierId) { value, error in
             guard error == nil else {
+                // FIXME: use Result and make this FlutterError
                 completion(SdkError.convertToFlutter(error))
                 return
             }
@@ -94,16 +95,16 @@ extension OneginiModuleSwift {
         }
     }
 
-    func getAuthenticatedUserProfile() -> Result<OWUserProfile, Error> {
+    func getAuthenticatedUserProfile() -> Result<OWUserProfile, FlutterError> {
         guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
-            return .failure(SdkError(.noUserProfileIsAuthenticated))
+            return .failure(FlutterError(.noUserProfileIsAuthenticated))
         }
         return .success(OWUserProfile(profile))
     }
     
-    func getAccessToken() -> Result<String, Error> {
+    func getAccessToken() -> Result<String, FlutterError> {
         guard let accessToken = ONGUserClient.sharedInstance().accessToken else {
-            return .failure(SdkError(.noUserProfileIsAuthenticated))
+            return .failure(FlutterError(.noUserProfileIsAuthenticated))
         }
         return .success(accessToken)
     }

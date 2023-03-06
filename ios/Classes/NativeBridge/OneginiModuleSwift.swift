@@ -61,7 +61,7 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
         }
     }
     
-    func getUserProfiles() -> Result<[OWUserProfile], Error> {
+    func getUserProfiles() -> Result<[OWUserProfile], FlutterError> {
         let profiles = ONGUserClient.sharedInstance().userProfiles()
         return .success(profiles.compactMap({OWUserProfile($0)}))
     }

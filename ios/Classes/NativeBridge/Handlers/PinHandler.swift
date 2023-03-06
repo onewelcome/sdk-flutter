@@ -7,7 +7,7 @@ protocol PinConnectorToPinHandler: AnyObject {
     func onCancel()
     func handleFlowUpdate(_ flow: PinFlow, _ error: SdkError?, receiver: PinHandlerToReceiverProtocol)
     func closeFlow()
-    func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, Error>) -> Void)
+    func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, FlutterError>) -> Void)
 }
 
 protocol PinHandlerToReceiverProtocol: class {
@@ -136,13 +136,13 @@ extension PinHandler: PinConnectorToPinHandler{
         processCancelAction()
     }
     
-    func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
         ONGUserClient.sharedInstance().validatePin(withPolicy: pin) { (value, error) in
             guard let error = error else {
                 completion(.success(()))
                 return
             }
-            completion(.failure(SdkError(code: error.code, errorDescription: error.localizedDescription)))
+            completion(.failure(SdkError(code: error.code, errorDescription: error.localizedDescription).flutterError()))
         }
     }
  }

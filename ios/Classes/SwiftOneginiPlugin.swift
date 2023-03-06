@@ -75,7 +75,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func getIdentityProviders(completion: @escaping (Result<[OWIdentityProvider], Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getIdentityProviders())
+        completion(OneginiModuleSwift.sharedInstance.getIdentityProviders().mapError{$0})
     }
 
     func deregisterUser(profileId: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -83,15 +83,15 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func getRegisteredAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getRegisteredAuthenticators(profileId))
+        completion(OneginiModuleSwift.sharedInstance.getRegisteredAuthenticators(profileId).mapError{$0})
     }
 
     func getAllAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getAllAuthenticators(profileId))
+        completion(OneginiModuleSwift.sharedInstance.getAllAuthenticators(profileId).mapError{$0})
     }
 
     func getAuthenticatedUserProfile(completion: @escaping (Result<OWUserProfile, Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getAuthenticatedUserProfile())
+        completion(OneginiModuleSwift.sharedInstance.getAuthenticatedUserProfile().mapError{$0})
     }
 
     func authenticateUser(profileId: String, registeredAuthenticatorId: String?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
@@ -101,7 +101,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func getNotRegisteredAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getNotRegisteredAuthenticators(profileId))
+        completion(OneginiModuleSwift.sharedInstance.getNotRegisteredAuthenticators(profileId).mapError{$0})
     }
 
     func changePin(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -133,20 +133,20 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func getAccessToken(completion: @escaping (Result<String, Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getAccessToken())
+        completion(OneginiModuleSwift.sharedInstance.getAccessToken().mapError{$0})
     }
 
     func getRedirectUrl(completion: @escaping (Result<String, Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getRedirectUrl())
+        completion(OneginiModuleSwift.sharedInstance.getRedirectUrl().mapError{$0})
     }
 
     func getUserProfiles(completion: @escaping (Result<[OWUserProfile], Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getUserProfiles())
+        completion(OneginiModuleSwift.sharedInstance.getUserProfiles().mapError{$0})
     }
 
     func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.validatePinWithPolicy(pin) { result in
-            completion(result)
+            completion(result.mapError{$0})
         }
     }
 
