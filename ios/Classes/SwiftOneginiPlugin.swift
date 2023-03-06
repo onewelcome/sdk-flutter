@@ -24,6 +24,16 @@ extension OWCustomInfo {
     }
 }
 
+extension OWAuthenticator {
+    init(_ authenticator: ONGAuthenticator) {
+        id = authenticator.identifier
+        name = authenticator.name
+        isPreferred = authenticator.isPreferred
+        isRegistered = authenticator.isRegistered
+        authenticatorType = Int32(authenticator.type.rawValue)
+    }
+}
+
 func toOWCustomInfo(_ info: CustomInfo?) -> OWCustomInfo? {
     guard let info = info else { return nil }
     return OWCustomInfo(status: Int32(info.status), data: info.data)
@@ -53,7 +63,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func getAllAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void) {
-        
+        completion(OneginiModuleSwift.sharedInstance.getAllAuthenticators(profileId))
     }
 
     func getAuthenticatedUserProfile(completion: @escaping (Result<OWUserProfile, Error>) -> Void) {
@@ -189,7 +199,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             
         case Constants.Routes.getRegisteredAuthenticators: getRegisteredAuthenticators(call, result)
         case Constants.Routes.getAllNotRegisteredAuthenticators: getAllNotRegisteredAuthenticators(call, result)
-        case Constants.Routes.getAllAuthenticators: getAllAuthenticators(call, result)
         case Constants.Routes.deregisterAuthenticator:
             deregisterAuthenticator(call, result)
             

@@ -10,7 +10,6 @@ protocol OneginiPluginAuthProtocol {
 
     func getRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func getAllNotRegisteredAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
-    func getAllAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func setPreferredAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
 
     func acceptPinAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
@@ -102,20 +101,6 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
         }
 
         OneginiModuleSwift.sharedInstance.getNotRegisteredAuthenticators(profileId, callback: result)
-    }
-
-    func getAllAuthenticators(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        guard let arg = call.arguments as? [String: Any] else {
-            result(SdkError(.methodArgumentNotFound).flutterError())
-            return
-        }
-        
-        guard let profileId = arg["profileId"] as? String else {
-            result(SdkError(.methodArgumentNotFound).flutterError())
-            return
-        }
-
-        OneginiModuleSwift.sharedInstance.getAllAuthenticators(profileId, callback: result)
     }
 
     func setPreferredAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {

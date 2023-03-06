@@ -126,19 +126,14 @@ extension OneginiModuleSwift {
         callback(String.stringify(json: authenticators))
     }
     
-    func getAllAuthenticators(_ profileId: String, callback: @escaping FlutterResult) -> Void {
+    func getAllAuthenticators(_ profileId: String) -> Result<[OWAuthenticator], Error> {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
-            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
-            return
+            return .failure(SdkError(.userProfileDoesNotExist))
         }
 
-        // get all authenticators
         let allAuthenticators = ONGUserClient.sharedInstance().allAuthenticators(forUser: profile)
-
-        // convert list to list of objects with id and name
-        let authenticators: [[String: String]] = allAuthenticators.compactMap({ ["id" : $0.identifier, "name": $0.name] })
-
-        callback(String.stringify(json: authenticators))
+        
+        return .success(allAuthenticators.compactMap({OWAuthenticator($0)}))
     }
     
     func getRedirectUrl(callback: @escaping FlutterResult) -> Void {
