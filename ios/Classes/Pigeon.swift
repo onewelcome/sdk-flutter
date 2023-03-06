@@ -54,11 +54,11 @@ struct OWUserProfile {
 /// Generated class from Pigeon that represents data sent in messages.
 struct OWCustomInfo {
   var status: Int32
-  var data: String
+  var data: String? = nil
 
   static func fromList(_ list: [Any?]) -> OWCustomInfo? {
     let status = list[0] as! Int32
-    let data = list[1] as! String
+    let data = list[1] as? String 
 
     return OWCustomInfo(
       status: status,
@@ -252,6 +252,8 @@ protocol UserClientApi {
   func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, Error>) -> Void)
   func authenticateDevice(scopes: [String]?, completion: @escaping (Result<Void, Error>) -> Void)
   func authenticateUserImplicitly(profileId: String, scopes: [String]?, completion: @escaping (Result<Void, Error>) -> Void)
+  func submitCustomRegistrationAction(identityProviderId: String, data: String?, completion: @escaping (Result<Void, Error>) -> Void)
+  func cancelCustomRegistrationAction(identityProviderId: String, error: String, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -638,6 +640,42 @@ class UserClientApiSetup {
       }
     } else {
       authenticateUserImplicitlyChannel.setMessageHandler(nil)
+    }
+    let submitCustomRegistrationActionChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.submitCustomRegistrationAction", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      submitCustomRegistrationActionChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let identityProviderIdArg = args[0] as! String
+        let dataArg = args[1] as? String
+        api.submitCustomRegistrationAction(identityProviderId: identityProviderIdArg, data: dataArg) { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      submitCustomRegistrationActionChannel.setMessageHandler(nil)
+    }
+    let cancelCustomRegistrationActionChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.cancelCustomRegistrationAction", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      cancelCustomRegistrationActionChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let identityProviderIdArg = args[0] as! String
+        let errorArg = args[1] as! String
+        api.cancelCustomRegistrationAction(identityProviderId: identityProviderIdArg, error: errorArg) { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      cancelCustomRegistrationActionChannel.setMessageHandler(nil)
     }
   }
 }

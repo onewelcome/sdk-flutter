@@ -63,14 +63,14 @@ data class OWUserProfile (
 /** Generated class from Pigeon that represents data sent in messages. */
 data class OWCustomInfo (
   val status: Long,
-  val data: String
+  val data: String? = null
 
 ) {
   companion object {
     @Suppress("UNCHECKED_CAST")
     fun fromList(list: List<Any?>): OWCustomInfo {
       val status = list[0].let { if (it is Int) it.toLong() else it as Long }
-      val data = list[1] as String
+      val data = list[1] as? String
       return OWCustomInfo(status, data)
     }
   }
@@ -269,6 +269,8 @@ interface UserClientApi {
   fun validatePinWithPolicy(pin: String, callback: (Result<Unit>) -> Unit)
   fun authenticateDevice(scopes: List<String>?, callback: (Result<Unit>) -> Unit)
   fun authenticateUserImplicitly(profileId: String, scopes: List<String>?, callback: (Result<Unit>) -> Unit)
+  fun submitCustomRegistrationAction(identityProviderId: String, data: String?, callback: (Result<Unit>) -> Unit)
+  fun cancelCustomRegistrationAction(identityProviderId: String, error: String, callback: (Result<Unit>) -> Unit)
 
   companion object {
     /** The codec used by UserClientApi. */
@@ -727,6 +729,48 @@ interface UserClientApi {
             val profileIdArg = args[0] as String
             val scopesArg = args[1] as? List<String>
             api.authenticateUserImplicitly(profileIdArg, scopesArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.submitCustomRegistrationAction", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val identityProviderIdArg = args[0] as String
+            val dataArg = args[1] as? String
+            api.submitCustomRegistrationAction(identityProviderIdArg, dataArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.cancelCustomRegistrationAction", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val identityProviderIdArg = args[0] as String
+            val errorArg = args[1] as String
+            api.cancelCustomRegistrationAction(identityProviderIdArg, errorArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

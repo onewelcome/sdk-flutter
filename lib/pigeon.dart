@@ -33,12 +33,12 @@ class OWUserProfile {
 class OWCustomInfo {
   OWCustomInfo({
     required this.status,
-    required this.data,
+    this.data,
   });
 
   int status;
 
-  String data;
+  String? data;
 
   Object encode() {
     return <Object?>[
@@ -51,7 +51,7 @@ class OWCustomInfo {
     result as List<Object?>;
     return OWCustomInfo(
       status: result[0]! as int,
-      data: result[1]! as String,
+      data: result[1] as String?,
     );
   }
 }
@@ -771,6 +771,50 @@ class UserClientApi {
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_profileId, arg_scopes]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> submitCustomRegistrationAction(String arg_identityProviderId, String? arg_data) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.UserClientApi.submitCustomRegistrationAction', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identityProviderId, arg_data]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> cancelCustomRegistrationAction(String arg_identityProviderId, String arg_error) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.UserClientApi.cancelCustomRegistrationAction', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_identityProviderId, arg_error]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

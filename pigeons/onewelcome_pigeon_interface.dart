@@ -23,7 +23,7 @@ class OWUserProfile {
 
 class OWCustomInfo {
   int status;
-  String data;
+  String? data;
 
   OWCustomInfo({required this.status, required this.data});
 }
@@ -134,6 +134,12 @@ abstract class UserClientApi {
   // todo update return value to object
   @async
   void authenticateUserImplicitly(String profileId, List<String>? scopes);
+
+  @async
+  void submitCustomRegistrationAction(String identityProviderId, String? data);
+
+  @async
+  void cancelCustomRegistrationAction(String identityProviderId, String error);
 }
 
 @HostApi()

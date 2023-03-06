@@ -40,7 +40,7 @@ class OneginiMethodsWrapper @Inject constructor(
 ) {
 
     fun registerUser(call: MethodCall, result: MethodChannel.Result) {
-        registrationUseCase(call, result)
+//        registrationUseCase(call, result)
     }
 
     fun respondCustomRegistrationAction(
@@ -60,7 +60,7 @@ class OneginiMethodsWrapper @Inject constructor(
     }
 
     fun getIdentityProviders(result: MethodChannel.Result) {
-        getIdentityProvidersUseCase(result)
+//        getIdentityProvidersUseCase(result)
     }
 
     fun getAccessToken(result: MethodChannel.Result) {
@@ -72,7 +72,7 @@ class OneginiMethodsWrapper @Inject constructor(
     }
 
     fun getAuthenticatedUserProfile(result: MethodChannel.Result) {
-        getAuthenticatedUserProfileUseCase(result)
+//        getAuthenticatedUserProfileUseCase(result)
     }
 
     fun getUserProfiles(result: MethodChannel.Result) {
