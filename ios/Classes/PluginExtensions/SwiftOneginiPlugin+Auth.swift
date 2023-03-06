@@ -5,7 +5,6 @@ import Flutter
 protocol OneginiPluginAuthProtocol {
 
     func registerAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
-    func authenticateUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func authenticateUserImplicitly(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 
     func setPreferredAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
@@ -26,29 +25,6 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
             return
         }
         OneginiModuleSwift.sharedInstance.registerAuthenticator(_authenticator, callback: result)
-    }
-
-    func authenticateUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        guard let arg = call.arguments as? [String: Any] else {
-            result(SdkError(.methodArgumentNotFound).flutterError())
-            return
-        }
-
-        guard let profileId = arg["profileId"] as? String else {
-            result(SdkError(.methodArgumentNotFound).flutterError())
-            return
-        }
-
-        guard let registeredAuthenticatorId = arg["registeredAuthenticatorId"] as? String else {
-            // auth with pin
-            Logger.log("use pin for auth")
-            OneginiModuleSwift.sharedInstance.authenticateUserPin(profileId, completion: result)
-            return
-        }
-
-        // auth with provider
-        Logger.log("use provider for auth")
-        OneginiModuleSwift.sharedInstance.authenticateWithRegisteredAuthentication(profileId: profileId, registeredAuthenticatorId: registeredAuthenticatorId, completion: result)
     }
 
     func authenticateUserImplicitly(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {

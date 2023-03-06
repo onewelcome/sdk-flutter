@@ -4,6 +4,17 @@ import OneginiSDKiOS
 
 extension FlutterError: Error {}
 
+extension FlutterError {
+    convenience init(_ error: OneWelcomeWrapperError) {
+        let flutterError = SdkError(error).flutterError()
+        self.init(code: flutterError.code, message: flutterError.message, details: flutterError.details)
+    }
+    convenience init(_ error: SdkError) {
+        let flutterError = error.flutterError()
+        self.init(code: flutterError.code, message: flutterError.message, details: flutterError.details)
+    }
+}
+
 extension OWUserProfile {
     init(_ profile: UserProfile) {
         self.profileId = profile.profileId
@@ -46,6 +57,12 @@ func toOWCustomInfo(_ info: CustomInfo?) -> OWCustomInfo? {
     return OWCustomInfo(status: Int32(info.status), data: info.data)
 }
 
+func toOWCustomInfo(_ info: ONGCustomInfo?) -> OWCustomInfo? {
+    guard let info = info else { return nil }
+    return OWCustomInfo(status: Int32(info.status), data: info.data)
+}
+
+
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
 
 
@@ -78,7 +95,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func authenticateUser(profileId: String, registeredAuthenticatorId: String?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.authenticateUser(profileId: profileId, authenticatorId: registeredAuthenticatorId) { result in
+            completion(result.mapError{$0})
+        }
     }
 
     func getNotRegisteredAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void) {
@@ -200,7 +219,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             
             // auth
         case Constants.Routes.registerAuthenticator: registerAuthenticator(call, result)
-        case Constants.Routes.authenticateUser: authenticateUser(call, result)
         case Constants.Routes.authenticateUserImplicitly: authenticateUserImplicitly(call, result)
         case Constants.Routes.authenticateDevice: authenticateDevice(call, result)
             
