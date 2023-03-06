@@ -4,17 +4,9 @@ import Flutter
 
 extension OneginiModuleSwift {
 
-    func identityProviders(callback: @escaping FlutterResult) {
-        let _providers = ONGClient.sharedInstance().userClient.identityProviders()
-        let jsonData = _providers.compactMap { (identityProvider) -> [String: Any]? in
-            var data = [String: Any]()
-            data["id"] = identityProvider.identifier
-            data["name"] = identityProvider.name
-            return data
-        }
-
-        let data = String.stringify(json: jsonData)
-        callback(data)
+    func getIdentityProviders() -> Result<[OWIdentityProvider], Error> {
+        let providers = ONGClient.sharedInstance().userClient.identityProviders()
+        return .success(providers.compactMap({OWIdentityProvider($0)}))
     }
 
     func logOut(callback: @escaping FlutterResult) {

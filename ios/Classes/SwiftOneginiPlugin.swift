@@ -34,6 +34,13 @@ extension OWAuthenticator {
     }
 }
 
+extension OWIdentityProvider {
+    init(_ identityProvider: ONGIdentityProvider) {
+        id = identityProvider.identifier
+        name = identityProvider.name
+    }
+}
+
 func toOWCustomInfo(_ info: CustomInfo?) -> OWCustomInfo? {
     guard let info = info else { return nil }
     return OWCustomInfo(status: Int32(info.status), data: info.data)
@@ -51,7 +58,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func getIdentityProviders(completion: @escaping (Result<[OWIdentityProvider], Error>) -> Void) {
-        
+        completion(OneginiModuleSwift.sharedInstance.getIdentityProviders())
     }
 
     func deregisterUser(profileId: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -176,7 +183,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
 //        case Constants.Routes.registerUser: registerUser(call, result)
         case Constants.Routes.handleRegisteredUserUrl: handleRegisteredProcessUrl(call, result)
             
-        case Constants.Routes.getIdentityProviders: getIdentityProviders(call, result)
         case Constants.Routes.cancelBrowserRegistration: cancelBrowserRegistration(call, result)
         case Constants.Routes.setPreferredAuthenticator:
             setPreferredAuthenticator(call, result)

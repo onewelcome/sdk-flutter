@@ -9,8 +9,6 @@ enum WebSignInType: Int {
 
 protocol OneginiPluginRegisterProtocol {
 
-    func getIdentityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
-
     func registerUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func handleRegisteredProcessUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     
@@ -30,10 +28,6 @@ protocol OneginiPluginRegisterProtocol {
 extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
     func getRedirectUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         OneginiModuleSwift.sharedInstance.getRedirectUrl(callback: result)
-    }
-    
-    func getIdentityProviders(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        OneginiModuleSwift.sharedInstance.identityProviders(callback: result)
     }
 
     func registerUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
