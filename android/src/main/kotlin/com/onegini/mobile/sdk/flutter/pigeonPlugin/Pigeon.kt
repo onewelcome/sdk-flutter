@@ -107,7 +107,10 @@ data class OWIdentityProvider (
 /** Generated class from Pigeon that represents data sent in messages. */
 data class OWAuthenticator (
   val id: String,
-  val name: String
+  val name: String,
+  val isRegistered: Boolean,
+  val isPreferred: Boolean,
+  val authenticatorType: Long
 
 ) {
   companion object {
@@ -115,13 +118,19 @@ data class OWAuthenticator (
     fun fromList(list: List<Any?>): OWAuthenticator {
       val id = list[0] as String
       val name = list[1] as String
-      return OWAuthenticator(id, name)
+      val isRegistered = list[2] as Boolean
+      val isPreferred = list[3] as Boolean
+      val authenticatorType = list[4].let { if (it is Int) it.toLong() else it as Long }
+      return OWAuthenticator(id, name, isRegistered, isPreferred, authenticatorType)
     }
   }
   fun toList(): List<Any?> {
     return listOf<Any?>(
       id,
       name,
+      isRegistered,
+      isPreferred,
+      authenticatorType,
     )
   }
 }

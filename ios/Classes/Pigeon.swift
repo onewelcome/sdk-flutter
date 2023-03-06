@@ -99,20 +99,32 @@ struct OWIdentityProvider {
 struct OWAuthenticator {
   var id: String
   var name: String
+  var isRegistered: Bool
+  var isPreferred: Bool
+  var authenticatorType: Int32
 
   static func fromList(_ list: [Any?]) -> OWAuthenticator? {
     let id = list[0] as! String
     let name = list[1] as! String
+    let isRegistered = list[2] as! Bool
+    let isPreferred = list[3] as! Bool
+    let authenticatorType = list[4] as! Int32
 
     return OWAuthenticator(
       id: id,
-      name: name
+      name: name,
+      isRegistered: isRegistered,
+      isPreferred: isPreferred,
+      authenticatorType: authenticatorType
     )
   }
   func toList() -> [Any?] {
     return [
       id,
       name,
+      isRegistered,
+      isPreferred,
+      authenticatorType,
     ]
   }
 }

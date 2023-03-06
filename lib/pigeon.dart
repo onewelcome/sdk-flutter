@@ -86,16 +86,28 @@ class OWAuthenticator {
   OWAuthenticator({
     required this.id,
     required this.name,
+    required this.isRegistered,
+    required this.isPreferred,
+    required this.authenticatorType,
   });
 
   String id;
 
   String name;
 
+  bool isRegistered;
+
+  bool isPreferred;
+
+  int authenticatorType;
+
   Object encode() {
     return <Object?>[
       id,
       name,
+      isRegistered,
+      isPreferred,
+      authenticatorType,
     ];
   }
 
@@ -104,6 +116,9 @@ class OWAuthenticator {
     return OWAuthenticator(
       id: result[0]! as String,
       name: result[1]! as String,
+      isRegistered: result[2]! as bool,
+      isPreferred: result[3]! as bool,
+      authenticatorType: result[4]! as int,
     );
   }
 }

@@ -38,8 +38,16 @@ class OWIdentityProvider {
 class OWAuthenticator {
   String id;
   String name;
+  bool isRegistered;
+  bool isPreferred;
+  int authenticatorType;
 
-  OWAuthenticator({required this.id, required this.name});
+  OWAuthenticator(
+      {required this.id,
+      required this.name,
+      required this.isRegistered,
+      required this.isPreferred,
+      required this.authenticatorType});
 }
 
 class OWAppToWebSingleSignOn {
@@ -64,7 +72,8 @@ abstract class UserClientApi {
   List<OWUserProfile> fetchUserProfiles();
 
   @async
-  OWRegistrationResponse registerUser(String? identityProviderId, List<String>? scopes);
+  OWRegistrationResponse registerUser(
+      String? identityProviderId, List<String>? scopes);
 
   @async
   void handleRegisteredUserUrl(String? url, int signInType);
@@ -86,7 +95,8 @@ abstract class UserClientApi {
   OWUserProfile getAuthenticatedUserProfile();
 
   @async
-  OWRegistrationResponse authenticateUser(String profileId, String? registeredAuthenticatorId);
+  OWRegistrationResponse authenticateUser(
+      String profileId, String? registeredAuthenticatorId);
 
   @async
   List<OWAuthenticator> getNotRegisteredAuthenticators(String profileId);
