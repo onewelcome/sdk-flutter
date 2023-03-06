@@ -1,7 +1,33 @@
 import Flutter
 import UIKit
+import OneginiSDKiOS
 
 extension FlutterError: Error {}
+
+extension OWUserProfile {
+    init(_ profile: UserProfile) {
+        self.profileId = profile.profileId
+    }
+    init(_ profile: ONGUserProfile) {
+        self.profileId = profile.profileId
+    }
+}
+
+extension OWCustomInfo {
+    init(_ info: CustomInfo) {
+        status = Int32(info.status)
+        data = info.data
+    }
+    init(_ info: ONGCustomInfo) {
+        status = Int32(info.status)
+        data = info.data
+    }
+}
+
+func toOWCustomInfo(_ info: CustomInfo?) -> OWCustomInfo? {
+    guard let info = info else { return nil }
+    return OWCustomInfo(status: Int32(info.status), data: info.data)
+}
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     static var flutterApi: NativeCallFlutterApi?
