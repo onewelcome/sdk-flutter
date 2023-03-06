@@ -20,7 +20,7 @@ extension OneginiModuleSwift {
         }
     }
     
-    func validatePinWithPolicy(_ pin: String, completion: (Result<Void, SdkError>) -> Void) {
+    func validatePinWithPolicy(_ pin: String, completion: @escaping (Result<Void, SdkError>) -> Void) {
         bridgeConnector.toPinHandlerConnector.pinHandler.validatePinWithPolicy(pin: pin, completion: { result in
             completion(result)
         })

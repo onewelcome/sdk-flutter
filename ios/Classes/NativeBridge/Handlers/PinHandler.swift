@@ -1,6 +1,15 @@
 import OneginiSDKiOS
 import Flutter
 
+protocol PinConnectorToPinHandler: AnyObject {
+    func onPinProvided(pin: String)
+    func onChangePinCalled(completion: @escaping (Bool, SdkError?) -> Void)
+    func onCancel()
+    func handleFlowUpdate(_ flow: PinFlow, _ error: SdkError?, receiver: PinHandlerToReceiverProtocol)
+    func closeFlow()
+    func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, SdkError>) -> Void)
+}
+
 protocol PinHandlerToReceiverProtocol: class {
     func handlePin(pin: String?)
 }
@@ -57,7 +66,7 @@ class PinHandler: NSObject {
 }
 
 //MARK: -
-extension PinHandler {
+extension PinHandler: PinConnectorToPinHandler{
     func handleFlowUpdate(_ flow: PinFlow, _ error: SdkError?, receiver: PinHandlerToReceiverProtocol) {
         if(self.flow == nil){
             self.flow = flow

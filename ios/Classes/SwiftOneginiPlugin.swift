@@ -30,6 +30,101 @@ func toOWCustomInfo(_ info: CustomInfo?) -> OWCustomInfo? {
 }
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
+
+
+    func registerUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
+        
+    }
+
+    func handleRegisteredUserUrl(url: String?, signInType: Int32, completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func getIdentityProviders(completion: @escaping (Result<[OWIdentityProvider], Error>) -> Void) {
+        
+    }
+
+    func deregisterUser(profileId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func getRegisteredAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void) {
+        
+    }
+
+    func getAllAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void) {
+        
+    }
+
+    func getAuthenticatedUserProfile(completion: @escaping (Result<OWUserProfile, Error>) -> Void) {
+        completion(OneginiModuleSwift.sharedInstance.getAuthenticatedUserProfile())
+    }
+
+    func authenticateUser(profileId: String, registeredAuthenticatorId: String?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
+        
+    }
+
+    func getNotRegisteredAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void) {
+        
+    }
+
+    func changePin(completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func setPreferredAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func deregisterAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func registerAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func logout(completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func mobileAuthWithOtp(data: String, completion: @escaping (Result<String?, Error>) -> Void) {
+        
+    }
+
+    func getAppToWebSingleSignOn(url: String, completion: @escaping (Result<OWAppToWebSingleSignOn, Error>) -> Void) {
+        
+    }
+
+    func getAccessToken(completion: @escaping (Result<String, Error>) -> Void) {
+        completion(OneginiModuleSwift.sharedInstance.getAccessToken())
+    }
+
+    func getRedirectUrl(completion: @escaping (Result<String, Error>) -> Void) {
+        
+    }
+
+    func getUserProfiles(completion: @escaping (Result<[OWUserProfile], Error>) -> Void) {
+        
+    }
+
+    func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func authenticateDevice(scopes: [String]?, completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func authenticateUserImplicitly(profileId: String, scopes: [String]?, completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+    
+    // FIXME: Remove when deleted from api
+    func fetchUserProfiles(completion: @escaping (Result<[OWUserProfile], Error>) -> Void) {
+        
+    }
+
     static var flutterApi: NativeCallFlutterApi?
     
     public static func register(with registrar: FlutterPluginRegistrar) {
@@ -68,7 +163,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
         case Constants.Routes.startApp: startApp(call, result)
             
             // register
-        case Constants.Routes.registerUser: registerUser(call, result)
+//        case Constants.Routes.registerUser: registerUser(call, result)
         case Constants.Routes.handleRegisteredUserUrl: handleRegisteredProcessUrl(call, result)
             
         case Constants.Routes.getIdentityProviders: getIdentityProviders(call, result)
@@ -103,8 +198,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             
         case Constants.Routes.logout: logout(call, result)
             
-        case Constants.Routes.validatePinWithPolicy:
-            validatePinWithPolicy(call, result)
 //        case Constants.Routes.getAuthenticatedUserProfile: getAuthenticatedUserProfile(result)
         case Constants.Routes.getUserProfiles: getUserProfiles(result)
 //        case Constants.Routes.getAccessToken: getAccessToken(result)
@@ -132,13 +225,5 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             result(FlutterMethodNotImplemented)
         }
         }
-    }
-    
-    // Example function for Flutter -> Native functions and how to return a response or error
-    func fetchUserProfiles(completion: @escaping (Result<[PigeonUserProfile], Error>) -> Void) {
-        //        let a = .success([PigeonUserProfile(profileId: "boopios", isDefault: true)])
-        completion(.failure(SdkError(.userProfileDoesNotExist).flutterError()))
-        
-        //        completion(.success([PigeonUserProfile(profileId: "boopios", isDefault: true)]))
     }
 }

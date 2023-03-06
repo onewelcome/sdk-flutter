@@ -154,13 +154,6 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
         OneginiModuleSwift.sharedInstance.submitPinAction(PinFlow.authentication.rawValue, action: PinAction.provide.rawValue, pin: _pin)
     }
 
-    func validatePinWithPolicy(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        guard let _arg = call.arguments as! [String: Any]?, let _pin = _arg["pin"] as! String? else {
-            result(SdkError(.emptyInputValue).flutterError())
-            return;
-        }
-        OneginiModuleSwift.sharedInstance.validatePinWithPolicy(_pin, callback: result)
-    }
 
     func denyPinAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         OneginiModuleSwift.sharedInstance.cancelPinAuth()
@@ -168,13 +161,5 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
 
     func logout(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         OneginiModuleSwift.sharedInstance.logOut(callback:result)
-    }
-    
-    func getAuthenticatedUserProfile(_ result: @escaping FlutterResult) {
-        OneginiModuleSwift.sharedInstance.getAuthenticatedUserProfile(callback: result)
-    }
-    
-    func getAccessToken(_ result: @escaping FlutterResult) {
-        OneginiModuleSwift.sharedInstance.getAccessToken(callback: result)
     }
 }

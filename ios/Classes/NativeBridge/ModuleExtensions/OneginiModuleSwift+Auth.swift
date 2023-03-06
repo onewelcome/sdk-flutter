@@ -126,11 +126,11 @@ extension OneginiModuleSwift {
         }
     }
 
-    func getAuthenticatedUserProfile() -> Result<FPUserProfile, Error> {
+    func getAuthenticatedUserProfile() -> Result<OWUserProfile, Error> {
         guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
             return .failure(SdkError(.noUserProfileIsAuthenticated))
         }
-        return .success(FPUserProfile(profile))
+        return .success(OWUserProfile(profile))
     }
     
     func getAccessToken() -> Result<String, Error> {
