@@ -37,18 +37,22 @@ class FlutterError (
   val details: Any? = null
 ) : Throwable()
 
-/** Generated class from Pigeon that represents data sent in messages. */
-data class PigeonUserProfile (
+/**
+ * Result objects
+ *
+ * Generated class from Pigeon that represents data sent in messages.
+ */
+data class OWUserProfile (
   val profileId: String,
   val isDefault: Boolean
 
 ) {
   companion object {
     @Suppress("UNCHECKED_CAST")
-    fun fromList(list: List<Any?>): PigeonUserProfile {
+    fun fromList(list: List<Any?>): OWUserProfile {
       val profileId = list[0] as String
       val isDefault = list[1] as Boolean
-      return PigeonUserProfile(profileId, isDefault)
+      return OWUserProfile(profileId, isDefault)
     }
   }
   fun toList(): List<Any?> {
@@ -59,13 +63,150 @@ data class PigeonUserProfile (
   }
 }
 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class OWCustomInfo (
+  val status: Long,
+  val data: String
+
+) {
+  companion object {
+    @Suppress("UNCHECKED_CAST")
+    fun fromList(list: List<Any?>): OWCustomInfo {
+      val status = list[0].let { if (it is Int) it.toLong() else it as Long }
+      val data = list[1] as String
+      return OWCustomInfo(status, data)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf<Any?>(
+      status,
+      data,
+    )
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class OWIdentityProvider (
+  val id: String,
+  val name: String
+
+) {
+  companion object {
+    @Suppress("UNCHECKED_CAST")
+    fun fromList(list: List<Any?>): OWIdentityProvider {
+      val id = list[0] as String
+      val name = list[1] as String
+      return OWIdentityProvider(id, name)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf<Any?>(
+      id,
+      name,
+    )
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class OWAuthenticator (
+  val id: String,
+  val name: String
+
+) {
+  companion object {
+    @Suppress("UNCHECKED_CAST")
+    fun fromList(list: List<Any?>): OWAuthenticator {
+      val id = list[0] as String
+      val name = list[1] as String
+      return OWAuthenticator(id, name)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf<Any?>(
+      id,
+      name,
+    )
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class OWAppToWebSingleSignOn (
+  val token: String,
+  val redirectUrl: String
+
+) {
+  companion object {
+    @Suppress("UNCHECKED_CAST")
+    fun fromList(list: List<Any?>): OWAppToWebSingleSignOn {
+      val token = list[0] as String
+      val redirectUrl = list[1] as String
+      return OWAppToWebSingleSignOn(token, redirectUrl)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf<Any?>(
+      token,
+      redirectUrl,
+    )
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class OWRegistrationResponse (
+  val userProfile: OWUserProfile,
+  val customInfo: OWCustomInfo? = null
+
+) {
+  companion object {
+    @Suppress("UNCHECKED_CAST")
+    fun fromList(list: List<Any?>): OWRegistrationResponse {
+      val userProfile = OWUserProfile.fromList(list[0] as List<Any?>)
+      val customInfo: OWCustomInfo? = (list[1] as? List<Any?>)?.let {
+        OWCustomInfo.fromList(it)
+      }
+      return OWRegistrationResponse(userProfile, customInfo)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf<Any?>(
+      userProfile?.toList(),
+      customInfo?.toList(),
+    )
+  }
+}
+
 @Suppress("UNCHECKED_CAST")
 private object UserClientApiCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
     return when (type) {
       128.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          PigeonUserProfile.fromList(it)
+          OWAppToWebSingleSignOn.fromList(it)
+        }
+      }
+      129.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          OWAuthenticator.fromList(it)
+        }
+      }
+      130.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          OWCustomInfo.fromList(it)
+        }
+      }
+      131.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          OWIdentityProvider.fromList(it)
+        }
+      }
+      132.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          OWRegistrationResponse.fromList(it)
+        }
+      }
+      133.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          OWUserProfile.fromList(it)
         }
       }
       else -> super.readValueOfType(type, buffer)
@@ -73,8 +214,28 @@ private object UserClientApiCodec : StandardMessageCodec() {
   }
   override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
     when (value) {
-      is PigeonUserProfile -> {
+      is OWAppToWebSingleSignOn -> {
         stream.write(128)
+        writeValue(stream, value.toList())
+      }
+      is OWAuthenticator -> {
+        stream.write(129)
+        writeValue(stream, value.toList())
+      }
+      is OWCustomInfo -> {
+        stream.write(130)
+        writeValue(stream, value.toList())
+      }
+      is OWIdentityProvider -> {
+        stream.write(131)
+        writeValue(stream, value.toList())
+      }
+      is OWRegistrationResponse -> {
+        stream.write(132)
+        writeValue(stream, value.toList())
+      }
+      is OWUserProfile -> {
+        stream.write(133)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -88,7 +249,29 @@ private object UserClientApiCodec : StandardMessageCodec() {
  * Generated interface from Pigeon that represents a handler of messages from Flutter.
  */
 interface UserClientApi {
-  fun fetchUserProfiles(callback: (Result<List<PigeonUserProfile>>) -> Unit)
+  fun fetchUserProfiles(callback: (Result<List<OWUserProfile>>) -> Unit)
+  fun registerUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit)
+  fun handleRegisteredUserUrl(url: String?, signInType: Long, callback: (Result<Unit>) -> Unit)
+  fun getIdentityProviders(callback: (Result<List<OWIdentityProvider>>) -> Unit)
+  fun deregisterUser(profileId: String, callback: (Result<Unit>) -> Unit)
+  fun getRegisteredAuthenticators(profileId: String, callback: (Result<List<OWAuthenticator>>) -> Unit)
+  fun getAllAuthenticators(profileId: String, callback: (Result<List<OWAuthenticator>>) -> Unit)
+  fun getAuthenticatedUserProfile(callback: (Result<OWUserProfile>) -> Unit)
+  fun authenticateUser(profileId: String, registeredAuthenticatorId: String?, callback: (Result<OWRegistrationResponse>) -> Unit)
+  fun getNotRegisteredAuthenticators(profileId: String, callback: (Result<List<OWAuthenticator>>) -> Unit)
+  fun changePin(callback: (Result<Unit>) -> Unit)
+  fun setPreferredAuthenticator(authenticatorId: String, callback: (Result<Unit>) -> Unit)
+  fun deregisterAuthenticator(authenticatorId: String, callback: (Result<Unit>) -> Unit)
+  fun registerAuthenticator(authenticatorId: String, callback: (Result<Unit>) -> Unit)
+  fun logout(callback: (Result<Unit>) -> Unit)
+  fun mobileAuthWithOtp(data: String, callback: (Result<String?>) -> Unit)
+  fun getAppToWebSingleSignOn(url: String, callback: (Result<OWAppToWebSingleSignOn>) -> Unit)
+  fun getAccessToken(callback: (Result<String>) -> Unit)
+  fun getRedirectUrl(callback: (Result<String>) -> Unit)
+  fun getUserProfiles(callback: (Result<List<OWUserProfile>>) -> Unit)
+  fun validatePinWithPolicy(pin: String, callback: (Result<Unit>) -> Unit)
+  fun authenticateDevice(scopes: List<String>?, callback: (Result<Unit>) -> Unit)
+  fun authenticateUserImplicitly(profileId: String, scopes: List<String>?, callback: (Result<Unit>) -> Unit)
 
   companion object {
     /** The codec used by UserClientApi. */
@@ -103,7 +286,506 @@ interface UserClientApi {
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             var wrapped = listOf<Any?>()
-            api.fetchUserProfiles() { result: Result<List<PigeonUserProfile>> ->
+            api.fetchUserProfiles() { result: Result<List<OWUserProfile>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.registerUser", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val identityProviderIdArg = args[0] as? String
+            val scopesArg = args[1] as? List<String>
+            api.registerUser(identityProviderIdArg, scopesArg) { result: Result<OWRegistrationResponse> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.handleRegisteredUserUrl", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val urlArg = args[0] as? String
+            val signInTypeArg = args[1].let { if (it is Int) it.toLong() else it as Long }
+            api.handleRegisteredUserUrl(urlArg, signInTypeArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.getIdentityProviders", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped = listOf<Any?>()
+            api.getIdentityProviders() { result: Result<List<OWIdentityProvider>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.deregisterUser", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val profileIdArg = args[0] as String
+            api.deregisterUser(profileIdArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.getRegisteredAuthenticators", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val profileIdArg = args[0] as String
+            api.getRegisteredAuthenticators(profileIdArg) { result: Result<List<OWAuthenticator>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.getAllAuthenticators", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val profileIdArg = args[0] as String
+            api.getAllAuthenticators(profileIdArg) { result: Result<List<OWAuthenticator>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.getAuthenticatedUserProfile", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped = listOf<Any?>()
+            api.getAuthenticatedUserProfile() { result: Result<OWUserProfile> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.authenticateUser", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val profileIdArg = args[0] as String
+            val registeredAuthenticatorIdArg = args[1] as? String
+            api.authenticateUser(profileIdArg, registeredAuthenticatorIdArg) { result: Result<OWRegistrationResponse> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.getNotRegisteredAuthenticators", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val profileIdArg = args[0] as String
+            api.getNotRegisteredAuthenticators(profileIdArg) { result: Result<List<OWAuthenticator>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.changePin", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped = listOf<Any?>()
+            api.changePin() { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.setPreferredAuthenticator", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val authenticatorIdArg = args[0] as String
+            api.setPreferredAuthenticator(authenticatorIdArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.deregisterAuthenticator", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val authenticatorIdArg = args[0] as String
+            api.deregisterAuthenticator(authenticatorIdArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.registerAuthenticator", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val authenticatorIdArg = args[0] as String
+            api.registerAuthenticator(authenticatorIdArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.logout", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped = listOf<Any?>()
+            api.logout() { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.mobileAuthWithOtp", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val dataArg = args[0] as String
+            api.mobileAuthWithOtp(dataArg) { result: Result<String?> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.getAppToWebSingleSignOn", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val urlArg = args[0] as String
+            api.getAppToWebSingleSignOn(urlArg) { result: Result<OWAppToWebSingleSignOn> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.getAccessToken", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped = listOf<Any?>()
+            api.getAccessToken() { result: Result<String> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.getRedirectUrl", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped = listOf<Any?>()
+            api.getRedirectUrl() { result: Result<String> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.getUserProfiles", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped = listOf<Any?>()
+            api.getUserProfiles() { result: Result<List<OWUserProfile>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.validatePinWithPolicy", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val pinArg = args[0] as String
+            api.validatePinWithPolicy(pinArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.authenticateDevice", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val scopesArg = args[0] as? List<String>
+            api.authenticateDevice(scopesArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.authenticateUserImplicitly", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            var wrapped = listOf<Any?>()
+            val args = message as List<Any?>
+            val profileIdArg = args[0] as String
+            val scopesArg = args[1] as? List<String>
+            api.authenticateUserImplicitly(profileIdArg, scopesArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+    }
+  }
+}
+@Suppress("UNCHECKED_CAST")
+private object ResourceMethodApiCodec : StandardMessageCodec() {
+  override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
+    return when (type) {
+      128.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          OWUserProfile.fromList(it)
+        }
+      }
+      else -> super.readValueOfType(type, buffer)
+    }
+  }
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+    when (value) {
+      is OWUserProfile -> {
+        stream.write(128)
+        writeValue(stream, value.toList())
+      }
+      else -> super.writeValue(stream, value)
+    }
+  }
+}
+
+/** Generated interface from Pigeon that represents a handler of messages from Flutter. */
+interface ResourceMethodApi {
+  fun fetchUserProfiles(callback: (Result<List<OWUserProfile>>) -> Unit)
+
+  companion object {
+    /** The codec used by ResourceMethodApi. */
+    val codec: MessageCodec<Any?> by lazy {
+      ResourceMethodApiCodec
+    }
+    /** Sets up an instance of `ResourceMethodApi` to handle messages through the `binaryMessenger`. */
+    @Suppress("UNCHECKED_CAST")
+    fun setUp(binaryMessenger: BinaryMessenger, api: ResourceMethodApi?) {
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ResourceMethodApi.fetchUserProfiles", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped = listOf<Any?>()
+            api.fetchUserProfiles() { result: Result<List<OWUserProfile>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -121,7 +803,7 @@ interface UserClientApi {
   }
 }
 /**
- * Native calls Flutter
+ * Native calls to Flutter
  *
  * Generated class from Pigeon that represents Flutter messages that can be called from Kotlin.
  */

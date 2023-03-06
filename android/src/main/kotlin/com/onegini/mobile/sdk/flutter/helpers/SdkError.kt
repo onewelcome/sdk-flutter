@@ -6,6 +6,7 @@ import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_BOD
 import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_HEADERS
 import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_STATUS_CODE
 import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_URL
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import io.flutter.plugin.common.MethodChannel
 import okhttp3.Response
 
@@ -82,5 +83,9 @@ class SdkError: Exception {
 
     fun flutterError(result: MethodChannel.Result) {
         result.error(code.toString(), message, details)
+    }
+
+    fun pigeonError(): FlutterError {
+        return FlutterError(code.toString(), message, details)
     }
 }
