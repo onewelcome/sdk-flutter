@@ -109,7 +109,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func changePin(completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.changePin() { result in
+            completion(result.mapError{$0})
+        }
     }
 
     func setPreferredAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -245,7 +247,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             getResource(call, result)
             
             // other
-        case Constants.Routes.changePin: changePin(call, result)
         case Constants.Routes.getAppToWebSingleSignOn: getAppToWebSingleSignOn(call, result)
             
         default: do {

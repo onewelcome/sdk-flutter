@@ -3,7 +3,7 @@ import Flutter
 
 protocol PinConnectorToPinHandler: AnyObject {
     func onPinProvided(pin: String)
-    func onChangePinCalled(completion: @escaping (Bool, SdkError?) -> Void)
+    func onChangePinCalled(completion: @escaping (Result<Void, Error>) -> Void)
     func onCancel()
     func handleFlowUpdate(_ flow: PinFlow, _ error: SdkError?, receiver: PinHandlerToReceiverProtocol)
     func closeFlow()
@@ -30,7 +30,7 @@ class PinHandler: NSObject {
     var flow: PinFlow?
     var mode: PINEntryMode?
     var pinEntryToVerify = Array<String>()
-    var changePinCompletion: ((Bool, SdkError?) -> Void)?
+    var changePinCompletion: ((Result<Void, Error>) -> Void)?
     
     unowned var pinReceiver: PinHandlerToReceiverProtocol?
     unowned var notificationReceiver: PinNotificationReceiverProtocol?
@@ -127,7 +127,7 @@ extension PinHandler: PinConnectorToPinHandler{
       processPin(pinEntry: pinArray)
     }
 
-    func onChangePinCalled(completion: @escaping (Bool, SdkError?) -> Void) {
+    func onChangePinCalled(completion: @escaping (Result<Void, Error>) -> Void) {
         changePinCompletion = completion
         ONGUserClient.sharedInstance().changePin(self)
     }
@@ -213,11 +213,11 @@ extension PinHandler: ONGChangePinDelegate {
         let mappedError = ErrorMapper().mapError(error)
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            changePinCompletion?(false, SdkError(.changingPinCancelled))
+            changePinCompletion?(.failure(FlutterError(.changingPinCancelled)))
         } else if error.code == ONGGenericError.userDeregistered.rawValue {
-            changePinCompletion?(false, mappedError)
+            changePinCompletion?(.failure(FlutterError(mappedError)))
         } else {
-            changePinCompletion?(false, mappedError)
+            changePinCompletion?(.failure(FlutterError(mappedError)))
         }
     }
 
@@ -225,6 +225,6 @@ extension PinHandler: ONGChangePinDelegate {
         Logger.log("didChangePinForUser", sender: self)
         createPinChallenge = nil
         closeFlow()
-        changePinCompletion?(true, nil)
+        changePinCompletion?(.success(()))
     }
 }

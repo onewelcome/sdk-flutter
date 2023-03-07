@@ -12,12 +12,8 @@ extension OneginiModuleSwift {
         bridgeConnector.toPinHandlerConnector.handlePinAction(flow, action, pin)
      }
     
-    func changePin(callback: @escaping FlutterResult) -> Void {
-        bridgeConnector.toPinHandlerConnector.pinHandler.onChangePinCalled() {
-            (_, error) -> Void in
-
-            error != nil ? callback(SdkError.convertToFlutter(error)) : callback(true)
-        }
+    func changePin(completion: @escaping (Result<Void, Error>) -> Void) {
+        bridgeConnector.toPinHandlerConnector.pinHandler.onChangePinCalled(completion: completion)
     }
     
     func validatePinWithPolicy(_ pin: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
