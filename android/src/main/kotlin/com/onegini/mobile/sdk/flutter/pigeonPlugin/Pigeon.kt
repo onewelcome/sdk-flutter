@@ -248,7 +248,7 @@ private object UserClientApiCodec : StandardMessageCodec() {
 interface UserClientApi {
   fun fetchUserProfiles(callback: (Result<List<OWUserProfile>>) -> Unit)
   fun registerUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit)
-  fun handleRegisteredUserUrl(url: String?, signInType: Long, callback: (Result<Unit>) -> Unit)
+  fun handleRegisteredUserUrl(url: String, signInType: Long, callback: (Result<Unit>) -> Unit)
   fun getIdentityProviders(callback: (Result<List<OWIdentityProvider>>) -> Unit)
   fun deregisterUser(profileId: String, callback: (Result<Unit>) -> Unit)
   fun getRegisteredAuthenticators(profileId: String, callback: (Result<List<OWAuthenticator>>) -> Unit)
@@ -327,7 +327,7 @@ interface UserClientApi {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
             val args = message as List<Any?>
-            val urlArg = args[0] as? String
+            val urlArg = args[0] as String
             val signInTypeArg = args[1].let { if (it is Int) it.toLong() else it as Long }
             api.handleRegisteredUserUrl(urlArg, signInTypeArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
