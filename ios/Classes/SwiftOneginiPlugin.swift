@@ -81,7 +81,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func deregisterUser(profileId: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.deregisterUser(profileId: profileId) { result in
+            completion(result.mapError{$0})
+        }
     }
 
     func getRegisteredAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void) {
@@ -216,8 +218,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             // custom registration
         case Constants.Routes.submitCustomRegistrationAction: submitCustomRegistrationAction(call, result)
         case Constants.Routes.cancelCustomRegistrationAction: cancelCustomRegistrationAction(call, result)
-            
-        case Constants.Routes.deregisterUser: deregisterUser(call, result)
             
             // auth
         case Constants.Routes.registerAuthenticator: registerAuthenticator(call, result)

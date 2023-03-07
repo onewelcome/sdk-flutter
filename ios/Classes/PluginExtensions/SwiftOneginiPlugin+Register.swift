@@ -13,8 +13,6 @@ protocol OneginiPluginRegisterProtocol {
 
     func submitCustomRegistrationAction(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func cancelCustomRegistrationAction(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
-
-    func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     
 }
 
@@ -44,18 +42,5 @@ extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
         OneginiModuleSwift.sharedInstance.submitCustomRegistrationError(_error)
     }
 
-    func deregisterUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        guard let arg = call.arguments as? [String: Any] else {
-            result(SdkError(.methodArgumentNotFound).flutterError())
-            return
-        }
-
-        guard let profileId = arg["profileId"] as? String else {
-            result(SdkError(.methodArgumentNotFound).flutterError())
-            return
-        }
-
-        OneginiModuleSwift.sharedInstance.deregisterUser(profileId: profileId, callback:result)
-    }
 }
 

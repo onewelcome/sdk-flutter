@@ -6,10 +6,8 @@ import Flutter
 
 extension OneginiModuleSwift {
 
-    func deregisterUser(profileId: String, callback: @escaping FlutterResult) {
-        bridgeConnector.toDeregisterUserHandler.deregister(profileId: profileId) { error in
-            error != nil ? callback(SdkError.convertToFlutter(error)) : callback(true)
-        }
+    func deregisterUser(profileId: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        bridgeConnector.toDeregisterUserHandler.deregister(profileId: profileId, completion: completion)
     }
 
     func registerUser(_ identityProviderId: String? = nil, scopes: [String]? = nil, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
