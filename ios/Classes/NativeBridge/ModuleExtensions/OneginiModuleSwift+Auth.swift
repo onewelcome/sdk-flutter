@@ -9,10 +9,8 @@ extension OneginiModuleSwift {
         return .success(providers.compactMap({OWIdentityProvider($0)}))
     }
 
-    func logOut(callback: @escaping FlutterResult) {
-        bridgeConnector.toLogoutUserHandler.logout { error in
-            error != nil ? callback(error?.flutterError()) : callback(true)
-        }
+    func logOut(callback: @escaping (Result<Void, FlutterError>) -> Void) {
+        bridgeConnector.toLogoutUserHandler.logout(completion: callback)
     }
 
     public func authenticateUserImplicitly(_ profileId: String, _ scopes: [String]?,

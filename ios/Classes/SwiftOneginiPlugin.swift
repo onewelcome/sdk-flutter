@@ -67,7 +67,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
 
 
     func registerUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
-        
         OneginiModuleSwift.sharedInstance.registerUser(identityProviderId, scopes: scopes) { result in
             completion(result.mapError{$0})
         }
@@ -124,7 +123,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func logout(completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.logOut(){ result in
+            completion(result.mapError{$0})
+        }
     }
 
     func mobileAuthWithOtp(data: String, completion: @escaping (Result<String?, Error>) -> Void) {
@@ -228,8 +229,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             
         case Constants.Routes.acceptPinAuthenticationRequest: acceptPinAuthenticationRequest(call, result)
         case Constants.Routes.denyPinAuthenticationRequest: denyPinAuthenticationRequest(call, result)
-            
-        case Constants.Routes.logout: logout(call, result)
             
             // fingerprint
         case Constants.Routes.acceptFingerprintAuthenticationRequest: acceptFingerprintAuthenticationRequest(call, result)

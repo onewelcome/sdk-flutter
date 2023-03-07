@@ -13,8 +13,6 @@ protocol OneginiPluginAuthProtocol {
     func denyPinAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func deregisterAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 
-    func logout(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
-
 }
 
 //MARK: - OneginiPluginAuthProtocol
@@ -88,9 +86,5 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
 
     func denyPinAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         OneginiModuleSwift.sharedInstance.cancelPinAuth()
-    }
-
-    func logout(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        OneginiModuleSwift.sharedInstance.logOut(callback:result)
     }
 }

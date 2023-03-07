@@ -4,7 +4,6 @@ protocol RegistrationConnectorToHandlerProtocol: RegistrationHandlerToPinHanlder
     func registerUser(_ providerId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void)
     func processRedirectURL(url: String, webSignInType: Int) -> Result<Void, FlutterError>
     func cancelBrowserRegistration()
-    func logout(completion: @escaping (SdkError?) -> Void)
     func deregister(profileId: String, completion: @escaping (SdkError?) -> Void)
     func identityProviders() -> Array<ONGIdentityProvider>
     func submitCustomRegistrationSuccess(_ data: String?)
@@ -31,8 +30,6 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     var browserRegistrationChallenge: ONGBrowserRegistrationChallenge?
     var customRegistrationChallenge: ONGCustomRegistrationChallenge?
     var browserConntroller: BrowserHandlerProtocol?
-    
-    var logoutUserHandler = LogoutHandler()
     var deregisterUserHandler = DeregisterUserHandler()
     var signUpCompletion: ((Result<OWRegistrationResponse, FlutterError>) -> Void)?
     
@@ -129,10 +126,6 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
         }
         
         ONGUserClient.sharedInstance().registerUser(with: identityProvider, scopes: scopes, delegate: self)
-    }
-    
-    func logout(completion: @escaping (SdkError?) -> Void) {
-        logoutUserHandler.logout(completion: completion)
     }
     
     func deregister(profileId: String, completion: @escaping (SdkError?) -> Void) {
