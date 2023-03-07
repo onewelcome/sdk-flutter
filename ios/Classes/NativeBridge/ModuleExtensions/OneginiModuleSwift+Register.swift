@@ -2,10 +2,7 @@ import Foundation
 import OneginiSDKiOS
 import Flutter
 
-enum WebSignInType: Int {
-  case insideApp = 0
-  case safari
-}
+
 
 extension OneginiModuleSwift {
 
@@ -19,8 +16,8 @@ extension OneginiModuleSwift {
         bridgeConnector.toRegistrationConnector.registrationHandler.registerUser(identityProviderId, scopes: scopes, completion: completion)
     }
     
-    func handleRegisteredProcessUrl(_ url: String, webSignInType: WebSignInType) -> Void {
-        bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: url, webSignInType: webSignInType)
+    func handleRegisteredProcessUrl(_ url: String, webSignInType: Int) -> Result<Void, FlutterError> {
+        return bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: url, webSignInType: webSignInType)
     }
     
     public func handleDeepLinkCallbackUrl(_ url: URL) -> Bool {

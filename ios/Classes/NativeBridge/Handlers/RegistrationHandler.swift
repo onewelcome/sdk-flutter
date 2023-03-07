@@ -2,7 +2,7 @@ import OneginiSDKiOS
 
 protocol RegistrationConnectorToHandlerProtocol: RegistrationHandlerToPinHanlderProtocol {
     func registerUser(_ providerId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void)
-    func processRedirectURL(url: String, webSignInType: WebSignInType)
+    func processRedirectURL(url: String, webSignInType: Int) -> Result<Void, FlutterError>
     func cancelBrowserRegistration()
     func logout(completion: @escaping (SdkError?) -> Void)
     func deregister(profileId: String, completion: @escaping (SdkError?) -> Void)
@@ -18,6 +18,11 @@ protocol RegistrationHandlerToPinHanlderProtocol: class {
 
 protocol CustomRegistrationNotificationReceiverProtocol: class {
     func sendCustomRegistrationNotification(_ event: CustomRegistrationNotification,_ data: Dictionary<String, Any?>?)
+}
+
+enum WebSignInType: Int {
+  case insideApp = 0
+  case safari
 }
 
 class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, PinHandlerToReceiverProtocol, RegistrationHandlerToPinHanlderProtocol {
@@ -134,18 +139,21 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
         deregisterUserHandler.deregister(profileId: profileId, completion: completion)
     }
 
-    func processRedirectURL(url: String, webSignInType: WebSignInType) {
+    func processRedirectURL(url: String, webSignInType: Int) -> Result<Void, FlutterError> {
+        let webSignInType = WebSignInType(rawValue: webSignInType) ?? .insideApp
         guard let url = URL.init(string: url) else {
+            //FIXME: This doesn't seem right, we're canceling the whole registration here???
             signUpCompletion?(.failure(FlutterError(.providedUrlIncorrect)))
-            return
+            return .failure(FlutterError(.providedUrlIncorrect))
         }
         
         if webSignInType != .insideApp && !UIApplication.shared.canOpenURL(url) {
             signUpCompletion?(.failure(FlutterError(.providedUrlIncorrect)))
-            return
+            return .failure(FlutterError(.providedUrlIncorrect))
         }
         
         presentBrowserUserRegistrationView(registrationUserURL: url, webSignInType: webSignInType)
+        return .success(())
     }
     
     func submitCustomRegistrationSuccess(_ data: String?) {
