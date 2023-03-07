@@ -76,7 +76,7 @@ abstract class UserClientApi {
       String? identityProviderId, List<String>? scopes);
 
   @async
-  void handleRegisteredUserUrl(String? url, int signInType);
+  void handleRegisteredUserUrl(String url, int signInType);
 
   @async
   List<OWIdentityProvider> getIdentityProviders();

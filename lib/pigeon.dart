@@ -290,7 +290,7 @@ class UserClientApi {
     }
   }
 
-  Future<void> handleRegisteredUserUrl(String? arg_url, int arg_signInType) async {
+  Future<void> handleRegisteredUserUrl(String arg_url, int arg_signInType) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.handleRegisteredUserUrl', codec,
         binaryMessenger: _binaryMessenger);

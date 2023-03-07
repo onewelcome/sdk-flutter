@@ -243,7 +243,7 @@ class UserClientApiCodec: FlutterStandardMessageCodec {
 protocol UserClientApi {
   func fetchUserProfiles(completion: @escaping (Result<[OWUserProfile], Error>) -> Void)
   func registerUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void)
-  func handleRegisteredUserUrl(url: String?, signInType: Int32, completion: @escaping (Result<Void, Error>) -> Void)
+  func handleRegisteredUserUrl(url: String, signInType: Int32, completion: @escaping (Result<Void, Error>) -> Void)
   func getIdentityProviders(completion: @escaping (Result<[OWIdentityProvider], Error>) -> Void)
   func deregisterUser(profileId: String, completion: @escaping (Result<Void, Error>) -> Void)
   func getRegisteredAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void)
@@ -309,7 +309,7 @@ class UserClientApiSetup {
     if let api = api {
       handleRegisteredUserUrlChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let urlArg = args[0] as? String
+        let urlArg = args[0] as! String
         let signInTypeArg = args[1] as! Int32
         api.handleRegisteredUserUrl(url: urlArg, signInType: signInTypeArg) { result in
           switch result {
