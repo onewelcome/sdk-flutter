@@ -2,6 +2,11 @@ import Foundation
 import OneginiSDKiOS
 import Flutter
 
+enum WebSignInType: Int {
+  case insideApp = 0
+  case safari
+}
+
 extension OneginiModuleSwift {
 
     func deregisterUser(profileId: String, callback: @escaping FlutterResult) {
@@ -10,25 +15,8 @@ extension OneginiModuleSwift {
         }
     }
 
-    func registerUser(_ identityProviderId: String? = nil, scopes: [String]? = nil, callback: @escaping FlutterResult) -> Void {
-
-        bridgeConnector.toRegistrationConnector.registrationHandler.signUp(identityProviderId, scopes: scopes) { (_, userProfile, userInfo, error) -> Void in
-            guard let userProfile = userProfile else {
-                callback(SdkError.convertToFlutter(error))
-                return
-            }
-
-            var result = Dictionary<String, Any?>()
-            result["userProfile"] = ["profileId": userProfile.profileId]
-
-            guard let userInfo = userInfo else {
-                callback(String.stringify(json: result))
-                return
-            }
-
-            result["customInfo"] = ["status": userInfo.status, "data": userInfo.data]
-            callback(String.stringify(json: result))
-        }
+    func registerUser(_ identityProviderId: String? = nil, scopes: [String]? = nil, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
+        bridgeConnector.toRegistrationConnector.registrationHandler.registerUser(identityProviderId, scopes: scopes, completion: completion)
     }
     
     func handleRegisteredProcessUrl(_ url: String, webSignInType: WebSignInType) -> Void {

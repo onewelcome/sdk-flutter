@@ -68,10 +68,13 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
 
     func registerUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
         
+        OneginiModuleSwift.sharedInstance.registerUser(identityProviderId, scopes: scopes) { result in
+            completion(result.mapError{$0})
+        }
     }
 
     func handleRegisteredUserUrl(url: String?, signInType: Int32, completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.handleRegisteredProcessUrl(url ?? "", webSignInType: type)
     }
 
     func getIdentityProviders(completion: @escaping (Result<[OWIdentityProvider], Error>) -> Void) {
@@ -201,7 +204,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
         case Constants.Routes.startApp: startApp(call, result)
             
             // register
-//        case Constants.Routes.registerUser: registerUser(call, result)
         case Constants.Routes.handleRegisteredUserUrl: handleRegisteredProcessUrl(call, result)
             
         case Constants.Routes.cancelBrowserRegistration: cancelBrowserRegistration(call, result)

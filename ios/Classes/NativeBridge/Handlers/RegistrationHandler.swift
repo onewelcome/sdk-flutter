@@ -1,7 +1,7 @@
 import OneginiSDKiOS
 
 protocol RegistrationConnectorToHandlerProtocol: RegistrationHandlerToPinHanlderProtocol {
-    func signUp(_ providerId: String?, scopes: [String]?, completion: @escaping (Bool, ONGUserProfile?, ONGCustomInfo?, SdkError?) -> Void)
+    func registerUser(_ providerId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void)
     func processRedirectURL(url: String, webSignInType: WebSignInType)
     func cancelBrowserRegistration()
     func logout(completion: @escaping (SdkError?) -> Void)
@@ -29,7 +29,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     
     var logoutUserHandler = LogoutHandler()
     var deregisterUserHandler = DeregisterUserHandler()
-    var signUpCompletion: ((Bool, ONGUserProfile?, ONGCustomInfo?, SdkError?) -> Void)?
+    var signUpCompletion: ((Result<OWRegistrationResponse, FlutterError>) -> Void)?
     
     unowned var pinHandler: PinConnectorToPinHandler?
     
@@ -75,7 +75,8 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     func handleRedirectURL(url: URL?) {
         Logger.log("handleRedirectURL url: \(url?.absoluteString ?? "nil")", sender: self)
         guard let browserRegistrationChallenge = self.browserRegistrationChallenge else {
-            signUpCompletion?(false, nil, nil, SdkError(.genericError))
+            //FIXME: Registration not in progress error here
+            signUpCompletion?(.failure(FlutterError(.genericError)))
             return
         }
         
@@ -111,9 +112,8 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, Pi
     }
 }
 
-//MARK:-
 extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
-    func signUp(_ providerId: String?, scopes: [String]?, completion: @escaping (Bool, ONGUserProfile?, ONGCustomInfo?, SdkError?) -> Void) {
+    func registerUser(_ providerId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
         signUpCompletion = completion
 
         var identityProvider = identityProviders().first(where: { $0.identifier == providerId})
@@ -136,12 +136,12 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
 
     func processRedirectURL(url: String, webSignInType: WebSignInType) {
         guard let url = URL.init(string: url) else {
-            signUpCompletion?(false, nil, nil, SdkError(.providedUrlIncorrect))
+            signUpCompletion?(.failure(FlutterError(.providedUrlIncorrect)))
             return
         }
         
         if webSignInType != .insideApp && !UIApplication.shared.canOpenURL(url) {
-            signUpCompletion?(false, nil, nil, SdkError(.providedUrlIncorrect))
+            signUpCompletion?(.failure(FlutterError(.providedUrlIncorrect)))
             return
         }
         
@@ -187,7 +187,10 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         createPinChallenge = nil
         customRegistrationChallenge = nil
         pinHandler?.closeFlow()
-        signUpCompletion?(true, userProfile, info, nil)
+
+        signUpCompletion?(.success(
+            OWRegistrationResponse(userProfile: OWUserProfile(userProfile),
+                                   customInfo: toOWCustomInfo(info))))
     }
 
     func userClient(_: ONGUserClient, didReceiveCustomRegistrationInitChallenge challenge: ONGCustomRegistrationChallenge) {
@@ -203,7 +206,7 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         Logger.log("didReceiveCustomRegistrationFinish ONGCustomRegistrationChallenge", sender: self)
         customRegistrationChallenge = challenge
 
-        var result = makeCustomInfoResponse(challenge)
+        let result = makeCustomInfoResponse(challenge)
 
         sendCustomRegistrationNotification(CustomRegistrationNotification.finishRegistration, result)
     }
@@ -215,10 +218,10 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         pinHandler?.closeFlow()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            signUpCompletion?(false, nil, nil, SdkError(.registrationCancelled))
+            signUpCompletion?(.failure(FlutterError(.registrationCancelled)))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            signUpCompletion?(false, nil, nil, mappedError)
+            signUpCompletion?(.failure(FlutterError(mappedError)))
         }
     }
     

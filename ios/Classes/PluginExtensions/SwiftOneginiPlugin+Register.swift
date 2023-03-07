@@ -2,15 +2,9 @@ import Foundation
 import OneginiSDKiOS
 import Flutter
 
-enum WebSignInType: Int {
-  case insideApp = 0
-  case safari
-}
+
 
 protocol OneginiPluginRegisterProtocol {
-
-    func registerUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
-    func handleRegisteredProcessUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     
     func cancelBrowserRegistration(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 
@@ -25,26 +19,6 @@ protocol OneginiPluginRegisterProtocol {
 }
 
 extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
-
-    func registerUser(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        guard let arg = call.arguments as? [String: Any] else { return; }
-        let identifier = arg["identityProviderId"] as? String
-        let scopes = arg["scopes"] as? [String]
-        OneginiModuleSwift.sharedInstance.registerUser(identifier, scopes: scopes, callback: result)
-    }
-
-    func handleRegisteredProcessUrl(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        guard let arg = call.arguments as? [String: Any] else { return }
-        let url = arg["url"] as? String
-        let typeValue = arg["type"] as? Int
-        
-        var type: WebSignInType = .insideApp
-        if let _typeValue = typeValue, let value = WebSignInType.init(rawValue: _typeValue) {
-            type = value
-        }
-        OneginiModuleSwift.sharedInstance.handleRegisteredProcessUrl(url ?? "", webSignInType: type)
-        result(nil)
-    }
 
     func cancelBrowserRegistration(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         OneginiModuleSwift.sharedInstance.cancelBrowserRegistration()
