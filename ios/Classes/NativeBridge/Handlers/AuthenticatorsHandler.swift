@@ -5,7 +5,7 @@ import OneginiSDKiOS
 protocol BridgeToAuthenticatorsHandlerProtocol: AnyObject {
     func registerAuthenticator(_ authenticatorId: String, _ completion: @escaping (Result<Void, Error>) -> Void)
     func deregisterAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Bool, SdkError?) -> Void)
-    func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Bool, SdkError?) -> Void)
+    func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, Error>) -> Void)
     func getAuthenticatorsListForUserProfile(_ userProfile: ONGUserProfile) -> Array<ONGAuthenticator>
     func isAuthenticatorRegistered(_ authenticatorType: ONGAuthenticatorType, _ userProfile: ONGUserProfile) -> Bool
     var notificationReceiver: AuthenticatorsNotificationReceiverProtocol? { get }
@@ -95,19 +95,20 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
         ONGUserClient.sharedInstance().deregister(authenticator, delegate: self)
     }
 
-    func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String,_ completion: @escaping (Bool, SdkError?) -> Void) {
+    func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String,_ completion: @escaping (Result<Void, Error>) -> Void) {
         guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticatorId}) else {
-            completion(false, SdkError(.authenticatorNotFound))
+            completion(.failure(FlutterError(.authenticatorNotFound)))
             return
         }
         
+        // FIXME: Doesnt the sdk give us an error by itself?
         if(!authenticator.isRegistered) {
-            completion(false, SdkError(.authenticatorNotRegistered))
+            completion(.failure(FlutterError(.authenticatorNotRegistered)))
             return
         }
         
         ONGUserClient.sharedInstance().preferredAuthenticator = authenticator
-        completion(true, nil)
+        completion(.success(()))
     }
     
     func getAuthenticatorsListForUserProfile(_ userProfile: ONGUserProfile) -> Array<ONGAuthenticator> {

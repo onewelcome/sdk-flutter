@@ -115,7 +115,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func setPreferredAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.setPreferredAuthenticator(authenticatorId) { result in
+            completion(result.mapError{$0})
+        }
     }
 
     func deregisterAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -215,8 +217,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             // register
             
         case Constants.Routes.cancelBrowserRegistration: cancelBrowserRegistration(call, result)
-        case Constants.Routes.setPreferredAuthenticator:
-            setPreferredAuthenticator(call, result)
             
         case Constants.Routes.acceptPinRegistrationRequest: acceptPinRegistrationRequest(call, result)
         case Constants.Routes.denyPinRegistrationRequest: denyPinRegistrationRequest(call, result)
