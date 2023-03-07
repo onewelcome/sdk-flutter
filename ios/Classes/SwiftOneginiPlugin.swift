@@ -123,7 +123,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func registerAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.registerAuthenticator(authenticatorId) { result in
+            completion(result.mapError{$0})
+        }
     }
 
     func logout(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -224,7 +226,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
         case Constants.Routes.cancelCustomRegistrationAction: cancelCustomRegistrationAction(call, result)
             
             // auth
-        case Constants.Routes.registerAuthenticator: registerAuthenticator(call, result)
         case Constants.Routes.authenticateUserImplicitly: authenticateUserImplicitly(call, result)
         case Constants.Routes.authenticateDevice: authenticateDevice(call, result)
             

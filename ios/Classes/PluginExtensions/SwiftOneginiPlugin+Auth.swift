@@ -4,7 +4,6 @@ import Flutter
 
 protocol OneginiPluginAuthProtocol {
 
-    func registerAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func authenticateUserImplicitly(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 
     func setPreferredAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult)
@@ -17,13 +16,6 @@ protocol OneginiPluginAuthProtocol {
 
 //MARK: - OneginiPluginAuthProtocol
 extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
-    func registerAuthenticator(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        guard let _arg = call.arguments as! [String: Any]?, let _authenticator = _arg["authenticatorId"] as! String? else {
-            result(SdkError(.emptyInputValue).flutterError())
-            return
-        }
-        OneginiModuleSwift.sharedInstance.registerAuthenticator(_authenticator, callback: result)
-    }
 
     func authenticateUserImplicitly(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         guard let arg = call.arguments as? [String: Any] else {

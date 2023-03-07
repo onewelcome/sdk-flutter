@@ -56,28 +56,8 @@ extension OneginiModuleSwift {
         bridgeConnector.toRegistrationConnector.registrationHandler.cancelBrowserRegistration()
     }
     
-    func registerAuthenticator(_ authenticatorId: String, callback: @escaping FlutterResult) {
-        guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
-            callback(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
-            return
-        }
-
-        let notRegisteredAuthenticators = ONGUserClient.sharedInstance().nonRegisteredAuthenticators(forUser: profile)
-
-        guard let authenticator = notRegisteredAuthenticators.first(where: { $0.identifier == authenticatorId }) else {
-            callback(SdkError.convertToFlutter(SdkError(.authenticatorNotFound)))
-            return
-        }
-
-        bridgeConnector.toAuthenticatorsHandler.registerAuthenticator(profile, authenticator) {
-            (_ , error) -> Void in
-
-            if let _error = error {
-                callback(SdkError.convertToFlutter(_error))
-            } else {
-                callback(nil)
-            }
-        }
+    func registerAuthenticator(_ authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        bridgeConnector.toAuthenticatorsHandler.registerAuthenticator(authenticatorId, completion)
     }
     
     func getRegisteredAuthenticators(_ profileId: String) -> Result<[OWAuthenticator], FlutterError> {
