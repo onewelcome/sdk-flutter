@@ -13,6 +13,7 @@ import 'onegini.dart';
 ///Сlass with basic methods available to the developer.
 class UserClient {
   final api = UserClientApi();
+
   ///Start registration flow.
   ///
   /// If [identityProviderId] is null, starts standard browser registration.
@@ -27,7 +28,7 @@ class UserClient {
   }
 
   /// Start browser Registration logic
-  Future<void> handleRegisteredUserUrl(BuildContext? context, String? url,
+  Future<void> handleRegisteredUserUrl(BuildContext? context, String url,
       {WebSignInType signInType = WebSignInType.insideApp}) async {
     Onegini.instance.setEventContext(context);
     await api.handleRegisteredUserUrl(url, signInType.value);
@@ -52,7 +53,8 @@ class UserClient {
       BuildContext? context, String profileId) async {
     Onegini.instance.setEventContext(context);
 
-    final registeredAuthenticators = await api.getRegisteredAuthenticators(profileId);
+    final registeredAuthenticators =
+        await api.getRegisteredAuthenticators(profileId);
     return registeredAuthenticators.whereType<OWAuthenticator>().toList();
   }
 
@@ -85,7 +87,8 @@ class UserClient {
   /// Returns a list of authenticators available to the user, but not yet registered.
   Future<List<OWAuthenticator>> getNotRegisteredAuthenticators(
       BuildContext? context, String profileId) async {
-    final notRegisteredAuthenticators = await api.getNotRegisteredAuthenticators(profileId);
+    final notRegisteredAuthenticators =
+        await api.getNotRegisteredAuthenticators(profileId);
     return notRegisteredAuthenticators.whereType<OWAuthenticator>().toList();
   }
 
@@ -135,8 +138,7 @@ class UserClient {
   }
 
   /// Single sign on the user web page.
-  Future<OWAppToWebSingleSignOn> getAppToWebSingleSignOn(
-      String url) async {
+  Future<OWAppToWebSingleSignOn> getAppToWebSingleSignOn(String url) async {
     return await api.getAppToWebSingleSignOn(url);
   }
 
