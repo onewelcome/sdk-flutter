@@ -121,7 +121,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func deregisterAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.deregisterAuthenticator(authenticatorId) { result in
+            completion(result.mapError{$0})
+        }
     }
 
     func registerAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -228,9 +230,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             // auth
         case Constants.Routes.authenticateUserImplicitly: authenticateUserImplicitly(call, result)
         case Constants.Routes.authenticateDevice: authenticateDevice(call, result)
-            
-        case Constants.Routes.deregisterAuthenticator:
-            deregisterAuthenticator(call, result)
+
             
         case Constants.Routes.acceptPinAuthenticationRequest: acceptPinAuthenticationRequest(call, result)
         case Constants.Routes.denyPinAuthenticationRequest: denyPinAuthenticationRequest(call, result)

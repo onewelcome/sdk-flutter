@@ -63,22 +63,12 @@ extension OneginiModuleSwift {
         bridgeConnector.toAuthenticatorsHandler.setPreferredAuthenticator(profile, identifierId, completion)
     }
     
-    func deregisterAuthenticator(_ identifierId: String, completion: @escaping FlutterResult) {
+    func deregisterAuthenticator(_ identifierId: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let profile = ONGClient.sharedInstance().userClient.authenticatedUserProfile() else {
-            completion(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
+            completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
             return
         }
-
-        // Deregister Authenticator
-        bridgeConnector.toAuthenticatorsHandler.deregisterAuthenticator(profile, identifierId) { value, error in
-            guard error == nil else {
-                // FIXME: use Result and make this FlutterError
-                completion(SdkError.convertToFlutter(error))
-                return
-            }
-
-            completion(value)
-        }
+        bridgeConnector.toAuthenticatorsHandler.deregisterAuthenticator(profile, identifierId, completion)
     }
 
     func getAuthenticatedUserProfile() -> Result<OWUserProfile, FlutterError> {
