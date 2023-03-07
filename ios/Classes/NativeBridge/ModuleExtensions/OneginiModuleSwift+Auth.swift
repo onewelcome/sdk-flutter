@@ -31,16 +31,13 @@ extension OneginiModuleSwift {
         }
     }
 
-    func runSingleSignOn(_ path: String?, callback: @escaping FlutterResult) -> Void {
+    func runSingleSignOn(_ path: String, completion: @escaping (Result<OWAppToWebSingleSignOn, Error>) -> Void) {
         
-        guard let _path = path, let _url = URL(string: _path) else {
-            callback(SdkError(.providedUrlIncorrect))
+        guard let url = URL(string: path) else {
+            completion(.failure(FlutterError(.providedUrlIncorrect)))
             return
         }
-        
-        bridgeConnector.toAppToWebHandler.signInAppToWeb(targetURL: _url, completion: { (result, error) in
-            error != nil ? callback(SdkError.convertToFlutter(error)) : callback(String.stringify(json: result ?? []))
-        })
+        bridgeConnector.toAppToWebHandler.signInAppToWeb(targetURL: url, completion: completion)
     }
     
     func authenticateUser(profileId: String, authenticatorId: String?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {

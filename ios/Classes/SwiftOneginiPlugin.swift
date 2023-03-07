@@ -137,7 +137,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func getAppToWebSingleSignOn(url: String, completion: @escaping (Result<OWAppToWebSingleSignOn, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.runSingleSignOn(url) { result in
+            completion(result.mapError{$0})
+        }
     }
 
     func getAccessToken(completion: @escaping (Result<String, Error>) -> Void) {
@@ -245,9 +247,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             // resources
         case Constants.Routes.getResourceAnonymous, Constants.Routes.getResource, Constants.Routes.getImplicitResource, Constants.Routes.unauthenticatedRequest:
             getResource(call, result)
-            
-            // other
-        case Constants.Routes.getAppToWebSingleSignOn: getAppToWebSingleSignOn(call, result)
             
         default: do {
             Logger.log("Method wasn't handled: " + call.method)
