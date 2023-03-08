@@ -97,11 +97,15 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func otpDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.denyMobileAuthConfirmation()
+        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-??
+        completion(.success(()))
     }
 
     func otpAcceptAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.acceptMobileAuthConfirmation()
+        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-??
+        completion(.success(()))
     }
 
     func pinDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -290,8 +294,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             
             // otp
         case Constants.Routes.handleMobileAuthWithOtp: handleMobileAuthWithOtp(call, result)
-        case Constants.Routes.acceptOtpAuthenticationRequest: acceptOtpAuthenticationRequest(call, result)
-        case Constants.Routes.denyOtpAuthenticationRequest: denyOtpAuthenticationRequest(call, result)
             
             // resources
         case Constants.Routes.getResourceAnonymous, Constants.Routes.getResource, Constants.Routes.getImplicitResource, Constants.Routes.unauthenticatedRequest:
