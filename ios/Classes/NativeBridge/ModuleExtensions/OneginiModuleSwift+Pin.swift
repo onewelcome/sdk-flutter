@@ -8,8 +8,8 @@ extension OneginiModuleSwift {
         bridgeConnector.toPinHandlerConnector.pinHandler.onCancel()
     }
   
-    func submitPinAction(_ flow: String, action: String, pin: String, isCustomAuth: Bool = false) -> Void {
-        bridgeConnector.toPinHandlerConnector.handlePinAction(flow, action, pin)
+    func submitPinAction(_ flow: String, action: String, pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        bridgeConnector.toPinHandlerConnector.handlePinAction(flow, action, pin, completion: completion)
      }
     
     func changePin(completion: @escaping (Result<Void, Error>) -> Void) {
