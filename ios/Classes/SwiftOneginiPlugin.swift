@@ -73,19 +73,27 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func cancelCustomRegistrationAction(identityProviderId: String, error: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.submitCustomRegistrationError(error)
+        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-??
+        completion(.success(()))
     }
 
     func fingerprintFallbackToPin(completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        Logger.log("fingerprintFallbackToPin is Android only and should not be called on iOS")
+        // FIXME: We should actually reject here with a specific error
+        completion(.success(()))
     }
 
     func fingerprintDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        Logger.log("fingerprintDenyAuthenticationRequest is Android only and should not be called on iOS")
+        // FIXME: We should actually reject here with a specific error
+        completion(.success(()))
     }
 
     func fingerprintAcceptAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        Logger.log("fingerprintAcceptAuthenticationRequest is Android only and should not be called on iOS")
+        // FIXME: We should actually reject here with a specific error
+        completion(.success(()))
     }
 
     func otpDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -275,18 +283,10 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             
             // base
         case Constants.Routes.startApp: startApp(call, result)
-              
-            // custom registration
-        case Constants.Routes.cancelCustomRegistrationAction: cancelCustomRegistrationAction(call, result)
             
             // auth
         case Constants.Routes.authenticateUserImplicitly: authenticateUserImplicitly(call, result)
         case Constants.Routes.authenticateDevice: authenticateDevice(call, result)
-            
-            // fingerprint
-        case Constants.Routes.acceptFingerprintAuthenticationRequest: acceptFingerprintAuthenticationRequest(call, result)
-        case Constants.Routes.denyFingerprintAuthenticationRequest: denyFingerprintAuthenticationRequest(call, result)
-        case Constants.Routes.fingerprintFallbackToPin: fingerprintFallbackToPin(call, result)
             
             // otp
         case Constants.Routes.handleMobileAuthWithOtp: handleMobileAuthWithOtp(call, result)
