@@ -65,7 +65,7 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
     if (widget.confirmation) {
       if (pin == widget.previousCode) {
         OneginiPinRegistrationCallback()
-            .acceptAuthenticationRequest(context, pin: pin)
+            .acceptAuthenticationRequest(context, pin)
             .catchError((error) {
           if (error is PlatformException) {
             showFlutterToast(error.message);

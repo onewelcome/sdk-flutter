@@ -181,7 +181,7 @@ abstract class UserClientApi {
   void pinDenyRegistrationRequest();
 
   @async
-  void pinAcceptRegistrationRequest(String pin, bool isCustomAuthenticator);
+  void pinAcceptRegistrationRequest(String pin);
 
   /// Browser Registration Callbacks
   @async
