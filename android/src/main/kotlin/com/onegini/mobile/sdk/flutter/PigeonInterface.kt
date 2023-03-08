@@ -200,21 +200,13 @@ open class PigeonInterface : UserClientApi {
     authenticateUserImplicitlyUseCase(profileId, scopes, callback)
   }
 
+  // Callback functions
   override fun submitCustomRegistrationAction(identityProviderId: String, data: String?, callback: (Result<Unit>) -> Unit) {
     submitCustomRegistrationActionUseCase(identityProviderId, data, callback)
   }
 
   override fun cancelCustomRegistrationAction(identityProviderId: String, error: String, callback: (Result<Unit>) -> Unit) {
     cancelCustomRegistrationActionUseCase(identityProviderId, error, callback)
-  }
-
-  // Callback functions
-  override fun submitCustomRegistrationSuccessAction(identityProviderId: String, data: String?, callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
-  }
-
-  override fun submitCustomRegistrationErrorAction(identityProviderId: String, error: String, callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
   }
 
   override fun fingerprintFallbackToPin(callback: (Result<Unit>) -> Unit) {

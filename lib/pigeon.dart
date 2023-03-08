@@ -802,6 +802,7 @@ class UserClientApi {
     }
   }
 
+  /// Custom Registration Callbacks
   Future<void> submitCustomRegistrationAction(String arg_identityProviderId, String? arg_data) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.submitCustomRegistrationAction', codec,
@@ -827,51 +828,6 @@ class UserClientApi {
   Future<void> cancelCustomRegistrationAction(String arg_identityProviderId, String arg_error) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.cancelCustomRegistrationAction', codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identityProviderId, arg_error]) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  /// Custom Registration Callbacks
-  Future<void> submitCustomRegistrationSuccessAction(String arg_identityProviderId, String? arg_data) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.submitCustomRegistrationSuccessAction', codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identityProviderId, arg_data]) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  Future<void> submitCustomRegistrationErrorAction(String arg_identityProviderId, String arg_error) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.submitCustomRegistrationErrorAction', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_identityProviderId, arg_error]) as List<Object?>?;

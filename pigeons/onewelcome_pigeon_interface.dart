@@ -145,18 +145,12 @@ abstract class UserClientApi {
   @async
   void authenticateUserImplicitly(String profileId, List<String>? scopes);
 
+  /// Custom Registration Callbacks
   @async
   void submitCustomRegistrationAction(String identityProviderId, String? data);
 
   @async
   void cancelCustomRegistrationAction(String identityProviderId, String error);
-
-  /// Custom Registration Callbacks
-  @async
-  void submitCustomRegistrationSuccessAction(String identityProviderId, String? data);
-
-  @async
-  void submitCustomRegistrationErrorAction(String identityProviderId, String error);
 
   /// Fingerprint Callbacks
   @async

@@ -278,11 +278,9 @@ interface UserClientApi {
   fun validatePinWithPolicy(pin: String, callback: (Result<Unit>) -> Unit)
   fun authenticateDevice(scopes: List<String>?, callback: (Result<Unit>) -> Unit)
   fun authenticateUserImplicitly(profileId: String, scopes: List<String>?, callback: (Result<Unit>) -> Unit)
+  /** Custom Registration Callbacks */
   fun submitCustomRegistrationAction(identityProviderId: String, data: String?, callback: (Result<Unit>) -> Unit)
   fun cancelCustomRegistrationAction(identityProviderId: String, error: String, callback: (Result<Unit>) -> Unit)
-  /** Custom Registration Callbacks */
-  fun submitCustomRegistrationSuccessAction(identityProviderId: String, data: String?, callback: (Result<Unit>) -> Unit)
-  fun submitCustomRegistrationErrorAction(identityProviderId: String, error: String, callback: (Result<Unit>) -> Unit)
   /** Fingerprint Callbacks */
   fun fingerprintFallbackToPin(callback: (Result<Unit>) -> Unit)
   fun fingerprintDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit)
@@ -798,48 +796,6 @@ interface UserClientApi {
             val identityProviderIdArg = args[0] as String
             val errorArg = args[1] as String
             api.cancelCustomRegistrationAction(identityProviderIdArg, errorArg) { result: Result<Unit> ->
-              val error = result.exceptionOrNull()
-              if (error != null) {
-                reply.reply(wrapError(error))
-              } else {
-                reply.reply(wrapResult(null))
-              }
-            }
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.submitCustomRegistrationSuccessAction", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            var wrapped = listOf<Any?>()
-            val args = message as List<Any?>
-            val identityProviderIdArg = args[0] as String
-            val dataArg = args[1] as? String
-            api.submitCustomRegistrationSuccessAction(identityProviderIdArg, dataArg) { result: Result<Unit> ->
-              val error = result.exceptionOrNull()
-              if (error != null) {
-                reply.reply(wrapError(error))
-              } else {
-                reply.reply(wrapResult(null))
-              }
-            }
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.submitCustomRegistrationErrorAction", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            var wrapped = listOf<Any?>()
-            val args = message as List<Any?>
-            val identityProviderIdArg = args[0] as String
-            val errorArg = args[1] as String
-            api.submitCustomRegistrationErrorAction(identityProviderIdArg, errorArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

@@ -264,11 +264,9 @@ protocol UserClientApi {
   func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, Error>) -> Void)
   func authenticateDevice(scopes: [String]?, completion: @escaping (Result<Void, Error>) -> Void)
   func authenticateUserImplicitly(profileId: String, scopes: [String]?, completion: @escaping (Result<Void, Error>) -> Void)
+  /// Custom Registration Callbacks
   func submitCustomRegistrationAction(identityProviderId: String, data: String?, completion: @escaping (Result<Void, Error>) -> Void)
   func cancelCustomRegistrationAction(identityProviderId: String, error: String, completion: @escaping (Result<Void, Error>) -> Void)
-  /// Custom Registration Callbacks
-  func submitCustomRegistrationSuccessAction(identityProviderId: String, data: String?, completion: @escaping (Result<Void, Error>) -> Void)
-  func submitCustomRegistrationErrorAction(identityProviderId: String, error: String, completion: @escaping (Result<Void, Error>) -> Void)
   /// Fingerprint Callbacks
   func fingerprintFallbackToPin(completion: @escaping (Result<Void, Error>) -> Void)
   func fingerprintDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void)
@@ -671,6 +669,7 @@ class UserClientApiSetup {
     } else {
       authenticateUserImplicitlyChannel.setMessageHandler(nil)
     }
+    /// Custom Registration Callbacks
     let submitCustomRegistrationActionChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.submitCustomRegistrationAction", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       submitCustomRegistrationActionChannel.setMessageHandler { message, reply in
@@ -706,43 +705,6 @@ class UserClientApiSetup {
       }
     } else {
       cancelCustomRegistrationActionChannel.setMessageHandler(nil)
-    }
-    /// Custom Registration Callbacks
-    let submitCustomRegistrationSuccessActionChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.submitCustomRegistrationSuccessAction", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      submitCustomRegistrationSuccessActionChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let identityProviderIdArg = args[0] as! String
-        let dataArg = args[1] as? String
-        api.submitCustomRegistrationSuccessAction(identityProviderId: identityProviderIdArg, data: dataArg) { result in
-          switch result {
-            case .success:
-              reply(wrapResult(nil))
-            case .failure(let error):
-              reply(wrapError(error))
-          }
-        }
-      }
-    } else {
-      submitCustomRegistrationSuccessActionChannel.setMessageHandler(nil)
-    }
-    let submitCustomRegistrationErrorActionChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.submitCustomRegistrationErrorAction", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      submitCustomRegistrationErrorActionChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let identityProviderIdArg = args[0] as! String
-        let errorArg = args[1] as! String
-        api.submitCustomRegistrationErrorAction(identityProviderId: identityProviderIdArg, error: errorArg) { result in
-          switch result {
-            case .success:
-              reply(wrapResult(nil))
-            case .failure(let error):
-              reply(wrapError(error))
-          }
-        }
-      }
-    } else {
-      submitCustomRegistrationErrorActionChannel.setMessageHandler(nil)
     }
     /// Fingerprint Callbacks
     let fingerprintFallbackToPinChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.fingerprintFallbackToPin", binaryMessenger: binaryMessenger, codec: codec)
