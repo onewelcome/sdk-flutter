@@ -83,7 +83,7 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
           );
       }
     } else {
-      bool isSuccess = await Onegini.instance.userClient
+      await Onegini.instance.userClient
           .validatePinWithPolicy(pin)
           .catchError((error) {
         if (error is PlatformException) {
@@ -91,18 +91,16 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
           showFlutterToast(error.message);
         }
       });
-      if (isSuccess != null && isSuccess) {
-        Navigator.of(context)
-          ..pop()
-          ..push(
-            MaterialPageRoute(
-                builder: (context) => PinRequestScreen(
-                      confirmation: true,
-                      previousCode: pin,
-                      customAuthenticator: this.widget.customAuthenticator,
-                    )),
-          );
-      }
+      Navigator.of(context)
+        ..pop()
+        ..push(
+          MaterialPageRoute(
+              builder: (context) => PinRequestScreen(
+                    confirmation: true,
+                    previousCode: pin,
+                    customAuthenticator: this.widget.customAuthenticator,
+                  )),
+        );
     }
   }
 

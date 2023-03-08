@@ -37,7 +37,8 @@ class OneginiMethodsWrapper @Inject constructor(
     private val resourceHelper: ResourceHelper,
     private val setPreferredAuthenticatorUseCase: SetPreferredAuthenticatorUseCase,
     private val startAppUseCase: StartAppUseCase,
-    private val submitCustomRegistrationActionUseCase: SubmitCustomRegistrationActionUseCase
+    private val submitCustomRegistrationActionUseCase: SubmitCustomRegistrationActionUseCase,
+    private val validatePinWithPolicyUseCase: ValidatePinWithPolicyUseCase,
 ) {
 
     fun registerUser(call: MethodCall, result: MethodChannel.Result) {
@@ -146,6 +147,10 @@ class OneginiMethodsWrapper @Inject constructor(
 
     fun isAuthenticatorRegistered(call: MethodCall, result: MethodChannel.Result) {
         isAuthenticatorRegisteredUseCase(call, result)
+    }
+
+    fun validatePinWithPolicy(call: MethodCall, result: MethodChannel.Result) {
+        validatePinWithPolicyUseCase(call, result)
     }
 
     fun logout(result: MethodChannel.Result) {
