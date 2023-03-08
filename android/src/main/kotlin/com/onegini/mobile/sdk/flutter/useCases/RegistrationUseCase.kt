@@ -23,7 +23,7 @@ class RegistrationUseCase @Inject constructor(private val oneginiSDK: OneginiSDK
             callback(Result.failure(SdkError(IDENTITY_PROVIDER_NOT_FOUND).pigeonError()))
         }
 
-        val registerScopes = scopes?.toTypedArray() ?: emptyArray()
+        val registerScopes = scopes?.toTypedArray()
 
         register(identityProvider, registerScopes, callback)
     }
