@@ -244,12 +244,15 @@ open class PigeonInterface : UserClientApi {
   }
 
   override fun pinDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    // TODO NEEDS OWN USE CASE
+    PinRequestHandler.CALLBACK?.denyAuthenticationRequest()
+    callback(Result.success(Unit))
   }
 
   override fun pinAcceptAuthenticationRequest(pin: String, callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    // TODO NEEDS OWN USE CASE
     PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin.toCharArray())
+    callback(Result.success(Unit))
   }
 
   override fun pinDenyRegistrationRequest(callback: (Result<Unit>) -> Unit) {
@@ -258,6 +261,7 @@ open class PigeonInterface : UserClientApi {
 
   override fun pinAcceptRegistrationRequest(pin: String, isCustomAuthenticator: Boolean, callback: (Result<Unit>) -> Unit) {
 //    TODO("Not yet implemented")
+    PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin.toCharArray())
   }
 
   override fun cancelBrowserRegistration(callback: (Result<Unit>) -> Unit) {
