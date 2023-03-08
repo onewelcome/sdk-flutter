@@ -11,8 +11,6 @@ import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.models.CustomRegistrationModel
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
-import io.flutter.plugin.common.MethodChannel
 
 class CustomTwoStepRegistrationActionImpl(private val providerId: String) : OneginiCustomTwoStepRegistrationAction, CustomRegistrationAction {
     var callback: OneginiCustomRegistrationCallback? = null
@@ -41,19 +39,25 @@ class CustomTwoStepRegistrationActionImpl(private val providerId: String) : Oneg
         return providerId
     }
 
-    override fun returnSuccess(result: String?, resultChannel: MethodChannel.Result) {
+    override fun returnSuccess(result: String?, pigeonChannel: (Result<Unit>) -> Unit) {
         when (callback) {
-            null -> SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).flutterError(resultChannel)
-            else -> this.callback?.returnSuccess(result)
+            null -> pigeonChannel(Result.failure(SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).pigeonError()))
+            else -> {
+                this.callback?.returnSuccess(result)
+                pigeonChannel(Result.success(Unit))
+            }
         }
 
         callback = null
     }
 
-    override fun returnError(exception: Exception?, resultChannel: MethodChannel.Result) {
+    override fun returnError(exception: Exception?, pigeonChannel: (Result<Unit>) -> Unit) {
         when (callback) {
-            null -> SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).flutterError(resultChannel)
-            else -> this.callback?.returnError(exception)
+            null -> pigeonChannel(Result.failure(SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).pigeonError()))
+            else -> {
+                this.callback?.returnError(exception)
+                pigeonChannel(Result.success(Unit))
+            }
         }
 
         callback = null
