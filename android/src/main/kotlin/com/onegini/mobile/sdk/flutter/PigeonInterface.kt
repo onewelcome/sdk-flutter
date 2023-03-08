@@ -1,8 +1,10 @@
 package com.onegini.mobile.sdk.flutter
 
 import com.onegini.mobile.sdk.flutter.constants.Constants
+import com.onegini.mobile.sdk.flutter.handlers.BrowserRegistrationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
+import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
@@ -244,24 +246,33 @@ open class PigeonInterface : UserClientApi {
   }
 
   override fun pinDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    // TODO NEEDS OWN USE CASE
+    PinAuthenticationRequestHandler.CALLBACK?.denyAuthenticationRequest()
+    callback(Result.success(Unit))
   }
 
   override fun pinAcceptAuthenticationRequest(pin: String, callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
-    PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin.toCharArray())
+    // TODO NEEDS OWN USE CASE
+    PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin.toCharArray())
+    callback(Result.success(Unit))
   }
 
   override fun pinDenyRegistrationRequest(callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    // TODO NEEDS OWN USE CASE
+    PinRequestHandler.CALLBACK?.denyAuthenticationRequest()
+    callback(Result.success(Unit))
   }
 
-  override fun pinAcceptRegistrationRequest(pin: String, isCustomAuthenticator: Boolean, callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+  override fun pinAcceptRegistrationRequest(pin: String, callback: (Result<Unit>) -> Unit) {
+    // TODO NEEDS OWN USE CASE
+    PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin.toCharArray())
+    callback(Result.success(Unit))
   }
 
   override fun cancelBrowserRegistration(callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    // TODO NEEDS OWN USE CASE
+    BrowserRegistrationRequestHandler.onRegistrationCanceled()
+    callback(Result.success(Unit))
   }
 
   private fun <T> flutterCallback(callback: (Result<T>)  -> Unit, result: Result<T>) {

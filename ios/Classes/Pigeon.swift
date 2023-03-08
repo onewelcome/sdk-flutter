@@ -279,7 +279,7 @@ protocol UserClientApi {
   func pinAcceptAuthenticationRequest(pin: String, completion: @escaping (Result<Void, Error>) -> Void)
   /// Pin Registration Callbacks
   func pinDenyRegistrationRequest(completion: @escaping (Result<Void, Error>) -> Void)
-  func pinAcceptRegistrationRequest(pin: String, isCustomAuthenticator: Bool, completion: @escaping (Result<Void, Error>) -> Void)
+  func pinAcceptRegistrationRequest(pin: String, completion: @escaping (Result<Void, Error>) -> Void)
   /// Browser Registration Callbacks
   func cancelBrowserRegistration(completion: @escaping (Result<Void, Error>) -> Void)
 }
@@ -837,8 +837,7 @@ class UserClientApiSetup {
       pinAcceptRegistrationRequestChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
         let pinArg = args[0] as! String
-        let isCustomAuthenticatorArg = args[1] as! Bool
-        api.pinAcceptRegistrationRequest(pin: pinArg, isCustomAuthenticator: isCustomAuthenticatorArg) { result in
+        api.pinAcceptRegistrationRequest(pin: pinArg) { result in
           switch result {
             case .success:
               reply(wrapResult(nil))

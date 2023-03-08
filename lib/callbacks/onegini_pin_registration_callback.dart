@@ -12,9 +12,9 @@ class OneginiPinRegistrationCallback {
   }
 
   /// Accepts pin registration and sent [pin] to the OneginiSdk.
-  Future<void> acceptAuthenticationRequest(BuildContext? context, String pin, [bool isCustomAuthenticator=false]) async {
+  Future<void> acceptAuthenticationRequest(BuildContext? context, String pin) async {
     Onegini.instance.setEventContext(context);
 
-    await api.pinAcceptRegistrationRequest(pin, isCustomAuthenticator);
+    await api.pinAcceptRegistrationRequest(pin);
   }
 }

@@ -1027,12 +1027,12 @@ class UserClientApi {
     }
   }
 
-  Future<void> pinAcceptRegistrationRequest(String arg_pin, bool arg_isCustomAuthenticator) async {
+  Future<void> pinAcceptRegistrationRequest(String arg_pin) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.pinAcceptRegistrationRequest', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_pin, arg_isCustomAuthenticator]) as List<Object?>?;
+        await channel.send(<Object?>[arg_pin]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
