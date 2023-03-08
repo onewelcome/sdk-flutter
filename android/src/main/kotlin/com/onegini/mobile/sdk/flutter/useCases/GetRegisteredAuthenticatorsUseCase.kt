@@ -1,11 +1,8 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
-import com.google.gson.GsonBuilder
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticator
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -14,30 +11,28 @@ class GetRegisteredAuthenticatorsUseCase @Inject constructor(
   private val oneginiSDK: OneginiSDK,
   private val getUserProfileUseCase: GetUserProfileUseCase
 ) {
-  operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
-    val profileId = call.argument<String>("profileId")
-      ?: return SdkError(METHOD_ARGUMENT_NOT_FOUND).flutterError(result)
-
+  operator fun invoke(profileId: String): Result<List<OWAuthenticator>> {
     val userProfile = try {
       getUserProfileUseCase(profileId)
     } catch (error: SdkError) {
-      return error.flutterError(result)
+      return Result.failure(error)
     }
 
-    val gson = GsonBuilder().serializeNulls().create()
     val registeredAuthenticators = oneginiSDK.oneginiClient.userClient.getRegisteredAuthenticators(userProfile)
-    val authenticators: ArrayList<Map<String, String>> = ArrayList()
-    for (registeredAuthenticator in registeredAuthenticators) {
-      val map = mutableMapOf<String, String>()
-      map["id"] = registeredAuthenticator.id
-      map["name"] = registeredAuthenticator.name
+    val authenticators = mutableListOf<OWAuthenticator>()
 
-      /* TODO Extend this callback with additional attributes
-       * type, isPreferred, isRegistered
-       * https://onewelcome.atlassian.net/browse/FP-46
-       */
-      authenticators.add(map)
+    for (registeredAuthenticator in registeredAuthenticators) {
+      val authenticator = OWAuthenticator(
+        registeredAuthenticator.id,
+        registeredAuthenticator.name,
+        registeredAuthenticator.isRegistered,
+        registeredAuthenticator.isPreferred,
+        registeredAuthenticator.type.toLong()
+      )
+
+      authenticators.add(authenticator)
     }
-    result.success(gson.toJson(authenticators))
+
+    return Result.success(authenticators)
   }
 }
