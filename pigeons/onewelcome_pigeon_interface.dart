@@ -150,6 +150,48 @@ abstract class UserClientApi {
 
   @async
   void cancelCustomRegistrationAction(String identityProviderId, String error);
+
+  /// Custom Registration Callbacks
+  @async
+  void submitCustomRegistrationSuccessAction(String identityProviderId, String? data);
+
+  @async
+  void submitCustomRegistrationErrorAction(String identityProviderId, String error);
+
+  /// Fingerprint Callbacks
+  @async
+  void fingerprintFallbackToPin();
+
+  @async
+  void fingerprintDenyAuthenticationRequest();
+
+  @async
+  void fingerprintAcceptAuthenticationRequest();
+
+  /// OTP Callbacks
+  @async
+  void otpDenyAuthenticationRequest();
+
+  @async
+  void otpAcceptAuthenticationRequest();
+
+  /// Pin Authentication Callbacks
+  @async
+  void pinDenyAuthenticationRequest();
+
+  @async
+  void pinAcceptAuthenticationRequest(String? pin);
+
+  /// Pin Registration Callbacks
+  @async
+  void pinDenyRegistrationRequest();
+
+  @async
+  void pinAcceptRegistrationRequest(String? pin, bool isCustomAuthenticator);
+
+  /// Browser Registration Callbacks
+  @async
+  void cancelBrowserRegistration();
 }
 
 @HostApi()

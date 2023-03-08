@@ -93,7 +93,7 @@ open class PigeonInterface : UserClientApi {
   @Inject
   lateinit var submitCustomRegistrationActionUseCase: SubmitCustomRegistrationActionUseCase
 
-  // Example function on how it could be initiated on Flutter send to Native
+  // FIXME REMOVE ME AT THE END; Example function on how it could be initiated on Flutter send to Native
   override fun fetchUserProfiles(callback: (Result<List<OWUserProfile>>) -> Unit) {
     val a = Result.success(listOf(OWUserProfile("ghalo")))
     flutterCallback(callback, a)
@@ -104,11 +104,11 @@ open class PigeonInterface : UserClientApi {
 
   override fun registerUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit) {
     registrationUseCase(identityProviderId, scopes, callback)
-//    flutterCallback(callback, result)
   }
 
-  override fun handleRegisteredUserUrl(url: String?, signInType: Long, callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+  override fun handleRegisteredUserUrl(url: String, signInType: Long, callback: (Result<Unit>) -> Unit) {
+    val result = handleRegisteredUrlUseCase(url, signInType)
+    flutterCallback(callback, result)
   }
 
   override fun getIdentityProviders(callback: (Result<List<OWIdentityProvider>>) -> Unit) {
@@ -117,27 +117,31 @@ open class PigeonInterface : UserClientApi {
   }
 
   override fun deregisterUser(profileId: String, callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    deregisterUserUseCase(profileId, callback)
   }
 
   override fun getRegisteredAuthenticators(profileId: String, callback: (Result<List<OWAuthenticator>>) -> Unit) {
-//    TODO("Not yet implemented")
+    val result = getRegisteredAuthenticatorsUseCase(profileId)
+    flutterCallback(callback, result)
   }
 
   override fun getAllAuthenticators(profileId: String, callback: (Result<List<OWAuthenticator>>) -> Unit) {
-//    TODO("Not yet implemented")
+    val result = getAllAuthenticatorsUseCase(profileId)
+    flutterCallback(callback, result)
   }
 
   override fun getAuthenticatedUserProfile(callback: (Result<OWUserProfile>) -> Unit) {
-//    TODO("Not yet implemented")
+    val result = getAuthenticatedUserProfileUseCase()
+    flutterCallback(callback, result)
   }
 
   override fun authenticateUser(profileId: String, registeredAuthenticatorId: String?, callback: (Result<OWRegistrationResponse>) -> Unit) {
-//    TODO("Not yet implemented")
+    authenticateUserUseCase(profileId, registeredAuthenticatorId, callback)
   }
 
   override fun getNotRegisteredAuthenticators(profileId: String, callback: (Result<List<OWAuthenticator>>) -> Unit) {
-//    TODO("Not yet implemented")
+    val result = getNotRegisteredAuthenticatorsUseCase(profileId)
+    flutterCallback(callback, result)
   }
 
   override fun changePin(callback: (Result<Unit>) -> Unit) {
@@ -145,19 +149,20 @@ open class PigeonInterface : UserClientApi {
   }
 
   override fun setPreferredAuthenticator(authenticatorId: String, callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    val result = setPreferredAuthenticatorUseCase(authenticatorId)
+    flutterCallback(callback, result)
   }
 
   override fun deregisterAuthenticator(authenticatorId: String, callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    deregisterAuthenticatorUseCase(authenticatorId, callback)
   }
 
   override fun registerAuthenticator(authenticatorId: String, callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    registerAuthenticatorUseCase(authenticatorId, callback)
   }
 
   override fun logout(callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    logoutUseCase(callback)
   }
 
   override fun mobileAuthWithOtp(data: String, callback: (Result<String?>) -> Unit) {
@@ -169,15 +174,18 @@ open class PigeonInterface : UserClientApi {
   }
 
   override fun getAccessToken(callback: (Result<String>) -> Unit) {
-//    TODO("Not yet implemented")
+    val result = getAccessTokenUseCase()
+    flutterCallback(callback, result)
   }
 
   override fun getRedirectUrl(callback: (Result<String>) -> Unit) {
-//    TODO("Not yet implemented")
+    val result = getRedirectUrlUseCase()
+    flutterCallback(callback, result)
   }
 
   override fun getUserProfiles(callback: (Result<List<OWUserProfile>>) -> Unit) {
-//    TODO("Not yet implemented")
+    val result = getUserProfilesUseCase()
+    flutterCallback(callback, result)
   }
 
   override fun validatePinWithPolicy(pin: String, callback: (Result<Unit>) -> Unit) {
@@ -185,18 +193,67 @@ open class PigeonInterface : UserClientApi {
   }
 
   override fun authenticateDevice(scopes: List<String>?, callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    authenticateDeviceUseCase(scopes, callback)
   }
 
   override fun authenticateUserImplicitly(profileId: String, scopes: List<String>?, callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    authenticateUserImplicitlyUseCase(profileId, scopes, callback)
   }
 
   override fun submitCustomRegistrationAction(identityProviderId: String, data: String?, callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    submitCustomRegistrationActionUseCase(identityProviderId, data, callback)
   }
 
   override fun cancelCustomRegistrationAction(identityProviderId: String, error: String, callback: (Result<Unit>) -> Unit) {
+    cancelCustomRegistrationActionUseCase(identityProviderId, error, callback)
+  }
+
+  // Callback functions
+  override fun submitCustomRegistrationSuccessAction(identityProviderId: String, data: String?, callback: (Result<Unit>) -> Unit) {
+//    TODO("Not yet implemented")
+  }
+
+  override fun submitCustomRegistrationErrorAction(identityProviderId: String, error: String, callback: (Result<Unit>) -> Unit) {
+//    TODO("Not yet implemented")
+  }
+
+  override fun fingerprintFallbackToPin(callback: (Result<Unit>) -> Unit) {
+//    TODO("Not yet implemented")
+  }
+
+  override fun fingerprintDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
+//    TODO("Not yet implemented")
+  }
+
+  override fun fingerprintAcceptAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
+//    TODO("Not yet implemented")
+  }
+
+  override fun otpDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
+//    TODO("Not yet implemented")
+  }
+
+  override fun otpAcceptAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
+//    TODO("Not yet implemented")
+  }
+
+  override fun pinDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
+//    TODO("Not yet implemented")
+  }
+
+  override fun pinAcceptAuthenticationRequest(pin: String?, callback: (Result<Unit>) -> Unit) {
+//    TODO("Not yet implemented")
+  }
+
+  override fun pinDenyRegistrationRequest(callback: (Result<Unit>) -> Unit) {
+//    TODO("Not yet implemented")
+  }
+
+  override fun pinAcceptRegistrationRequest(pin: String?, isCustomAuthenticator: Boolean, callback: (Result<Unit>) -> Unit) {
+//    TODO("Not yet implemented")
+  }
+
+  override fun cancelBrowserRegistration(callback: (Result<Unit>) -> Unit) {
 //    TODO("Not yet implemented")
   }
 
