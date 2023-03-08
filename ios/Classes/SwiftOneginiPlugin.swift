@@ -235,11 +235,15 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func authenticateDevice(scopes: [String]?, completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.authenticateDevice(scopes) { result in
+            completion(result.mapError{$0})
+        }
     }
 
     func authenticateUserImplicitly(profileId: String, scopes: [String]?, completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.authenticateUserImplicitly(profileId, scopes) { result in
+            completion(result.mapError{$0})
+        }
     }
     
     // FIXME: Remove when deleted from api
@@ -283,10 +287,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             
             // base
         case Constants.Routes.startApp: startApp(call, result)
-            
-            // auth
-        case Constants.Routes.authenticateUserImplicitly: authenticateUserImplicitly(call, result)
-        case Constants.Routes.authenticateDevice: authenticateDevice(call, result)
             
             // otp
         case Constants.Routes.handleMobileAuthWithOtp: handleMobileAuthWithOtp(call, result)

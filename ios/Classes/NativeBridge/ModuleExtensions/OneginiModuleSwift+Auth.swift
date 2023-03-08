@@ -14,21 +14,13 @@ extension OneginiModuleSwift {
     }
 
     public func authenticateUserImplicitly(_ profileId: String, _ scopes: [String]?,
-                                           _ completion: @escaping FlutterResult) {
+                                           completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let profile = ONGClient.sharedInstance().userClient.userProfiles().first(where: { $0.profileId == profileId }) else {
-            completion(SdkError(.noUserProfileIsAuthenticated).flutterError())
+            completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
             return
         }
 
-        bridgeConnector.toResourceFetchHandler.authenticateUserImplicitly(profile, scopes: scopes) {
-            result -> Void in
-            switch result {
-            case .success(let response):
-                completion(response)
-            case .failure(let error):
-                completion(error.flutterError())
-            }
-        }
+        bridgeConnector.toResourceFetchHandler.authenticateUserImplicitly(profile, scopes: scopes, completion: completion)
     }
 
     func runSingleSignOn(_ path: String, completion: @escaping (Result<OWAppToWebSingleSignOn, Error>) -> Void) {
