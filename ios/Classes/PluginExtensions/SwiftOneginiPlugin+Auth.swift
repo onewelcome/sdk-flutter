@@ -5,7 +5,6 @@ import Flutter
 protocol OneginiPluginAuthProtocol {
 
     func authenticateUserImplicitly(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
-    func denyPinAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 
 }
 
@@ -32,9 +31,5 @@ extension SwiftOneginiPlugin: OneginiPluginAuthProtocol {
         guard let _arg = call.arguments as! [String: Any]? else { return }
         let _scopes = _arg["scope"] as? [String]
         OneginiModuleSwift.sharedInstance.authenticateDevice(_scopes, callback: result)
-    }
-
-    func denyPinAuthenticationRequest(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        OneginiModuleSwift.sharedInstance.cancelPinAuth()
     }
 }

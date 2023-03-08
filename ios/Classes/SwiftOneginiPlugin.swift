@@ -95,7 +95,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func pinDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.cancelPinAuth()
+        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-49
+        completion(.success(()))
     }
 
     func pinAcceptAuthenticationRequest(pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -105,7 +107,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func pinDenyRegistrationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.cancelPinAuth()
+        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-49
+        completion(.success(()))
     }
 
     func pinAcceptRegistrationRequest(pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -272,8 +276,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             
         case Constants.Routes.cancelBrowserRegistration: cancelBrowserRegistration(call, result)
             
-        case Constants.Routes.denyPinRegistrationRequest: denyPinRegistrationRequest(call, result)
-            
             // custom registration
         case Constants.Routes.submitCustomRegistrationAction: submitCustomRegistrationAction(call, result)
         case Constants.Routes.cancelCustomRegistrationAction: cancelCustomRegistrationAction(call, result)
@@ -281,8 +283,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             // auth
         case Constants.Routes.authenticateUserImplicitly: authenticateUserImplicitly(call, result)
         case Constants.Routes.authenticateDevice: authenticateDevice(call, result)
-
-        case Constants.Routes.denyPinAuthenticationRequest: denyPinAuthenticationRequest(call, result)
             
             // fingerprint
         case Constants.Routes.acceptFingerprintAuthenticationRequest: acceptFingerprintAuthenticationRequest(call, result)
