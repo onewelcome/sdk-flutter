@@ -276,10 +276,10 @@ protocol UserClientApi {
   func otpAcceptAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void)
   /// Pin Authentication Callbacks
   func pinDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void)
-  func pinAcceptAuthenticationRequest(pin: String?, completion: @escaping (Result<Void, Error>) -> Void)
+  func pinAcceptAuthenticationRequest(pin: String, completion: @escaping (Result<Void, Error>) -> Void)
   /// Pin Registration Callbacks
   func pinDenyRegistrationRequest(completion: @escaping (Result<Void, Error>) -> Void)
-  func pinAcceptRegistrationRequest(pin: String?, isCustomAuthenticator: Bool, completion: @escaping (Result<Void, Error>) -> Void)
+  func pinAcceptRegistrationRequest(pin: String, isCustomAuthenticator: Bool, completion: @escaping (Result<Void, Error>) -> Void)
   /// Browser Registration Callbacks
   func cancelBrowserRegistration(completion: @escaping (Result<Void, Error>) -> Void)
 }
@@ -803,7 +803,7 @@ class UserClientApiSetup {
     if let api = api {
       pinAcceptAuthenticationRequestChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pinArg = args[0] as? String
+        let pinArg = args[0] as! String
         api.pinAcceptAuthenticationRequest(pin: pinArg) { result in
           switch result {
             case .success:
@@ -836,7 +836,7 @@ class UserClientApiSetup {
     if let api = api {
       pinAcceptRegistrationRequestChannel.setMessageHandler { message, reply in
         let args = message as! [Any?]
-        let pinArg = args[0] as? String
+        let pinArg = args[0] as! String
         let isCustomAuthenticatorArg = args[1] as! Bool
         api.pinAcceptRegistrationRequest(pin: pinArg, isCustomAuthenticator: isCustomAuthenticatorArg) { result in
           switch result {

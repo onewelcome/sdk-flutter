@@ -290,10 +290,10 @@ interface UserClientApi {
   fun otpAcceptAuthenticationRequest(callback: (Result<Unit>) -> Unit)
   /** Pin Authentication Callbacks */
   fun pinDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit)
-  fun pinAcceptAuthenticationRequest(pin: String?, callback: (Result<Unit>) -> Unit)
+  fun pinAcceptAuthenticationRequest(pin: String, callback: (Result<Unit>) -> Unit)
   /** Pin Registration Callbacks */
   fun pinDenyRegistrationRequest(callback: (Result<Unit>) -> Unit)
-  fun pinAcceptRegistrationRequest(pin: String?, isCustomAuthenticator: Boolean, callback: (Result<Unit>) -> Unit)
+  fun pinAcceptRegistrationRequest(pin: String, isCustomAuthenticator: Boolean, callback: (Result<Unit>) -> Unit)
   /** Browser Registration Callbacks */
   fun cancelBrowserRegistration(callback: (Result<Unit>) -> Unit)
 
@@ -922,7 +922,7 @@ interface UserClientApi {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
             val args = message as List<Any?>
-            val pinArg = args[0] as? String
+            val pinArg = args[0] as String
             api.pinAcceptAuthenticationRequest(pinArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
@@ -960,7 +960,7 @@ interface UserClientApi {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
             val args = message as List<Any?>
-            val pinArg = args[0] as? String
+            val pinArg = args[0] as String
             val isCustomAuthenticatorArg = args[1] as Boolean
             api.pinAcceptRegistrationRequest(pinArg, isCustomAuthenticatorArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()

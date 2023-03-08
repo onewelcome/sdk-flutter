@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:onegini/constants/constants.dart';
 import 'package:onegini/pigeon.dart';
 
 import '../onegini.dart';
