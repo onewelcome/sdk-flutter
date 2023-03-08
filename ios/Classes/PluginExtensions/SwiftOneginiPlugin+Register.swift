@@ -5,8 +5,6 @@ import Flutter
 
 
 protocol OneginiPluginRegisterProtocol {
-    
-    func cancelBrowserRegistration(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
 
     func submitCustomRegistrationAction(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
     func cancelCustomRegistrationAction(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) -> Void
@@ -15,9 +13,6 @@ protocol OneginiPluginRegisterProtocol {
 
 extension SwiftOneginiPlugin: OneginiPluginRegisterProtocol {
 
-    func cancelBrowserRegistration(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
-        OneginiModuleSwift.sharedInstance.cancelBrowserRegistration()
-    }
 
     func submitCustomRegistrationAction(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
         guard let args = call.arguments as? [String: Any] else { return; } // FIXME: Throw exception here

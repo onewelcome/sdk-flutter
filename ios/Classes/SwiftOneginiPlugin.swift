@@ -119,7 +119,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func cancelBrowserRegistration(completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.cancelBrowserRegistration()
+        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-??
+        completion(.success(()))
     }
 
     func registerUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
@@ -271,11 +273,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             
             // base
         case Constants.Routes.startApp: startApp(call, result)
-            
-            // register
-            
-        case Constants.Routes.cancelBrowserRegistration: cancelBrowserRegistration(call, result)
-            
+              
             // custom registration
         case Constants.Routes.submitCustomRegistrationAction: submitCustomRegistrationAction(call, result)
         case Constants.Routes.cancelCustomRegistrationAction: cancelCustomRegistrationAction(call, result)
