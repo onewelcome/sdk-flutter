@@ -1,25 +1,13 @@
-import 'package:onegini/constants/constants.dart';
-
-import '../onegini.dart';
+import 'package:onegini/pigeon.dart';
 
 class OneginiCustomRegistrationCallback {
-    Future<void> submitSuccessAction(String identityProviderId, String? data) async {
-        await Onegini.instance.channel.invokeMethod(
-            Constants.submitCustomRegistrationAction,
-            <String, String?>{
-                'identityProviderId': identityProviderId,
-                'data': data
-            }
-        );
-    }
+  final api = UserClientApi();
 
-    Future<void> submitErrorAction(String identityProviderId, String error) async {
-        await Onegini.instance.channel.invokeMethod(
-            Constants.cancelCustomRegistrationAction,
-            <String, String>{
-                'identityProviderId': identityProviderId,
-                'error': error,
-            }
-        );
-    }
+  Future<void> submitSuccessAction(String identityProviderId, String? data) async {
+    await api.submitCustomRegistrationAction(identityProviderId, data);
+  }
+
+  Future<void> submitErrorAction(String identityProviderId, String error) async {
+    await api.cancelCustomRegistrationAction(identityProviderId, error);
+  }
 }

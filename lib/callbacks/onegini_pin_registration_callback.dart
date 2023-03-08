@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:onegini/constants/constants.dart';
+import 'package:onegini/pigeon.dart';
 
 import '../onegini.dart';
 
 /// A callback for pin REGISTRATION.
 class OneginiPinRegistrationCallback {
+  final api = UserClientApi();
   /// Cancels pin registration request.
   Future<void> denyAuthenticationRequest() async {
-    await Onegini.instance.channel
-        .invokeMethod(Constants.denyPinRegistrationRequest);
+    await api.pinDenyRegistrationRequest();
   }
 
   /// Accepts pin registration and sent [pin] to the OneginiSdk.
@@ -16,10 +16,7 @@ class OneginiPinRegistrationCallback {
   Future<void> acceptAuthenticationRequest(BuildContext? context,
       {String? pin, bool isCustomAuthenticator = false}) async {
     Onegini.instance.setEventContext(context);
-    await Onegini.instance.channel
-        .invokeMethod(Constants.acceptPinRegistrationRequest, <String, String?>{
-      'pin': pin,
-      'isCustomAuth': isCustomAuthenticator ? "true" : null,
-    });
+
+    await api.pinAcceptRegistrationRequest(pin, isCustomAuthenticator);
   }
 }

@@ -7,33 +7,32 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class DeregisterAuthenticatorUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
-  operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
-    val authenticatorId = call.argument<String>("authenticatorId")
-      ?: return SdkError(METHOD_ARGUMENT_NOT_FOUND).flutterError(result)
-
+  operator fun invoke(authenticatorId: String, callback: (Result<Unit>) -> Unit) {
     val userProfile = oneginiSDK.oneginiClient.userClient.authenticatedUserProfile
-      ?: return SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).flutterError(result)
+      ?: return callback(Result.failure(SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).pigeonError()))
 
     val authenticator = getAuthenticatorById(authenticatorId, userProfile)
-      ?: return SdkError(AUTHENTICATOR_NOT_FOUND).flutterError(result)
+      ?: return callback(Result.failure(SdkError(AUTHENTICATOR_NOT_FOUND).pigeonError()))
 
     oneginiSDK.oneginiClient.userClient.deregisterAuthenticator(authenticator, object : OneginiAuthenticatorDeregistrationHandler {
       override fun onSuccess() {
-        result.success(true)
+        callback(Result.success(Unit))
       }
 
       override fun onError(oneginiAuthenticatorDeregistrationError: OneginiAuthenticatorDeregistrationError) {
-        SdkError(
-          code = oneginiAuthenticatorDeregistrationError.errorType,
-          message = oneginiAuthenticatorDeregistrationError.message
-        ).flutterError(result)
+        callback(
+          Result.failure(
+            SdkError(
+              code = oneginiAuthenticatorDeregistrationError.errorType,
+              message = oneginiAuthenticatorDeregistrationError.message
+            ).pigeonError()
+          )
+        )
       }
     }
     )
@@ -49,5 +48,4 @@ class DeregisterAuthenticatorUseCase @Inject constructor(private val oneginiSDK:
     }
     return authenticator
   }
-
 }

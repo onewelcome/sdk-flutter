@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:onegini/constants/constants.dart';
+import 'package:onegini/pigeon.dart';
 
 import '../onegini.dart';
 
 /// A callback for mobile authentication with OTP
 class OneginiOtpAcceptDenyCallback {
+  final api = UserClientApi();
+
   /// Cancels OTP authentication.
   Future<void> denyAuthenticationRequest() async {
-    await Onegini.instance.channel
-        .invokeMethod(Constants.denyOtpAuthenticationRequest);
+    await api.otpDenyAuthenticationRequest();
   }
 
   /// Accepts OTP authentication.
   Future<void> acceptAuthenticationRequest(BuildContext? context) async {
     Onegini.instance.setEventContext(context);
-    await Onegini.instance.channel
-        .invokeMethod(Constants.acceptOtpAuthenticationRequest);
+
+    await api.otpAcceptAuthenticationRequest();
   }
 }

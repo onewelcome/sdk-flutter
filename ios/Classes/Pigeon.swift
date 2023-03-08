@@ -54,11 +54,11 @@ struct OWUserProfile {
 /// Generated class from Pigeon that represents data sent in messages.
 struct OWCustomInfo {
   var status: Int32
-  var data: String
+  var data: String? = nil
 
   static func fromList(_ list: [Any?]) -> OWCustomInfo? {
     let status = list[0] as! Int32
-    let data = list[1] as! String
+    let data = list[1] as? String 
 
     return OWCustomInfo(
       status: status,
@@ -264,6 +264,24 @@ protocol UserClientApi {
   func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, Error>) -> Void)
   func authenticateDevice(scopes: [String]?, completion: @escaping (Result<Void, Error>) -> Void)
   func authenticateUserImplicitly(profileId: String, scopes: [String]?, completion: @escaping (Result<Void, Error>) -> Void)
+  /// Custom Registration Callbacks
+  func submitCustomRegistrationAction(identityProviderId: String, data: String?, completion: @escaping (Result<Void, Error>) -> Void)
+  func cancelCustomRegistrationAction(identityProviderId: String, error: String, completion: @escaping (Result<Void, Error>) -> Void)
+  /// Fingerprint Callbacks
+  func fingerprintFallbackToPin(completion: @escaping (Result<Void, Error>) -> Void)
+  func fingerprintDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void)
+  func fingerprintAcceptAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void)
+  /// OTP Callbacks
+  func otpDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void)
+  func otpAcceptAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void)
+  /// Pin Authentication Callbacks
+  func pinDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void)
+  func pinAcceptAuthenticationRequest(pin: String?, completion: @escaping (Result<Void, Error>) -> Void)
+  /// Pin Registration Callbacks
+  func pinDenyRegistrationRequest(completion: @escaping (Result<Void, Error>) -> Void)
+  func pinAcceptRegistrationRequest(pin: String?, isCustomAuthenticator: Bool, completion: @escaping (Result<Void, Error>) -> Void)
+  /// Browser Registration Callbacks
+  func cancelBrowserRegistration(completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -650,6 +668,203 @@ class UserClientApiSetup {
       }
     } else {
       authenticateUserImplicitlyChannel.setMessageHandler(nil)
+    }
+    /// Custom Registration Callbacks
+    let submitCustomRegistrationActionChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.submitCustomRegistrationAction", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      submitCustomRegistrationActionChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let identityProviderIdArg = args[0] as! String
+        let dataArg = args[1] as? String
+        api.submitCustomRegistrationAction(identityProviderId: identityProviderIdArg, data: dataArg) { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      submitCustomRegistrationActionChannel.setMessageHandler(nil)
+    }
+    let cancelCustomRegistrationActionChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.cancelCustomRegistrationAction", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      cancelCustomRegistrationActionChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let identityProviderIdArg = args[0] as! String
+        let errorArg = args[1] as! String
+        api.cancelCustomRegistrationAction(identityProviderId: identityProviderIdArg, error: errorArg) { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      cancelCustomRegistrationActionChannel.setMessageHandler(nil)
+    }
+    /// Fingerprint Callbacks
+    let fingerprintFallbackToPinChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.fingerprintFallbackToPin", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      fingerprintFallbackToPinChannel.setMessageHandler { _, reply in
+        api.fingerprintFallbackToPin() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      fingerprintFallbackToPinChannel.setMessageHandler(nil)
+    }
+    let fingerprintDenyAuthenticationRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.fingerprintDenyAuthenticationRequest", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      fingerprintDenyAuthenticationRequestChannel.setMessageHandler { _, reply in
+        api.fingerprintDenyAuthenticationRequest() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      fingerprintDenyAuthenticationRequestChannel.setMessageHandler(nil)
+    }
+    let fingerprintAcceptAuthenticationRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.fingerprintAcceptAuthenticationRequest", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      fingerprintAcceptAuthenticationRequestChannel.setMessageHandler { _, reply in
+        api.fingerprintAcceptAuthenticationRequest() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      fingerprintAcceptAuthenticationRequestChannel.setMessageHandler(nil)
+    }
+    /// OTP Callbacks
+    let otpDenyAuthenticationRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.otpDenyAuthenticationRequest", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      otpDenyAuthenticationRequestChannel.setMessageHandler { _, reply in
+        api.otpDenyAuthenticationRequest() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      otpDenyAuthenticationRequestChannel.setMessageHandler(nil)
+    }
+    let otpAcceptAuthenticationRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.otpAcceptAuthenticationRequest", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      otpAcceptAuthenticationRequestChannel.setMessageHandler { _, reply in
+        api.otpAcceptAuthenticationRequest() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      otpAcceptAuthenticationRequestChannel.setMessageHandler(nil)
+    }
+    /// Pin Authentication Callbacks
+    let pinDenyAuthenticationRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.pinDenyAuthenticationRequest", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      pinDenyAuthenticationRequestChannel.setMessageHandler { _, reply in
+        api.pinDenyAuthenticationRequest() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      pinDenyAuthenticationRequestChannel.setMessageHandler(nil)
+    }
+    let pinAcceptAuthenticationRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.pinAcceptAuthenticationRequest", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      pinAcceptAuthenticationRequestChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pinArg = args[0] as? String
+        api.pinAcceptAuthenticationRequest(pin: pinArg) { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      pinAcceptAuthenticationRequestChannel.setMessageHandler(nil)
+    }
+    /// Pin Registration Callbacks
+    let pinDenyRegistrationRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.pinDenyRegistrationRequest", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      pinDenyRegistrationRequestChannel.setMessageHandler { _, reply in
+        api.pinDenyRegistrationRequest() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      pinDenyRegistrationRequestChannel.setMessageHandler(nil)
+    }
+    let pinAcceptRegistrationRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.pinAcceptRegistrationRequest", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      pinAcceptRegistrationRequestChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let pinArg = args[0] as? String
+        let isCustomAuthenticatorArg = args[1] as! Bool
+        api.pinAcceptRegistrationRequest(pin: pinArg, isCustomAuthenticator: isCustomAuthenticatorArg) { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      pinAcceptRegistrationRequestChannel.setMessageHandler(nil)
+    }
+    /// Browser Registration Callbacks
+    let cancelBrowserRegistrationChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.cancelBrowserRegistration", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      cancelBrowserRegistrationChannel.setMessageHandler { _, reply in
+        api.cancelBrowserRegistration() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      cancelBrowserRegistrationChannel.setMessageHandler(nil)
     }
   }
 }

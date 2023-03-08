@@ -1,13 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:onegini/model/registration_response.dart';
 import 'package:onegini/pigeon.dart';
 
 import 'constants/constants.dart';
 import 'model/oneginiAppToWebSingleSignOn.dart';
-import 'model/onegini_list_response.dart';
 import 'onegini.dart';
 
 ///Сlass with basic methods available to the developer.
@@ -24,7 +20,7 @@ class UserClient {
     List<String>? scopes,
   ) async {
     Onegini.instance.setEventContext(context);
-    return api.registerUser(identityProviderId, scopes);
+    return await api.registerUser(identityProviderId, scopes);
   }
 
   /// Start browser Registration logic
@@ -98,7 +94,9 @@ class UserClient {
   ) async {
     Onegini.instance.setEventContext(context);
 
-    await api.changePin();
+    // todo use api once the branch is merged that puts this in an usecase on android
+    // await api.changePin();
+    await Onegini.instance.channel.invokeMethod(Constants.changePin);
   }
 
   /// Registers authenticator from [getNotRegisteredAuthenticators] list.
@@ -134,7 +132,20 @@ class UserClient {
 
   /// Starts mobile authentication on web by OTP.
   Future<String?> mobileAuthWithOtp(String data) async {
-    return await api.mobileAuthWithOtp(data);
+    // todo use api once the branch is merged that puts this in an usecase on android
+    // return await api.mobileAuthWithOtp(data);
+    try {
+      var isSuccess = await Onegini.instance.channel
+          .invokeMethod(Constants.handleMobileAuthWithOtp, <String, dynamic>{
+        'data': data,
+      });
+      return isSuccess;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
+    }
   }
 
   /// Single sign on the user web page.
@@ -160,7 +171,18 @@ class UserClient {
 
   /// todo removed boolean return update docu
   Future<void> validatePinWithPolicy(String pin) async {
-    await api.validatePinWithPolicy(pin);
+    // todo use api once the branch is merged that puts this in an usecase on android
+    // await api.validatePinWithPolicy(pin);
+    try {
+      var success = await Onegini.instance.channel.invokeMethod(
+          Constants.validatePinWithPolicy, <String, String?>{'pin': pin});
+      return success ?? false;
+    } on TypeError catch (error) {
+      throw PlatformException(
+          code: Constants.wrapperTypeError.code.toString(),
+          message: Constants.wrapperTypeError.message,
+          stacktrace: error.stackTrace?.toString());
+    }
   }
 
   /// todo removed boolean return update docu

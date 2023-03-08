@@ -8,7 +8,7 @@ interface CustomRegistrationAction {
 
     fun getIdProvider(): String
 
-    fun returnSuccess(result: String?, resultChannel: MethodChannel.Result)
+    fun returnSuccess(result: String?, pigeonChannel: (Result<Unit>) -> Unit)
 
-    fun returnError(exception: Exception?, resultChannel: MethodChannel.Result)
+    fun returnError(exception: Exception?, pigeonChannel: (Result<Unit>) -> Unit)
 }

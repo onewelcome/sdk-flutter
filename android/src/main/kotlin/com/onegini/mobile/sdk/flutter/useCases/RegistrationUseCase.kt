@@ -1,7 +1,5 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
-import com.google.gson.Gson
-import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiRegistrationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiRegistrationError
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
@@ -10,22 +8,24 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWUserProfile
+
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class RegistrationUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
-    operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
-        val identityProviderId = call.argument<String>("identityProviderId")
-        val scopes = call.argument<ArrayList<String>>("scopes") ?: ArrayList()
+    operator fun invoke(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit) {
         val identityProvider = getIdentityProviderById(identityProviderId)
         if (identityProviderId != null && identityProvider == null) {
-            SdkError(IDENTITY_PROVIDER_NOT_FOUND).flutterError(result)
-            return
+            callback(Result.failure(SdkError(IDENTITY_PROVIDER_NOT_FOUND).pigeonError()))
         }
-        register(identityProvider, scopes.toArray(arrayOfNulls<String>(scopes.size)), result)
+
+        val registerScopes = scopes?.toTypedArray()
+
+        register(identityProvider, registerScopes, callback)
     }
 
     private fun getIdentityProviderById(identityProviderId: String?): OneginiIdentityProvider? {
@@ -41,20 +41,27 @@ class RegistrationUseCase @Inject constructor(private val oneginiSDK: OneginiSDK
         return foundIdentityProvider
     }
 
-    private fun register(identityProvider: OneginiIdentityProvider?, scopes: Array<String>, result: MethodChannel.Result) {
+    private fun register(identityProvider: OneginiIdentityProvider?, scopes: Array<String>?, callback: (Result<OWRegistrationResponse>) -> Unit) {
         oneginiSDK.oneginiClient.userClient.registerUser(identityProvider, scopes, object : OneginiRegistrationHandler {
             override fun onSuccess(userProfile: UserProfile, customInfo: CustomInfo?) {
-                val userProfileJson = mapOf("profileId" to userProfile.profileId, "isDefault" to userProfile.isDefault)
-                val customInfoJson = mapOf("data" to customInfo?.data, "status" to customInfo?.status)
-                val returnedResult = Gson().toJson(mapOf("userProfile" to userProfileJson, "customInfo" to customInfoJson))
-                result.success(returnedResult)
+                val user = OWUserProfile(userProfile.profileId)
+
+                when (customInfo) {
+                    null -> callback(Result.success(OWRegistrationResponse(user)))
+                    else -> {
+                        val info = OWCustomInfo(customInfo.status.toLong(), customInfo.data)
+                        callback(Result.success(OWRegistrationResponse(user, info)))
+                    }
+                }
             }
 
             override fun onError(oneginiRegistrationError: OneginiRegistrationError) {
-                SdkError(
-                    code = oneginiRegistrationError.errorType,
-                    message = oneginiRegistrationError.message
-                ).flutterError(result)
+                callback(Result.failure(
+                    SdkError(
+                        code = oneginiRegistrationError.errorType,
+                        message = oneginiRegistrationError.message
+                    ).pigeonError())
+                )
             }
         })
     }

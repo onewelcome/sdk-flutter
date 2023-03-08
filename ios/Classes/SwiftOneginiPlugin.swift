@@ -64,7 +64,53 @@ func toOWCustomInfo(_ info: ONGCustomInfo?) -> OWCustomInfo? {
 
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
+    func submitCustomRegistrationAction(identityProviderId: String, data: String?, completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
 
+    func cancelCustomRegistrationAction(identityProviderId: String, error: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func fingerprintFallbackToPin(completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func fingerprintDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func fingerprintAcceptAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func otpDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func otpAcceptAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func pinDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func pinAcceptAuthenticationRequest(pin: String?, completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func pinDenyRegistrationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func pinAcceptRegistrationRequest(pin: String?, isCustomAuthenticator: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
+
+    func cancelBrowserRegistration(completion: @escaping (Result<Void, Error>) -> Void) {
+        
+    }
 
     func registerUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.registerUser(identityProviderId, scopes: scopes) { result in

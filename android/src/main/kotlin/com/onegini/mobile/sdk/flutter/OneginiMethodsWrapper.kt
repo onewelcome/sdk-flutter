@@ -40,31 +40,31 @@ class OneginiMethodsWrapper @Inject constructor(
 ) {
 
     fun registerUser(call: MethodCall, result: MethodChannel.Result) {
-        registrationUseCase(call, result)
+//        registrationUseCase(call, result)
     }
 
     fun respondCustomRegistrationAction(
         call: MethodCall,
         result: MethodChannel.Result) {
-        submitCustomRegistrationActionUseCase(result, call)
+//        submitCustomRegistrationActionUseCase(result, call)
     }
 
     fun cancelCustomRegistrationAction(
         call: MethodCall,
         result: MethodChannel.Result) {
-        cancelCustomRegistrationActionUseCase(result, call)
+//        cancelCustomRegistrationActionUseCase(result, call)
     }
 
     fun handleRegisteredUrl(call: MethodCall) {
-        handleRegisteredUrlUseCase(call)
+//        handleRegisteredUrlUseCase(call)
     }
 
     fun getIdentityProviders(result: MethodChannel.Result) {
-        getIdentityProvidersUseCase(result)
+//        getIdentityProvidersUseCase(result)
     }
 
     fun getAccessToken(result: MethodChannel.Result) {
-        getAccessTokenUseCase(result)
+//        getAccessTokenUseCase(result)
     }
 
     fun cancelBrowserRegistration() {
@@ -72,11 +72,11 @@ class OneginiMethodsWrapper @Inject constructor(
     }
 
     fun getAuthenticatedUserProfile(result: MethodChannel.Result) {
-        getAuthenticatedUserProfileUseCase(result)
+//        getAuthenticatedUserProfileUseCase(result)
     }
 
     fun getUserProfiles(result: MethodChannel.Result) {
-        getUserProfilesUseCase(result)
+//        getUserProfilesUseCase(result)
     }
 
     fun startApp(call: MethodCall, result: MethodChannel.Result) {
@@ -84,51 +84,51 @@ class OneginiMethodsWrapper @Inject constructor(
     }
 
     fun getRegisteredAuthenticators(call: MethodCall, result: MethodChannel.Result) {
-        getRegisteredAuthenticatorsUseCase(call, result)
+//        getRegisteredAuthenticatorsUseCase(call, result)
     }
 
     fun getNotRegisteredAuthenticators(call: MethodCall, result: MethodChannel.Result) {
-        getNotRegisteredAuthenticatorsUseCase(call, result)
+//        getNotRegisteredAuthenticatorsUseCase(call, result)
     }
 
     fun setPreferredAuthenticator(call: MethodCall, result: MethodChannel.Result) {
-        setPreferredAuthenticatorUseCase(call, result)
+//        setPreferredAuthenticatorUseCase(call, result)
     }
 
     fun deregisterUser(call: MethodCall, result: MethodChannel.Result) {
-        deregisterUserUseCase(call, result)
+//        deregisterUserUseCase(call, result)
     }
 
     fun deregisterAuthenticator(call: MethodCall, result: MethodChannel.Result) {
-        deregisterAuthenticatorUseCase(call, result)
+//        deregisterAuthenticatorUseCase(call, result)
     }
 
     fun registerAuthenticator(call: MethodCall, result: MethodChannel.Result) {
-        registerAuthenticatorUseCase(call, result)
+//        registerAuthenticatorUseCase(call, result)
     }
 
     fun getAllAuthenticators(call: MethodCall, result: MethodChannel.Result) {
-        getAllAuthenticatorsUseCase(call, result)
+//        getAllAuthenticatorsUseCase(call, result)
     }
 
     fun getRedirectUrl(result: MethodChannel.Result) {
-        getRedirectUrlUseCase(result)
+//        getRedirectUrlUseCase(result)
     }
 
     fun authenticateUser(call: MethodCall, result: MethodChannel.Result) {
-        authenticateUserUseCase(call, result)
+//        authenticateUserUseCase(call, result)
     }
 
     fun authenticateDevice(call: MethodCall, result: MethodChannel.Result){
-        authenticateDeviceUseCase(call, result)
+//        authenticateDeviceUseCase(call, result)
     }
 
     fun authenticateUserImplicitly(call: MethodCall, result: MethodChannel.Result){
-        authenticateUserImplicitlyUseCase(call, result)
+//        authenticateUserImplicitlyUseCase(call, result)
     }
 
     fun getResourceAnonymous(call: MethodCall, result: MethodChannel.Result){
-        getResourceAnonymousUseCase(call, result, resourceHelper)
+//        getResourceAnonymousUseCase(call, result, resourceHelper)
     }
 
     fun getResource(call: MethodCall, result: MethodChannel.Result){
@@ -148,6 +148,6 @@ class OneginiMethodsWrapper @Inject constructor(
     }
 
     fun logout(result: MethodChannel.Result) {
-        logoutUseCase(result)
+//        logoutUseCase(result)
     }
 }

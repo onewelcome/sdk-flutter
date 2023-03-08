@@ -23,7 +23,7 @@ class OWUserProfile {
 
 class OWCustomInfo {
   int status;
-  String data;
+  String? data;
 
   OWCustomInfo({required this.status, required this.data});
 }
@@ -144,6 +144,48 @@ abstract class UserClientApi {
   // todo update return value to object
   @async
   void authenticateUserImplicitly(String profileId, List<String>? scopes);
+
+  /// Custom Registration Callbacks
+  @async
+  void submitCustomRegistrationAction(String identityProviderId, String? data);
+
+  @async
+  void cancelCustomRegistrationAction(String identityProviderId, String error);
+
+  /// Fingerprint Callbacks
+  @async
+  void fingerprintFallbackToPin();
+
+  @async
+  void fingerprintDenyAuthenticationRequest();
+
+  @async
+  void fingerprintAcceptAuthenticationRequest();
+
+  /// OTP Callbacks
+  @async
+  void otpDenyAuthenticationRequest();
+
+  @async
+  void otpAcceptAuthenticationRequest();
+
+  /// Pin Authentication Callbacks
+  @async
+  void pinDenyAuthenticationRequest();
+
+  @async
+  void pinAcceptAuthenticationRequest(String? pin);
+
+  /// Pin Registration Callbacks
+  @async
+  void pinDenyRegistrationRequest();
+
+  @async
+  void pinAcceptRegistrationRequest(String? pin, bool isCustomAuthenticator);
+
+  /// Browser Registration Callbacks
+  @async
+  void cancelBrowserRegistration();
 }
 
 @HostApi()

@@ -40,7 +40,7 @@ class GetIdentityProvidersUseCaseTests {
     fun `should return empty list when sdk return empty set`() {
         whenever(oneginiSdk.oneginiClient.userClient.identityProviders).thenReturn(emptySet())
 
-        getIdentityProvidersUseCase(resultSpy)
+        getIdentityProvidersUseCase()
 
         val expectedResult = Gson().toJson(emptyArray<Map<String, String>>())
         verify(resultSpy).success(expectedResult)
@@ -54,7 +54,7 @@ class GetIdentityProvidersUseCaseTests {
         whenever(oneginiIdentityProviderSecondMock.id).thenReturn("secondId")
         whenever(oneginiIdentityProviderSecondMock.name).thenReturn("secondName")
 
-        getIdentityProvidersUseCase(resultSpy)
+        getIdentityProvidersUseCase()
 
         val expectedArray = arrayOf(mapOf("id" to "firstId", "name" to "firstName"), mapOf("id" to "secondId", "name" to "secondName"))
         val expectedResult = Gson().toJson(expectedArray)
