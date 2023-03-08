@@ -67,7 +67,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
 
 
     func submitCustomRegistrationAction(identityProviderId: String, data: String?, completion: @escaping (Result<Void, Error>) -> Void) {
-        
+        OneginiModuleSwift.sharedInstance.submitCustomRegistrationSuccess(data)
+        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-??
+        completion(.success(()))
     }
 
     func cancelCustomRegistrationAction(identityProviderId: String, error: String, completion: @escaping (Result<Void, Error>) -> Void) {
@@ -275,7 +277,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
         case Constants.Routes.startApp: startApp(call, result)
               
             // custom registration
-        case Constants.Routes.submitCustomRegistrationAction: submitCustomRegistrationAction(call, result)
         case Constants.Routes.cancelCustomRegistrationAction: cancelCustomRegistrationAction(call, result)
             
             // auth
