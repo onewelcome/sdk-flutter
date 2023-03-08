@@ -65,6 +65,7 @@ func toOWCustomInfo(_ info: ONGCustomInfo?) -> OWCustomInfo? {
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
 
+
     func submitCustomRegistrationAction(identityProviderId: String, data: String?, completion: @escaping (Result<Void, Error>) -> Void) {
         
     }
@@ -105,7 +106,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
         
     }
 
-    func pinAcceptRegistrationRequest(pin: String, isCustomAuthenticator: Bool, completion: @escaping (Result<Void, Error>) -> Void) {
+    func pinAcceptRegistrationRequest(pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.submitPinAction(PinFlow.create.rawValue, action: PinAction.provide.rawValue, pin: pin, completion: completion)
         // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-49
         completion(.success(()))

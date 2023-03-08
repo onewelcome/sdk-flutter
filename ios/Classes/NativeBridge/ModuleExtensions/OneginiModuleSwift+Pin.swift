@@ -9,7 +9,7 @@ extension OneginiModuleSwift {
     }
   
     func submitPinAction(_ flow: String, action: String, pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        bridgeConnector.toPinHandlerConnector.handlePinAction(flow, action, pin, completion: completion)
+        bridgeConnector.toPinHandlerConnector.handlePinAction(flow, action, pin)
      }
     
     func changePin(completion: @escaping (Result<Void, Error>) -> Void) {
