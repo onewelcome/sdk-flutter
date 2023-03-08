@@ -982,7 +982,7 @@ class UserClientApi {
     }
   }
 
-  Future<void> pinAcceptAuthenticationRequest(String? arg_pin) async {
+  Future<void> pinAcceptAuthenticationRequest(String arg_pin) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.pinAcceptAuthenticationRequest', codec,
         binaryMessenger: _binaryMessenger);
@@ -1027,7 +1027,7 @@ class UserClientApi {
     }
   }
 
-  Future<void> pinAcceptRegistrationRequest(String? arg_pin, bool arg_isCustomAuthenticator) async {
+  Future<void> pinAcceptRegistrationRequest(String arg_pin, bool arg_isCustomAuthenticator) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.pinAcceptRegistrationRequest', codec,
         binaryMessenger: _binaryMessenger);

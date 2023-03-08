@@ -1,5 +1,9 @@
 package com.onegini.mobile.sdk.flutter
 
+import com.onegini.mobile.sdk.flutter.constants.Constants
+import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
+import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
+import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
@@ -210,38 +214,49 @@ open class PigeonInterface : UserClientApi {
   }
 
   override fun fingerprintFallbackToPin(callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    // TODO NEEDS OWN USE CASE
+    FingerprintAuthenticationRequestHandler.fingerprintCallback?.fallbackToPin()
+    callback(Result.success(Unit))
   }
 
   override fun fingerprintDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    // TODO NEEDS OWN USE CASE
+    FingerprintAuthenticationRequestHandler.fingerprintCallback?.denyAuthenticationRequest()
+    callback(Result.success(Unit))
   }
 
   override fun fingerprintAcceptAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    // TODO NEEDS OWN USE CASE
+    FingerprintAuthenticationRequestHandler.fingerprintCallback?.acceptAuthenticationRequest()
+    callback(Result.success(Unit))
   }
 
   override fun otpDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    // TODO NEEDS OWN USE CASE
+    MobileAuthOtpRequestHandler.CALLBACK?.denyAuthenticationRequest()
+    callback(Result.success(Unit))
   }
 
   override fun otpAcceptAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    // TODO NEEDS OWN USE CASE
+    MobileAuthOtpRequestHandler.CALLBACK?.acceptAuthenticationRequest()
+    callback(Result.success(Unit))
   }
 
   override fun pinDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
 //    TODO("Not yet implemented")
   }
 
-  override fun pinAcceptAuthenticationRequest(pin: String?, callback: (Result<Unit>) -> Unit) {
+  override fun pinAcceptAuthenticationRequest(pin: String, callback: (Result<Unit>) -> Unit) {
 //    TODO("Not yet implemented")
+    PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin.toCharArray())
   }
 
   override fun pinDenyRegistrationRequest(callback: (Result<Unit>) -> Unit) {
 //    TODO("Not yet implemented")
   }
 
-  override fun pinAcceptRegistrationRequest(pin: String?, isCustomAuthenticator: Boolean, callback: (Result<Unit>) -> Unit) {
+  override fun pinAcceptRegistrationRequest(pin: String, isCustomAuthenticator: Boolean, callback: (Result<Unit>) -> Unit) {
 //    TODO("Not yet implemented")
   }
 
