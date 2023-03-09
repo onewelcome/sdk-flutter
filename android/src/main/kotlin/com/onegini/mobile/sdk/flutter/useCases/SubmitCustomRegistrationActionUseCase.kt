@@ -8,10 +8,12 @@ import javax.inject.Singleton
 
 @Singleton
 class SubmitCustomRegistrationActionUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
-  operator fun invoke(identityProviderId: String, data: String?, callback: (Result<Unit>) -> Unit) {
-    when (val action = oneginiSDK.getCustomRegistrationActions().find { it.getIdProvider() == identityProviderId }) {
-      null -> callback(Result.failure(SdkError(IDENTITY_PROVIDER_NOT_FOUND).pigeonError()))
-      else -> action.returnSuccess(data, callback)
+  operator fun invoke(identityProviderId: String, data: String?): Result<Unit> {
+    return when (val action = oneginiSDK.getCustomRegistrationActions().find { it.getIdProvider() == identityProviderId }) {
+      null -> Result.failure(SdkError(IDENTITY_PROVIDER_NOT_FOUND).pigeonError())
+      else -> {
+        action.returnSuccess(data)
+      }
     }
   }
 }

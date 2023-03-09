@@ -33,27 +33,31 @@ class CustomRegistrationActionImpl(private val providerId: String) : OneginiCust
         return providerId
     }
 
-    override fun returnSuccess(result: String?, pigeonCallback: (Result<Unit>) -> Unit) {
-        when (callback) {
-            null -> pigeonCallback(Result.failure(SdkError(REGISTRATION_NOT_IN_PROGRESS).pigeonError()))
+    override fun returnSuccess(result: String?): Result<Unit> {
+        return when (callback) {
+            null -> {
+                callback = null
+                Result.failure(SdkError(REGISTRATION_NOT_IN_PROGRESS).pigeonError())
+            }
             else -> {
                 this.callback?.returnSuccess(result)
-                pigeonCallback(Result.success(Unit))
+                callback = null
+                Result.success(Unit)
             }
         }
-
-        callback = null
     }
 
-    override fun returnError(exception: Exception?, pigeonCallback: (Result<Unit>) -> Unit) {
-        when (callback) {
-            null -> pigeonCallback(Result.failure(SdkError(REGISTRATION_NOT_IN_PROGRESS).pigeonError()))
+    override fun returnError(exception: Exception?): Result<Unit> {
+        return when (callback) {
+            null -> {
+                callback = null
+                Result.failure(SdkError(REGISTRATION_NOT_IN_PROGRESS).pigeonError())
+            }
             else -> {
+                callback = null
                 this.callback?.returnError(exception)
-                pigeonCallback(Result.success(Unit))
+                Result.success(Unit)
             }
         }
-
-        callback = null
     }
 }

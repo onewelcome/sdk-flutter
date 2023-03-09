@@ -201,11 +201,11 @@ open class PigeonInterface : UserClientApi {
 
   // Callback functions
   override fun submitCustomRegistrationAction(identityProviderId: String, data: String?, callback: (Result<Unit>) -> Unit) {
-    submitCustomRegistrationActionUseCase(identityProviderId, data, callback)
+    callback(submitCustomRegistrationActionUseCase(identityProviderId, data))
   }
 
   override fun cancelCustomRegistrationAction(identityProviderId: String, error: String, callback: (Result<Unit>) -> Unit) {
-    cancelCustomRegistrationActionUseCase(identityProviderId, error, callback)
+    callback(cancelCustomRegistrationActionUseCase(identityProviderId, error))
   }
 
   override fun fingerprintFallbackToPin(callback: (Result<Unit>) -> Unit) {
