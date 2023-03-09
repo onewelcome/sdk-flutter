@@ -42,12 +42,9 @@ class GetAllAuthenticatorsUseCaseTests {
 
   @Test
   fun `When an unknown or unregistered profileId is given, Then an error should be thrown`() {
-    whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
-    whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("ABCDEF")))
-
     when (val error = getAllAuthenticatorsUseCase("QWERTY").exceptionOrNull()) {
       is FlutterError -> {
-        Assert.assertEquals(error.code, USER_PROFILE_DOES_NOT_EXIST.code)
+        Assert.assertEquals(error.code.toInt(), USER_PROFILE_DOES_NOT_EXIST.code)
         Assert.assertEquals(error.message, USER_PROFILE_DOES_NOT_EXIST.message)
       }
       else -> fail(UNEXPECTED_ERROR_TYPE.message)

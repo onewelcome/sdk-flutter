@@ -64,7 +64,7 @@ class RegistrationUseCaseTests {
   }
 
   @Test
-  fun `should match the IDs with the identity provider id as a parameter when the given ID is found in the SDK identity providers`() {
+  fun `When the given ID is found in the SDK identity providers, Then it should match the IDs with the identity provider id as a parameter`() {
     val testProviderId = "testId"
     val testScopes = listOf("read")
     val setOfIdentityProviders = setOf(oneginiIdentityProviderMock)
@@ -81,7 +81,7 @@ class RegistrationUseCaseTests {
   }
 
   @Test
-  fun `should return error when the given ID is not found in the SDK identity providers`() {
+  fun `When the given ID is not found in the SDK identity providers, Then it should return error`() {
     whenever(oneginiIdentityProviderMock.id).thenReturn("id")
     whenever(oneginiSdk.oneginiClient.userClient.identityProviders).thenReturn(setOf(oneginiIdentityProviderMock))
 
@@ -101,7 +101,7 @@ class RegistrationUseCaseTests {
   }
 
   @Test
-  fun `should call result success with identity provider id as a param when given identity provider id is found in SDK identity providers`() {
+  fun `When given identity provider id is found in SDK identity providers, Then it should call result success with identity provider id as a param`() {
     whenever(oneginiIdentityProviderMock.id).thenReturn("testId")
     whenever(oneginiSdk.oneginiClient.userClient.identityProviders).thenReturn(setOf(oneginiIdentityProviderMock))
     whenever(oneginiSdk.oneginiClient.userClient.registerUser(isNotNull(), eq(arrayOf("read")), any())).thenAnswer {
@@ -119,14 +119,14 @@ class RegistrationUseCaseTests {
   }
 
   @Test
-  fun `should call 'registerUser' method once when given identity provider id is null`() {
+  fun `When given identity provider id is null, Then it should call 'registerUser' method once`() {
     registrationUseCase(null, listOf("read"), callbackMock)
 
     verify(oneginiSdk.oneginiClient.userClient).registerUser(isNull(), eq(arrayOf("read")), any())
   }
 
   @Test
-  fun `should scopes param be array of two scopes when given scopes contains two strings`() {
+  fun `When given scopes contains two strings, Then the scopes param should be array of two scopes`() {
     registrationUseCase(null, listOf("read", "write"), callbackMock)
 
     argumentCaptor<Array<String>> {
@@ -137,12 +137,12 @@ class RegistrationUseCaseTests {
   }
 
   @Test
-  fun `should scopes param be array of zero lengths when given scopes is null`() {
+  fun `When given scopes is null, Then the scopes param should be be an array of null`() {
     registrationUseCase(null, null, callbackMock)
 
     argumentCaptor<Array<String>> {
       verify(oneginiSdk.oneginiClient.userClient).registerUser(isNull(), capture(), any())
-      assertThat(firstValue).isEmpty()
+      assertThat(firstValue).isNull()
     }
   }
 }
