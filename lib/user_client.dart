@@ -92,11 +92,8 @@ class UserClient {
   Future<void> changePin(
     BuildContext? context,
   ) async {
+    await api.changePin();
     Onegini.instance.setEventContext(context);
-
-    // todo use api once the branch is merged that puts this in an usecase on android
-    // await api.changePin();
-    await Onegini.instance.channel.invokeMethod(Constants.changePin);
   }
 
   /// Registers authenticator from [getNotRegisteredAuthenticators] list.
