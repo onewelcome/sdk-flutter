@@ -6,25 +6,25 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiImplicitTokenRequest
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserImplicitlyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfileUseCase
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
+import junit.framework.Assert.fail
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers
 import org.mockito.Mock
-import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.util.ArrayList
 
 @RunWith(MockitoJUnitRunner::class)
 class AuthenticateUserImplicitlyUseCaseTests {
@@ -36,12 +36,10 @@ class AuthenticateUserImplicitlyUseCaseTests {
   lateinit var oneginiImplicitTokenRequestErrorMock: OneginiImplicitTokenRequestError
 
   @Mock
-  lateinit var callMock: MethodCall
-
-  @Spy
-  lateinit var resultSpy: MethodChannel.Result
+  lateinit var callbackMock: (Result<Unit>) -> Unit
 
   lateinit var authenticateUserImplicitlyUseCase: AuthenticateUserImplicitlyUseCase
+
   @Before
   fun attach() {
     val getUserProfileUseCase = GetUserProfileUseCase(oneginiSdk)
@@ -50,9 +48,6 @@ class AuthenticateUserImplicitlyUseCaseTests {
 
   @Test
   fun `should return error when the sdk returns authentication error`() {
-    whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(null)
-    whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
-
     whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
 
     whenever(oneginiImplicitTokenRequestErrorMock.errorType).thenReturn(GENERIC_ERROR.code)
@@ -61,51 +56,66 @@ class AuthenticateUserImplicitlyUseCaseTests {
       it.getArgument<OneginiImplicitAuthenticationHandler>(2).onError(oneginiImplicitTokenRequestErrorMock)
     }
 
-    authenticateUserImplicitlyUseCase(callMock, resultSpy)
+    authenticateUserImplicitlyUseCase("QWERTY", null, callbackMock)
 
-    verify(resultSpy).error(
-      GENERIC_ERROR.code.toString(), GENERIC_ERROR.message,
-      mutableMapOf("code" to GENERIC_ERROR.code.toString(), "message" to GENERIC_ERROR.message)
-    )
+    argumentCaptor<Result<Unit>>().apply {
+      verify(callbackMock, times(1)).invoke(capture())
+
+      when (val error = firstValue.exceptionOrNull()) {
+        is FlutterError -> {
+          Assert.assertEquals(error.code.toInt(), GENERIC_ERROR.code)
+          Assert.assertEquals(error.message, GENERIC_ERROR.message)
+        }
+        else -> fail(UNEXPECTED_ERROR_TYPE.message)
+      }
+    }
   }
 
   @Test
-  fun `should return error when the userProfileId is not a registered users`() {
-    whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(null)
-    whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
+  fun `When the userProfileId is not a registered users, Then an error should be returned`() {
     whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf())
 
-    authenticateUserImplicitlyUseCase(callMock, resultSpy)
+    authenticateUserImplicitlyUseCase("QWERTY", null, callbackMock)
 
-    verify(resultSpy).error(
-      USER_PROFILE_DOES_NOT_EXIST.code.toString(), USER_PROFILE_DOES_NOT_EXIST.message,
-      mutableMapOf("code" to USER_PROFILE_DOES_NOT_EXIST.code.toString(), "message" to USER_PROFILE_DOES_NOT_EXIST.message)
-    )
+    argumentCaptor<Result<Unit>>().apply {
+      verify(callbackMock, times(1)).invoke(capture())
+
+      when (val error = firstValue.exceptionOrNull()) {
+        is FlutterError -> {
+          Assert.assertEquals(error.code.toInt(), USER_PROFILE_DOES_NOT_EXIST.code)
+          Assert.assertEquals(error.message, USER_PROFILE_DOES_NOT_EXIST.message)
+        }
+        else -> fail(UNEXPECTED_ERROR_TYPE.message)
+      }
+    }
   }
 
   @Test
-  fun `should return success when the SDK returns success`() {
-    whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("test"))
-    whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
-
+  fun `When the implicit authentications goes successfully, Then the function should resolve with success`() {
     whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
-    whenever(oneginiSdk.oneginiClient.userClient.authenticateUserImplicitly(eq(UserProfile("QWERTY")), eq(arrayOf("test")), any())).thenAnswer {
+    whenever(
+      oneginiSdk.oneginiClient.userClient.authenticateUserImplicitly(
+        eq(UserProfile("QWERTY")),
+        eq(arrayOf("test")),
+        any()
+      )
+    ).thenAnswer {
       it.getArgument<OneginiImplicitAuthenticationHandler>(2).onSuccess(UserProfile("QWERTY"))
     }
 
-    authenticateUserImplicitlyUseCase(callMock, resultSpy)
+    authenticateUserImplicitlyUseCase("QWERTY", listOf("test"), callbackMock)
 
-    verify(resultSpy).success(eq("QWERTY"))
+    argumentCaptor<Result<Unit>>().apply {
+      verify(callbackMock, times(1)).invoke(capture())
+      Assert.assertEquals(firstValue.getOrNull(), Unit)
+    }
   }
 
   @Test
-  fun `should scopes param be array of two scopes when given scopes contains two strings`() {
-    whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read", "write"))
-    whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
-
+  fun `When given scopes contains two strings, Then scopes param should be array of two scopes`() {
     whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
 
-    authenticateUserImplicitlyUseCase(callMock, resultSpy)
+    authenticateUserImplicitlyUseCase("QWERTY", listOf("read", "write"), callbackMock)
 
     argumentCaptor<Array<String>> {
       verify(oneginiSdk.oneginiClient.userClient).authenticateUserImplicitly(eq(UserProfile("QWERTY")), capture(), ArgumentMatchers.any())
