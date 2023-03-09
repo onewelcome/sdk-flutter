@@ -17,6 +17,7 @@ class OneginiMethodsWrapper @Inject constructor(
     private val isAuthenticatorRegisteredUseCase: IsAuthenticatorRegisteredUseCase,
     private val resourceHelper: ResourceHelper,
     private val startAppUseCase: StartAppUseCase,
+    private val changePinUseCase: ChangePinUseCase,
     private val validatePinWithPolicyUseCase: ValidatePinWithPolicyUseCase,
 ) {
 
@@ -50,5 +51,9 @@ class OneginiMethodsWrapper @Inject constructor(
 
     fun validatePinWithPolicy(call: MethodCall, result: MethodChannel.Result) {
         validatePinWithPolicyUseCase(call, result)
+    }
+
+    fun changePin(result: MethodChannel.Result) {
+        changePinUseCase(result)
     }
 }
