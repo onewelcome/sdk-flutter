@@ -17,6 +17,7 @@ class OneginiMethodsWrapper @Inject constructor(
     private val isAuthenticatorRegisteredUseCase: IsAuthenticatorRegisteredUseCase,
     private val resourceHelper: ResourceHelper,
     private val startAppUseCase: StartAppUseCase,
+    private val validatePinWithPolicyUseCase: ValidatePinWithPolicyUseCase,
 ) {
 
     fun cancelBrowserRegistration() {
@@ -45,5 +46,9 @@ class OneginiMethodsWrapper @Inject constructor(
 
     fun isAuthenticatorRegistered(call: MethodCall, result: MethodChannel.Result) {
         isAuthenticatorRegisteredUseCase(call, result)
+    }
+
+    fun validatePinWithPolicy(call: MethodCall, result: MethodChannel.Result) {
+        validatePinWithPolicyUseCase(call, result)
     }
 }

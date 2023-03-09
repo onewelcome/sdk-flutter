@@ -40,6 +40,7 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
     private fun onSDKMethodCall(call: MethodCall, client: OneginiClient, result: MethodChannel.Result) {
         when (call.method) {
             Constants.METHOD_IS_AUTHENTICATOR_REGISTERED -> oneginiMethodsWrapper.isAuthenticatorRegistered(call, result)
+            Constants.METHOD_VALIDATE_PIN_WITH_POLICY -> oneginiMethodsWrapper.validatePinWithPolicy(call, result)
 
             // OTP
             Constants.METHOD_HANDLE_MOBILE_AUTH_WITH_OTP -> MobileAuthenticationObject.mobileAuthWithOtp(call.argument<String>("data"), result, client)
@@ -51,33 +52,11 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
             Constants.METHOD_GET_UNAUTHENTICATED_RESOURCE -> oneginiMethodsWrapper.getUnauthenticatedResource(call, result)
 
             // Other
-            Constants.METHOD_CHANGE_PIN -> startChangePinFlow(result, client)
+            Constants.METHOD_CHANGE_PIN -> oneginiMethodsWrapper.changePin(result)
             Constants.METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON -> getAppToWebSingleSignOn(call.argument<String>("url"), result, client)
-
-            Constants.METHOD_VALIDATE_PIN_WITH_POLICY -> validatePinWithPolicy(call.argument<String>("pin")?.toCharArray(), result, client)
 
             else -> SdkError(METHOD_TO_CALL_NOT_FOUND).flutterError(result)
         }
-    }
-
-    private fun validatePinWithPolicy(pin: CharArray?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        val nonNullPin = pin ?: return SdkError(ARGUMENT_NOT_CORRECT.code, ARGUMENT_NOT_CORRECT.message + " pin is null").flutterError(result)
-
-        oneginiClient.userClient.validatePinWithPolicy(
-            nonNullPin,
-            object : OneginiPinValidationHandler {
-                override fun onSuccess() {
-                    result.success(true)
-                }
-
-                override fun onError(oneginiPinValidationError: OneginiPinValidationError) {
-                    SdkError(
-                        code = oneginiPinValidationError.errorType,
-                        message = oneginiPinValidationError.message
-                    ).flutterError(result)
-                }
-            }
-        )
     }
 
     fun getAppToWebSingleSignOn(url: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
@@ -105,20 +84,5 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
                     }
                 }
         )
-    }
-
-    fun startChangePinFlow(result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        oneginiClient.userClient.changePin(object : OneginiChangePinHandler {
-            override fun onSuccess() {
-                result.success("Pin change successfully")
-            }
-
-            override fun onError(error: OneginiChangePinError) {
-                SdkError(
-                    code = error.errorType,
-                    message = error.message
-                ).flutterError(result)
-            }
-        })
     }
 }
