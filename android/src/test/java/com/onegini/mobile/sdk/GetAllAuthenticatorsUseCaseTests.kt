@@ -1,24 +1,22 @@
 package com.onegini.mobile.sdk
 
-import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticator
 import com.onegini.mobile.sdk.flutter.useCases.GetAllAuthenticatorsUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfileUseCase
 import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
+import junit.framework.Assert.fail
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Answers
 import org.mockito.Mock
-import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
@@ -32,8 +30,6 @@ class GetAllAuthenticatorsUseCaseTests {
   @Mock
   lateinit var oneginiAuthenticatorMock: OneginiAuthenticator
 
-  @Spy
-  lateinit var resultSpy: MethodChannel.Result
 
   lateinit var getAllAuthenticatorsUseCase: GetAllAuthenticatorsUseCase
 
@@ -44,39 +40,50 @@ class GetAllAuthenticatorsUseCaseTests {
   }
 
   @Test
-  fun `When an unknown or unregistered profileId is given then an error should be thrown`() {
+  fun `When an unknown or unregistered profileId is given, Then an error should be thrown`() {
     whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
     whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("ABCDEF")))
 
-    getAllAuthenticatorsUseCase(callMock, resultSpy)
-
-    val message = USER_PROFILE_DOES_NOT_EXIST.message
-    verify(resultSpy).error(eq(USER_PROFILE_DOES_NOT_EXIST.code.toString()), eq(message), any())
+    when (val error = getAllAuthenticatorsUseCase("QWERTY").exceptionOrNull()) {
+      is SdkError -> {
+        Assert.assertEquals(error.code, USER_PROFILE_DOES_NOT_EXIST.code)
+        Assert.assertEquals(error.message, USER_PROFILE_DOES_NOT_EXIST.message)
+      }
+      else -> fail(UNEXPECTED_ERROR_TYPE.message)
+    }
   }
 
   @Test
-  fun `When getAllAuthenticators method return empty set then the function should return empty`() {
-    whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
+  fun `When getAllAuthenticators method return empty set, Then the function should return empty`() {
     whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
     whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(UserProfile("QWERTY"))).thenReturn(emptySet())
 
-    getAllAuthenticatorsUseCase(callMock, resultSpy)
+    val result = getAllAuthenticatorsUseCase("QWERTY")
 
-    val expectedResult = Gson().toJson(emptyArray<Map<String, String>>())
-    verify(resultSpy).success(expectedResult)
+    Assert.assertEquals(result.getOrNull(), mutableListOf<List<OWAuthenticator>>())
   }
 
   @Test
-  fun `When a registered profileId is given and getAllAuthenticatorsUseCase contains authenticators then an array of maps should be returned`() {
-    whenever(callMock.argument<String>("profileId")).thenReturn("QWERTY")
+  fun `When a registered profileId is given and getAllAuthenticatorsUseCase contains authenticators, Then an array of maps should be returned`() {
     whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
     whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(UserProfile("QWERTY"))).thenReturn(setOf(oneginiAuthenticatorMock))
     whenever(oneginiAuthenticatorMock.name).thenReturn("test")
     whenever(oneginiAuthenticatorMock.id).thenReturn("test")
+    whenever(oneginiAuthenticatorMock.isRegistered).thenReturn(true)
+    whenever(oneginiAuthenticatorMock.isPreferred).thenReturn(true)
+    whenever(oneginiAuthenticatorMock.type).thenReturn(5)
 
-    getAllAuthenticatorsUseCase(callMock, resultSpy)
+    val result = getAllAuthenticatorsUseCase("QWERTY")
 
-    val expectedResult = Gson().toJson(arrayOf(mapOf("id" to "test", "name" to "test")))
-    verify(resultSpy).success(expectedResult)
+    when (val authenticator = result.getOrNull()?.first()) {
+      is OWAuthenticator -> {
+        Assert.assertEquals(authenticator.id, "test")
+        Assert.assertEquals(authenticator.name, "test")
+        Assert.assertEquals(authenticator.isRegistered, true)
+        Assert.assertEquals(authenticator.isPreferred, true)
+        Assert.assertEquals(authenticator.authenticatorType, 5)
+      }
+      else -> fail(UNEXPECTED_ERROR_TYPE.message)
+    }
   }
 }
