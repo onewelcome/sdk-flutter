@@ -13,7 +13,6 @@ import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWUserProfile
 import com.onegini.mobile.sdk.flutter.useCases.RegistrationUseCase
-import io.flutter.plugin.common.MethodCall
 import junit.framework.Assert.fail
 import org.junit.Assert
 import org.junit.Before
@@ -35,10 +34,7 @@ class RegistrationUseCaseTests {
   lateinit var clientMock: OneginiClient
 
   @Mock
-  lateinit var callbackSpy: (Result<OWRegistrationResponse>) -> Unit
-
-  @Mock
-  lateinit var callMock: MethodCall
+  lateinit var callbackMock: (Result<OWRegistrationResponse>) -> Unit
 
   @Mock
   lateinit var oneginiIdentityProviderMock: OneginiIdentityProvider
@@ -51,16 +47,16 @@ class RegistrationUseCaseTests {
   }
 
   @Test
-  fun `should call result success with identity provider id as a param when given identity provider id is null`() {
+  fun `when given identity provider id is null, Then it should resolve with success with identity provider id as a param`() {
     whenever(oneginiSdk.oneginiClient.userClient.identityProviders).thenReturn(emptySet())
     whenever(oneginiSdk.oneginiClient.userClient.registerUser(isNull(), eq(arrayOf("read")), any())).thenAnswer {
       it.getArgument<OneginiRegistrationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0, ""))
     }
 
-    registrationUseCase(null, listOf("read"), callbackSpy)
+    registrationUseCase(null, listOf("read"), callbackMock)
 
     argumentCaptor<Result<OWRegistrationResponse>>().apply {
-      verify(callbackSpy, times(1)).invoke(capture())
+      verify(callbackMock, times(1)).invoke(capture())
       val testUser = OWUserProfile("QWERTY")
       val testInfo = OWCustomInfo(0, "")
       Assert.assertEquals(firstValue.getOrNull(), OWRegistrationResponse(testUser, testInfo))
@@ -76,7 +72,7 @@ class RegistrationUseCaseTests {
     whenever(oneginiIdentityProviderMock.id).thenReturn(testProviderId)
     whenever(oneginiSdk.oneginiClient.userClient.identityProviders).thenReturn(setOfIdentityProviders)
 
-    registrationUseCase(testProviderId, testScopes, callbackSpy)
+    registrationUseCase(testProviderId, testScopes, callbackMock)
 
     argumentCaptor<OneginiIdentityProvider> {
       verify(oneginiSdk.oneginiClient.userClient).registerUser(capture(), eq(arrayOf("read")), any())
@@ -89,10 +85,10 @@ class RegistrationUseCaseTests {
     whenever(oneginiIdentityProviderMock.id).thenReturn("id")
     whenever(oneginiSdk.oneginiClient.userClient.identityProviders).thenReturn(setOf(oneginiIdentityProviderMock))
 
-    registrationUseCase("differentId", listOf("read"), callbackSpy)
+    registrationUseCase("differentId", listOf("read"), callbackMock)
 
     argumentCaptor<Result<OWRegistrationResponse>>().apply {
-      verify(callbackSpy, times(1)).invoke(capture())
+      verify(callbackMock, times(1)).invoke(capture())
 
       when (val error = firstValue.exceptionOrNull()) {
         is FlutterError -> {
@@ -112,10 +108,10 @@ class RegistrationUseCaseTests {
       it.getArgument<OneginiRegistrationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0, ""))
     }
 
-    registrationUseCase("testId", listOf("read"), callbackSpy)
+    registrationUseCase("testId", listOf("read"), callbackMock)
 
     argumentCaptor<Result<OWRegistrationResponse>>().apply {
-      verify(callbackSpy, times(1)).invoke(capture())
+      verify(callbackMock, times(1)).invoke(capture())
       val testUser = OWUserProfile("QWERTY")
       val testInfo = OWCustomInfo(0, "")
       Assert.assertEquals(firstValue.getOrNull(), OWRegistrationResponse(testUser, testInfo))
@@ -124,14 +120,14 @@ class RegistrationUseCaseTests {
 
   @Test
   fun `should call 'registerUser' method once when given identity provider id is null`() {
-    registrationUseCase(null, listOf("read"), callbackSpy)
+    registrationUseCase(null, listOf("read"), callbackMock)
 
     verify(oneginiSdk.oneginiClient.userClient).registerUser(isNull(), eq(arrayOf("read")), any())
   }
 
   @Test
   fun `should scopes param be array of two scopes when given scopes contains two strings`() {
-    registrationUseCase(null, listOf("read", "write"), callbackSpy)
+    registrationUseCase(null, listOf("read", "write"), callbackMock)
 
     argumentCaptor<Array<String>> {
       verify(oneginiSdk.oneginiClient.userClient).registerUser(isNull(), capture(), any())
@@ -142,7 +138,7 @@ class RegistrationUseCaseTests {
 
   @Test
   fun `should scopes param be array of zero lengths when given scopes is null`() {
-    registrationUseCase(null, null, callbackSpy)
+    registrationUseCase(null, null, callbackMock)
 
     argumentCaptor<Array<String>> {
       verify(oneginiSdk.oneginiClient.userClient).registerUser(isNull(), capture(), any())
