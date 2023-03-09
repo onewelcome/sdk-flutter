@@ -3,9 +3,9 @@ import OneginiSDKiOS
 
 //MARK: -
 protocol BridgeToAuthenticatorsHandlerProtocol: AnyObject {
-    func registerAuthenticator(_ authenticatorId: String, _ completion: @escaping (Result<Void, Error>) -> Void)
+    func registerAuthenticator(_ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
     func deregisterAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
-    func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, Error>) -> Void)
+    func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
     func getAuthenticatorsListForUserProfile(_ userProfile: ONGUserProfile) -> Array<ONGAuthenticator>
     func isAuthenticatorRegistered(_ authenticatorType: ONGAuthenticatorType, _ userProfile: ONGUserProfile) -> Bool
     var notificationReceiver: AuthenticatorsNotificationReceiverProtocol? { get }
@@ -19,7 +19,7 @@ protocol AuthenticatorsNotificationReceiverProtocol: class {
 class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
     var pinChallenge: ONGPinChallenge?
     var customAuthChallenge: ONGCustomAuthFinishRegistrationChallenge?
-    var registrationCompletion: ((Result<Void, Error>) -> Void)?
+    var registrationCompletion: ((Result<Void, FlutterError>) -> Void)?
     var deregistrationCompletion: ((Result<Void, FlutterError>) -> Void)?
 
     unowned var notificationReceiver: AuthenticatorsNotificationReceiverProtocol?
@@ -65,7 +65,7 @@ class AuthenticatorsHandler: NSObject, PinHandlerToReceiverProtocol {
 
 //MARK: - BridgeToAuthenticatorsHandlerProtocol
 extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
-    func registerAuthenticator(_ authenticatorId: String, _ completion: @escaping (Result<Void, Error>) -> Void) {
+    func registerAuthenticator(_ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
             completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
             return
@@ -95,7 +95,7 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
         ONGUserClient.sharedInstance().deregister(authenticator, delegate: self)
     }
 
-    func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String,_ completion: @escaping (Result<Void, Error>) -> Void) {
+    func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String,_ completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticatorId}) else {
             completion(.failure(FlutterError(.authenticatorNotFound)))
             return

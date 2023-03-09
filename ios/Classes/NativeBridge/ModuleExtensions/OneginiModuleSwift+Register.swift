@@ -56,7 +56,7 @@ extension OneginiModuleSwift {
         bridgeConnector.toRegistrationConnector.registrationHandler.cancelBrowserRegistration()
     }
     
-    func registerAuthenticator(_ authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    func registerAuthenticator(_ authenticatorId: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
         bridgeConnector.toAuthenticatorsHandler.registerAuthenticator(authenticatorId, completion)
     }
     

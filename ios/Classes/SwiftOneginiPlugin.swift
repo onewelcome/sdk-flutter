@@ -115,7 +115,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func pinAcceptAuthenticationRequest(pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.submitPinAction(PinFlow.authentication.rawValue, action: PinAction.provide.rawValue, pin: pin, completion: completion)
+        OneginiModuleSwift.sharedInstance.submitPinAction(PinFlow.authentication.rawValue, action: PinAction.provide.rawValue, pin: pin) { result in
+            completion(result.mapError{$0})
+        }
         // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-49
         completion(.success(()))
     }
@@ -127,7 +129,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func pinAcceptRegistrationRequest(pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.submitPinAction(PinFlow.create.rawValue, action: PinAction.provide.rawValue, pin: pin, completion: completion)
+        OneginiModuleSwift.sharedInstance.submitPinAction(PinFlow.create.rawValue, action: PinAction.provide.rawValue, pin: pin) { result in
+            completion(result.mapError{$0})
+        }
         // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-49
         completion(.success(()))
     }

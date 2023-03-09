@@ -3,7 +3,7 @@ import Flutter
 
 protocol PinConnectorToPinHandler: AnyObject {
     func onPinProvided(pin: String)
-    func onChangePinCalled(completion: @escaping (Result<Void, Error>) -> Void)
+    func onChangePinCalled(completion: @escaping (Result<Void, FlutterError>) -> Void)
     func onCancel()
     func handleFlowUpdate(_ flow: PinFlow, _ error: SdkError?, receiver: PinHandlerToReceiverProtocol)
     func closeFlow()
@@ -30,7 +30,7 @@ class PinHandler: NSObject {
     var flow: PinFlow?
     var mode: PINEntryMode?
     var pinEntryToVerify = Array<String>()
-    var changePinCompletion: ((Result<Void, Error>) -> Void)?
+    var changePinCompletion: ((Result<Void, FlutterError>) -> Void)?
     
     unowned var pinReceiver: PinHandlerToReceiverProtocol?
     unowned var notificationReceiver: PinNotificationReceiverProtocol?
@@ -127,7 +127,7 @@ extension PinHandler: PinConnectorToPinHandler{
       processPin(pinEntry: pinArray)
     }
 
-    func onChangePinCalled(completion: @escaping (Result<Void, Error>) -> Void) {
+    func onChangePinCalled(completion: @escaping (Result<Void, FlutterError>) -> Void) {
         changePinCompletion = completion
         ONGUserClient.sharedInstance().changePin(self)
     }

@@ -23,7 +23,7 @@ extension OneginiModuleSwift {
         bridgeConnector.toResourceFetchHandler.authenticateUserImplicitly(profile, scopes: scopes, completion: completion)
     }
 
-    func runSingleSignOn(_ path: String, completion: @escaping (Result<OWAppToWebSingleSignOn, Error>) -> Void) {
+    func runSingleSignOn(_ path: String, completion: @escaping (Result<OWAppToWebSingleSignOn, FlutterError>) -> Void) {
         
         guard let url = URL(string: path) else {
             completion(.failure(FlutterError(.providedUrlIncorrect)))
@@ -47,7 +47,7 @@ extension OneginiModuleSwift {
         
     }
 
-    func setPreferredAuthenticator(_ identifierId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    func setPreferredAuthenticator(_ identifierId: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let profile = ONGClient.sharedInstance().userClient.authenticatedUserProfile() else {
             completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
             return
