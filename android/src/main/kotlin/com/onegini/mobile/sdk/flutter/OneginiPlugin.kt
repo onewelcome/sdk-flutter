@@ -30,8 +30,9 @@ class OneginiPlugin : FlutterPlugin, PigeonInterface() {
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         // Pigeon setup
         UserClientApi.setUp(flutterPluginBinding.binaryMessenger, this)
-//        nativeApi = NativeCallFlutterApi(flutterPluginBinding.binaryMessenger)
 
+        // Reference Example code for when we implement the event callbacks using flutter
+//        nativeApi = NativeCallFlutterApi(flutterPluginBinding.binaryMessenger)
         // fixme what is the new way to do this?
 //        val oneginiSDK = OneginiSDK(nativeApi)
 
