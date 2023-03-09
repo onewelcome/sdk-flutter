@@ -3,6 +3,7 @@ package com.onegini.mobile.sdk
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import com.onegini.mobile.sdk.flutter.useCases.GetAccessTokenUseCase
 import junit.framework.Assert.fail
 import org.junit.Assert
@@ -32,8 +33,8 @@ class GetAccessTokenUseCaseTests {
     whenever(oneginiSdk.oneginiClient.userClient.accessToken).thenReturn(null)
 
     when (val error = getAccessTokenUseCase().exceptionOrNull()) {
-      is SdkError -> {
-        Assert.assertEquals(error.code, NO_USER_PROFILE_IS_AUTHENTICATED.code)
+      is FlutterError -> {
+        Assert.assertEquals(error.code.toInt(), NO_USER_PROFILE_IS_AUTHENTICATED.code)
         Assert.assertEquals(error.message, NO_USER_PROFILE_IS_AUTHENTICATED.message)
       }
       else -> fail(UNEXPECTED_ERROR_TYPE.message)

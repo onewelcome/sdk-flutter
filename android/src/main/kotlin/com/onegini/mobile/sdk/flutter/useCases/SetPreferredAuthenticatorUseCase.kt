@@ -13,10 +13,10 @@ class SetPreferredAuthenticatorUseCase @Inject constructor(private val oneginiSD
   operator fun invoke(authenticatorId: String): Result<Unit> {
 
     val userProfile = oneginiSDK.oneginiClient.userClient.authenticatedUserProfile
-      ?: return Result.failure(SdkError(NO_USER_PROFILE_IS_AUTHENTICATED))
+      ?: return Result.failure(SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).pigeonError())
 
     val authenticator = getAuthenticatorById(authenticatorId, userProfile)
-      ?: return Result.failure(SdkError(AUTHENTICATOR_NOT_FOUND))
+      ?: return Result.failure(SdkError(AUTHENTICATOR_NOT_FOUND).pigeonError())
 
     oneginiSDK.oneginiClient.userClient.setPreferredAuthenticator(authenticator)
     return Result.success(Unit)

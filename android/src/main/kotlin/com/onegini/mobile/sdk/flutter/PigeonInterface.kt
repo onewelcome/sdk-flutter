@@ -18,6 +18,7 @@ import com.onegini.mobile.sdk.flutter.useCases.AuthenticateDeviceUseCase
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserImplicitlyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserUseCase
 import com.onegini.mobile.sdk.flutter.useCases.CancelCustomRegistrationActionUseCase
+import com.onegini.mobile.sdk.flutter.useCases.ChangePinUseCase
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterUserUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAccessTokenUseCase
@@ -98,11 +99,13 @@ open class PigeonInterface : UserClientApi {
   lateinit var startAppUseCase: StartAppUseCase
   @Inject
   lateinit var submitCustomRegistrationActionUseCase: SubmitCustomRegistrationActionUseCase
+  @Inject
+  lateinit var changePinUseCase: ChangePinUseCase
 
   // FIXME REMOVE ME AT THE END; Example function on how it could be initiated on Flutter send to Native
   override fun fetchUserProfiles(callback: (Result<List<OWUserProfile>>) -> Unit) {
     val a = Result.success(listOf(OWUserProfile("ghalo")))
-    flutterCallback(callback, a)
+//    flutterCallback(callback, a)
 
 //    val b = Result.failure<List<OneWelcomeUserProfile>>(SdkError(2000, "hallo"))
 //    flutterCallback(callback, b)
@@ -113,13 +116,11 @@ open class PigeonInterface : UserClientApi {
   }
 
   override fun handleRegisteredUserUrl(url: String, signInType: Long, callback: (Result<Unit>) -> Unit) {
-    val result = handleRegisteredUrlUseCase(url, signInType)
-    flutterCallback(callback, result)
+    callback(handleRegisteredUrlUseCase(url, signInType))
   }
 
   override fun getIdentityProviders(callback: (Result<List<OWIdentityProvider>>) -> Unit) {
-    val result = getIdentityProvidersUseCase()
-    flutterCallback(callback, result)
+    callback(getIdentityProvidersUseCase())
   }
 
   override fun deregisterUser(profileId: String, callback: (Result<Unit>) -> Unit) {
@@ -127,18 +128,15 @@ open class PigeonInterface : UserClientApi {
   }
 
   override fun getRegisteredAuthenticators(profileId: String, callback: (Result<List<OWAuthenticator>>) -> Unit) {
-    val result = getRegisteredAuthenticatorsUseCase(profileId)
-    flutterCallback(callback, result)
+    callback(getRegisteredAuthenticatorsUseCase(profileId))
   }
 
   override fun getAllAuthenticators(profileId: String, callback: (Result<List<OWAuthenticator>>) -> Unit) {
-    val result = getAllAuthenticatorsUseCase(profileId)
-    flutterCallback(callback, result)
+    callback(getAllAuthenticatorsUseCase(profileId))
   }
 
   override fun getAuthenticatedUserProfile(callback: (Result<OWUserProfile>) -> Unit) {
-    val result = getAuthenticatedUserProfileUseCase()
-    flutterCallback(callback, result)
+    callback(getAuthenticatedUserProfileUseCase())
   }
 
   override fun authenticateUser(profileId: String, registeredAuthenticatorId: String?, callback: (Result<OWRegistrationResponse>) -> Unit) {
@@ -146,17 +144,15 @@ open class PigeonInterface : UserClientApi {
   }
 
   override fun getNotRegisteredAuthenticators(profileId: String, callback: (Result<List<OWAuthenticator>>) -> Unit) {
-    val result = getNotRegisteredAuthenticatorsUseCase(profileId)
-    flutterCallback(callback, result)
+    callback(getNotRegisteredAuthenticatorsUseCase(profileId))
   }
 
   override fun changePin(callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    changePinUseCase(callback)
   }
 
   override fun setPreferredAuthenticator(authenticatorId: String, callback: (Result<Unit>) -> Unit) {
-    val result = setPreferredAuthenticatorUseCase(authenticatorId)
-    flutterCallback(callback, result)
+    callback(setPreferredAuthenticatorUseCase(authenticatorId))
   }
 
   override fun deregisterAuthenticator(authenticatorId: String, callback: (Result<Unit>) -> Unit) {
@@ -180,18 +176,15 @@ open class PigeonInterface : UserClientApi {
   }
 
   override fun getAccessToken(callback: (Result<String>) -> Unit) {
-    val result = getAccessTokenUseCase()
-    flutterCallback(callback, result)
+    callback(getAccessTokenUseCase())
   }
 
   override fun getRedirectUrl(callback: (Result<String>) -> Unit) {
-    val result = getRedirectUrlUseCase()
-    flutterCallback(callback, result)
+    callback(getRedirectUrlUseCase())
   }
 
   override fun getUserProfiles(callback: (Result<List<OWUserProfile>>) -> Unit) {
-    val result = getUserProfilesUseCase()
-    flutterCallback(callback, result)
+    callback(getUserProfilesUseCase())
   }
 
   override fun validatePinWithPolicy(pin: String, callback: (Result<Unit>) -> Unit) {
@@ -273,19 +266,5 @@ open class PigeonInterface : UserClientApi {
     // TODO NEEDS OWN USE CASE
     BrowserRegistrationRequestHandler.onRegistrationCanceled()
     callback(Result.success(Unit))
-  }
-
-  private fun <T> flutterCallback(callback: (Result<T>)  -> Unit, result: Result<T>) {
-    result.fold(
-      onFailure = { error ->
-        when (error) {
-          is SdkError -> callback(Result.failure(error.pigeonError()))
-          else -> callback(Result.failure(error))
-        }
-      },
-      onSuccess = { value ->
-        callback(Result.success(value))
-      }
-    )
   }
 }

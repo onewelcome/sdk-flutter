@@ -6,6 +6,7 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import com.onegini.mobile.sdk.flutter.useCases.SetPreferredAuthenticatorUseCase
 import junit.framework.Assert.fail
 import org.junit.Assert
@@ -42,8 +43,8 @@ class SetPreferredAuthenticatorUseCaseTests {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(null)
 
     when (val error = setPreferredAuthenticatorUseCase("test").exceptionOrNull()) {
-      is SdkError -> {
-        Assert.assertEquals(error.code, NO_USER_PROFILE_IS_AUTHENTICATED.code)
+      is FlutterError -> {
+        Assert.assertEquals(error.code.toInt(), NO_USER_PROFILE_IS_AUTHENTICATED.code)
         Assert.assertEquals(error.message, NO_USER_PROFILE_IS_AUTHENTICATED.message)
       }
       else -> fail(UNEXPECTED_ERROR_TYPE.message)
@@ -58,8 +59,8 @@ class SetPreferredAuthenticatorUseCaseTests {
     setPreferredAuthenticatorUseCase("test")
 
     when (val error = setPreferredAuthenticatorUseCase("test").exceptionOrNull()) {
-      is SdkError -> {
-        Assert.assertEquals(error.code, AUTHENTICATOR_NOT_FOUND.code)
+      is FlutterError -> {
+        Assert.assertEquals(error.code.toInt(), AUTHENTICATOR_NOT_FOUND.code)
         Assert.assertEquals(error.message, AUTHENTICATOR_NOT_FOUND.message)
       }
       else -> fail(UNEXPECTED_ERROR_TYPE.message)

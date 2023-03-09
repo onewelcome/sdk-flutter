@@ -15,7 +15,7 @@ class GetRegisteredAuthenticatorsUseCase @Inject constructor(
     val userProfile = try {
       getUserProfileUseCase(profileId)
     } catch (error: SdkError) {
-      return Result.failure(error)
+      return Result.failure(error.pigeonError())
     }
 
     val registeredAuthenticators = oneginiSDK.oneginiClient.userClient.getRegisteredAuthenticators(userProfile)

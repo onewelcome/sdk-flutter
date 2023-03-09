@@ -5,6 +5,7 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticator
 import com.onegini.mobile.sdk.flutter.useCases.GetAllAuthenticatorsUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfileUseCase
@@ -45,7 +46,7 @@ class GetAllAuthenticatorsUseCaseTests {
     whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("ABCDEF")))
 
     when (val error = getAllAuthenticatorsUseCase("QWERTY").exceptionOrNull()) {
-      is SdkError -> {
+      is FlutterError -> {
         Assert.assertEquals(error.code, USER_PROFILE_DOES_NOT_EXIST.code)
         Assert.assertEquals(error.message, USER_PROFILE_DOES_NOT_EXIST.message)
       }
