@@ -5,9 +5,10 @@ import com.onegini.mobile.sdk.android.handlers.OneginiChangePinHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiChangePinError
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import com.onegini.mobile.sdk.flutter.useCases.ChangePinUseCase
 import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -15,7 +16,8 @@ import org.mockito.Answers
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.any
-import org.mockito.kotlin.eq
+import org.mockito.kotlin.argumentCaptor
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -32,7 +34,7 @@ class ChangePinUseCaseTests {
     lateinit var callMock: MethodCall
 
     @Mock
-    lateinit var resultMock: MethodChannel.Result
+    lateinit var callbackMock: (Result<Unit>) -> Unit
 
     @Mock
     lateinit var oneginiChangePinError: OneginiChangePinError
@@ -51,9 +53,12 @@ class ChangePinUseCaseTests {
             it.getArgument<OneginiChangePinHandler>(0).onSuccess()
         }
 
-        changePinUseCase(resultMock)
+        changePinUseCase(callbackMock)
 
-        verify(resultMock).success(null)
+        argumentCaptor<Result<Unit>>().apply {
+            verify(callbackMock, times(1)).invoke(capture())
+            Assert.assertEquals(firstValue.getOrNull(), Unit)
+        }
     }
 
     @Test
@@ -62,10 +67,18 @@ class ChangePinUseCaseTests {
             it.getArgument<OneginiChangePinHandler>(0).onError(oneginiChangePinError)
         }
 
-        changePinUseCase(resultMock)
+        changePinUseCase(callbackMock)
 
-        val message = oneginiChangePinError.message
-        verify(resultMock).error(eq(oneginiChangePinError.errorType.toString()), eq(message), any())
+        argumentCaptor<Result<Unit>>().apply {
+            verify(callbackMock, times(1)).invoke(capture())
+            when (val error = firstValue.exceptionOrNull()) {
+                is FlutterError -> {
+                    Assert.assertEquals(error.code.toInt(), oneginiChangePinError.errorType)
+                    Assert.assertEquals(error.message, oneginiChangePinError.message)
+                }
+                else -> junit.framework.Assert.fail(UNEXPECTED_ERROR_TYPE.message)
+            }
+        }
     }
 
     private fun setupErrorMock() {

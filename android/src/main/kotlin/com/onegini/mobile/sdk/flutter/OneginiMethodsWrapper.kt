@@ -52,8 +52,4 @@ class OneginiMethodsWrapper @Inject constructor(
     fun validatePinWithPolicy(call: MethodCall, result: MethodChannel.Result) {
         validatePinWithPolicyUseCase(call, result)
     }
-
-    fun changePin(result: MethodChannel.Result) {
-        changePinUseCase(result)
-    }
 }
