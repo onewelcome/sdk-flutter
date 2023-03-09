@@ -41,6 +41,7 @@ import com.onegini.mobile.sdk.flutter.useCases.RegistrationUseCase
 import com.onegini.mobile.sdk.flutter.useCases.SetPreferredAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.StartAppUseCase
 import com.onegini.mobile.sdk.flutter.useCases.SubmitCustomRegistrationActionUseCase
+import com.onegini.mobile.sdk.flutter.useCases.ValidatePinWithPolicyUseCase
 import javax.inject.Inject
 
 //private val getIdentityProvidersUseCase: GetIdentityProvidersUseCase
@@ -101,6 +102,8 @@ open class PigeonInterface : UserClientApi {
   lateinit var submitCustomRegistrationActionUseCase: SubmitCustomRegistrationActionUseCase
   @Inject
   lateinit var changePinUseCase: ChangePinUseCase
+  @Inject
+  lateinit var validatePinWithPolicyUseCase: ValidatePinWithPolicyUseCase
 
   // FIXME REMOVE ME AT THE END; Example function on how it could be initiated on Flutter send to Native
   override fun fetchUserProfiles(callback: (Result<List<OWUserProfile>>) -> Unit) {
@@ -188,7 +191,7 @@ open class PigeonInterface : UserClientApi {
   }
 
   override fun validatePinWithPolicy(pin: String, callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    validatePinWithPolicyUseCase(pin, callback)
   }
 
   override fun authenticateDevice(scopes: List<String>?, callback: (Result<Unit>) -> Unit) {
