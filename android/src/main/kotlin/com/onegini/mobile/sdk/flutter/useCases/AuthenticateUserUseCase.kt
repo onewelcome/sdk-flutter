@@ -23,7 +23,7 @@ class AuthenticateUserUseCase @Inject constructor(
     val userProfile = try {
       getUserProfileUseCase(profileId)
     } catch (error: SdkError) {
-      return callback(Result.failure(error))
+      return callback(Result.failure(error.pigeonError()))
     }
 
     val authenticator = getRegisteredAuthenticatorById(authenticatorId, userProfile)
