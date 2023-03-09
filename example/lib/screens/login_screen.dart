@@ -133,10 +133,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<List<OWUserProfile>> getUserProfiles() async {
     try {
-      var userApi = UserClientApi();
-      var derp = await userApi.fetchUserProfiles();
-      print(derp[0].profileId);
-
       var profiles = await Onegini.instance.userClient.getUserProfiles();
       return profiles;
     } catch (err) {
@@ -148,6 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<String> getImplicitUserDetails(String profileId) async {
     var returnString = "";
     try {
+      print("boop");
       var userProfileId = await Onegini.instance.userClient
           .authenticateUserImplicitly(profileId, ["read"]);
 
