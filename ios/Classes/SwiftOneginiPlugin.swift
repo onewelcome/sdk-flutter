@@ -108,27 +108,27 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func pinDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.pinDenyAuthenticationRequest(completion)
-        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-49
-        completion(.success(()))
+        OneginiModuleSwift.sharedInstance.pinDenyAuthenticationRequest() { result in
+            completion(result.mapError{$0})
+        }
     }
 
     func pinAcceptAuthenticationRequest(pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.pinAcceptAuthenticationRequest(pin, completion: completion)
-        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-49
-        completion(.success(()))
+        OneginiModuleSwift.sharedInstance.pinAcceptAuthenticationRequest(pin) { result in
+            completion(result.mapError{$0})
+        }
     }
 
     func pinDenyRegistrationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.pinDenyRegistrationRequest(completion)
-        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-49
-        completion(.success(()))
+        OneginiModuleSwift.sharedInstance.pinDenyRegistrationRequest() { result in
+            completion(result.mapError{$0})
+        }
     }
 
     func pinAcceptRegistrationRequest(pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.pinAcceptRegistrationRequest(pin, completion: completion)
-        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-49
-        completion(.success(()))
+        OneginiModuleSwift.sharedInstance.pinAcceptRegistrationRequest(pin) { result in
+            completion(result.mapError{$0})
+        }
     }
 
     func cancelBrowserRegistration(completion: @escaping (Result<Void, Error>) -> Void) {

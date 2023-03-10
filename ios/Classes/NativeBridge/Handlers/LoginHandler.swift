@@ -5,18 +5,22 @@ class LoginHandler: NSObject {
     var pinChallenge: ONGPinChallenge?
     var loginCompletion: ((Result<OWRegistrationResponse, FlutterError>) -> Void)?
     
-    func handlePin(pin: String) {
-        //FIXME: add a completion handler and errors for in progress
-        if let pinChallenge = pinChallenge {
-            pinChallenge.sender.respond(withPin: pin, challenge: pinChallenge)
+    func handlePin(pin: String, completion: (Result<Void, FlutterError>) -> Void) {
+        guard let pinChallenge = pinChallenge else {
+            completion(.failure(FlutterError(.authenticationNotInProgress)))
+            return
         }
+        pinChallenge.sender.respond(withPin: pin, challenge: pinChallenge)
+        completion(.success(()))
     }
     
-    func cancelPinAuthentication() {
-        //FIXME: add a completion handler and errors for in progress
-        if let pinChallenge = pinChallenge {
-            pinChallenge.sender.cancel(pinChallenge)
+    func cancelPinAuthentication(completion: (Result<Void, FlutterError>) -> Void) {
+        guard let pinChallenge = pinChallenge else {
+            completion(.failure(FlutterError(.authenticationNotInProgress)))
+            return
         }
+        pinChallenge.sender.cancel(pinChallenge)
+        completion(.success(()))
     }
     
     func handleDidReceiveChallenge(_ challenge: ONGPinChallenge) {

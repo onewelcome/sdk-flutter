@@ -83,21 +83,22 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
         browserRegistrationChallenge.sender.respond(with: url, challenge: browserRegistrationChallenge)
     }
 
-    func handlePin(pin: String?) {
-        guard let createPinChallenge = self.createPinChallenge else { return }
-
-        if let _pin = pin {
-            createPinChallenge.sender.respond(withCreatedPin: _pin, challenge: createPinChallenge)
-
-        } else {
-            createPinChallenge.sender.cancel(createPinChallenge)
+    func handlePin(pin: String, completion: (Result<Void, FlutterError>) -> Void) {
+        guard let createPinChallenge = createPinChallenge else {
+            completion(.failure(FlutterError(.registrationNotInProgress)))
+            return
         }
+        createPinChallenge.sender.respond(withCreatedPin: pin, challenge: createPinChallenge)
+        completion(.success(()))
     }
     
-    func cancelPinRegistration() {
-        // FIXME: add completion here and error if createPin not in progress
-        guard let createPinChallenge = self.createPinChallenge else { return }
+    func cancelPinRegistration(completion: (Result<Void, FlutterError>) -> Void) {
+        guard let createPinChallenge = self.createPinChallenge else {
+            completion(.failure(FlutterError(.registrationNotInProgress)))
+            return
+        }
         createPinChallenge.sender.cancel(createPinChallenge)
+        completion(.success(()))
     }
     
     
