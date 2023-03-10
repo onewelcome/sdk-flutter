@@ -101,6 +101,7 @@ class ErrorMapper {
     
     func mapErrorFromPinChallenge(_ challenge: ONGPinChallenge?) -> SdkError? {
         if let error = challenge?.error, error.code != ONGAuthenticationError.touchIDAuthenticatorFailure.rawValue {
+            // FIXME: this probably shouldn't be here
             guard let maxAttempts = challenge?.maxFailureCount,
                   let previousCount = challenge?.previousFailureCount,
                   maxAttempts != previousCount else {

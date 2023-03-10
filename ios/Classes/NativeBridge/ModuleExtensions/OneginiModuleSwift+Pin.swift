@@ -3,23 +3,37 @@ import OneginiSDKiOS
 import Flutter
 
 extension OneginiModuleSwift {
-    
-    func cancelPinAuth() {
-        bridgeConnector.toPinHandlerConnector.pinHandler.onCancel()
+
+    func pinAcceptAuthenticationRequest(_ pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        bridgeConnector.toLoginHandler.handlePin(pin: pin)
     }
-  
-    func submitPinAction(_ flow: String, action: String, pin: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        bridgeConnector.toPinHandlerConnector.handlePinAction(flow, action, pin)
-     }
+    
+    func pinDenyAuthenticationRequest(_ completion: @escaping (Result<Void, Error>) -> Void) {
+        bridgeConnector.toLoginHandler.cancelPinAuthentication()
+    }
+    
+    func pinAcceptRegistrationRequest(_ pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        bridgeConnector.toRegistrationConnector.registrationHandler.handlePin(pin: pin)
+    }
+    
+    func pinDenyRegistrationRequest(_ completion: @escaping (Result<Void, Error>) -> Void) {
+        bridgeConnector.toRegistrationConnector.registrationHandler.cancelPinRegistration()
+    }
+    
     
     func changePin(completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        bridgeConnector.toPinHandlerConnector.pinHandler.onChangePinCalled(completion: completion)
+        bridgeConnector.toChangePinHandler.changePin(completion: completion)
     }
     
     func validatePinWithPolicy(_ pin: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        bridgeConnector.toPinHandlerConnector.pinHandler.validatePinWithPolicy(pin: pin, completion: { result in
-            completion(result)
-        })
+        // FIXME: Move this out of this file
+        ONGUserClient.sharedInstance().validatePin(withPolicy: pin) { (value, error) in
+            guard let error = error else {
+                completion(.success(()))
+                return
+            }
+            completion(.failure(SdkError(code: error.code, errorDescription: error.localizedDescription).flutterError()))
+        }
     }
 }
 
