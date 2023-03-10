@@ -125,30 +125,15 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
 extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
     func userClient(_: ONGUserClient, didReceive challenge: ONGPinChallenge) {
         Logger.log("[AUTH] userClient didReceive ONGPinChallenge", sender: self)
-        
-        pinChallenge = challenge
-        let pinError = ErrorMapper().mapErrorFromPinChallenge(challenge)
-        
-        if let error = pinError, error.code == ONGAuthenticationError.invalidPin.rawValue, challenge.previousFailureCount < challenge.maxFailureCount { // 9009
-//            BridgeConnector.shared?.toPinHandlerConnector.pinHandler.handleFlowUpdate(PinFlow.nextAuthenticationAttempt, error, receiver: self)
-            return
-        }
-        
-//        BridgeConnector.shared?.toPinHandlerConnector.pinHandler.handleFlowUpdate(PinFlow.authentication, pinError, receiver: self)
+        BridgeConnector.shared?.toLoginHandler.handleDidReceiveChallenge(challenge)
     }
 
     func userClient(_: ONGUserClient, didReceive challenge: ONGCustomAuthFinishRegistrationChallenge) {
-        Logger.log("[AUTH] userClient didReceive ONGCustomAuthFinishRegistrationChallenge", sender: self)
-        // TODO: Will need to check it in the future
-        
-        registrationCompletion?(.success(()))
-        customAuthChallenge = challenge
-//        BridgeConnector.shared?.toPinHandlerConnector.pinHandler.handleFlowUpdate(PinFlow.create, nil, receiver: self)
+        // We currently don't support custom authenticators
     }
 
     func userClient(_: ONGUserClient, didFailToRegister authenticator: ONGAuthenticator, forUser _: ONGUserProfile, error: Error) {
         Logger.log("[AUTH] userClient didFailToRegister ONGAuthenticator", sender:self)
-//        BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
         if error.code == ONGGenericError.actionCancelled.rawValue {
             registrationCompletion?(.failure(FlutterError(.authenticatorRegistrationCancelled)))
         } else {
@@ -159,12 +144,11 @@ extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
 
     func userClient(_: ONGUserClient, didRegister authenticator: ONGAuthenticator, forUser _: ONGUserProfile, info _: ONGCustomInfo?) {
         Logger.log("[AUTH] userClient didRegister ONGAuthenticator", sender: self)
+        BridgeConnector.shared?.toLoginHandler.handleDidAuthenticateUser()
         registrationCompletion?(.success(()))
-//        BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
     }
 }
 
-//MARK: - ONGAuthenticatorDeregistrationDelegate
 extension AuthenticatorsHandler: ONGAuthenticatorDeregistrationDelegate {
     func userClient(_: ONGUserClient, didDeregister _: ONGAuthenticator, forUser _: ONGUserProfile) {
         Logger.log("[AUTH] userClient didDeregister ONGAuthenticator", sender: self)
@@ -172,14 +156,11 @@ extension AuthenticatorsHandler: ONGAuthenticatorDeregistrationDelegate {
     }
 
     func userClient(_: ONGUserClient, didReceive challenge: ONGCustomAuthDeregistrationChallenge) {
-        Logger.log("[AUTH] userClient didReceive ONGCustomAuthDeregistrationChallenge", sender: self)
-        
-        deregistrationCompletion?(.success(()))
+        // We currently don't support custom authenticators
     }
 
     func userClient(_: ONGUserClient, didFailToDeregister authenticator: ONGAuthenticator, forUser _: ONGUserProfile, error: Error) {
         Logger.log("[AUTH] userClient didFailToDeregister ONGAuthenticator", sender: self)
-        //BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
         if error.code == ONGGenericError.actionCancelled.rawValue {
             deregistrationCompletion?(.failure(FlutterError(.authenticatorDeregistrationCancelled)))
         } else {
