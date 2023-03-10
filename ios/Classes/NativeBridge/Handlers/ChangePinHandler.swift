@@ -28,19 +28,13 @@ extension ChangePinHandler: ONGChangePinDelegate {
         loginHandler.handleDidAuthenticateUser()
         registrationHandler.handleDidReceivePinRegistrationChallenge(challenge)
     }
-
+    
     func userClient(_: ONGUserClient, didFailToChangePinForUser _: ONGUserProfile, error: Error) {
         loginHandler.handleDidFailToAuthenticateUser()
         registrationHandler.handleDidFailToRegister()
         
-        // FIXME: Clearly we already have an error for canceling pin, so why do we need to create our own here?
-        //        Fixing this could probably remove all those lines and just pass the Error directly.
         let mappedError = ErrorMapper().mapError(error)
-        if error.code == ONGGenericError.actionCancelled.rawValue {
-            changePinCompletion?(.failure(FlutterError(.changingPinCancelled)))
-        } else {
-            changePinCompletion?(.failure(FlutterError(mappedError)))
-        }
+        changePinCompletion?(.failure(FlutterError(mappedError)))
         changePinCompletion = nil
     }
 

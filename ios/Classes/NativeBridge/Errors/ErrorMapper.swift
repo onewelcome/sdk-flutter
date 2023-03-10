@@ -18,7 +18,6 @@ enum OneWelcomeWrapperError: Int {
     case loginCanceled = 8015
     case enrollmentFailed = 8016
     case authenticationCancelled = 8017
-    case changingPinCancelled = 8018
     case registrationCancelled = 8020
     case cantHandleOTP = 8021
     case incorrectResourcesAccess = 8022
@@ -52,8 +51,6 @@ enum OneWelcomeWrapperError: Int {
             return "Authentication cancelled."
         case .authenticatorDeregistrationCancelled:
             return "Authenticator deregistration cancelled."
-        case .changingPinCancelled:
-            return "Changing pin cancelled."
         case .registrationCancelled:
             return "Registration cancelled."
         case .cantHandleOTP:
@@ -93,7 +90,7 @@ enum OneWelcomeWrapperError: Int {
 }
 
 class ErrorMapper {
-    func mapError(_ error: Error, pinChallenge: ONGPinChallenge? = nil, customInfo: ONGCustomInfo? = nil) -> SdkError {
+    func mapError(_ error: Error) -> SdkError {
         Logger.log("Error domain: \(error.domain)")
         
         return SdkError(code: error.code, errorDescription: error.localizedDescription)
@@ -105,7 +102,7 @@ class ErrorMapper {
             guard let maxAttempts = challenge?.maxFailureCount,
                   let previousCount = challenge?.previousFailureCount,
                   maxAttempts != previousCount else {
-                return ErrorMapper().mapError(error, pinChallenge: challenge)
+                return SdkError(code: error.code, errorDescription: error.localizedDescription)
             }
             return SdkError(code: error.code, errorDescription: "Failed attempts", info: ["failedAttempts": previousCount, "maxAttempts": maxAttempts])
         } else {
