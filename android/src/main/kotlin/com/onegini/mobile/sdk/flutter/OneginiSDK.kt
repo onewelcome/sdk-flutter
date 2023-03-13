@@ -3,7 +3,6 @@ package com.onegini.mobile.sdk.flutter
 import android.content.Context
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
-import com.onegini.mobile.sdk.android.handlers.request.OneginiMobileAuthWithPushFingerprintRequestHandler
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 import com.onegini.mobile.sdk.flutter.handlers.*
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
@@ -16,7 +15,6 @@ import com.onegini.mobile.sdk.flutter.providers.CustomTwoStepRegistrationActionI
 import io.flutter.plugin.common.MethodChannel
 import java.util.concurrent.TimeUnit
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -29,7 +27,6 @@ class OneginiSDK @Inject constructor(
     private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler,
     private val createPinRequestHandler: PinRequestHandler,
     private val mobileAuthWithOtpRequestHandler: MobileAuthOtpRequestHandler,
-//    private var nativeApi: NativeCallFlutterApi,
 ){
 
     val oneginiClient: OneginiClient

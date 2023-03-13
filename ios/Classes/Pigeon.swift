@@ -241,7 +241,6 @@ class UserClientApiCodec: FlutterStandardMessageCodec {
 ///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol UserClientApi {
-  func fetchUserProfiles(completion: @escaping (Result<[OWUserProfile], Error>) -> Void)
   func registerUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void)
   func handleRegisteredUserUrl(url: String, signInType: Int32, completion: @escaping (Result<Void, Error>) -> Void)
   func getIdentityProviders(completion: @escaping (Result<[OWIdentityProvider], Error>) -> Void)
@@ -290,21 +289,6 @@ class UserClientApiSetup {
   static var codec: FlutterStandardMessageCodec { UserClientApiCodec.shared }
   /// Sets up an instance of `UserClientApi` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: UserClientApi?) {
-    let fetchUserProfilesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.fetchUserProfiles", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      fetchUserProfilesChannel.setMessageHandler { _, reply in
-        api.fetchUserProfiles() { result in
-          switch result {
-            case .success(let res):
-              reply(wrapResult(res))
-            case .failure(let error):
-              reply(wrapError(error))
-          }
-        }
-      }
-    } else {
-      fetchUserProfilesChannel.setMessageHandler(nil)
-    }
     let registerUserChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.registerUser", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       registerUserChannel.setMessageHandler { message, reply in

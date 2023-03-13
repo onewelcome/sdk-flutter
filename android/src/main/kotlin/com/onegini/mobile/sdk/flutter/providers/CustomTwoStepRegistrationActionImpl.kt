@@ -25,8 +25,6 @@ class CustomTwoStepRegistrationActionImpl(private val providerId: String) : Oneg
     override fun finishRegistration(callback: OneginiCustomRegistrationCallback, customInfo: CustomInfo?) {
         this.callback = callback
 
-//        onewelcomeEventApi.testEventFunction("custom2stepOnFinish") { }
-
         val data = Gson().toJson(CustomRegistrationModel(customInfo?.data.orEmpty(), customInfo?.status, providerId))
         OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_FINISH_CUSTOM_REGISTRATION, data)))
     }
@@ -42,7 +40,6 @@ class CustomTwoStepRegistrationActionImpl(private val providerId: String) : Oneg
     override fun returnSuccess(result: String?): Result<Unit> {
         return when (callback) {
             null -> {
-                callback = null
                 Result.failure(SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).pigeonError())
             }
             else -> {
@@ -56,12 +53,11 @@ class CustomTwoStepRegistrationActionImpl(private val providerId: String) : Oneg
     override fun returnError(exception: Exception?): Result<Unit> {
         return when (callback) {
             null -> {
-                callback = null
                 Result.failure(SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).pigeonError())
             }
             else -> {
-                callback = null
                 this.callback?.returnError(exception)
+                callback = null
                 Result.success(Unit)
             }
         }

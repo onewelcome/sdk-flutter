@@ -1,7 +1,5 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
-import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
-import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
@@ -15,21 +13,11 @@ class SetPreferredAuthenticatorUseCase @Inject constructor(private val oneginiSD
     val userProfile = oneginiSDK.oneginiClient.userClient.authenticatedUserProfile
       ?: return Result.failure(SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).pigeonError())
 
-    val authenticator = getAuthenticatorById(authenticatorId, userProfile)
+    val authenticator = oneginiSDK.oneginiClient.userClient
+      .getRegisteredAuthenticators(userProfile).find { it.id == authenticatorId }
       ?: return Result.failure(SdkError(AUTHENTICATOR_NOT_FOUND).pigeonError())
 
     oneginiSDK.oneginiClient.userClient.setPreferredAuthenticator(authenticator)
     return Result.success(Unit)
-  }
-
-  private fun getAuthenticatorById(authenticatorId: String?, userProfile: UserProfile): OneginiAuthenticator? {
-    var authenticator: OneginiAuthenticator? = null
-    val registeredAuthenticators = oneginiSDK.oneginiClient.userClient.getRegisteredAuthenticators(userProfile)
-    for (registeredAuthenticator in registeredAuthenticators) {
-      if (registeredAuthenticator.id == authenticatorId) {
-        authenticator = registeredAuthenticator
-      }
-    }
-    return authenticator
   }
 }

@@ -5,17 +5,9 @@ import android.util.Patterns
 import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiAppToWebSingleSignOnHandler
-import com.onegini.mobile.sdk.android.handlers.OneginiChangePinHandler
-import com.onegini.mobile.sdk.android.handlers.OneginiPinValidationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAppToWebSingleSignOnError
-import com.onegini.mobile.sdk.android.handlers.error.OneginiChangePinError
-import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
 import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
 import com.onegini.mobile.sdk.flutter.constants.Constants
-import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
-import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
-import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
-import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.MobileAuthenticationObject
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodCall
@@ -39,6 +31,7 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
 
     private fun onSDKMethodCall(call: MethodCall, client: OneginiClient, result: MethodChannel.Result) {
         when (call.method) {
+            // TODO: Move remaining methods to pigeon; https://onewelcome.atlassian.net/browse/FP-71
             Constants.METHOD_IS_AUTHENTICATOR_REGISTERED -> oneginiMethodsWrapper.isAuthenticatorRegistered(call, result)
 
             // OTP
@@ -50,37 +43,7 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
             Constants.METHOD_GET_IMPLICIT_RESOURCE -> oneginiMethodsWrapper.getImplicitResource(call, result)
             Constants.METHOD_GET_UNAUTHENTICATED_RESOURCE -> oneginiMethodsWrapper.getUnauthenticatedResource(call, result)
 
-            // Other
-            Constants.METHOD_GET_APP_TO_WEB_SINGLE_SIGN_ON -> getAppToWebSingleSignOn(call.argument<String>("url"), result, client)
-
             else -> SdkError(METHOD_TO_CALL_NOT_FOUND).flutterError(result)
         }
-    }
-
-    fun getAppToWebSingleSignOn(url: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
-        if (url == null) {
-            SdkError(URL_CANT_BE_NULL).flutterError(result)
-            return
-        }
-        if (!Patterns.WEB_URL.matcher(url).matches()) {
-            SdkError(MALFORMED_URL).flutterError(result)
-            return
-        }
-        val targetUri: Uri = Uri.parse(url)
-        oneginiClient.userClient.getAppToWebSingleSignOn(
-                targetUri,
-                object : OneginiAppToWebSingleSignOnHandler {
-                    override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {
-                        result.success(Gson().toJson(mapOf("token" to oneginiAppToWebSingleSignOn.token, "redirectUrl" to oneginiAppToWebSingleSignOn.redirectUrl.toString())))
-                    }
-
-                    override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
-                        SdkError(
-                            code = oneginiSingleSignOnError.errorType,
-                            message = oneginiSingleSignOnError.message
-                        ).flutterError(result)
-                    }
-                }
-        )
     }
 }

@@ -107,12 +107,4 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
     }
   }
-    
-    // Example function for Flutter -> Native functions and how to return a response or error
-    func fetchUserProfiles(completion: @escaping (Result<[PigeonUserProfile], Error>) -> Void) {
-//        let a = .success([PigeonUserProfile(profileId: "boopios", isDefault: true)])
-        completion(.failure(SdkError(.userProfileDoesNotExist).flutterError()))
-
-//        completion(.success([PigeonUserProfile(profileId: "boopios", isDefault: true)]))
-    }
 }

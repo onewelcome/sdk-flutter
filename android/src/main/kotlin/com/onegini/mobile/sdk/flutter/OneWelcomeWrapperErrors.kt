@@ -9,7 +9,6 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
     ERROR_CODE_HTTP_REQUEST(8013, "OneWelcome: HTTP Request returned an error code. Check Response for more info"),
     USER_NOT_AUTHENTICATED_IMPLICITLY(8035, "The requested action requires you to be authenticated implicitly"),
     METHOD_ARGUMENT_NOT_FOUND(8036, "The passed argument from Flutter could not be found"),
-    ARGUMENT_NOT_CORRECT(8036, "The passed argument is not correct"),
 
     // Errors that only occur on Android
     IDENTITY_PROVIDER_NOT_FOUND(8005, "The requested identity provider is not found"),

@@ -14,7 +14,6 @@ class AuthenticateUserImplicitlyUseCase @Inject constructor(
   private val getUserProfileUseCase: GetUserProfileUseCase
 ) {
   operator fun invoke(profileId: String, scopes: List<String>?, callback: (Result<Unit>) -> Unit) {
-    // TODO replace this logic with result
     val userProfile = try {
       getUserProfileUseCase(profileId)
     } catch (error: SdkError) {

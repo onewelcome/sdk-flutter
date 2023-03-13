@@ -255,7 +255,6 @@ private object UserClientApiCodec : StandardMessageCodec() {
  * Generated interface from Pigeon that represents a handler of messages from Flutter.
  */
 interface UserClientApi {
-  fun fetchUserProfiles(callback: (Result<List<OWUserProfile>>) -> Unit)
   fun registerUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit)
   fun handleRegisteredUserUrl(url: String, signInType: Long, callback: (Result<Unit>) -> Unit)
   fun getIdentityProviders(callback: (Result<List<OWIdentityProvider>>) -> Unit)
@@ -305,25 +304,6 @@ interface UserClientApi {
     /** Sets up an instance of `UserClientApi` to handle messages through the `binaryMessenger`. */
     @Suppress("UNCHECKED_CAST")
     fun setUp(binaryMessenger: BinaryMessenger, api: UserClientApi?) {
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.fetchUserProfiles", codec)
-        if (api != null) {
-          channel.setMessageHandler { _, reply ->
-            var wrapped = listOf<Any?>()
-            api.fetchUserProfiles() { result: Result<List<OWUserProfile>> ->
-              val error = result.exceptionOrNull()
-              if (error != null) {
-                reply.reply(wrapError(error))
-              } else {
-                val data = result.getOrNull()
-                reply.reply(wrapResult(data))
-              }
-            }
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
       run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.registerUser", codec)
         if (api != null) {

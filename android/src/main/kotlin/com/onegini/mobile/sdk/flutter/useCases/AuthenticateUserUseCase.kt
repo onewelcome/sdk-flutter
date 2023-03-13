@@ -26,23 +26,13 @@ class AuthenticateUserUseCase @Inject constructor(
       return callback(Result.failure(error.pigeonError()))
     }
 
-    val authenticator = getRegisteredAuthenticatorById(authenticatorId, userProfile)
+    val authenticator = oneginiSDK.oneginiClient.userClient.getRegisteredAuthenticators(userProfile)
+      .find { it.id == authenticatorId }
 
     when {
       authenticatorId != null && authenticator == null -> callback(Result.failure(SdkError(AUTHENTICATOR_NOT_FOUND).pigeonError()))
       else -> authenticate(userProfile, authenticator, callback)
     }
-  }
-
-  private fun getRegisteredAuthenticatorById(registeredAuthenticatorsId: String?, userProfile: UserProfile): OneginiAuthenticator? {
-    if (registeredAuthenticatorsId == null) return null
-    val registeredAuthenticators = oneginiSDK.oneginiClient.userClient.getRegisteredAuthenticators(userProfile)
-    for (registeredAuthenticator in registeredAuthenticators) {
-      if (registeredAuthenticator.id == registeredAuthenticatorsId) {
-        return registeredAuthenticator
-      }
-    }
-    return null
   }
 
   private fun authenticate(

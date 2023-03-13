@@ -18,21 +18,8 @@ class GetAllAuthenticatorsUseCase @Inject constructor(
       return Result.failure(error.pigeonError())
     }
 
-    val allAuthenticators = oneginiSDK.oneginiClient.userClient.getAllAuthenticators(userProfile)
-    val authenticators = mutableListOf<OWAuthenticator>()
-
-    for (auth in allAuthenticators) {
-      val authenticator = OWAuthenticator(
-        auth.id,
-        auth.name,
-        auth.isRegistered,
-        auth.isPreferred,
-        auth.type.toLong()
-      )
-
-      authenticators.add(authenticator)
-    }
-
-    return Result.success(authenticators)
+    return oneginiSDK.oneginiClient.userClient.getAllAuthenticators(userProfile)
+      .map { OWAuthenticator(it.id, it.name, it.isRegistered, it.isPreferred, it.type.toLong()) }
+      .let { Result.success(it) }
   }
 }

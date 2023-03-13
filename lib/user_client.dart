@@ -148,24 +148,7 @@ class UserClient {
   /// Single sign on the user web page.
   Future<OWAppToWebSingleSignOn> getAppToWebSingleSignOn(String url) async {
     // todo use api once the branch is merged that puts this in an usecase on android
-    // return await api.getAppToWebSingleSignOn(url);
-    try {
-      var oneginiAppToWebSingleSignOn = await Onegini.instance.channel
-          .invokeMethod(Constants.getAppToWebSingleSignOn, <String, String>{
-        'url': url,
-      });
-
-      var oldAppToWeb = oneginiAppToWebSingleSignOnFromJson(oneginiAppToWebSingleSignOn);
-      var token = oldAppToWeb.token != null ? oldAppToWeb.token.toString() : "";
-      var redirectUrl = oldAppToWeb.redirectUrl != null ? oldAppToWeb.redirectUrl.toString() : "";
-
-      return OWAppToWebSingleSignOn(token: token, redirectUrl: redirectUrl);
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+    return await api.getAppToWebSingleSignOn(url);
   }
 
   // Get Access Token

@@ -1,12 +1,8 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
-import com.google.gson.GsonBuilder
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticator
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,19 +18,8 @@ class GetNotRegisteredAuthenticatorsUseCase @Inject constructor(
       return Result.failure(error.pigeonError())
     }
 
-    val notRegisteredAuthenticators = oneginiSDK.oneginiClient.userClient.getNotRegisteredAuthenticators(userProfile)
-    val authenticators = mutableListOf<OWAuthenticator>()
-    for (auth in notRegisteredAuthenticators) {
-      val authenticator = OWAuthenticator(
-        auth.id,
-        auth.name,
-        auth.isRegistered,
-        auth.isPreferred,
-        auth.type.toLong()
-      )
-
-      authenticators.add(authenticator)
-    }
-    return Result.success(authenticators)
+    return oneginiSDK.oneginiClient.userClient.getNotRegisteredAuthenticators(userProfile)
+      .map { OWAuthenticator(it.id, it.name, it.isRegistered, it.isPreferred, it.type.toLong()) }
+      .let { Result.success(it) }
   }
 }

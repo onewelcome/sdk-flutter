@@ -17,9 +17,6 @@ class CustomRegistrationActionImpl(private val providerId: String) : OneginiCust
     override fun finishRegistration(callback: OneginiCustomRegistrationCallback, info: CustomInfo?) {
         this.callback = callback
 
-        // Example Tell flutter to start this method from native
-//        onewelcomeEventApi.testEventFunction("customOneStepOnFinish") { }
-
         val data = Gson().toJson(CustomRegistrationModel(info?.data.orEmpty(), info?.status, providerId))
         OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_FINISH_CUSTOM_REGISTRATION, data)))
 
@@ -36,7 +33,6 @@ class CustomRegistrationActionImpl(private val providerId: String) : OneginiCust
     override fun returnSuccess(result: String?): Result<Unit> {
         return when (callback) {
             null -> {
-                callback = null
                 Result.failure(SdkError(REGISTRATION_NOT_IN_PROGRESS).pigeonError())
             }
             else -> {
@@ -50,12 +46,11 @@ class CustomRegistrationActionImpl(private val providerId: String) : OneginiCust
     override fun returnError(exception: Exception?): Result<Unit> {
         return when (callback) {
             null -> {
-                callback = null
                 Result.failure(SdkError(REGISTRATION_NOT_IN_PROGRESS).pigeonError())
             }
             else -> {
-                callback = null
                 this.callback?.returnError(exception)
+                callback = null
                 Result.success(Unit)
             }
         }

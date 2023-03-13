@@ -18,21 +18,8 @@ class GetRegisteredAuthenticatorsUseCase @Inject constructor(
       return Result.failure(error.pigeonError())
     }
 
-    val registeredAuthenticators = oneginiSDK.oneginiClient.userClient.getRegisteredAuthenticators(userProfile)
-    val authenticators = mutableListOf<OWAuthenticator>()
-
-    for (registeredAuthenticator in registeredAuthenticators) {
-      val authenticator = OWAuthenticator(
-        registeredAuthenticator.id,
-        registeredAuthenticator.name,
-        registeredAuthenticator.isRegistered,
-        registeredAuthenticator.isPreferred,
-        registeredAuthenticator.type.toLong()
-      )
-
-      authenticators.add(authenticator)
-    }
-
-    return Result.success(authenticators)
+    return oneginiSDK.oneginiClient.userClient.getRegisteredAuthenticators(userProfile)
+      .map { OWAuthenticator(it.id, it.name, it.isRegistered, it.isPreferred, it.type.toLong()) }
+      .let { Result.success(it) }
   }
 }

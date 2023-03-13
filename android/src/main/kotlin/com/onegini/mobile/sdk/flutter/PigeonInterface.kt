@@ -1,6 +1,10 @@
 package com.onegini.mobile.sdk.flutter
 
-import com.onegini.mobile.sdk.flutter.constants.Constants
+import android.net.Uri
+import android.util.Patterns
+import com.onegini.mobile.sdk.android.handlers.OneginiAppToWebSingleSignOnHandler
+import com.onegini.mobile.sdk.android.handlers.error.OneginiAppToWebSingleSignOnError
+import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
 import com.onegini.mobile.sdk.flutter.handlers.BrowserRegistrationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
@@ -44,7 +48,6 @@ import com.onegini.mobile.sdk.flutter.useCases.SubmitCustomRegistrationActionUse
 import com.onegini.mobile.sdk.flutter.useCases.ValidatePinWithPolicyUseCase
 import javax.inject.Inject
 
-//private val getIdentityProvidersUseCase: GetIdentityProvidersUseCase
 open class PigeonInterface : UserClientApi {
   @Inject
   lateinit var authenticateDeviceUseCase: AuthenticateDeviceUseCase
@@ -104,15 +107,8 @@ open class PigeonInterface : UserClientApi {
   lateinit var changePinUseCase: ChangePinUseCase
   @Inject
   lateinit var validatePinWithPolicyUseCase: ValidatePinWithPolicyUseCase
-
-  // FIXME REMOVE ME AT THE END; Example function on how it could be initiated on Flutter send to Native
-  override fun fetchUserProfiles(callback: (Result<List<OWUserProfile>>) -> Unit) {
-    val a = Result.success(listOf(OWUserProfile("ghalo")))
-//    flutterCallback(callback, a)
-
-//    val b = Result.failure<List<OneWelcomeUserProfile>>(SdkError(2000, "hallo"))
-//    flutterCallback(callback, b)
-  }
+  @Inject
+  lateinit var oneginiSDK: OneginiSDK
 
   override fun registerUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit) {
     registrationUseCase(identityProviderId, scopes, callback)
@@ -171,11 +167,34 @@ open class PigeonInterface : UserClientApi {
   }
 
   override fun mobileAuthWithOtp(data: String, callback: (Result<String?>) -> Unit) {
-//    TODO("Not yet implemented")
+    // TODO; dependent on:
+    // https://onewelcome.atlassian.net/browse/FP-20
+    // https://onewelcome.atlassian.net/browse/FP-70
   }
 
   override fun getAppToWebSingleSignOn(url: String, callback: (Result<OWAppToWebSingleSignOn>) -> Unit) {
-//    TODO("Not yet implemented")
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-62
+    if (!Patterns.WEB_URL.matcher(url).matches()) {
+      callback(Result.failure(SdkError(OneWelcomeWrapperErrors.MALFORMED_URL).pigeonError()))
+      return
+    }
+    val targetUri: Uri = Uri.parse(url)
+
+    oneginiSDK.oneginiClient.userClient.getAppToWebSingleSignOn(
+      targetUri,
+      object : OneginiAppToWebSingleSignOnHandler {
+        override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {
+          callback(Result.success(OWAppToWebSingleSignOn(oneginiAppToWebSingleSignOn.token, oneginiAppToWebSingleSignOn.redirectUrl.toString())))
+        }
+
+        override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
+          callback(Result.failure(SdkError(
+            code = oneginiSingleSignOnError.errorType,
+            message = oneginiSingleSignOnError.message
+          ).pigeonError()))
+        }
+      }
+    )
   }
 
   override fun getAccessToken(callback: (Result<String>) -> Unit) {
@@ -212,61 +231,61 @@ open class PigeonInterface : UserClientApi {
   }
 
   override fun fingerprintFallbackToPin(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-72
     FingerprintAuthenticationRequestHandler.fingerprintCallback?.fallbackToPin()
     callback(Result.success(Unit))
   }
 
   override fun fingerprintDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-72
     FingerprintAuthenticationRequestHandler.fingerprintCallback?.denyAuthenticationRequest()
     callback(Result.success(Unit))
   }
 
   override fun fingerprintAcceptAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-72
     FingerprintAuthenticationRequestHandler.fingerprintCallback?.acceptAuthenticationRequest()
     callback(Result.success(Unit))
   }
 
   override fun otpDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-70
     MobileAuthOtpRequestHandler.CALLBACK?.denyAuthenticationRequest()
     callback(Result.success(Unit))
   }
 
   override fun otpAcceptAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-70
     MobileAuthOtpRequestHandler.CALLBACK?.acceptAuthenticationRequest()
     callback(Result.success(Unit))
   }
 
   override fun pinDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-73
     PinAuthenticationRequestHandler.CALLBACK?.denyAuthenticationRequest()
     callback(Result.success(Unit))
   }
 
   override fun pinAcceptAuthenticationRequest(pin: String, callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-73
     PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin.toCharArray())
     callback(Result.success(Unit))
   }
 
   override fun pinDenyRegistrationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-73
     PinRequestHandler.CALLBACK?.denyAuthenticationRequest()
     callback(Result.success(Unit))
   }
 
   override fun pinAcceptRegistrationRequest(pin: String, callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-73
     PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin.toCharArray())
     callback(Result.success(Unit))
   }
 
   override fun cancelBrowserRegistration(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-74
     BrowserRegistrationRequestHandler.onRegistrationCanceled()
     callback(Result.success(Unit))
   }

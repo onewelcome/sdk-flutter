@@ -31,9 +31,6 @@ class ChangePinUseCaseTests {
     lateinit var clientMock: OneginiClient
 
     @Mock
-    lateinit var callMock: MethodCall
-
-    @Mock
     lateinit var callbackMock: (Result<Unit>) -> Unit
 
     @Mock
