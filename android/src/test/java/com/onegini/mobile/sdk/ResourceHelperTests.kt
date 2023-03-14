@@ -34,14 +34,11 @@ class ResourceHelperTests {
     @Mock
     lateinit var callMock: MethodCall
 
-    @Spy
-    lateinit var resultSpy: MethodChannel.Result
-
     lateinit var resourceHelper: ResourceHelper
 
     @Before
     fun setup() {
-        resourceHelper = ResourceHelper()
+//        resourceHelper = ResourceHelper()
     }
     @Test
     fun `should build correct url when 'path' parameter is given`() {

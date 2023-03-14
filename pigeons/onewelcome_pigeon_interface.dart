@@ -64,6 +64,39 @@ class OWRegistrationResponse {
   OWRegistrationResponse({required this.userProfile, this.customInfo});
 }
 
+enum HttpRequestMethod {
+  get,
+  post,
+  put,
+  delete,
+  patch // unsure if we want to support this
+}
+
+enum ResourceRequestType {
+  authenticated,
+  implicit,
+  anonymous,
+  unauthenticated
+}
+
+class OWRequestDetails {
+  String path;
+  HttpRequestMethod method;
+  Map<String?, String?>? headers;
+  String? body;
+
+  OWRequestDetails({required this.path, required this.method, headers, body});
+}
+
+class OWRequestResponse {
+  Map<String?, String?> headers;
+  String body;
+  bool ok;
+  int status;
+
+  OWRequestResponse({required this.headers, required this.body, required this.ok, required this.status});
+}
+
 /// Flutter calls native
 @HostApi()
 abstract class UserClientApi {
@@ -77,7 +110,6 @@ abstract class UserClientApi {
   @async
   List<OWIdentityProvider> getIdentityProviders();
 
-  // removed boolean return
   @async
   void deregisterUser(String profileId);
 
@@ -100,18 +132,15 @@ abstract class UserClientApi {
   @async
   void changePin();
 
-  // changed it into void instead of boolean
   @async
   void setPreferredAuthenticator(String authenticatorId);
 
-  // changed it into void instead of boolean
   @async
   void deregisterAuthenticator(String authenticatorId);
 
   @async
   void registerAuthenticator(String authenticatorId);
 
-  // changed it into void instead of boolean
   @async
   void logout();
 
@@ -137,7 +166,6 @@ abstract class UserClientApi {
   @async
   void authenticateDevice(List<String>? scopes);
 
-  // todo update return value to object
   @async
   void authenticateUserImplicitly(String profileId, List<String>? scopes);
 
@@ -186,6 +214,9 @@ abstract class UserClientApi {
 
 @HostApi()
 abstract class ResourceMethodApi {
+  @async
+  OWRequestResponse requestResource(ResourceRequestType type, OWRequestDetails details);
+
   @async
   String? getResourceAnonymous();
 

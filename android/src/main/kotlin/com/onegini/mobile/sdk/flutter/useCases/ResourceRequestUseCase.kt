@@ -1,0 +1,138 @@
+package com.onegini.mobile.sdk.flutter.useCases
+
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ERROR_CODE_HTTP_REQUEST
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR
+import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestDetails
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestResponse
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceRequestType
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.GET
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.POST
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.PUT
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.PATCH
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.DELETE
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Headers
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import java.io.IOException
+import javax.inject.Inject
+import javax.inject.Singleton
+
+@Singleton
+class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
+  operator fun invoke(type: ResourceRequestType, details: OWRequestDetails, callback: (Result<OWRequestResponse>) -> Unit) {
+    val resourceClient = getOkHttpClient(type)
+    val request = buildRequest(details)
+
+    performCall(resourceClient, request, callback)
+  }
+
+  private fun getOkHttpClient(type: ResourceRequestType): OkHttpClient {
+    return when (type) {
+      ResourceRequestType.AUTHENTICATED -> oneginiSDK.oneginiClient.userClient.resourceOkHttpClient
+      ResourceRequestType.IMPLICIT -> oneginiSDK.oneginiClient.userClient.implicitResourceOkHttpClient
+      ResourceRequestType.ANONYMOUS -> oneginiSDK.oneginiClient.deviceClient.anonymousResourceOkHttpClient
+      ResourceRequestType.UNAUTHENTICATED -> oneginiSDK.oneginiClient.deviceClient.unauthenticatedResourceOkHttpClient
+    }
+  }
+
+  private fun buildRequest(details: OWRequestDetails): Request {
+    return Request.Builder()
+      .url(getCompleteResourceUrl(details.path))
+      .headers(getHeaders(details.headers))
+      .setMethod(details)
+      .build()
+  }
+
+  private fun getCompleteResourceUrl(path: String): String {
+    // TODO Add support for multiple base resource urls
+    val resourceBaseUrl = oneginiSDK.oneginiClient.configModel.resourceBaseUrl
+
+    return when (path.startsWith(resourceBaseUrl)) {
+      true -> path
+      else -> resourceBaseUrl + path
+    }
+  }
+
+  private fun getHeaders(headers: Map<String?, String?>?): Headers {
+    val headerBuilder = Headers.Builder()
+
+    headers?.entries?.forEach {
+      val headerKey = it.key
+      val headerValue = it.value
+
+      // Pigeon 9.0.5 limits enforcing non null values in maps
+      if (headerKey is String && headerValue is String) {
+        headerBuilder.add(headerKey, headerValue)
+      }
+    }
+
+    return headerBuilder.build()
+  }
+
+  private fun Request.Builder.setMethod(details: OWRequestDetails): Request.Builder {
+    return when (details.method) {
+      GET -> {
+        this.get()
+      }
+      POST -> {
+        val body = details.body ?: ""
+        this.post(body.toRequestBody(null))
+      }
+      PUT -> {
+        val body = details.body ?: ""
+        this.put(body.toRequestBody(null))
+      }
+      PATCH -> {
+        val body = details.body ?: ""
+        this.patch(body.toRequestBody(null))
+      }
+      DELETE -> {
+        this.delete(details.body?.toRequestBody())
+      }
+    }
+  }
+
+  private fun performCall(okHttpClient: OkHttpClient, request: Request, callback: (Result<OWRequestResponse>) -> Unit) {
+    okHttpClient.newCall(request).enqueue(object : Callback {
+      override fun onFailure(call: Call, e: IOException) {
+        callback(
+          Result.failure(
+            SdkError(
+              code = HTTP_REQUEST_ERROR.code,
+              message = e.message.toString()
+            ).pigeonError()
+          )
+        )
+      }
+
+      override fun onResponse(call: Call, response: Response) {
+        // Fail on non-successful http-codes to align behaviour with iOS
+        if (response.code >= 400) {
+          callback(
+            Result.failure(
+              SdkError(
+                wrapperError = ERROR_CODE_HTTP_REQUEST,
+                httpResponse = response
+              ).pigeonError()
+            )
+          )
+        } else {
+          val owResponse = OWRequestResponse(
+            headers = response.headers.toMap(),
+            body = response.body?.string() ?: "",
+            ok = response.isSuccessful,
+            status = response.code.toLong()
+          )
+
+          callback(Result.success(owResponse))
+        }
+      }
+    })
+  }
+}

@@ -4,8 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/callbacks/onegini_registration_callback.dart';
-import 'package:onegini/model/onegini_list_response.dart';
-import 'package:onegini/model/registration_response.dart';
+import 'package:onegini/model/request_details.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini/pigeon.dart';
 import 'package:onegini_example/screens/user_screen.dart';
@@ -148,11 +147,13 @@ class _LoginScreenState extends State<LoginScreen> {
       var userProfileId = await Onegini.instance.userClient
           .authenticateUserImplicitly(profileId, ["read"]);
 
-      var response = await Onegini.instance.resourcesMethods
-          .getResourceImplicit("user-id-decorated");
-      var res = json.decode(response);
+      var response = await Onegini.instance.resourcesMethods.resourceRequest(
+        ResourceRequestType.implicit,
+        RequestDetails(path: "user-id-decorated", method: HttpRequestMethod.get));
 
-      returnString = json.decode(res["body"])["decorated_user_id"];
+      var res = json.decode(response.body);
+
+      returnString =res["decorated_user_id"];
 
       return returnString;
     } catch (err) {

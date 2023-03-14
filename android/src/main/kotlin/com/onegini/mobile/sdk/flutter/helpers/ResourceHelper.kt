@@ -1,31 +1,45 @@
 package com.onegini.mobile.sdk.flutter.helpers
 
 import com.google.gson.Gson
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_BODY
 import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_HEADERS
 import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_STATUS_CODE
 import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_URL
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.GET
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.POST
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.PUT
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.PATCH
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.DELETE
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestDetails
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestResponse
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceRequestType
 
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.schedulers.Schedulers
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Headers
 import okhttp3.Headers.Companion.toHeaders
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import java.io.IOException
 import java.util.Locale
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.collections.HashMap
 
 @Singleton
-class ResourceHelper @Inject constructor() {
-
+class ResourceHelper @Inject constructor(private val oneginiSDK: OneginiSDK) {
     fun callRequest(okHttpClient: OkHttpClient, request: Request, result: MethodChannel.Result) {
         Observable.fromCallable { okHttpClient.newCall(request).execute() }
                 .subscribeOn(Schedulers.io())
