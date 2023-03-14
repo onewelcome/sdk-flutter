@@ -608,64 +608,6 @@ void main() {
     );
   });
 
-  group('UserClient validatePinWithPolicy', () {
-    test(
-      'return true',
-      () async {
-        //arrange
-        setupMethodChannel(Constants.validatePinWithPolicy, Future.value(true));
-
-        //act
-        var result = await userClient.validatePinWithPolicy('');
-
-        //assert
-        expect(result, true);
-      },
-    );
-
-    test(
-      'return false',
-      () async {
-        //arrange
-        setupMethodChannel(
-            Constants.validatePinWithPolicy, Future.value(false));
-
-        //act
-        var result = await userClient.validatePinWithPolicy('');
-
-        //assert
-        expect(result, false);
-      },
-    );
-
-    test(
-      'return null defaults to false',
-      () async {
-        //arrange
-        setupMethodChannel(Constants.validatePinWithPolicy, Future.value(null));
-
-        //act
-        var result = await userClient.validatePinWithPolicy('');
-
-        //assert
-        expect(result, false);
-      },
-    );
-
-    test(
-      'handle PlatformException',
-      () async {
-        //arrange
-        setupMethodChannel(Constants.validatePinWithPolicy,
-            Future.error(PlatformException(code: '1')));
-
-        //assert
-        expect(() async => await userClient.validatePinWithPolicy(''),
-            throwsA(isA<PlatformException>()));
-      },
-    );
-  });
-
   group('UserClient authenticateDevice', () {
     test(
       'return true',
@@ -728,8 +670,8 @@ void main() {
       'return UserProfile',
       () async {
         //arrange
-        setupMethodChannel(Constants.authenticateUserImplicitly,
-            Future.value('1234'));
+        setupMethodChannel(
+            Constants.authenticateUserImplicitly, Future.value('1234'));
 
         var result = await userClient.authenticateUserImplicitly("1234", null);
 
