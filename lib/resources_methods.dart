@@ -53,7 +53,7 @@ class ResourcesMethods {
   }
 
   /// Gets unauthenticated resource.
-  Future<RequestResponse> getUnauthenticatedResource(RequestDetails details) async {
+  Future<RequestResponse> getResourceUnauthenticated(RequestDetails details) async {
      var owDetails = OWRequestDetails(path: details.path, method: details.method, headers: details.headers, body: details.body);
     var owResponse = await api.requestResource(ResourceRequestType.unauthenticated, owDetails);
 

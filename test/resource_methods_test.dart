@@ -110,7 +110,7 @@ void main() {
     );
   });
 
-  group('ResourcesMethods getUnauthenticatedResource', () {
+  group('ResourcesMethods getResourceUnauthenticated', () {
     test(
       'return String',
       () async {
@@ -119,7 +119,7 @@ void main() {
             Constants.getUnauthenticatedResource, Future.value('success'));
 
         //act
-        var result = await resourcesMethods.getUnauthenticatedResource('');
+        var result = await resourcesMethods.getResourceUnauthenticated('');
 
         //assert
         expect(result, 'success');
@@ -134,7 +134,7 @@ void main() {
             Constants.getUnauthenticatedResource, Future.value(null));
 
         //act
-        var result = await resourcesMethods.getUnauthenticatedResource('');
+        var result = await resourcesMethods.getResourceUnauthenticated('');
 
         //assert
         expect(result, null);
@@ -150,7 +150,7 @@ void main() {
 
         //assert
         expect(
-            () async => await resourcesMethods.getUnauthenticatedResource(''),
+            () async => await resourcesMethods.getResourceUnauthenticated(''),
             throwsA(isA<PlatformException>()));
       },
     );

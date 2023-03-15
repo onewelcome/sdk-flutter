@@ -436,7 +436,7 @@ class _InfoState extends State<Info> {
   Future<String> makeUnaunthenticatedRequest() async {
     var headers = {'Declareren-Appversion': 'CZ.app'};
     var response = await Onegini.instance.resourcesMethods
-        .getUnauthenticatedResource(RequestDetails(path: "devices", method: HttpRequestMethod.get, headers: headers))
+        .getResourceUnauthenticated(RequestDetails(path: "devices", method: HttpRequestMethod.get, headers: headers))
         .catchError((onError) {
       debugPrint(onError);
     });
