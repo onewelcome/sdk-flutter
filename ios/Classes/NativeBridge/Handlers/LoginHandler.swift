@@ -3,7 +3,7 @@ import Flutter
 
 //MARK: -
 protocol BridgeToLoginHandlerProtocol: LoginHandlerToPinHanlderProtocol {
-    func authenticateUser(_ profile: ONGUserProfile, authenticator: ONGAuthenticator?, completion: @escaping (ONGUserProfile?, SdkError?) -> Void)
+    func authenticateUser(_ profile: ONGUserProfile, authenticator: ONGAuthenticator?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void)
 }
 
 protocol LoginHandlerToPinHanlderProtocol: class {
@@ -14,7 +14,7 @@ protocol LoginHandlerToPinHanlderProtocol: class {
 class LoginHandler: NSObject, PinHandlerToReceiverProtocol {
     var pinChallenge: ONGPinChallenge?
     var customChallange: ONGCustomAuthFinishAuthenticationChallenge?
-    var loginCompletion: ((ONGUserProfile?, SdkError?) -> Void)?
+    var loginCompletion: ((Result<OWRegistrationResponse, FlutterError>) -> Void)?
 
     unowned var pinHandler: PinConnectorToPinHandler?
     
@@ -47,7 +47,7 @@ class LoginHandler: NSObject, PinHandlerToReceiverProtocol {
 
 //MARK: -
 extension LoginHandler : BridgeToLoginHandlerProtocol {
-    func authenticateUser(_ profile: ONGUserProfile, authenticator: ONGAuthenticator?, completion: @escaping (ONGUserProfile?, SdkError?) -> Void) {
+    func authenticateUser(_ profile: ONGUserProfile, authenticator: ONGAuthenticator?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
         loginCompletion = completion
         ONGUserClient.sharedInstance().authenticateUser(profile, authenticator: authenticator, delegate: self)
     }
@@ -59,14 +59,14 @@ extension LoginHandler: ONGAuthenticationDelegate {
         pinChallenge = challenge
         let pinError = ErrorMapper().mapErrorFromPinChallenge(challenge)
 
-        if let error = pinError, error.code == ONGAuthenticationError.invalidPin.rawValue    , challenge.previousFailureCount < challenge.maxFailureCount { // 9009
+        if let error = pinError, error.code == ONGAuthenticationError.invalidPin.rawValue, challenge.previousFailureCount < challenge.maxFailureCount { // 9009
             pinHandler?.handleFlowUpdate(PinFlow.nextAuthenticationAttempt, error, receiver: self)
             return
         }
 
         pinHandler?.handleFlowUpdate(PinFlow.authentication, pinError, receiver: self)
 
-        guard let _ = pinError else { return }
+        guard let pinError = pinError else { return }
         guard challenge.maxFailureCount == challenge.previousFailureCount else {
             return
         }
@@ -74,7 +74,7 @@ extension LoginHandler: ONGAuthenticationDelegate {
         pinHandler?.closeFlow()
         pinHandler?.onCancel()
 
-        loginCompletion?(nil, pinError)
+        loginCompletion?(.failure((FlutterError(pinError))))
     }
 
     func userClient(_: ONGUserClient, didReceive challenge: ONGCustomAuthFinishAuthenticationChallenge) {
@@ -97,7 +97,9 @@ extension LoginHandler: ONGAuthenticationDelegate {
         pinChallenge = nil
         customChallange = nil
         
-        loginCompletion?(userProfile, nil)
+        loginCompletion?(.success(
+            OWRegistrationResponse(userProfile: OWUserProfile(userProfile),
+                                   customInfo: toOWCustomInfo(customAuthInfo))))
         pinHandler?.closeFlow()
     }
 
@@ -109,10 +111,10 @@ extension LoginHandler: ONGAuthenticationDelegate {
         pinHandler?.closeFlow()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            loginCompletion?(nil, SdkError(.loginCanceled))
+            loginCompletion?(.failure(FlutterError(.loginCanceled)))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            loginCompletion?(nil, mappedError)
+            loginCompletion?(.failure(FlutterError(mappedError)))
         }
     }
 }

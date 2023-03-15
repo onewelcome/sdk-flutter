@@ -1,14 +1,13 @@
 import OneginiSDKiOS
 import Flutter
 
-//MARK: -
 protocol PinConnectorToPinHandler: AnyObject {
     func onPinProvided(pin: String)
-    func onChangePinCalled(completion: @escaping (Bool, SdkError?) -> Void)
+    func onChangePinCalled(completion: @escaping (Result<Void, FlutterError>) -> Void)
     func onCancel()
     func handleFlowUpdate(_ flow: PinFlow, _ error: SdkError?, receiver: PinHandlerToReceiverProtocol)
     func closeFlow()
-    func validatePinWithPolicy(pin: String, completion: @escaping (Bool, SdkError?) -> Void)
+    func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, FlutterError>) -> Void)
 }
 
 protocol PinHandlerToReceiverProtocol: class {
@@ -31,7 +30,7 @@ class PinHandler: NSObject {
     var flow: PinFlow?
     var mode: PINEntryMode?
     var pinEntryToVerify = Array<String>()
-    var changePinCompletion: ((Bool, SdkError?) -> Void)?
+    var changePinCompletion: ((Result<Void, FlutterError>) -> Void)?
     
     unowned var pinReceiver: PinHandlerToReceiverProtocol?
     unowned var notificationReceiver: PinNotificationReceiverProtocol?
@@ -67,7 +66,7 @@ class PinHandler: NSObject {
 }
 
 //MARK: -
-extension PinHandler : PinConnectorToPinHandler {
+extension PinHandler: PinConnectorToPinHandler{
     func handleFlowUpdate(_ flow: PinFlow, _ error: SdkError?, receiver: PinHandlerToReceiverProtocol) {
         if(self.flow == nil){
             self.flow = flow
@@ -128,7 +127,7 @@ extension PinHandler : PinConnectorToPinHandler {
       processPin(pinEntry: pinArray)
     }
 
-    func onChangePinCalled(completion: @escaping (Bool, SdkError?) -> Void) {
+    func onChangePinCalled(completion: @escaping (Result<Void, FlutterError>) -> Void) {
         changePinCompletion = completion
         ONGUserClient.sharedInstance().changePin(self)
     }
@@ -137,14 +136,13 @@ extension PinHandler : PinConnectorToPinHandler {
         processCancelAction()
     }
     
-    func validatePinWithPolicy(pin: String, completion: @escaping (Bool, SdkError?) -> Void) {
+    func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
         ONGUserClient.sharedInstance().validatePin(withPolicy: pin) { (value, error) in
-            guard let _error = error else {
-                completion(value, nil)
+            guard let error = error else {
+                completion(.success(()))
                 return
             }
-            
-            completion(false, SdkError(code: _error.code, errorDescription: _error.localizedDescription))
+            completion(.failure(SdkError(code: error.code, errorDescription: error.localizedDescription).flutterError()))
         }
     }
  }
@@ -215,11 +213,11 @@ extension PinHandler: ONGChangePinDelegate {
         let mappedError = ErrorMapper().mapError(error)
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            changePinCompletion?(false, SdkError(.changingPinCancelled))
+            changePinCompletion?(.failure(FlutterError(.changingPinCancelled)))
         } else if error.code == ONGGenericError.userDeregistered.rawValue {
-            changePinCompletion?(false, mappedError)
+            changePinCompletion?(.failure(FlutterError(mappedError)))
         } else {
-            changePinCompletion?(false, mappedError)
+            changePinCompletion?(.failure(FlutterError(mappedError)))
         }
     }
 
@@ -227,6 +225,6 @@ extension PinHandler: ONGChangePinDelegate {
         Logger.log("didChangePinForUser", sender: self)
         createPinChallenge = nil
         closeFlow()
-        changePinCompletion?(true, nil)
+        changePinCompletion?(.success(()))
     }
 }

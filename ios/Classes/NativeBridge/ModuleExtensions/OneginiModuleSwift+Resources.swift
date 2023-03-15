@@ -4,11 +4,8 @@ import Flutter
 
 extension OneginiModuleSwift {
 
-    public func authenticateDevice(_ scopes: [String]?, callback: @escaping FlutterResult) -> Void {
-        bridgeConnector.toResourceFetchHandler.authenticateDevice(scopes) {
-            (data, error) -> Void in
-            error != nil ? callback(error?.flutterError()) : callback(data)
-        }
+    public func authenticateDevice(_ scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        bridgeConnector.toResourceFetchHandler.authenticateDevice(scopes, completion: completion)
     }
 
     public func resourceRequest(isImplicit: Bool, isAnonymousCall: Bool = true, parameters: [String: Any],

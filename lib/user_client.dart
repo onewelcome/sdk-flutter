@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:onegini/pigeon.dart';
 
 import 'constants/constants.dart';
-import 'model/oneginiAppToWebSingleSignOn.dart';
 import 'onegini.dart';
 
 ///Сlass with basic methods available to the developer.
@@ -147,7 +146,6 @@ class UserClient {
 
   /// Single sign on the user web page.
   Future<OWAppToWebSingleSignOn> getAppToWebSingleSignOn(String url) async {
-    // todo use api once the branch is merged that puts this in an usecase on android
     return await api.getAppToWebSingleSignOn(url);
   }
 

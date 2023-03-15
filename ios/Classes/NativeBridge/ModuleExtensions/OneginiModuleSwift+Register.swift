@@ -2,37 +2,20 @@ import Foundation
 import OneginiSDKiOS
 import Flutter
 
+
+
 extension OneginiModuleSwift {
 
-    func deregisterUser(profileId: String, callback: @escaping FlutterResult) {
-        bridgeConnector.toDeregisterUserHandler.deregister(profileId: profileId) { error in
-            error != nil ? callback(SdkError.convertToFlutter(error)) : callback(true)
-        }
+    func deregisterUser(profileId: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        bridgeConnector.toDeregisterUserHandler.deregister(profileId: profileId, completion: completion)
     }
 
-    func registerUser(_ identityProviderId: String? = nil, scopes: [String]? = nil, callback: @escaping FlutterResult) -> Void {
-
-        bridgeConnector.toRegistrationConnector.registrationHandler.signUp(identityProviderId, scopes: scopes) { (_, userProfile, userInfo, error) -> Void in
-            guard let userProfile = userProfile else {
-                callback(SdkError.convertToFlutter(error))
-                return
-            }
-
-            var result = Dictionary<String, Any?>()
-            result["userProfile"] = ["profileId": userProfile.profileId]
-
-            guard let userInfo = userInfo else {
-                callback(String.stringify(json: result))
-                return
-            }
-
-            result["customInfo"] = ["status": userInfo.status, "data": userInfo.data]
-            callback(String.stringify(json: result))
-        }
+    func registerUser(_ identityProviderId: String? = nil, scopes: [String]? = nil, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
+        bridgeConnector.toRegistrationConnector.registrationHandler.registerUser(identityProviderId, scopes: scopes, completion: completion)
     }
     
-    func handleRegisteredProcessUrl(_ url: String, webSignInType: WebSignInType) -> Void {
-        bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: url, webSignInType: webSignInType)
+    func handleRegisteredProcessUrl(_ url: String, webSignInType: Int) -> Result<Void, FlutterError> {
+        return bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: url, webSignInType: webSignInType)
     }
     
     public func handleDeepLinkCallbackUrl(_ url: URL) -> Bool {
@@ -73,76 +56,36 @@ extension OneginiModuleSwift {
         bridgeConnector.toRegistrationConnector.registrationHandler.cancelBrowserRegistration()
     }
     
-    func registerAuthenticator(_ authenticatorId: String, callback: @escaping FlutterResult) {
-        guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
-            callback(SdkError.convertToFlutter(SdkError(.noUserProfileIsAuthenticated)))
-            return
-        }
-
-        let notRegisteredAuthenticators = ONGUserClient.sharedInstance().nonRegisteredAuthenticators(forUser: profile)
-
-        guard let authenticator = notRegisteredAuthenticators.first(where: { $0.identifier == authenticatorId }) else {
-            callback(SdkError.convertToFlutter(SdkError(.authenticatorNotFound)))
-            return
-        }
-
-        bridgeConnector.toAuthenticatorsHandler.registerAuthenticator(profile, authenticator) {
-            (_ , error) -> Void in
-
-            if let _error = error {
-                callback(SdkError.convertToFlutter(_error))
-            } else {
-                callback(nil)
-            }
-        }
+    func registerAuthenticator(_ authenticatorId: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        bridgeConnector.toAuthenticatorsHandler.registerAuthenticator(authenticatorId, completion)
     }
     
-    func getRegisteredAuthenticators(_ profileId: String, callback: @escaping FlutterResult) {
+    func getRegisteredAuthenticators(_ profileId: String) -> Result<[OWAuthenticator], FlutterError> {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
-            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
-            return
+            return .failure(FlutterError(.userProfileDoesNotExist))
         }
-
         let registeredAuthenticators = ONGUserClient.sharedInstance().registeredAuthenticators(forUser: profile)
-
-        let authenticators: [[String: String]] = registeredAuthenticators.compactMap({ ["id" : $0.identifier, "name": $0.name] })
-
-        let data = String.stringify(json: authenticators)
-        callback(data)
+        return .success(registeredAuthenticators.compactMap({OWAuthenticator($0)}))
     }
     
-    func getNotRegisteredAuthenticators(_ profileId: String, callback: @escaping FlutterResult) -> Void {
+    func getNotRegisteredAuthenticators(_ profileId: String) -> Result<[OWAuthenticator], FlutterError> {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
-            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
-            return
+            return .failure(FlutterError(.userProfileDoesNotExist))
         }
-
-        // get not registered authenticators
         let notRegisteredAuthenticators = ONGUserClient.sharedInstance().nonRegisteredAuthenticators(forUser: profile)
-
-        // convert list to list of objects with id and name
-        let authenticators: [[String: String]] = notRegisteredAuthenticators.compactMap({ ["id" : $0.identifier, "name": $0.name] })
-
-        callback(String.stringify(json: authenticators))
+        return .success(notRegisteredAuthenticators.compactMap({OWAuthenticator($0)}))
     }
     
-    func getAllAuthenticators(_ profileId: String, callback: @escaping FlutterResult) -> Void {
+    func getAllAuthenticators(_ profileId: String) -> Result<[OWAuthenticator], FlutterError> {
         guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
-            callback(SdkError.convertToFlutter(SdkError(.userProfileDoesNotExist)))
-            return
+            return .failure(FlutterError(.userProfileDoesNotExist))
         }
-
-        // get all authenticators
         let allAuthenticators = ONGUserClient.sharedInstance().allAuthenticators(forUser: profile)
-
-        // convert list to list of objects with id and name
-        let authenticators: [[String: String]] = allAuthenticators.compactMap({ ["id" : $0.identifier, "name": $0.name] })
-
-        callback(String.stringify(json: authenticators))
+        return .success(allAuthenticators.compactMap({OWAuthenticator($0)}))
     }
     
-    func getRedirectUrl(callback: @escaping FlutterResult) -> Void {
-        callback(ONGClient.sharedInstance().configModel.redirectURL)
+    func getRedirectUrl() -> Result<String, FlutterError> {
+        return .success(ONGClient.sharedInstance().configModel.redirectURL)
     }
 }
 
