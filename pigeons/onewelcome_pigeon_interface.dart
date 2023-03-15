@@ -216,18 +216,6 @@ abstract class UserClientApi {
 abstract class ResourceMethodApi {
   @async
   OWRequestResponse requestResource(ResourceRequestType type, OWRequestDetails details);
-
-  @async
-  String? getResourceAnonymous();
-
-  @async
-  String? getResource();
-
-  @async
-  String? getResourceImplicit();
-
-  @async
-  String? getUnauthenticatedResource();
 }
 
 /// Native calls to Flutter

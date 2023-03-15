@@ -970,10 +970,6 @@ class ResourceMethodApiCodec: FlutterStandardMessageCodec {
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol ResourceMethodApi {
   func requestResource(type: ResourceRequestType, details: OWRequestDetails, completion: @escaping (Result<OWRequestResponse, Error>) -> Void)
-  func getResourceAnonymous(completion: @escaping (Result<String?, Error>) -> Void)
-  func getResource(completion: @escaping (Result<String?, Error>) -> Void)
-  func getResourceImplicit(completion: @escaping (Result<String?, Error>) -> Void)
-  func getUnauthenticatedResource(completion: @escaping (Result<String?, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -999,66 +995,6 @@ class ResourceMethodApiSetup {
       }
     } else {
       requestResourceChannel.setMessageHandler(nil)
-    }
-    let getResourceAnonymousChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ResourceMethodApi.getResourceAnonymous", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      getResourceAnonymousChannel.setMessageHandler { _, reply in
-        api.getResourceAnonymous() { result in
-          switch result {
-            case .success(let res):
-              reply(wrapResult(res))
-            case .failure(let error):
-              reply(wrapError(error))
-          }
-        }
-      }
-    } else {
-      getResourceAnonymousChannel.setMessageHandler(nil)
-    }
-    let getResourceChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ResourceMethodApi.getResource", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      getResourceChannel.setMessageHandler { _, reply in
-        api.getResource() { result in
-          switch result {
-            case .success(let res):
-              reply(wrapResult(res))
-            case .failure(let error):
-              reply(wrapError(error))
-          }
-        }
-      }
-    } else {
-      getResourceChannel.setMessageHandler(nil)
-    }
-    let getResourceImplicitChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ResourceMethodApi.getResourceImplicit", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      getResourceImplicitChannel.setMessageHandler { _, reply in
-        api.getResourceImplicit() { result in
-          switch result {
-            case .success(let res):
-              reply(wrapResult(res))
-            case .failure(let error):
-              reply(wrapError(error))
-          }
-        }
-      }
-    } else {
-      getResourceImplicitChannel.setMessageHandler(nil)
-    }
-    let getUnauthenticatedResourceChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ResourceMethodApi.getUnauthenticatedResource", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      getUnauthenticatedResourceChannel.setMessageHandler { _, reply in
-        api.getUnauthenticatedResource() { result in
-          switch result {
-            case .success(let res):
-              reply(wrapResult(res))
-            case .failure(let error):
-              reply(wrapError(error))
-          }
-        }
-      }
-    } else {
-      getUnauthenticatedResourceChannel.setMessageHandler(nil)
     }
   }
 }

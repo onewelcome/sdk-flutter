@@ -75,19 +75,11 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   @Inject
   lateinit var getIdentityProvidersUseCase: GetIdentityProvidersUseCase
   @Inject
-  lateinit var getImplicitResourceUseCase: GetImplicitResourceUseCase
-  @Inject
   lateinit var getNotRegisteredAuthenticatorsUseCase: GetNotRegisteredAuthenticatorsUseCase
   @Inject
   lateinit var getRedirectUrlUseCase: GetRedirectUrlUseCase
   @Inject
   lateinit var getRegisteredAuthenticatorsUseCase: GetRegisteredAuthenticatorsUseCase
-  @Inject
-  lateinit var getResourceAnonymousUseCase: GetResourceAnonymousUseCase
-  @Inject
-  lateinit var getResourceUseCase: GetResourceUseCase
-  @Inject
-  lateinit var getUnauthenticatedResourceUseCase: GetUnauthenticatedResourceUseCase
   @Inject
   lateinit var getUserProfilesUseCase: GetUserProfilesUseCase
   @Inject
@@ -100,8 +92,6 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   lateinit var registerAuthenticatorUseCase: RegisterAuthenticatorUseCase
   @Inject
   lateinit var registrationUseCase: RegistrationUseCase
-  @Inject
-  lateinit var resourceHelper: ResourceHelper
   @Inject
   lateinit var setPreferredAuthenticatorUseCase: SetPreferredAuthenticatorUseCase
   @Inject
@@ -299,21 +289,5 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
 
   override fun requestResource(type: ResourceRequestType, details: OWRequestDetails, callback: (Result<OWRequestResponse>) -> Unit) {
     resourceRequestUseCase(type, details, callback)
-  }
-
-  override fun getResourceAnonymous(callback: (Result<String?>) -> Unit) {
-    // TODO("Not yet implemented")
-  }
-
-  override fun getResource(callback: (Result<String?>) -> Unit) {
-    // TODO("Not yet implemented")
-  }
-
-  override fun getResourceImplicit(callback: (Result<String?>) -> Unit) {
-    // TODO("Not yet implemented")
-  }
-
-  override fun getUnauthenticatedResource(callback: (Result<String?>) -> Unit) {
-    // TODO("Not yet implemented")
   }
 }

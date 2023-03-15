@@ -1,12 +1,6 @@
 package com.onegini.mobile.sdk.flutter
 
-import android.net.Uri
-import android.util.Patterns
-import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
-import com.onegini.mobile.sdk.android.handlers.OneginiAppToWebSingleSignOnHandler
-import com.onegini.mobile.sdk.android.handlers.error.OneginiAppToWebSingleSignOnError
-import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
 import com.onegini.mobile.sdk.flutter.constants.Constants
 import com.onegini.mobile.sdk.flutter.helpers.MobileAuthenticationObject
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
@@ -36,12 +30,6 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
 
             // OTP
             Constants.METHOD_HANDLE_MOBILE_AUTH_WITH_OTP -> MobileAuthenticationObject.mobileAuthWithOtp(call.argument<String>("data"), result, client)
-
-            // Resources
-            Constants.METHOD_GET_RESOURCE_ANONYMOUS -> oneginiMethodsWrapper.getResourceAnonymous(call, result)
-            Constants.METHOD_GET_RESOURCE -> oneginiMethodsWrapper.getResource(call, result)
-            Constants.METHOD_GET_IMPLICIT_RESOURCE -> oneginiMethodsWrapper.getImplicitResource(call, result)
-            Constants.METHOD_GET_UNAUTHENTICATED_RESOURCE -> oneginiMethodsWrapper.getUnauthenticatedResource(call, result)
 
             else -> SdkError(METHOD_TO_CALL_NOT_FOUND).flutterError(result)
         }

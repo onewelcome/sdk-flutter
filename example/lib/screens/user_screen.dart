@@ -12,6 +12,7 @@ import 'package:onegini_example/models/client_resource.dart';
 import 'package:onegini_example/screens/qr_scan_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:onegini/pigeon.dart';
+import 'package:onegini/model/request_details.dart';
 
 import '../main.dart';
 import 'login_screen.dart';
@@ -422,26 +423,26 @@ class _InfoState extends State<Info> {
 
   Future<ClientResource> getClientResource() async {
     var response = await Onegini.instance.resourcesMethods
-        .getResource("devices")
+        .getResource(RequestDetails(path: "devices", method: HttpRequestMethod.get))
         .catchError((error) {
       print('Caught error: $error');
 
       showFlutterToast(error.message);
     });
 
-    var res = json.decode(response);
-    return clientResourceFromJson(res["body"]);
+    return clientResourceFromJson(response.body);
   }
 
   Future<String> makeUnaunthenticatedRequest() async {
     var headers = {'Declareren-Appversion': 'CZ.app'};
     var response = await Onegini.instance.resourcesMethods
-        .getUnauthenticatedResource("devices", headers: headers, method: 'GET')
+        .getUnauthenticatedResource(RequestDetails(path: "devices", method: HttpRequestMethod.get, headers: headers))
         .catchError((onError) {
       debugPrint(onError);
     });
-    var res = json.decode(response);
-    return res["body"];
+
+    var res = json.decode(response.body);
+    return res;
   }
 
   @override
@@ -515,7 +516,6 @@ class _InfoState extends State<Info> {
                 height: 20,
               ),
               FutureBuilder<String>(
-                //implicit
                 future: makeUnaunthenticatedRequest(),
                 builder: (context, snapshot) {
                   return snapshot.hasData
