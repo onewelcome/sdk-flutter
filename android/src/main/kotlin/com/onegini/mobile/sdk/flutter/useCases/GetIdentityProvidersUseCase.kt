@@ -8,13 +8,8 @@ import javax.inject.Singleton
 @Singleton
 class GetIdentityProvidersUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
   operator fun invoke(): Result<List<OWIdentityProvider>> {
-    val identityProviders = oneginiSDK.oneginiClient.userClient.identityProviders
-    val providers: MutableList<OWIdentityProvider> = mutableListOf()
-
-    for (identityProvider in identityProviders) {
-      providers.add(OWIdentityProvider(identityProvider.id, identityProvider.name))
-    }
-
-    return Result.success(providers)
+    return  oneginiSDK.oneginiClient.userClient.identityProviders
+      .map { OWIdentityProvider(it.id, it.name) }
+      .let { Result.success(it) }
   }
 }

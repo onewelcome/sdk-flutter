@@ -11,7 +11,7 @@ import javax.inject.Singleton
 class GetAuthenticatedUserProfileUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
   operator fun invoke(): Result<OWUserProfile> {
     return when (val authenticatedUserProfile = oneginiSDK.oneginiClient.userClient.authenticatedUserProfile) {
-      null -> Result.failure(SdkError(NO_USER_PROFILE_IS_AUTHENTICATED))
+      null -> Result.failure(SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).pigeonError())
       else -> Result.success(OWUserProfile(authenticatedUserProfile.profileId))
     }
   }

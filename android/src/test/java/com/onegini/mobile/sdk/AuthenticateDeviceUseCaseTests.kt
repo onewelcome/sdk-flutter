@@ -3,81 +3,90 @@ package com.onegini.mobile.sdk
 import com.google.common.truth.Truth
 import com.onegini.mobile.sdk.android.handlers.OneginiDeviceAuthenticationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiDeviceAuthenticationError
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.UNEXPECTED_ERROR_TYPE
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateDeviceUseCase
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
+import junit.framework.Assert.fail
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers
 import org.mockito.Mock
-import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
+import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever@RunWith(MockitoJUnitRunner::class)
+import org.mockito.kotlin.whenever
+
+@RunWith(MockitoJUnitRunner::class)
 class AuthenticateDeviceUseCaseTests {
 
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    lateinit var oneginiSdk: OneginiSDK
+  @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+  lateinit var oneginiSdk: OneginiSDK
 
-    @Mock
-    lateinit var oneginiDeviceAuthenticationErrorMock: OneginiDeviceAuthenticationError
+  @Mock
+  lateinit var oneginiDeviceAuthenticationErrorMock: OneginiDeviceAuthenticationError
 
-    @Mock
-    lateinit var callMock: MethodCall
+  @Mock
+  lateinit var callbackMock: (Result<Unit>) -> Unit
 
-    @Spy
-    lateinit var resultSpy: MethodChannel.Result
+  lateinit var authenticateDeviceUseCase: AuthenticateDeviceUseCase
 
-    lateinit var authenticateDeviceUseCase: AuthenticateDeviceUseCase
+  @Before
+  fun attach() {
+    authenticateDeviceUseCase = AuthenticateDeviceUseCase(oneginiSdk)
+  }
 
-    @Before
-    fun attach() {
-        authenticateDeviceUseCase = AuthenticateDeviceUseCase(oneginiSdk)
+  @Test
+  fun `When the sdk returns an Authentication error, Then it should return an`() {
+    whenever(oneginiDeviceAuthenticationErrorMock.errorType).thenReturn(OneginiDeviceAuthenticationError.GENERAL_ERROR)
+    whenever(oneginiDeviceAuthenticationErrorMock.message).thenReturn("General error")
+    whenever(oneginiSdk.oneginiClient.deviceClient.authenticateDevice(isNull(), any())).thenAnswer {
+      it.getArgument<OneginiDeviceAuthenticationHandler>(1).onError(oneginiDeviceAuthenticationErrorMock)
     }
+    authenticateDeviceUseCase(null, callbackMock)
 
-    @Test
-    fun `should return error when sdk returned authentication error`() {
-        whenever(callMock.argument<ArrayList<String>>("scope")).thenReturn(null)
-        whenever(oneginiDeviceAuthenticationErrorMock.errorType).thenReturn(OneginiDeviceAuthenticationError.GENERAL_ERROR)
-        whenever(oneginiDeviceAuthenticationErrorMock.message).thenReturn("General error")
-        whenever(oneginiSdk.oneginiClient.deviceClient.authenticateDevice(isNull(), any())).thenAnswer {
-            it.getArgument<OneginiDeviceAuthenticationHandler>(1).onError(oneginiDeviceAuthenticationErrorMock)
+    argumentCaptor<Result<Unit>>().apply {
+      verify(callbackMock, times(1)).invoke(capture())
+
+      when (val error = firstValue.exceptionOrNull()) {
+        is FlutterError -> {
+          Assert.assertEquals(error.code.toInt(), OneginiDeviceAuthenticationError.GENERAL_ERROR)
+          Assert.assertEquals(error.message, "General error")
         }
-        authenticateDeviceUseCase(callMock, resultSpy)
+        else -> fail(UNEXPECTED_ERROR_TYPE.message)
+      }
+    }
+  }
 
-        val message = oneginiDeviceAuthenticationErrorMock.message
-        verify(resultSpy).error(eq(oneginiDeviceAuthenticationErrorMock.errorType.toString()), eq(message), any())
+  @Test
+  fun `When the authentications goes successful, Then it should return resolve successfully`() {
+    whenever(oneginiSdk.oneginiClient.deviceClient.authenticateDevice(eq(arrayOf("test")), any())).thenAnswer {
+      it.getArgument<OneginiDeviceAuthenticationHandler>(1).onSuccess()
     }
 
-    @Test
-    fun `should return success when SDK returned authentication success`() {
-        whenever(callMock.argument<ArrayList<String>>("scope")).thenReturn(arrayListOf("test"))
-        whenever(oneginiSdk.oneginiClient.deviceClient.authenticateDevice(eq(arrayOf("test")), any())).thenAnswer {
-            it.getArgument<OneginiDeviceAuthenticationHandler>(1).onSuccess()
-        }
-        authenticateDeviceUseCase(callMock, resultSpy)
+    authenticateDeviceUseCase(listOf("test"), callbackMock)
 
-        verify(resultSpy).success(true)
+    argumentCaptor<Result<Unit>>().apply {
+      verify(callbackMock, times(1)).invoke(capture())
+      Assert.assertEquals(firstValue.getOrNull(), Unit)
     }
+  }
 
-    @Test
-    fun `should scopes param be array of two scopes when given scopes contains two strings`() {
-        whenever(callMock.argument<ArrayList<String>>("scope")).thenReturn(arrayListOf("read", "write"))
+  @Test
+  fun `When two scopes are passed, Then the native sdk should also respond with two scopes`() {
+    authenticateDeviceUseCase(listOf("read", "write"), callbackMock)
 
-        authenticateDeviceUseCase(callMock, resultSpy)
-
-        argumentCaptor<Array<String>> {
-            verify(oneginiSdk.oneginiClient.deviceClient).authenticateDevice(capture(), ArgumentMatchers.any())
-            Truth.assertThat(firstValue.size).isEqualTo(2)
-            Truth.assertThat(firstValue).isEqualTo(arrayOf("read", "write"))
-        }
+    argumentCaptor<Array<String>>().apply {
+      verify(oneginiSdk.oneginiClient.deviceClient).authenticateDevice(capture(), ArgumentMatchers.any())
+      Truth.assertThat(firstValue.size).isEqualTo(2)
+      Truth.assertThat(firstValue).isEqualTo(arrayOf("read", "write"))
     }
-
+  }
 }

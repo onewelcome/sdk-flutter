@@ -20,20 +20,10 @@ class OneginiPlugin : FlutterPlugin, PigeonInterface() {
     private lateinit var eventChannel: EventChannel
 
     @Inject
-    lateinit var oneginiSDK: OneginiSDK
-
-//    @Inject
-//    lateinit var nativeApi: NativeCallFlutterApi
-
-    @Inject
     lateinit var onMethodCallMapper: OnMethodCallMapper
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         // Pigeon setup
         UserClientApi.setUp(flutterPluginBinding.binaryMessenger, this)
-//        nativeApi = NativeCallFlutterApi(flutterPluginBinding.binaryMessenger)
-
-        // fixme what is the new way to do this?
-//        val oneginiSDK = OneginiSDK(nativeApi)
 
         val component = DaggerFlutterOneWelcomeSdkComponent.builder()
             .flutterOneWelcomeSdkModule(FlutterOneWelcomeSdkModule(flutterPluginBinding.applicationContext))

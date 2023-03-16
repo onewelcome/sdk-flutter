@@ -92,11 +92,8 @@ class UserClient {
   Future<void> changePin(
     BuildContext? context,
   ) async {
+    await api.changePin();
     Onegini.instance.setEventContext(context);
-
-    // todo use api once the branch is merged that puts this in an usecase on android
-    // await api.changePin();
-    await Onegini.instance.channel.invokeMethod(Constants.changePin);
   }
 
   /// Registers authenticator from [getNotRegisteredAuthenticators] list.
@@ -172,17 +169,7 @@ class UserClient {
   /// todo removed boolean return update docu
   Future<void> validatePinWithPolicy(String pin) async {
     // todo use api once the branch is merged that puts this in an usecase on android
-    // await api.validatePinWithPolicy(pin);
-    try {
-      var success = await Onegini.instance.channel.invokeMethod(
-          Constants.validatePinWithPolicy, <String, String?>{'pin': pin});
-      return success ?? false;
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+    await api.validatePinWithPolicy(pin);
   }
 
   /// todo removed boolean return update docu

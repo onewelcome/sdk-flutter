@@ -18,7 +18,8 @@ import javax.inject.Singleton
 @Singleton
 class RegistrationUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
     operator fun invoke(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit) {
-        val identityProvider = getIdentityProviderById(identityProviderId)
+        val identityProvider = oneginiSDK.oneginiClient.userClient.identityProviders.find { it.id == identityProviderId }
+
         if (identityProviderId != null && identityProvider == null) {
             callback(Result.failure(SdkError(IDENTITY_PROVIDER_NOT_FOUND).pigeonError()))
         }
@@ -26,19 +27,6 @@ class RegistrationUseCase @Inject constructor(private val oneginiSDK: OneginiSDK
         val registerScopes = scopes?.toTypedArray()
 
         register(identityProvider, registerScopes, callback)
-    }
-
-    private fun getIdentityProviderById(identityProviderId: String?): OneginiIdentityProvider? {
-        if (identityProviderId == null) return null
-        var foundIdentityProvider: OneginiIdentityProvider? = null
-        val identityProviders = oneginiSDK.oneginiClient.userClient.identityProviders
-        for (identityProvider in identityProviders) {
-            if (identityProvider.id == identityProviderId) {
-                foundIdentityProvider = identityProvider
-                break
-            }
-        }
-        return foundIdentityProvider
     }
 
     private fun register(identityProvider: OneginiIdentityProvider?, scopes: Array<String>?, callback: (Result<OWRegistrationResponse>) -> Unit) {

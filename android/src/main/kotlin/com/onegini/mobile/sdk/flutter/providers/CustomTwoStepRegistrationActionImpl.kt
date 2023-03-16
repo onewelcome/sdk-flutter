@@ -25,8 +25,6 @@ class CustomTwoStepRegistrationActionImpl(private val providerId: String) : Oneg
     override fun finishRegistration(callback: OneginiCustomRegistrationCallback, customInfo: CustomInfo?) {
         this.callback = callback
 
-//        onewelcomeEventApi.testEventFunction("custom2stepOnFinish") { }
-
         val data = Gson().toJson(CustomRegistrationModel(customInfo?.data.orEmpty(), customInfo?.status, providerId))
         OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_FINISH_CUSTOM_REGISTRATION, data)))
     }
@@ -39,27 +37,29 @@ class CustomTwoStepRegistrationActionImpl(private val providerId: String) : Oneg
         return providerId
     }
 
-    override fun returnSuccess(result: String?, pigeonChannel: (Result<Unit>) -> Unit) {
-        when (callback) {
-            null -> pigeonChannel(Result.failure(SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).pigeonError()))
+    override fun returnSuccess(result: String?): Result<Unit> {
+        return when (callback) {
+            null -> {
+                Result.failure(SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).pigeonError())
+            }
             else -> {
                 this.callback?.returnSuccess(result)
-                pigeonChannel(Result.success(Unit))
+                callback = null
+                Result.success(Unit)
             }
         }
-
-        callback = null
     }
 
-    override fun returnError(exception: Exception?, pigeonChannel: (Result<Unit>) -> Unit) {
-        when (callback) {
-            null -> pigeonChannel(Result.failure(SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).pigeonError()))
+    override fun returnError(exception: Exception?): Result<Unit> {
+        return when (callback) {
+            null -> {
+                Result.failure(SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).pigeonError())
+            }
             else -> {
                 this.callback?.returnError(exception)
-                pigeonChannel(Result.success(Unit))
+                callback = null
+                Result.success(Unit)
             }
         }
-
-        callback = null
     }
 }

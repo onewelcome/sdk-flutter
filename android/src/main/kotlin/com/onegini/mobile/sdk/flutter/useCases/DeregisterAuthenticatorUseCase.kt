@@ -16,7 +16,8 @@ class DeregisterAuthenticatorUseCase @Inject constructor(private val oneginiSDK:
     val userProfile = oneginiSDK.oneginiClient.userClient.authenticatedUserProfile
       ?: return callback(Result.failure(SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).pigeonError()))
 
-    val authenticator = getAuthenticatorById(authenticatorId, userProfile)
+    val authenticator = oneginiSDK.oneginiClient.userClient
+      .getRegisteredAuthenticators(userProfile).find { it.id == authenticatorId }
       ?: return callback(Result.failure(SdkError(AUTHENTICATOR_NOT_FOUND).pigeonError()))
 
     oneginiSDK.oneginiClient.userClient.deregisterAuthenticator(authenticator, object : OneginiAuthenticatorDeregistrationHandler {
@@ -36,16 +37,5 @@ class DeregisterAuthenticatorUseCase @Inject constructor(private val oneginiSDK:
       }
     }
     )
-  }
-
-  private fun getAuthenticatorById(authenticatorId: String?, userProfile: UserProfile): OneginiAuthenticator? {
-    var authenticator: OneginiAuthenticator? = null
-    val registeredAuthenticators = oneginiSDK.oneginiClient.userClient.getRegisteredAuthenticators(userProfile)
-    for (registeredAuthenticator in registeredAuthenticators) {
-      if (registeredAuthenticator.id == authenticatorId) {
-        authenticator = registeredAuthenticator
-      }
-    }
-    return authenticator
   }
 }
