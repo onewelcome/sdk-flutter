@@ -41,7 +41,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         Logger.log("requestResource", sender: self)
 
         let request = generateONGResourceRequest(details)
-        let requestCompletion = getCompletionRequest(completion)
+        let requestCompletion = getRequestCompletion(completion)
 
         switch my_type {
         case ResourceRequestType.implicit:
@@ -102,7 +102,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         }
     }
 
-    private func getCompletionRequest(_ completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) -> ((ONGResourceResponse?, Error?) -> Void)? {
+    private func getRequestCompletion(_ completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) -> ((ONGResourceResponse?, Error?) -> Void)? {
         Logger.log("getCompletionRequest", sender: self)
         let completionRequest: ((ONGResourceResponse?, Error?) -> Void)? = { response, error in
             if let error = error {
