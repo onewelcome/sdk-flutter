@@ -5,8 +5,7 @@ import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
+import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticator
 import com.onegini.mobile.sdk.flutter.useCases.GetRegisteredAuthenticatorsUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfileUseCase
@@ -57,15 +56,8 @@ class GetRegisteredAuthenticatorsUseCaseTests {
     fun `When UserProfile is null, Then it should return an error`() {
         whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(emptySet())
 
-        val result = getRegisteredAuthenticatorsUseCase("QWERTY")
-
-        when (val error = result.exceptionOrNull()) {
-            is FlutterError -> {
-                Assert.assertEquals(error.code.toInt(), USER_PROFILE_DOES_NOT_EXIST.code)
-                Assert.assertEquals(error.message, USER_PROFILE_DOES_NOT_EXIST.message)
-            }
-            else -> fail(UNEXPECTED_ERROR_TYPE.message)
-        }
+        val result = getRegisteredAuthenticatorsUseCase("QWERTY").exceptionOrNull()
+        SdkErrorAssert.assertEquals(USER_PROFILE_DOES_NOT_EXIST, result)
     }
 
     @Test

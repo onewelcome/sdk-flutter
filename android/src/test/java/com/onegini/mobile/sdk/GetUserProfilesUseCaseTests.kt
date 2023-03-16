@@ -35,7 +35,6 @@ class GetUserProfilesUseCaseTests {
     whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(emptySet())
 
     val result = getUserProfilesUseCase()
-
     Assert.assertEquals(result.getOrNull(), mutableListOf<List<OWUserProfile>>())
   }
 

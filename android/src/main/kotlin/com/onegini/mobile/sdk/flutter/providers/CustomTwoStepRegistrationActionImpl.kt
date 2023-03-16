@@ -38,28 +38,18 @@ class CustomTwoStepRegistrationActionImpl(private val providerId: String) : Oneg
     }
 
     override fun returnSuccess(result: String?): Result<Unit> {
-        return when (callback) {
-            null -> {
-                Result.failure(SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).pigeonError())
-            }
-            else -> {
-                this.callback?.returnSuccess(result)
-                callback = null
-                Result.success(Unit)
-            }
-        }
+        return callback?.let { customRegistrationCallback ->
+            customRegistrationCallback.returnSuccess(result)
+            callback = null
+            Result.success(Unit)
+        } ?: Result.failure(SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).pigeonError())
     }
 
     override fun returnError(exception: Exception?): Result<Unit> {
-        return when (callback) {
-            null -> {
-                Result.failure(SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).pigeonError())
-            }
-            else -> {
-                this.callback?.returnError(exception)
-                callback = null
-                Result.success(Unit)
-            }
-        }
+        return callback?.let { customRegistrationCallback ->
+            customRegistrationCallback.returnError(exception)
+            callback = null
+            Result.success(Unit)
+        } ?: Result.failure(SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).pigeonError())
     }
 }

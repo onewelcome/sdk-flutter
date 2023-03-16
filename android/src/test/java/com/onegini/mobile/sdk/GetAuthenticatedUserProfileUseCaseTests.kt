@@ -3,10 +3,8 @@ package com.onegini.mobile.sdk
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
+import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.useCases.GetAuthenticatedUserProfileUseCase
-import junit.framework.Assert.fail
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -33,15 +31,8 @@ class GetAuthenticatedUserProfileUseCaseTests {
   fun `When no user is authenticated, Then should reject with NO_USER_PROFILE_IS_AUTHENTICATED`() {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(null)
 
-    val result = getAuthenticatedUserProfileUseCase()
-
-    when (val error = result.exceptionOrNull()) {
-      is FlutterError -> {
-        Assert.assertEquals(error.code.toInt(), NO_USER_PROFILE_IS_AUTHENTICATED.code)
-        Assert.assertEquals(error.message, NO_USER_PROFILE_IS_AUTHENTICATED.message)
-      }
-      else -> fail("Test failed as no sdk error was passed")
-    }
+    val result = getAuthenticatedUserProfileUseCase().exceptionOrNull()
+    SdkErrorAssert.assertEquals(NO_USER_PROFILE_IS_AUTHENTICATED, result)
   }
 
   @Test
@@ -49,7 +40,6 @@ class GetAuthenticatedUserProfileUseCaseTests {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
 
     val result = getAuthenticatedUserProfileUseCase().getOrNull()
-
     Assert.assertEquals(result?.profileId, "QWERTY")
   }
 }

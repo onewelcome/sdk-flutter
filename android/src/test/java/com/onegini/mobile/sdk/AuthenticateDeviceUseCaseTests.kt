@@ -3,11 +3,10 @@ package com.onegini.mobile.sdk
 import com.google.common.truth.Truth
 import com.onegini.mobile.sdk.android.handlers.OneginiDeviceAuthenticationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiDeviceAuthenticationError
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.UNEXPECTED_ERROR_TYPE
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateDeviceUseCase
-import junit.framework.Assert.fail
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -20,7 +19,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
-import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -44,7 +42,7 @@ class AuthenticateDeviceUseCaseTests {
   }
 
   @Test
-  fun `When the sdk returns an Authentication error, Then it should return an`() {
+  fun `When the sdk returns an Authentication error, Then it should resolve with an error`() {
     whenever(oneginiDeviceAuthenticationErrorMock.errorType).thenReturn(OneginiDeviceAuthenticationError.GENERAL_ERROR)
     whenever(oneginiDeviceAuthenticationErrorMock.message).thenReturn("General error")
     whenever(oneginiSdk.oneginiClient.deviceClient.authenticateDevice(isNull(), any())).thenAnswer {
@@ -53,15 +51,10 @@ class AuthenticateDeviceUseCaseTests {
     authenticateDeviceUseCase(null, callbackMock)
 
     argumentCaptor<Result<Unit>>().apply {
-      verify(callbackMock, times(1)).invoke(capture())
+      verify(callbackMock).invoke(capture())
 
-      when (val error = firstValue.exceptionOrNull()) {
-        is FlutterError -> {
-          Assert.assertEquals(error.code.toInt(), OneginiDeviceAuthenticationError.GENERAL_ERROR)
-          Assert.assertEquals(error.message, "General error")
-        }
-        else -> fail(UNEXPECTED_ERROR_TYPE.message)
-      }
+      val expected = FlutterError(OneginiDeviceAuthenticationError.GENERAL_ERROR.toString(), "General error")
+      SdkErrorAssert.assertEquals(expected, firstValue.exceptionOrNull())
     }
   }
 
@@ -74,7 +67,7 @@ class AuthenticateDeviceUseCaseTests {
     authenticateDeviceUseCase(listOf("test"), callbackMock)
 
     argumentCaptor<Result<Unit>>().apply {
-      verify(callbackMock, times(1)).invoke(capture())
+      verify(callbackMock).invoke(capture())
       Assert.assertEquals(firstValue.getOrNull(), Unit)
     }
   }

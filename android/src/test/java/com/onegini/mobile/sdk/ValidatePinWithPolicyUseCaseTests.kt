@@ -3,11 +3,10 @@ package com.onegini.mobile.sdk
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiPinValidationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import com.onegini.mobile.sdk.flutter.useCases.ValidatePinWithPolicyUseCase
-import junit.framework.Assert.fail
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -18,7 +17,6 @@ import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
-import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -61,7 +59,7 @@ class ValidatePinWithPolicyUseCaseTests {
     validatePinWithPolicyUseCase("14789", callbackMock)
 
     argumentCaptor<Result<Unit>>().apply {
-      verify(callbackMock, times(1)).invoke(capture())
+      verify(callbackMock).invoke(capture())
       Assert.assertEquals(firstValue.getOrNull(), Unit)
     }
   }
@@ -73,15 +71,9 @@ class ValidatePinWithPolicyUseCaseTests {
     validatePinWithPolicyUseCase("14789", callbackMock)
 
     argumentCaptor<Result<Unit>>().apply {
-      verify(callbackMock, times(1)).invoke(capture())
-
-      when (val error = firstValue.exceptionOrNull()) {
-        is FlutterError -> {
-          Assert.assertEquals(error.code.toInt(), oneginiPinValidationErrorMock.errorType)
-          Assert.assertEquals(error.message, oneginiPinValidationErrorMock.message)
-        }
-        else -> fail(UNEXPECTED_ERROR_TYPE.message)
-      }
+      verify(callbackMock).invoke(capture())
+      val expected = FlutterError(oneginiPinValidationErrorMock.errorType.toString(), oneginiPinValidationErrorMock.message)
+      SdkErrorAssert.assertEquals(expected, firstValue.exceptionOrNull())
     }
   }
 

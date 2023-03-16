@@ -8,12 +8,11 @@ import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
+import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWUserProfile
 import com.onegini.mobile.sdk.flutter.useCases.RegistrationUseCase
-import junit.framework.Assert.fail
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -56,7 +55,7 @@ class RegistrationUseCaseTests {
     registrationUseCase(null, listOf("read"), callbackMock)
 
     argumentCaptor<Result<OWRegistrationResponse>>().apply {
-      verify(callbackMock, times(1)).invoke(capture())
+      verify(callbackMock).invoke(capture())
       val testUser = OWUserProfile("QWERTY")
       val testInfo = OWCustomInfo(0, "")
       Assert.assertEquals(firstValue.getOrNull(), OWRegistrationResponse(testUser, testInfo))
@@ -88,15 +87,8 @@ class RegistrationUseCaseTests {
     registrationUseCase("differentId", listOf("read"), callbackMock)
 
     argumentCaptor<Result<OWRegistrationResponse>>().apply {
-      verify(callbackMock, times(1)).invoke(capture())
-
-      when (val error = firstValue.exceptionOrNull()) {
-        is FlutterError -> {
-          Assert.assertEquals(error.message, IDENTITY_PROVIDER_NOT_FOUND.message)
-          Assert.assertEquals(error.code, IDENTITY_PROVIDER_NOT_FOUND.code.toString())
-        }
-        else -> fail("Test failed as no sdk error was passed")
-      }
+      verify(callbackMock).invoke(capture())
+      SdkErrorAssert.assertEquals(IDENTITY_PROVIDER_NOT_FOUND, firstValue.exceptionOrNull())
     }
   }
 
@@ -111,7 +103,7 @@ class RegistrationUseCaseTests {
     registrationUseCase("testId", listOf("read"), callbackMock)
 
     argumentCaptor<Result<OWRegistrationResponse>>().apply {
-      verify(callbackMock, times(1)).invoke(capture())
+      verify(callbackMock).invoke(capture())
       val testUser = OWUserProfile("QWERTY")
       val testInfo = OWCustomInfo(0, "")
       Assert.assertEquals(firstValue.getOrNull(), OWRegistrationResponse(testUser, testInfo))
