@@ -65,7 +65,7 @@ extension OneginiModuleSwift {
             return .failure(FlutterError(.userProfileDoesNotExist))
         }
         let registeredAuthenticators = ONGUserClient.sharedInstance().registeredAuthenticators(forUser: profile)
-        return .success(registeredAuthenticators.compactMap({OWAuthenticator($0)}))
+        return .success(registeredAuthenticators.compactMap { OWAuthenticator($0) } )
     }
     
     func getNotRegisteredAuthenticators(_ profileId: String) -> Result<[OWAuthenticator], FlutterError> {
@@ -73,7 +73,7 @@ extension OneginiModuleSwift {
             return .failure(FlutterError(.userProfileDoesNotExist))
         }
         let notRegisteredAuthenticators = ONGUserClient.sharedInstance().nonRegisteredAuthenticators(forUser: profile)
-        return .success(notRegisteredAuthenticators.compactMap({OWAuthenticator($0)}))
+        return .success(notRegisteredAuthenticators.compactMap { OWAuthenticator($0) } )
     }
     
     func getAllAuthenticators(_ profileId: String) -> Result<[OWAuthenticator], FlutterError> {
@@ -81,7 +81,7 @@ extension OneginiModuleSwift {
             return .failure(FlutterError(.userProfileDoesNotExist))
         }
         let allAuthenticators = ONGUserClient.sharedInstance().allAuthenticators(forUser: profile)
-        return .success(allAuthenticators.compactMap({OWAuthenticator($0)}))
+        return .success(allAuthenticators.compactMap { OWAuthenticator($0) } )
     }
     
     func getRedirectUrl() -> Result<String, FlutterError> {

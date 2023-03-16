@@ -17,7 +17,8 @@ class RegisterAuthenticatorUseCase @Inject constructor(private val oneginiSDK: O
     val authenticatedUserProfile = oneginiSDK.oneginiClient.userClient.authenticatedUserProfile
       ?: return callback(Result.failure(SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).pigeonError()))
 
-    val authenticator = getAuthenticatorById(authenticatorId, authenticatedUserProfile)
+    val authenticator = oneginiSDK.oneginiClient.userClient
+      .getAllAuthenticators(authenticatedUserProfile).find { it.id == authenticatorId }
       ?: return callback(Result.failure(SdkError(AUTHENTICATOR_NOT_FOUND).pigeonError()))
 
     oneginiSDK.oneginiClient.userClient.registerAuthenticator(authenticator, object : OneginiAuthenticatorRegistrationHandler {
@@ -37,18 +38,5 @@ class RegisterAuthenticatorUseCase @Inject constructor(private val oneginiSDK: O
       }
     }
     )
-  }
-
-  private fun getAuthenticatorById(authenticatorId: String?, authenticatedUserProfile: UserProfile): OneginiAuthenticator? {
-    var authenticator: OneginiAuthenticator? = null
-
-    // We don't have to check if the authenticator is already registered as the sdk will do that for us.
-    val allAuthenticators = oneginiSDK.oneginiClient.userClient.getAllAuthenticators(authenticatedUserProfile)
-    for (auth in allAuthenticators) {
-      if (auth.id == authenticatorId) {
-        authenticator = auth
-      }
-    }
-    return authenticator
   }
 }

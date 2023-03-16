@@ -62,9 +62,8 @@ extension LoginHandler: ONGAuthenticationDelegate {
     
     func userClient(_ userClient: ONGUserClient, didAuthenticateUser userProfile: ONGUserProfile, authenticator: ONGAuthenticator, info customAuthInfo: ONGCustomInfo?) {
         handleDidAuthenticateUser()
-        loginCompletion?(.success(
-            OWRegistrationResponse(userProfile: OWUserProfile(userProfile),
-                                   customInfo: toOWCustomInfo(customAuthInfo))))
+        loginCompletion?(.success(OWRegistrationResponse(userProfile: OWUserProfile(userProfile),
+                                                         customInfo: toOWCustomInfo(customAuthInfo))))
     }
 
     func userClient(_ userClient: ONGUserClient, didFailToAuthenticateUser userProfile: ONGUserProfile, authenticator: ONGAuthenticator, error: Error) {

@@ -67,10 +67,6 @@ class OWRegistrationResponse {
 /// Flutter calls native
 @HostApi()
 abstract class UserClientApi {
-  // example function
-  @async
-  List<OWUserProfile> fetchUserProfiles();
-
   @async
   OWRegistrationResponse registerUser(
       String? identityProviderId, List<String>? scopes);

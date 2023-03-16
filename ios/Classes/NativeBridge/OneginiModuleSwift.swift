@@ -63,7 +63,7 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
     
     func getUserProfiles() -> Result<[OWUserProfile], FlutterError> {
         let profiles = ONGUserClient.sharedInstance().userProfiles()
-        return .success(profiles.compactMap({OWUserProfile($0)}))
+        return .success(profiles.compactMap { OWUserProfile($0) } )
     }
     
     public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {

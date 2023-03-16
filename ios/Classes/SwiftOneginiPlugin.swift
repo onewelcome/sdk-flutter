@@ -52,6 +52,10 @@ extension OWIdentityProvider {
     }
 }
 
+extension Result where Success == Void {
+    public static var success: Result { .success(()) }
+}
+
 func toOWCustomInfo(_ info: CustomInfo?) -> OWCustomInfo? {
     guard let info = info else { return nil }
     return OWCustomInfo(status: Int32(info.status), data: info.data)
@@ -68,43 +72,43 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     func submitCustomRegistrationAction(identityProviderId: String, data: String?, completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.submitCustomRegistrationSuccess(data)
         // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-??
-        completion(.success(()))
+        completion(.success)
     }
 
     func cancelCustomRegistrationAction(identityProviderId: String, error: String, completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.submitCustomRegistrationError(error)
         // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-??
-        completion(.success(()))
+        completion(.success)
     }
 
     func fingerprintFallbackToPin(completion: @escaping (Result<Void, Error>) -> Void) {
         Logger.log("fingerprintFallbackToPin is Android only and should not be called on iOS")
         // FIXME: We should actually reject here with a specific error
-        completion(.success(()))
+        completion(.success)
     }
 
     func fingerprintDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
         Logger.log("fingerprintDenyAuthenticationRequest is Android only and should not be called on iOS")
         // FIXME: We should actually reject here with a specific error
-        completion(.success(()))
+        completion(.success)
     }
 
     func fingerprintAcceptAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
         Logger.log("fingerprintAcceptAuthenticationRequest is Android only and should not be called on iOS")
         // FIXME: We should actually reject here with a specific error
-        completion(.success(()))
+        completion(.success)
     }
 
     func otpDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.denyMobileAuthConfirmation()
         // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-??
-        completion(.success(()))
+        completion(.success)
     }
 
     func otpAcceptAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.acceptMobileAuthConfirmation()
         // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-??
-        completion(.success(()))
+        completion(.success)
     }
 
     func pinDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -134,7 +138,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     func cancelBrowserRegistration(completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.cancelBrowserRegistration()
         // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-??
-        completion(.success(()))
+        completion(.success)
     }
 
     func registerUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {

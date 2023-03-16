@@ -1,6 +1,10 @@
 package com.onegini.mobile.sdk.flutter
 
-import com.onegini.mobile.sdk.flutter.constants.Constants
+import android.net.Uri
+import android.util.Patterns
+import com.onegini.mobile.sdk.android.handlers.OneginiAppToWebSingleSignOnHandler
+import com.onegini.mobile.sdk.android.handlers.error.OneginiAppToWebSingleSignOnError
+import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
 import com.onegini.mobile.sdk.flutter.handlers.BrowserRegistrationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
@@ -18,6 +22,7 @@ import com.onegini.mobile.sdk.flutter.useCases.AuthenticateDeviceUseCase
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserImplicitlyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserUseCase
 import com.onegini.mobile.sdk.flutter.useCases.CancelCustomRegistrationActionUseCase
+import com.onegini.mobile.sdk.flutter.useCases.ChangePinUseCase
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterUserUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAccessTokenUseCase
@@ -40,9 +45,9 @@ import com.onegini.mobile.sdk.flutter.useCases.RegistrationUseCase
 import com.onegini.mobile.sdk.flutter.useCases.SetPreferredAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.StartAppUseCase
 import com.onegini.mobile.sdk.flutter.useCases.SubmitCustomRegistrationActionUseCase
+import com.onegini.mobile.sdk.flutter.useCases.ValidatePinWithPolicyUseCase
 import javax.inject.Inject
 
-//private val getIdentityProvidersUseCase: GetIdentityProvidersUseCase
 open class PigeonInterface : UserClientApi {
   @Inject
   lateinit var authenticateDeviceUseCase: AuthenticateDeviceUseCase
@@ -98,28 +103,23 @@ open class PigeonInterface : UserClientApi {
   lateinit var startAppUseCase: StartAppUseCase
   @Inject
   lateinit var submitCustomRegistrationActionUseCase: SubmitCustomRegistrationActionUseCase
-
-  // FIXME REMOVE ME AT THE END; Example function on how it could be initiated on Flutter send to Native
-  override fun fetchUserProfiles(callback: (Result<List<OWUserProfile>>) -> Unit) {
-    val a = Result.success(listOf(OWUserProfile("ghalo")))
-    flutterCallback(callback, a)
-
-//    val b = Result.failure<List<OneWelcomeUserProfile>>(SdkError(2000, "hallo"))
-//    flutterCallback(callback, b)
-  }
+  @Inject
+  lateinit var changePinUseCase: ChangePinUseCase
+  @Inject
+  lateinit var validatePinWithPolicyUseCase: ValidatePinWithPolicyUseCase
+  @Inject
+  lateinit var oneginiSDK: OneginiSDK
 
   override fun registerUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit) {
     registrationUseCase(identityProviderId, scopes, callback)
   }
 
   override fun handleRegisteredUserUrl(url: String, signInType: Long, callback: (Result<Unit>) -> Unit) {
-    val result = handleRegisteredUrlUseCase(url, signInType)
-    flutterCallback(callback, result)
+    callback(handleRegisteredUrlUseCase(url, signInType))
   }
 
   override fun getIdentityProviders(callback: (Result<List<OWIdentityProvider>>) -> Unit) {
-    val result = getIdentityProvidersUseCase()
-    flutterCallback(callback, result)
+    callback(getIdentityProvidersUseCase())
   }
 
   override fun deregisterUser(profileId: String, callback: (Result<Unit>) -> Unit) {
@@ -127,18 +127,15 @@ open class PigeonInterface : UserClientApi {
   }
 
   override fun getRegisteredAuthenticators(profileId: String, callback: (Result<List<OWAuthenticator>>) -> Unit) {
-    val result = getRegisteredAuthenticatorsUseCase(profileId)
-    flutterCallback(callback, result)
+    callback(getRegisteredAuthenticatorsUseCase(profileId))
   }
 
   override fun getAllAuthenticators(profileId: String, callback: (Result<List<OWAuthenticator>>) -> Unit) {
-    val result = getAllAuthenticatorsUseCase(profileId)
-    flutterCallback(callback, result)
+    callback(getAllAuthenticatorsUseCase(profileId))
   }
 
   override fun getAuthenticatedUserProfile(callback: (Result<OWUserProfile>) -> Unit) {
-    val result = getAuthenticatedUserProfileUseCase()
-    flutterCallback(callback, result)
+    callback(getAuthenticatedUserProfileUseCase())
   }
 
   override fun authenticateUser(profileId: String, registeredAuthenticatorId: String?, callback: (Result<OWRegistrationResponse>) -> Unit) {
@@ -146,17 +143,15 @@ open class PigeonInterface : UserClientApi {
   }
 
   override fun getNotRegisteredAuthenticators(profileId: String, callback: (Result<List<OWAuthenticator>>) -> Unit) {
-    val result = getNotRegisteredAuthenticatorsUseCase(profileId)
-    flutterCallback(callback, result)
+    callback(getNotRegisteredAuthenticatorsUseCase(profileId))
   }
 
   override fun changePin(callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    changePinUseCase(callback)
   }
 
   override fun setPreferredAuthenticator(authenticatorId: String, callback: (Result<Unit>) -> Unit) {
-    val result = setPreferredAuthenticatorUseCase(authenticatorId)
-    flutterCallback(callback, result)
+    callback(setPreferredAuthenticatorUseCase(authenticatorId))
   }
 
   override fun deregisterAuthenticator(authenticatorId: String, callback: (Result<Unit>) -> Unit) {
@@ -172,30 +167,50 @@ open class PigeonInterface : UserClientApi {
   }
 
   override fun mobileAuthWithOtp(data: String, callback: (Result<String?>) -> Unit) {
-//    TODO("Not yet implemented")
+    // TODO; dependent on:
+    // https://onewelcome.atlassian.net/browse/FP-20
+    // https://onewelcome.atlassian.net/browse/FP-70
   }
 
   override fun getAppToWebSingleSignOn(url: String, callback: (Result<OWAppToWebSingleSignOn>) -> Unit) {
-//    TODO("Not yet implemented")
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-62
+    if (!Patterns.WEB_URL.matcher(url).matches()) {
+      callback(Result.failure(SdkError(OneWelcomeWrapperErrors.MALFORMED_URL).pigeonError()))
+      return
+    }
+    val targetUri: Uri = Uri.parse(url)
+
+    oneginiSDK.oneginiClient.userClient.getAppToWebSingleSignOn(
+      targetUri,
+      object : OneginiAppToWebSingleSignOnHandler {
+        override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {
+          callback(Result.success(OWAppToWebSingleSignOn(oneginiAppToWebSingleSignOn.token, oneginiAppToWebSingleSignOn.redirectUrl.toString())))
+        }
+
+        override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
+          callback(Result.failure(SdkError(
+            code = oneginiSingleSignOnError.errorType,
+            message = oneginiSingleSignOnError.message
+          ).pigeonError()))
+        }
+      }
+    )
   }
 
   override fun getAccessToken(callback: (Result<String>) -> Unit) {
-    val result = getAccessTokenUseCase()
-    flutterCallback(callback, result)
+    callback(getAccessTokenUseCase())
   }
 
   override fun getRedirectUrl(callback: (Result<String>) -> Unit) {
-    val result = getRedirectUrlUseCase()
-    flutterCallback(callback, result)
+    callback(getRedirectUrlUseCase())
   }
 
   override fun getUserProfiles(callback: (Result<List<OWUserProfile>>) -> Unit) {
-    val result = getUserProfilesUseCase()
-    flutterCallback(callback, result)
+    callback(getUserProfilesUseCase())
   }
 
   override fun validatePinWithPolicy(pin: String, callback: (Result<Unit>) -> Unit) {
-//    TODO("Not yet implemented")
+    validatePinWithPolicyUseCase(pin, callback)
   }
 
   override fun authenticateDevice(scopes: List<String>?, callback: (Result<Unit>) -> Unit) {
@@ -208,84 +223,70 @@ open class PigeonInterface : UserClientApi {
 
   // Callback functions
   override fun submitCustomRegistrationAction(identityProviderId: String, data: String?, callback: (Result<Unit>) -> Unit) {
-    submitCustomRegistrationActionUseCase(identityProviderId, data, callback)
+    callback(submitCustomRegistrationActionUseCase(identityProviderId, data))
   }
 
   override fun cancelCustomRegistrationAction(identityProviderId: String, error: String, callback: (Result<Unit>) -> Unit) {
-    cancelCustomRegistrationActionUseCase(identityProviderId, error, callback)
+    callback(cancelCustomRegistrationActionUseCase(identityProviderId, error))
   }
 
   override fun fingerprintFallbackToPin(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-72
     FingerprintAuthenticationRequestHandler.fingerprintCallback?.fallbackToPin()
     callback(Result.success(Unit))
   }
 
   override fun fingerprintDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-72
     FingerprintAuthenticationRequestHandler.fingerprintCallback?.denyAuthenticationRequest()
     callback(Result.success(Unit))
   }
 
   override fun fingerprintAcceptAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-72
     FingerprintAuthenticationRequestHandler.fingerprintCallback?.acceptAuthenticationRequest()
     callback(Result.success(Unit))
   }
 
   override fun otpDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-70
     MobileAuthOtpRequestHandler.CALLBACK?.denyAuthenticationRequest()
     callback(Result.success(Unit))
   }
 
   override fun otpAcceptAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-70
     MobileAuthOtpRequestHandler.CALLBACK?.acceptAuthenticationRequest()
     callback(Result.success(Unit))
   }
 
   override fun pinDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-73
     PinAuthenticationRequestHandler.CALLBACK?.denyAuthenticationRequest()
     callback(Result.success(Unit))
   }
 
   override fun pinAcceptAuthenticationRequest(pin: String, callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-73
     PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin.toCharArray())
     callback(Result.success(Unit))
   }
 
   override fun pinDenyRegistrationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-73
     PinRequestHandler.CALLBACK?.denyAuthenticationRequest()
     callback(Result.success(Unit))
   }
 
   override fun pinAcceptRegistrationRequest(pin: String, callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-73
     PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin.toCharArray())
     callback(Result.success(Unit))
   }
 
   override fun cancelBrowserRegistration(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE
+    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-74
     BrowserRegistrationRequestHandler.onRegistrationCanceled()
     callback(Result.success(Unit))
-  }
-
-  private fun <T> flutterCallback(callback: (Result<T>)  -> Unit, result: Result<T>) {
-    result.fold(
-      onFailure = { error ->
-        when (error) {
-          is SdkError -> callback(Result.failure(error.pigeonError()))
-          else -> callback(Result.failure(error))
-        }
-      },
-      onSuccess = { value ->
-        callback(Result.success(value))
-      }
-    )
   }
 }

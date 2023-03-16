@@ -14,8 +14,15 @@ protocol CustomRegistrationNotificationReceiverProtocol: class {
 }
 
 enum WebSignInType: Int {
-  case insideApp = 0
-  case safari
+    case insideApp
+    case safari
+    
+    init(rawValue: Int) {
+        switch rawValue {
+        case 1: self = .safari
+        default: self = .insideApp
+        }
+    }
 }
 
 class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
@@ -150,7 +157,7 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
     }
 
     func processRedirectURL(url: String, webSignInType: Int) -> Result<Void, FlutterError> {
-        let webSignInType = WebSignInType(rawValue: webSignInType) ?? .insideApp
+        let webSignInType = WebSignInType(rawValue: webSignInType)
         guard let url = URL.init(string: url) else {
             //FIXME: This doesn't seem right, we're canceling the whole registration here???
             signUpCompletion?(.failure(FlutterError(.providedUrlIncorrect)))
@@ -163,7 +170,7 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
         }
         
         presentBrowserUserRegistrationView(registrationUserURL: url, webSignInType: webSignInType)
-        return .success(())
+        return .success
     }
     
     func submitCustomRegistrationSuccess(_ data: String?) {

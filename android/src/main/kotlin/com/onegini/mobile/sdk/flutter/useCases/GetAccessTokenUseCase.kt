@@ -13,6 +13,6 @@ class GetAccessTokenUseCase @Inject constructor(private val oneginiSDK: OneginiS
       return Result.success(token)
     }
 
-    return Result.failure(SdkError(NO_USER_PROFILE_IS_AUTHENTICATED))
+    return Result.failure(SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).pigeonError())
   }
 }

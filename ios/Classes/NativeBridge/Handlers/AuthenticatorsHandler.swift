@@ -108,7 +108,7 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
         }
         
         ONGUserClient.sharedInstance().preferredAuthenticator = authenticator
-        completion(.success(()))
+        completion(.success)
     }
     
     func getAuthenticatorsListForUserProfile(_ userProfile: ONGUserProfile) -> Array<ONGAuthenticator> {
@@ -145,14 +145,14 @@ extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
     func userClient(_: ONGUserClient, didRegister authenticator: ONGAuthenticator, forUser _: ONGUserProfile, info _: ONGCustomInfo?) {
         Logger.log("[AUTH] userClient didRegister ONGAuthenticator", sender: self)
         BridgeConnector.shared?.toLoginHandler.handleDidAuthenticateUser()
-        registrationCompletion?(.success(()))
+        registrationCompletion?(.success)
     }
 }
 
 extension AuthenticatorsHandler: ONGAuthenticatorDeregistrationDelegate {
     func userClient(_: ONGUserClient, didDeregister _: ONGAuthenticator, forUser _: ONGUserProfile) {
         Logger.log("[AUTH] userClient didDeregister ONGAuthenticator", sender: self)
-        deregistrationCompletion?(.success(()))
+        deregistrationCompletion?(.success)
     }
 
     func userClient(_: ONGUserClient, didReceive challenge: ONGCustomAuthDeregistrationChallenge) {

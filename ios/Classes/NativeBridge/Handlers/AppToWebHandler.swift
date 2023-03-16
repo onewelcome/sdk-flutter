@@ -14,6 +14,8 @@ class AppToWebHandler: AppToWebHandlerProtocol {
                 completion(.success(OWAppToWebSingleSignOn(token: token, redirectUrl: url.absoluteString)))
             } else if let error = error {
                 completion(.failure(SdkError(code: error.code, errorDescription: error.localizedDescription).flutterError()))
+            } else {
+                completion(.failure(SdkError(.genericError).flutterError()))
             }
         }
     }
