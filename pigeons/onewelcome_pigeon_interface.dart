@@ -69,7 +69,6 @@ enum HttpRequestMethod {
   post,
   put,
   delete,
-  patch // unsure if we want to support this
 }
 
 enum ResourceRequestType {

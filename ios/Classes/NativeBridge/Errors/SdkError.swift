@@ -97,3 +97,13 @@ class SdkError: Error {
         return _error.flutterError()
     }
 }
+
+extension ONGResourceResponse {
+    func toJSON() -> Dictionary<String, Any?> {
+        return ["statusCode": statusCode,
+                "headers": allHeaderFields,
+                "url": rawResponse.url?.absoluteString,
+                "body": data != nil ? String(data: data!, encoding: .utf8) : nil
+        ]
+    }
+}

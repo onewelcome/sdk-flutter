@@ -10,7 +10,6 @@ import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceRequestType
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.GET
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.POST
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.PUT
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.PATCH
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.DELETE
 import okhttp3.Call
 import okhttp3.Callback
@@ -87,10 +86,6 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
       PUT -> {
         val body = details.body ?: ""
         this.put(body.toRequestBody(null))
-      }
-      PATCH -> {
-        val body = details.body ?: ""
-        this.patch(body.toRequestBody(null))
       }
       DELETE -> {
         this.delete(details.body?.toRequestBody())

@@ -36,7 +36,6 @@ enum HttpRequestMethod: Int {
   case post = 1
   case put = 2
   case delete = 3
-  case patch = 4
 }
 
 enum ResourceRequestType: Int {

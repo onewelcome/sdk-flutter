@@ -6,11 +6,7 @@ typealias FlutterDataCallback = (Any?, SdkError?) -> Void
 protocol FetchResourcesHandlerProtocol: AnyObject {
     func authenticateDevice(_ scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void)
     func authenticateUserImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void)
-    func resourceRequest(isImplicit: Bool, isAnonymousCall: Bool, parameters: [String: Any], completion: @escaping FlutterDataCallback)
-    func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
-    func fetchAnonymousResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
-    func fetchResourceWithImplicitResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
-    func unauthenticatedRequest(_ path: String, parameters: [String: Any?], callback: @escaping FlutterResult)
+    func requestResource(_ type: ResourceRequestType, _ details: OWRequestDetails, completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void)
 }
 
 //MARK: -
@@ -34,26 +30,11 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             if success {
                 completion(.success(()))
             } else {
-                    // This error construction is obviously not good, but it will work for now till we refactor this later
+                // This error construction is obviously not good, but it will work for now till we refactor this later
                 let mappedError = FlutterError(error.flatMap { ErrorMapper().mapError($0) } ?? SdkError(.genericError))
                 completion(.failure(mappedError))
             }
         }
-    }
-
-    func resourceRequest(isImplicit: Bool, isAnonymousCall: Bool, parameters: [String: Any], completion: @escaping FlutterDataCallback) {
-        Logger.log("resourceRequest", sender: self)
-        if(isImplicit == true){
-            implicitResourcesRequest(parameters, completion)
-        } else{
-            simpleResourcesRequest(isAnonymousCall: isAnonymousCall, parameters: parameters, completion)
-        }
-    }
-
-    private func isProfileImplicitlyAuthenticated(_ profile: ONGUserProfile) -> Bool {
-        Logger.log("isProfileImplicitlyAuthenticated", sender: self)
-        let implicitlyAuthenticatedProfile = ONGUserClient.sharedInstance().implicitlyAuthenticatedUserProfile()
-        return implicitlyAuthenticatedProfile != nil && implicitlyAuthenticatedProfile == profile
     }
 
     private func authenticateProfileImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Bool, SdkError?) -> Void) {
@@ -68,192 +49,91 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         }
     }
 
-    private func simpleResourcesRequest(isAnonymousCall: Bool, parameters: [String: Any], _ completion: @escaping (Any?, SdkError?) -> Void) {
-        Logger.log("simpleResourcesRequest", sender: self)
-        let request = generateONGResourceRequest(from: parameters)
+    func requestResource(_ my_type: ResourceRequestType, _ details: OWRequestDetails, completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) {
+        Logger.log("requestResource", sender: self)
 
-        let completionRequest: ((ONGResourceResponse?, Error?) -> Void)? = { response, error in
-            if let error = error {
-                if response != nil {
-                    completion(nil, SdkError(.errorCodeHttpRequest, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
-                } else {
-                    completion(nil, SdkError(.httpRequestError, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
-                }
-            } else {
-                if let response = response, let _ = response.data {
-                    completion(response.toString(), nil)
-                } else {
-                    completion(nil, SdkError(.responseIsNull))
-                }
+        let request = generateONGResourceRequest(details)
+        let requestCompletion = getCompletionRequest(completion)
+
+        switch my_type {
+        case ResourceRequestType.implicit:
+            // For consistency with Android we perform this step
+            guard let _ = ONGUserClient.sharedInstance().implicitlyAuthenticatedUserProfile() else {
+                completion(.failure(FlutterError(SdkError(.unauthenticatedImplicitly))))
+                return
             }
-        }
-        
-        if isAnonymousCall {
-            ONGDeviceClient.sharedInstance().fetchResource(request, completion: completionRequest)
-        } else {
-            ONGUserClient.sharedInstance().fetchResource(request, completion: completionRequest)
-        }
-    }
 
-    private func implicitResourcesRequest(_ parameters: [String: Any], _ completion: @escaping FlutterDataCallback) {
-        Logger.log("implicitResourcesRequest", sender: self)
-
-        let request = generateONGResourceRequest(from: parameters)
-
-        ONGUserClient.sharedInstance().fetchImplicitResource(request) { response, error in
-            if let error = error {
-                if response != nil {
-                    completion(nil, SdkError(.errorCodeHttpRequest, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
-                } else {
-                    completion(nil, SdkError(.httpRequestError, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
-                }
-            } else {
-                if let response = response, let _ = response.data {
-                    completion(response.toString(), nil)
-                } else {
-                    completion(nil, SdkError(.responseIsNull))
-                }
-            }
-        }
-    }
-
-    private func getEncodingByValue(_ value: String) -> ONGParametersEncoding {
-        Logger.log("getEncodingByValue", sender: self)
-        switch value {
-        case "application/json":
-            return ONGParametersEncoding.JSON
-        case "application/x-www-form-urlencoded":
-            return ONGParametersEncoding.formURL
-        default:
-            return ONGParametersEncoding.JSON
+            ONGUserClient.sharedInstance().fetchImplicitResource(request, completion: requestCompletion)
+        case ResourceRequestType.anonymous:
+            ONGDeviceClient.sharedInstance().fetchResource(request, completion: requestCompletion)
+        case ResourceRequestType.authenticated:
+            ONGUserClient.sharedInstance().fetchResource(request, completion: requestCompletion)
+        case ResourceRequestType.unauthenticated:
+            ONGDeviceClient.sharedInstance().fetchUnauthenticatedResource(request, completion: requestCompletion)
         }
     }
 
     //MARK: - Bridge
-    func fetchAnonymousResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
-        Logger.log("fetchAnonymousResource", sender: self)
-        
-        let newParameters = generateParameters(from: parameters, path: path)
+    private func generateONGResourceRequest(_ details: OWRequestDetails) -> ONGResourceRequest {
+        Logger.log("generateONGResourceRequest", sender: self)
+        return ONGResourceRequest.init(path: details.path,
+                                       method: getRequestMethod(details.method),
+                                       body: details.body?.data(using: .utf8),
+                                       headers: getRequestHeaders(details.headers)
+                                      )
+    }
 
-        OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: false, parameters: newParameters) { (data, error) in
-            if let _errorResource = error {
-                completion(_errorResource)
-                return
-            } else {
-                completion(data)
+    private func getRequestHeaders(_ headers: Dictionary<String?, String?>?) -> Dictionary<String, String>? {
+        Logger.log("getRequestHeaders", sender: self)
+        if (headers == nil) {
+            return nil
+        }
+
+        var requestHeaders = Dictionary<String, String>()
+
+        headers?.forEach {
+            if ($0.key != nil && $0.value != nil) {
+                requestHeaders[$0.key ?? ""] = $0.value
             }
         }
+
+        return requestHeaders
     }
 
-    func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
-        Logger.log("fetchSimpleResources", sender: self)
-        let newParameters = generateParameters(from: parameters, path: path)
-        OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: false, isAnonymousCall: false, parameters: newParameters) { (_data, error) in
-            if let _errorResource = error {
-                completion(_errorResource)
-                return
-            } else {
-                completion(_data)
-            }
+    private func getRequestMethod(_ method: HttpRequestMethod) -> String {
+        Logger.log("getRequestMethod", sender: self)
+        switch method {
+        case HttpRequestMethod.get:
+            return "GET"
+        case HttpRequestMethod.post:
+            return "POST"
+        case HttpRequestMethod.delete:
+            return "DELETE"
+        case HttpRequestMethod.put:
+            return "PUT"
         }
     }
 
-    func fetchResourceWithImplicitResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult) {
-        Logger.log("fetchResourceWithImplicitResource", sender: self)
-        guard let _ = ONGUserClient.sharedInstance().implicitlyAuthenticatedUserProfile() else {
-            completion(SdkError(.unauthenticatedImplicitly).flutterError())
-            return
-        }
-
-        let newParameters = generateParameters(from: parameters, path: path)
-        let scopes = newParameters["scope"] as? [String]
-        
-        OneginiModuleSwift.sharedInstance.resourceRequest(isImplicit: true, parameters: newParameters) { (data, error) in
-            completion(data ?? error)
-        }
-    }
-
-    func unauthenticatedRequest(_ path: String, parameters: [String: Any?], callback: @escaping FlutterResult) {
-        Logger.log("unauthenticatedRequest", sender: self)
-
-        let newParameters = generateParameters(from: parameters, path: path)
-
-        let request = generateONGResourceRequest(from: newParameters)
-
-        ONGDeviceClient.sharedInstance().fetchUnauthenticatedResource(request) { (response, error) in
-            if let _errorResource = error {
+    private func getCompletionRequest(_ completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) -> ((ONGResourceResponse?, Error?) -> Void)? {
+        Logger.log("getCompletionRequest", sender: self)
+        let completionRequest: ((ONGResourceResponse?, Error?) -> Void)? = { response, error in
+            if let error = error {
                 if response != nil {
-                    callback(SdkError.convertToFlutter(SdkError(.errorCodeHttpRequest, response: response, iosCode: _errorResource.code, iosMessage: _errorResource.localizedDescription)))
+                    let flutterError = FlutterError(SdkError(.errorCodeHttpRequest, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
+                    completion(.failure(flutterError))
                 } else {
-                    callback(SdkError.convertToFlutter(SdkError(.httpRequestError, response: response, iosCode: _errorResource.code, iosMessage: _errorResource.localizedDescription)))
+                    let flutterError = FlutterError(SdkError(.httpRequestError, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
+                    completion(.failure(flutterError))
                 }
-                return
             } else {
-                if let response = response, let data = response.data {
-                    if let _ = String(data: data, encoding: .utf8) {
-                        callback(response.toString())
-                    } else {
-                        callback(data)
-                    }
+                if let response = response {
+                    completion(.success(OWRequestResponse(response)))
                 } else {
-                    callback(SdkError(.responseIsNull))
+                    completion(.failure(FlutterError(SdkError(.responseIsNull))))
                 }
             }
         }
-    }
 
-    func generateParameters(from parameters: [String: Any?], path: String) -> [String: Any] {
-        let buffer = parameters.filter { !($0.1 is NSNull) }
-        
-        var newParameters = [String: Any]()
-        newParameters["path"] = path
-        newParameters["encoding"] = buffer["encoding"] ?? "application/json"
-        newParameters["method"] = buffer["method"] ?? "GET"
-
-        if let headers = buffer["headers"] {
-            newParameters["headers"] = headers
-        }
-
-        if let body = buffer["body"] {
-            newParameters["body"] = body
-        }
-        
-        if let parameters = buffer["parameters"] {
-            newParameters["parameters"] = parameters
-        }
-        
-        return newParameters
-    }
-
-    func generateONGResourceRequest(from parameters: [String: Any]) -> ONGResourceRequest {
-        let encoding = getEncodingByValue(parameters["encoding"] as! String)
-        let path = parameters["path"] as! String
-        let method = parameters["method"] as! String
-        let headers = parameters["headers"] as? [String : String]
-
-        var request: ONGResourceRequest!
-        
-        if let body = parameters["body"] as? String {
-            let data = body.data(using: .utf8)
-            request = ONGResourceRequest.init(path: path, method: method, body: data, headers: headers)
-        } else {
-            request = ONGResourceRequest.init(path:path, method: method, parameters: parameters["parameters"] as? [String : Any], encoding: encoding, headers: headers)
-        }
-
-        return request
-    }
-}
-
-extension ONGResourceResponse {
-    func toJSON() -> Dictionary<String, Any?> {
-        return ["statusCode": statusCode,
-                "headers": allHeaderFields,
-                "url": rawResponse.url?.absoluteString,
-                "body": data != nil ? String(data: data!, encoding: .utf8) : nil
-        ]
-    }
-
-    func toString() -> String {
-        return String.stringify(json: self.toJSON())
+        return completionRequest
     }
 }

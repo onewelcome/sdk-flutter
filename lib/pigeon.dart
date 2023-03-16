@@ -13,7 +13,6 @@ enum HttpRequestMethod {
   post,
   put,
   delete,
-  patch,
 }
 
 enum ResourceRequestType {

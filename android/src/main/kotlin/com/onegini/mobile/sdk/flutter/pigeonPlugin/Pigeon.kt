@@ -41,8 +41,7 @@ enum class HttpRequestMethod(val raw: Int) {
   GET(0),
   POST(1),
   PUT(2),
-  DELETE(3),
-  PATCH(4);
+  DELETE(3);
 
   companion object {
     fun ofRaw(raw: Int): HttpRequestMethod? {
