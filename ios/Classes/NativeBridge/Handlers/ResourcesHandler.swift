@@ -37,18 +37,6 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         }
     }
 
-    private func authenticateProfileImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Bool, SdkError?) -> Void) {
-        Logger.log("authenticateProfileImplicitly", sender: self)
-        ONGUserClient.sharedInstance().implicitlyAuthenticateUser(profile, scopes: scopes) { success, error in
-            if !success {
-                let mappedError = error.flatMap { ErrorMapper().mapError($0) } ?? SdkError(.genericError)
-                completion(success, mappedError)
-                return
-            }
-            completion(success, nil)
-        }
-    }
-
     func requestResource(_ my_type: ResourceRequestType, _ details: OWRequestDetails, completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) {
         Logger.log("requestResource", sender: self)
 
