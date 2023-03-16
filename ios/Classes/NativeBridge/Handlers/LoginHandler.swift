@@ -96,11 +96,9 @@ extension LoginHandler: ONGAuthenticationDelegate {
         
         pinChallenge = nil
         customChallange = nil
-        
-        loginCompletion?(.success(
-            OWRegistrationResponse(userProfile: OWUserProfile(userProfile),
-                                   customInfo: toOWCustomInfo(customAuthInfo))))
         pinHandler?.closeFlow()
+        loginCompletion?(.success(OWRegistrationResponse(userProfile: OWUserProfile(userProfile),
+                                                         customInfo: toOWCustomInfo(customAuthInfo))))
     }
 
     func userClient(_ userClient: ONGUserClient, didFailToAuthenticateUser userProfile: ONGUserProfile, authenticator: ONGAuthenticator, error: Error) {
