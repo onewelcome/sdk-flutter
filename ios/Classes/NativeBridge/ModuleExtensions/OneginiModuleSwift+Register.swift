@@ -81,7 +81,7 @@ extension OneginiModuleSwift {
             return .failure(FlutterError(.userProfileDoesNotExist))
         }
         let allAuthenticators = ONGUserClient.sharedInstance().allAuthenticators(forUser: profile)
-        return .success(allAuthenticators.compactMap({OWAuthenticator($0)}))
+        return .success(allAuthenticators.compactMap { OWAuthenticator($0) } )
     }
     
     func getRedirectUrl() -> Result<String, FlutterError> {

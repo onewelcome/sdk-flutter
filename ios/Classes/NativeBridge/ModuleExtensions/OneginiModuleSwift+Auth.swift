@@ -44,7 +44,6 @@ extension OneginiModuleSwift {
         bridgeConnector.toLoginHandler.authenticateUser(profile, authenticator: authenticator) { result in
             completion(result)
         }
-        
     }
 
     func setPreferredAuthenticator(_ identifierId: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
