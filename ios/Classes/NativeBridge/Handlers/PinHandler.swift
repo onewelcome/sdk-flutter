@@ -66,7 +66,7 @@ class PinHandler: NSObject {
 }
 
 //MARK: -
-extension PinHandler: PinConnectorToPinHandler{
+extension PinHandler: PinConnectorToPinHandler {
     func handleFlowUpdate(_ flow: PinFlow, _ error: SdkError?, receiver: PinHandlerToReceiverProtocol) {
         if(self.flow == nil){
             self.flow = flow
@@ -214,8 +214,6 @@ extension PinHandler: ONGChangePinDelegate {
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
             changePinCompletion?(.failure(FlutterError(.changingPinCancelled)))
-        } else if error.code == ONGGenericError.userDeregistered.rawValue {
-            changePinCompletion?(.failure(FlutterError(mappedError)))
         } else {
             changePinCompletion?(.failure(FlutterError(mappedError)))
         }
