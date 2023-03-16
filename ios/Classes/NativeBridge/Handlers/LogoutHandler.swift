@@ -14,7 +14,7 @@ class LogoutHandler: LogoutHandlerProtocol {
                     let mappedError = ErrorMapper().mapError(error)
                     completion(.failure(FlutterError(mappedError)))
                 } else {
-                    completion(.success(()))
+                    completion(.success)
                 }
             }
         }

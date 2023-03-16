@@ -146,7 +146,7 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
         }
         
         presentBrowserUserRegistrationView(registrationUserURL: url, webSignInType: webSignInType)
-        return .success(())
+        return .success
     }
     
     func submitCustomRegistrationSuccess(_ data: String?) {

@@ -108,7 +108,7 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
         }
         
         ONGUserClient.sharedInstance().preferredAuthenticator = authenticator
-        completion(.success(()))
+        completion(.success)
     }
     
     func getAuthenticatorsListForUserProfile(_ userProfile: ONGUserProfile) -> Array<ONGAuthenticator> {
@@ -141,7 +141,7 @@ extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
         Logger.log("[AUTH] userClient didReceive ONGCustomAuthFinishRegistrationChallenge", sender: self)
         // TODO: Will need to check it in the future
         
-        registrationCompletion?(.success(()))
+        registrationCompletion?(.success)
         customAuthChallenge = challenge
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.handleFlowUpdate(PinFlow.create, nil, receiver: self)
     }
@@ -159,7 +159,7 @@ extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
 
     func userClient(_: ONGUserClient, didRegister authenticator: ONGAuthenticator, forUser _: ONGUserProfile, info _: ONGCustomInfo?) {
         Logger.log("[AUTH] userClient didRegister ONGAuthenticator", sender: self)
-        registrationCompletion?(.success(()))
+        registrationCompletion?(.success)
         BridgeConnector.shared?.toPinHandlerConnector.pinHandler.closeFlow()
     }
 }
@@ -168,13 +168,13 @@ extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
 extension AuthenticatorsHandler: ONGAuthenticatorDeregistrationDelegate {
     func userClient(_: ONGUserClient, didDeregister _: ONGAuthenticator, forUser _: ONGUserProfile) {
         Logger.log("[AUTH] userClient didDeregister ONGAuthenticator", sender: self)
-        deregistrationCompletion?(.success(()))
+        deregistrationCompletion?(.success)
     }
 
     func userClient(_: ONGUserClient, didReceive challenge: ONGCustomAuthDeregistrationChallenge) {
         Logger.log("[AUTH] userClient didReceive ONGCustomAuthDeregistrationChallenge", sender: self)
         
-        deregistrationCompletion?(.success(()))
+        deregistrationCompletion?(.success)
     }
 
     func userClient(_: ONGUserClient, didFailToDeregister authenticator: ONGAuthenticator, forUser _: ONGUserProfile, error: Error) {

@@ -139,7 +139,7 @@ extension PinHandler: PinConnectorToPinHandler{
     func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
         ONGUserClient.sharedInstance().validatePin(withPolicy: pin) { (value, error) in
             guard let error = error else {
-                completion(.success(()))
+                completion(.success)
                 return
             }
             completion(.failure(SdkError(code: error.code, errorDescription: error.localizedDescription).flutterError()))
@@ -225,6 +225,6 @@ extension PinHandler: ONGChangePinDelegate {
         Logger.log("didChangePinForUser", sender: self)
         createPinChallenge = nil
         closeFlow()
-        changePinCompletion?(.success(()))
+        changePinCompletion?(.success)
     }
 }
