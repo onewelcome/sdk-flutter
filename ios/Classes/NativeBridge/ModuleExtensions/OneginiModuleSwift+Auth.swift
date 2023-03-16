@@ -6,7 +6,7 @@ extension OneginiModuleSwift {
 
     func getIdentityProviders() -> Result<[OWIdentityProvider], FlutterError> {
         let providers = ONGClient.sharedInstance().userClient.identityProviders()
-        return .success(providers.compactMap({OWIdentityProvider($0)}))
+        return .success(providers.compactMap { OWIdentityProvider($0) } )
     }
 
     func logOut(callback: @escaping (Result<Void, FlutterError>) -> Void) {
