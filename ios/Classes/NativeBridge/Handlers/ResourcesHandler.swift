@@ -19,7 +19,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
                 let mappedError = FlutterError(ErrorMapper().mapError(error))
                 completion(.failure(mappedError))
             } else {
-                completion(.success(()))
+                completion(.success)
             }
         }
     }
@@ -28,7 +28,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         Logger.log("authenticateImplicitly", sender: self)
         ONGUserClient.sharedInstance().implicitlyAuthenticateUser(profile, scopes: scopes) { success, error in
             if success {
-                completion(.success(()))
+                completion(.success)
             } else {
                 // This error construction is obviously not good, but it will work for now till we refactor this later
                 let mappedError = FlutterError(error.flatMap { ErrorMapper().mapError($0) } ?? SdkError(.genericError))
