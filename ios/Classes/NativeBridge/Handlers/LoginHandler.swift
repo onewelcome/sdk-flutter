@@ -11,7 +11,7 @@ class LoginHandler: NSObject {
             return
         }
         pinChallenge.sender.respond(withPin: pin, challenge: pinChallenge)
-        completion(.success(()))
+        completion(.success)
     }
     
     func cancelPinAuthentication(completion: (Result<Void, FlutterError>) -> Void) {
@@ -20,7 +20,7 @@ class LoginHandler: NSObject {
             return
         }
         pinChallenge.sender.cancel(pinChallenge)
-        completion(.success(()))
+        completion(.success)
     }
     
     func handleDidReceiveChallenge(_ challenge: ONGPinChallenge) {

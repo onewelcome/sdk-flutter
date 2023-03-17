@@ -29,7 +29,7 @@ extension OneginiModuleSwift {
         // FIXME: Move this out of this file
         ONGUserClient.sharedInstance().validatePin(withPolicy: pin) { (value, error) in
             guard let error = error else {
-                completion(.success(()))
+                completion(.success)
                 return
             }
             completion(.failure(SdkError(code: error.code, errorDescription: error.localizedDescription).flutterError()))

@@ -40,7 +40,7 @@ extension ChangePinHandler: ONGChangePinDelegate {
 
     func userClient(_: ONGUserClient, didChangePinForUser _: ONGUserProfile) {
         registrationHandler.handleDidRegisterUser()
-        changePinCompletion?(.success(()))
+        changePinCompletion?(.success)
         changePinCompletion = nil
         
     }

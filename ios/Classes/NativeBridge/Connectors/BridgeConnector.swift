@@ -6,7 +6,7 @@ class BridgeConnector: BridgeConnectorProtocol {
     
 
     let toPinConnector = PinConnector()
-    let toLoginHandler: LoginHandler = LoginHandler()
+    let toLoginHandler = LoginHandler()
     let toAppToWebHandler: AppToWebHandlerProtocol = AppToWebHandler()
     let toResourceFetchHandler: FetchResourcesHandlerProtocol = ResourcesHandler()
     let toMobileAuthConnector: BridgeToMobileAuthConnectorProtocol = MobileAuthConnector()

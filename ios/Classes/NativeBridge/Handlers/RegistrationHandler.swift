@@ -96,7 +96,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
             return
         }
         createPinChallenge.sender.respond(withCreatedPin: pin, challenge: createPinChallenge)
-        completion(.success(()))
+        completion(.success)
     }
     
     func cancelPinRegistration(completion: (Result<Void, FlutterError>) -> Void) {
@@ -105,7 +105,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
             return
         }
         createPinChallenge.sender.cancel(createPinChallenge)
-        completion(.success(()))
+        completion(.success)
     }
     
     

@@ -46,15 +46,3 @@ enum PinNotification : String {
          showError = "eventError",
          nextAuthenticationAttempt = "eventNextAuthenticationAttempt"
 }
-
-enum PinAction : String {
-    case provide = "provide",
-         cancel = "cancel"
-}
-
-enum PinFlow : String {
-    case create = "create",
-//         change = "change",
-         authentication = "authentication"
-//         nextAuthenticationAttempt = "nextAuthenticationAttempt"
-}
