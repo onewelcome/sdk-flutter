@@ -8,24 +8,16 @@ extension OneginiModuleSwift {
         bridgeConnector.toPinHandlerConnector.pinHandler.onCancel()
     }
   
-    func submitPinAction(_ flow: String, action: String, pin: String, isCustomAuth: Bool = false) -> Void {
+    func submitPinAction(_ flow: String, action: String, pin: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
         bridgeConnector.toPinHandlerConnector.handlePinAction(flow, action, pin)
      }
     
-    func changePin(callback: @escaping FlutterResult) -> Void {
-        bridgeConnector.toPinHandlerConnector.pinHandler.onChangePinCalled() {
-            (_, error) -> Void in
-
-            error != nil ? callback(SdkError.convertToFlutter(error)) : callback(true)
-        }
+    func changePin(completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        bridgeConnector.toPinHandlerConnector.pinHandler.onChangePinCalled(completion: completion)
     }
     
-    func validatePinWithPolicy(_ pin: String, callback: @escaping FlutterResult) -> Void {
-        bridgeConnector.toPinHandlerConnector.pinHandler.validatePinWithPolicy(pin: pin, completion: {
-            (value, error) -> Void in
-
-            error != nil ? callback(SdkError.convertToFlutter(error)) : callback(value)
-        })
+    func validatePinWithPolicy(_ pin: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        bridgeConnector.toPinHandlerConnector.pinHandler.validatePinWithPolicy(pin: pin, completion: completion)
     }
 }
 

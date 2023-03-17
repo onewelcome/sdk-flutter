@@ -46,12 +46,12 @@ extension OneginiModuleSwift {
         }
     }
     
-    func acceptMobileAuthConfirmation(callback: @escaping FlutterResult) -> Void {
+    func acceptMobileAuthConfirmation() -> Void {
         bridgeConnector.toMobileAuthConnector.mobileAuthHandler.handleMobileAuthConfirmation(cancelled: false)
     }
 
     @objc
-    func denyMobileAuthConfirmation(callback: @escaping FlutterResult) -> Void {
+    func denyMobileAuthConfirmation() -> Void {
         bridgeConnector.toMobileAuthConnector.mobileAuthHandler.handleMobileAuthConfirmation(cancelled: true)
     }
 }

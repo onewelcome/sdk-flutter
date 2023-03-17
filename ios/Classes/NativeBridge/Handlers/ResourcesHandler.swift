@@ -4,8 +4,8 @@ import OneginiSDKiOS
 typealias FlutterDataCallback = (Any?, SdkError?) -> Void
 
 protocol FetchResourcesHandlerProtocol: AnyObject {
-    func authenticateDevice(_ scopes: [String]?, completion: @escaping (Bool, SdkError?) -> Void)
-    func authenticateUserImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Result<String, SdkError>) -> Void)
+    func authenticateDevice(_ scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void)
+    func authenticateUserImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void)
     func resourceRequest(isImplicit: Bool, isAnonymousCall: Bool, parameters: [String: Any], completion: @escaping FlutterDataCallback)
     func fetchSimpleResources(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
     func fetchAnonymousResource(_ path: String, parameters: [String: Any?], completion: @escaping FlutterResult)
@@ -16,25 +16,26 @@ protocol FetchResourcesHandlerProtocol: AnyObject {
 //MARK: -
 class ResourcesHandler: FetchResourcesHandlerProtocol {
 
-    func authenticateDevice(_ scopes: [String]?, completion: @escaping (Bool, SdkError?) -> Void) {
+    func authenticateDevice(_ scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void) {
         Logger.log("authenticateDevice", sender: self)
-        ONGDeviceClient.sharedInstance().authenticateDevice(scopes) { success, error in
+        ONGDeviceClient.sharedInstance().authenticateDevice(scopes) { _, error in
             if let error = error {
-                let mappedError = ErrorMapper().mapError(error)
-                completion(success, mappedError)
+                let mappedError = FlutterError(ErrorMapper().mapError(error))
+                completion(.failure(mappedError))
             } else {
-                completion(success, nil)
+                completion(.success)
             }
         }
     }
 
-    func authenticateUserImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Result<String, SdkError>) -> Void) {
+    func authenticateUserImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void) {
         Logger.log("authenticateImplicitly", sender: self)
         ONGUserClient.sharedInstance().implicitlyAuthenticateUser(profile, scopes: scopes) { success, error in
             if success {
-                completion(.success(profile.profileId))
+                completion(.success)
             } else {
-                let mappedError = error.flatMap { ErrorMapper().mapError($0) } ?? SdkError(.genericError)
+                    // This error construction is obviously not good, but it will work for now till we refactor this later
+                let mappedError = FlutterError(error.flatMap { ErrorMapper().mapError($0) } ?? SdkError(.genericError))
                 completion(.failure(mappedError))
             }
         }

@@ -147,7 +147,6 @@ class UserClient {
 
   /// Single sign on the user web page.
   Future<OWAppToWebSingleSignOn> getAppToWebSingleSignOn(String url) async {
-    // todo use api once the branch is merged that puts this in an usecase on android
     return await api.getAppToWebSingleSignOn(url);
   }
 
