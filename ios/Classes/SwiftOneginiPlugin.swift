@@ -69,7 +69,6 @@ func toOWCustomInfo(_ info: ONGCustomInfo?) -> OWCustomInfo? {
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
 
-
     func submitCustomRegistrationAction(identityProviderId: String, data: String?, completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.submitCustomRegistrationSuccess(data)
         // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-??
@@ -113,31 +112,27 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func pinDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.cancelPinAuth()
-        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-49
-        completion(.success)
+        OneginiModuleSwift.sharedInstance.pinDenyAuthenticationRequest() { result in
+            completion(result.mapError { $0 })
+        }
     }
 
     func pinAcceptAuthenticationRequest(pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.submitPinAction(PinFlow.authentication.rawValue, action: PinAction.provide.rawValue, pin: pin) { result in
-            completion(result.mapError{$0})
+        OneginiModuleSwift.sharedInstance.pinAcceptAuthenticationRequest(pin) { result in
+            completion(result.mapError { $0 })
         }
-        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-49
-        completion(.success)
     }
 
     func pinDenyRegistrationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.cancelPinAuth()
-        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-49
-        completion(.success)
+        OneginiModuleSwift.sharedInstance.pinDenyRegistrationRequest() { result in
+            completion(result.mapError { $0 })
+        }
     }
 
     func pinAcceptRegistrationRequest(pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.submitPinAction(PinFlow.create.rawValue, action: PinAction.provide.rawValue, pin: pin) { result in
-            completion(result.mapError{$0})
+        OneginiModuleSwift.sharedInstance.pinAcceptRegistrationRequest(pin) { result in
+            completion(result.mapError { $0 })
         }
-        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-49
-        completion(.success)
     }
 
     func cancelBrowserRegistration(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -148,7 +143,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
 
     func registerUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.registerUser(identityProviderId, scopes: scopes) { result in
-            completion(result.mapError{$0})
+            completion(result.mapError { $0 })
         }
     }
 
@@ -157,64 +152,64 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
     }
 
     func getIdentityProviders(completion: @escaping (Result<[OWIdentityProvider], Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getIdentityProviders().mapError{$0})
+        completion(OneginiModuleSwift.sharedInstance.getIdentityProviders().mapError { $0 })
     }
 
     func deregisterUser(profileId: String, completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.deregisterUser(profileId: profileId) { result in
-            completion(result.mapError{$0})
+            completion(result.mapError { $0 })
         }
     }
 
     func getRegisteredAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getRegisteredAuthenticators(profileId).mapError{$0})
+        completion(OneginiModuleSwift.sharedInstance.getRegisteredAuthenticators(profileId).mapError { $0 })
     }
 
     func getAllAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getAllAuthenticators(profileId).mapError{$0})
+        completion(OneginiModuleSwift.sharedInstance.getAllAuthenticators(profileId).mapError { $0 })
     }
 
     func getAuthenticatedUserProfile(completion: @escaping (Result<OWUserProfile, Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getAuthenticatedUserProfile().mapError{$0})
+        completion(OneginiModuleSwift.sharedInstance.getAuthenticatedUserProfile().mapError { $0 })
     }
 
     func authenticateUser(profileId: String, registeredAuthenticatorId: String?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.authenticateUser(profileId: profileId, authenticatorId: registeredAuthenticatorId) { result in
-            completion(result.mapError{$0})
+            completion(result.mapError { $0 })
         }
     }
 
     func getNotRegisteredAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getNotRegisteredAuthenticators(profileId).mapError{$0})
+        completion(OneginiModuleSwift.sharedInstance.getNotRegisteredAuthenticators(profileId).mapError { $0 })
     }
 
     func changePin(completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.changePin() { result in
-            completion(result.mapError{$0})
+            completion(result.mapError { $0 })
         }
     }
 
     func setPreferredAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.setPreferredAuthenticator(authenticatorId) { result in
-            completion(result.mapError{$0})
+            completion(result.mapError { $0 })
         }
     }
 
     func deregisterAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.deregisterAuthenticator(authenticatorId) { result in
-            completion(result.mapError{$0})
+            completion(result.mapError { $0 })
         }
     }
 
     func registerAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.registerAuthenticator(authenticatorId) { result in
-            completion(result.mapError{$0})
+            completion(result.mapError { $0 })
         }
     }
 
     func logout(completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.logOut(){ result in
-            completion(result.mapError{$0})
+            completion(result.mapError { $0 })
         }
     }
 
@@ -224,37 +219,37 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
 
     func getAppToWebSingleSignOn(url: String, completion: @escaping (Result<OWAppToWebSingleSignOn, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.runSingleSignOn(url) { result in
-            completion(result.mapError{$0})
+            completion(result.mapError { $0 })
         }
     }
 
     func getAccessToken(completion: @escaping (Result<String, Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getAccessToken().mapError{$0})
+        completion(OneginiModuleSwift.sharedInstance.getAccessToken().mapError { $0 })
     }
 
     func getRedirectUrl(completion: @escaping (Result<String, Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getRedirectUrl().mapError{$0})
+        completion(OneginiModuleSwift.sharedInstance.getRedirectUrl().mapError { $0 })
     }
 
     func getUserProfiles(completion: @escaping (Result<[OWUserProfile], Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getUserProfiles().mapError{$0})
+        completion(OneginiModuleSwift.sharedInstance.getUserProfiles().mapError { $0 })
     }
 
     func validatePinWithPolicy(pin: String, completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.validatePinWithPolicy(pin) { result in
-            completion(result.mapError{$0})
+            completion(result.mapError { $0 })
         }
     }
 
     func authenticateDevice(scopes: [String]?, completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.authenticateDevice(scopes) { result in
-            completion(result.mapError{$0})
+            completion(result.mapError { $0 })
         }
     }
 
     func authenticateUserImplicitly(profileId: String, scopes: [String]?, completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.authenticateUserImplicitly(profileId, scopes) { result in
-            completion(result.mapError{$0})
+            completion(result.mapError { $0 })
         }
     }
     

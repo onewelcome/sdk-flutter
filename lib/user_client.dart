@@ -92,8 +92,8 @@ class UserClient {
   Future<void> changePin(
     BuildContext? context,
   ) async {
-    await api.changePin();
     Onegini.instance.setEventContext(context);
+    await api.changePin();
   }
 
   /// Registers authenticator from [getNotRegisteredAuthenticators] list.
@@ -168,7 +168,6 @@ class UserClient {
 
   /// todo removed boolean return update docu
   Future<void> validatePinWithPolicy(String pin) async {
-    // todo use api once the branch is merged that puts this in an usecase on android
     await api.validatePinWithPolicy(pin);
   }
 

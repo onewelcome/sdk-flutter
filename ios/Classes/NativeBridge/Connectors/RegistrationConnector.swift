@@ -1,16 +1,15 @@
 //MARK: - 
 protocol BridgeToRegistrationConnectorProtocol: CustomRegistrationNotificationReceiverProtocol {
     var bridgeConnector: BridgeConnectorProtocol? { get set }
-    var registrationHandler: RegistrationConnectorToHandlerProtocol & BrowserHandlerToRegisterHandlerProtocol { get }
+    var registrationHandler: RegistrationHandler { get }
 }
 
 //MARK: -
 class RegistrationConnector : BridgeToRegistrationConnectorProtocol, CustomRegistrationNotificationReceiverProtocol {
-    var registrationHandler: RegistrationConnectorToHandlerProtocol & BrowserHandlerToRegisterHandlerProtocol
+    var registrationHandler: RegistrationHandler
     unowned var bridgeConnector: BridgeConnectorProtocol?
 
-    init() {
-        let handler = RegistrationHandler()
+    init(handler: RegistrationHandler) {
         registrationHandler = handler
         handler.customNotificationReceiver = self
     }

@@ -5,6 +5,7 @@ import Flutter
 extension OneginiModuleSwift {
     public func otpResourceCodeConfirmation(code: String?, callback: @escaping FlutterResult) {
         
+        // FIXME: Check what's going on here, why is custom registration challange put in mobile auth
         bridgeConnector.toMobileAuthConnector.mobileAuthHandler.handleOTPMobileAuth(code ?? "", customRegistrationChallenge: bridgeConnector.toRegistrationConnector.registrationHandler.currentChallenge()) {
             (_ , error) -> Void in
 
@@ -31,6 +32,7 @@ extension OneginiModuleSwift {
     }
     
     private func handleQRCode(_ code: String?, callback: @escaping FlutterResult) {
+        // FIXME: Check what's going on here, why is custom registration challange put in mobile auth
         let challenge = bridgeConnector.toRegistrationConnector.registrationHandler.currentChallenge()
         var handleMobileAuthConfirmation = false
         
