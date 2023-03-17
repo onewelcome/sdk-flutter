@@ -1,36 +1,43 @@
-abstract class pinEvent {
-  pinAction action;
+abstract class PinEvent {
+  PinAction action;
+  PinEvent(this.action);
 }
 
-class pinCreateEvent extends pinEvent {}
+class PinCreateEvent extends PinEvent {
+  PinCreateEvent(PinAction action) : super(action);
+}
 
-class pinAuthenticationEvent extends pinEvent {}
+class PinAuthenticationEvent extends PinEvent {
+  PinAuthenticationEvent(PinAction action) : super(action);
+}
 
-class pinAuthenticationCloseEvent extends pinAuthenticationEvent {}
+class PinAuthenticationCloseEvent extends PinAuthenticationEvent {
+  PinAuthenticationCloseEvent() : super(PinAction.closeAuthentication);
+}
 
-class pinAuthenticationOpenEvent extends pinAuthenticationEvent {}
+class PinAuthenticationOpenEvent extends PinAuthenticationEvent {
+  String profileId;
+  PinAuthenticationOpenEvent(this.profileId)
+      : super(PinAction.openAuthentication);
+}
 
-// enum pinFlow {
-
-// }
-
-enum pinAction {
+enum PinAction {
   openRegistration,
   closeRegistration,
   openAuthentication,
   closeAuthentication,
 }
 
-extension pinActionExtension on pinAction {
+extension pinActionExtension on PinAction {
   String get value {
     switch (this) {
-      case pinAction.openRegistration:
+      case PinAction.openRegistration:
         return "open";
-      case pinAction.closeRegistration:
+      case PinAction.closeRegistration:
         return "close";
-      case pinAction.openAuthentication:
+      case PinAction.openAuthentication:
         return "openAuth";
-      case pinAction.closeAuthentication:
+      case PinAction.closeAuthentication:
         return "closeAuth";
     }
   }

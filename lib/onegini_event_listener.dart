@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/model/onegini_error.dart';
+import 'package:onegini/user_client.dart';
 
 import 'constants/constants.dart';
+import 'events.dart';
 import 'model/authentication_attempt.dart';
 import 'model/onegini_event.dart';
+import 'onegini.dart';
 
 /// Extend from this class to describe the events that will take place inside OneginiSDK
 abstract class OneginiEventListener {
@@ -29,7 +32,9 @@ abstract class OneginiEventListener {
           openPinRequestScreen(_context);
           break;
         case Constants.eventOpenPinAuth: //1
-          openPinScreenAuth(_context);
+          Onegini.instance.userClient.pinStreamController.sink
+              .add(PinAuthenticationOpenEvent("hello"));
+          // openPinScreenAuth(_context);
           break;
         case Constants.eventOpenPinAuthenticator:
           openPinAuthenticator(_context);
@@ -60,10 +65,10 @@ abstract class OneginiEventListener {
           if (event != null) {
             Event _event = eventFromJson(event);
 
-            switch(_event.eventName) {
+            switch (_event.eventName) {
               case Constants.eventNextAuthenticationAttempt:
-                nextAuthenticationAttempt(
-                  _context, authenticationAttemptFromJson(_event.eventValue!));
+                nextAuthenticationAttempt(_context,
+                    authenticationAttemptFromJson(_event.eventValue!));
                 break;
               case Constants.eventOpenAuthOTP:
                 openAuthOtp(_context, _event.eventValue!);
@@ -132,12 +137,10 @@ abstract class OneginiEventListener {
   void closeFingerprintScreen(BuildContext? buildContext);
 
   /// Called when the InitCustomRegistration event occurs and a response should be given (only for two-step)
-  void eventInitCustomRegistration(
-      BuildContext? buildContext, String data);
+  void eventInitCustomRegistration(BuildContext? buildContext, String data);
 
   /// Called when the FinishCustomRegistration event occurs and a response should be given
-  void eventFinishCustomRegistration(
-      BuildContext? buildContext, String data);
+  void eventFinishCustomRegistration(BuildContext? buildContext, String data);
 
   /// Called when error event was received.
   void eventError(BuildContext? buildContext, PlatformException error);
