@@ -11,7 +11,6 @@ import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.models.CustomRegistrationModel
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
-import io.flutter.plugin.common.MethodChannel
 
 class CustomTwoStepRegistrationActionImpl(private val providerId: String) : OneginiCustomTwoStepRegistrationAction, CustomRegistrationAction {
     var callback: OneginiCustomRegistrationCallback? = null
@@ -38,21 +37,19 @@ class CustomTwoStepRegistrationActionImpl(private val providerId: String) : Oneg
         return providerId
     }
 
-    override fun returnSuccess(result: String?, resultChannel: MethodChannel.Result) {
-        when (callback) {
-            null -> SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).flutterError(resultChannel)
-            else -> this.callback?.returnSuccess(result)
-        }
-
-        callback = null
+    override fun returnSuccess(result: String?): Result<Unit> {
+        return callback?.let { customRegistrationCallback ->
+            customRegistrationCallback.returnSuccess(result)
+            callback = null
+            Result.success(Unit)
+        } ?: Result.failure(SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).pigeonError())
     }
 
-    override fun returnError(exception: Exception?, resultChannel: MethodChannel.Result) {
-        when (callback) {
-            null -> SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).flutterError(resultChannel)
-            else -> this.callback?.returnError(exception)
-        }
-
-        callback = null
+    override fun returnError(exception: Exception?): Result<Unit> {
+        return callback?.let { customRegistrationCallback ->
+            customRegistrationCallback.returnError(exception)
+            callback = null
+            Result.success(Unit)
+        } ?: Result.failure(SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).pigeonError())
     }
 }

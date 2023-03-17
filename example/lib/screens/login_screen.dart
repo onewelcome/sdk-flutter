@@ -7,6 +7,7 @@ import 'package:onegini/callbacks/onegini_registration_callback.dart';
 import 'package:onegini/model/onegini_list_response.dart';
 import 'package:onegini/model/registration_response.dart';
 import 'package:onegini/onegini.dart';
+import 'package:onegini/pigeon.dart';
 import 'package:onegini_example/screens/user_screen.dart';
 
 import '../components/display_toast.dart';
@@ -130,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  Future<List<UserProfile>> getUserProfiles() async {
+  Future<List<OWUserProfile>> getUserProfiles() async {
     try {
       var profiles = await Onegini.instance.userClient.getUserProfiles();
       return profiles;
@@ -143,16 +144,15 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<String> getImplicitUserDetails(String profileId) async {
     var returnString = "";
     try {
+      print("boop");
       var userProfileId = await Onegini.instance.userClient
           .authenticateUserImplicitly(profileId, ["read"]);
 
-      if (userProfileId != null) {
-        var response = await Onegini.instance.resourcesMethods
-            .getResourceImplicit("user-id-decorated");
-        var res = json.decode(response);
+      var response = await Onegini.instance.resourcesMethods
+          .getResourceImplicit("user-id-decorated");
+      var res = json.decode(response);
 
-        returnString = json.decode(res["body"])["decorated_user_id"];
-      }
+      returnString = json.decode(res["body"])["decorated_user_id"];
 
       return returnString;
     } catch (err) {
@@ -202,7 +202,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(
                     height: 20,
                   ),
-                  FutureBuilder<List<UserProfile>>(
+                  FutureBuilder<List<OWUserProfile>>(
                       //userProfiles
                       future: getUserProfiles(),
                       builder: (context, userProfiles) {
@@ -259,7 +259,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                       ),
                                                       FutureBuilder<
                                                           List<
-                                                              OneginiListResponse>>(
+                                                              OWAuthenticator>>(
                                                         future: Onegini
                                                             .instance.userClient
                                                             .getRegisteredAuthenticators(
@@ -342,7 +342,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(
                     height: 20,
                   ),
-                  FutureBuilder<List<OneginiListResponse>>(
+                  FutureBuilder<List<OWIdentityProvider>>(
                     future: Onegini.instance.userClient
                         .getIdentityProviders(context),
                     builder: (BuildContext context, identityProviders) {

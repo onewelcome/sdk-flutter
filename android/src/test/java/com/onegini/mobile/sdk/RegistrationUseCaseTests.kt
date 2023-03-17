@@ -1,7 +1,6 @@
 package com.onegini.mobile.sdk
 
 import com.google.common.truth.Truth.assertThat
-import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiRegistrationHandler
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
@@ -9,143 +8,133 @@ import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.SdkErrorAssert
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWUserProfile
 import com.onegini.mobile.sdk.flutter.useCases.RegistrationUseCase
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Answers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
-import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.*
 
 @RunWith(MockitoJUnitRunner::class)
 class RegistrationUseCaseTests {
 
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    lateinit var oneginiSdk: OneginiSDK
+  @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+  lateinit var oneginiSdk: OneginiSDK
 
-    @Mock
-    lateinit var clientMock: OneginiClient
-    @Spy
-    lateinit var resultSpy: MethodChannel.Result
+  @Mock
+  lateinit var clientMock: OneginiClient
 
-    @Mock
-    lateinit var callMock: MethodCall
+  @Mock
+  lateinit var callbackMock: (Result<OWRegistrationResponse>) -> Unit
 
-    @Mock
-    lateinit var oneginiIdentityProviderMock: OneginiIdentityProvider
+  @Mock
+  lateinit var oneginiIdentityProviderMock: OneginiIdentityProvider
 
-    lateinit var registrationUseCase: RegistrationUseCase
+  lateinit var registrationUseCase: RegistrationUseCase
 
-    @Before
-    fun attach() {
-        registrationUseCase = RegistrationUseCase(oneginiSdk)
+  @Before
+  fun attach() {
+    registrationUseCase = RegistrationUseCase(oneginiSdk)
+  }
+
+  @Test
+  fun `when given identity provider id is null, Then it should resolve with success with identity provider id as a param`() {
+    whenever(oneginiSdk.oneginiClient.userClient.identityProviders).thenReturn(emptySet())
+    whenever(oneginiSdk.oneginiClient.userClient.registerUser(isNull(), eq(arrayOf("read")), any())).thenAnswer {
+      it.getArgument<OneginiRegistrationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0, ""))
     }
 
-    @Test
-    fun `should call result success with identity provider id as a param when given identity provider id is null`() {
-        whenever(callMock.argument<String>("identityProviderId")).thenReturn(null)
-        whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
-        whenever(oneginiSdk.oneginiClient.userClient.registerUser(isNull(), eq(arrayOf("read")), any())).thenAnswer {
-            it.getArgument<OneginiRegistrationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0, ""))
-        }
+    registrationUseCase(null, listOf("read"), callbackMock)
 
-        registrationUseCase(callMock, resultSpy)
+    argumentCaptor<Result<OWRegistrationResponse>>().apply {
+      verify(callbackMock).invoke(capture())
+      val testUser = OWUserProfile("QWERTY")
+      val testInfo = OWCustomInfo(0, "")
+      Assert.assertEquals(firstValue.getOrNull(), OWRegistrationResponse(testUser, testInfo))
+    }
+  }
 
-        val userProfileJson = mapOf("profileId" to "QWERTY", "isDefault" to false)
-        val customInfoJson = mapOf("data" to "", "status" to 0)
-        val expectedResult = Gson().toJson(mapOf("userProfile" to userProfileJson, "customInfo" to customInfoJson))
-       
-        verify(resultSpy).success(expectedResult)
+  @Test
+  fun `When the given ID is found in the SDK identity providers, Then it should match the IDs with the identity provider id as a parameter`() {
+    val testProviderId = "testId"
+    val testScopes = listOf("read")
+    val setOfIdentityProviders = setOf(oneginiIdentityProviderMock)
+
+    whenever(oneginiIdentityProviderMock.id).thenReturn(testProviderId)
+    whenever(oneginiSdk.oneginiClient.userClient.identityProviders).thenReturn(setOfIdentityProviders)
+
+    registrationUseCase(testProviderId, testScopes, callbackMock)
+
+    argumentCaptor<OneginiIdentityProvider> {
+      verify(oneginiSdk.oneginiClient.userClient).registerUser(capture(), eq(arrayOf("read")), any())
+      assertThat(firstValue.id).isEqualTo(testProviderId)
+    }
+  }
+
+  @Test
+  fun `When the given ID is not found in the SDK identity providers, Then it should return error`() {
+    whenever(oneginiIdentityProviderMock.id).thenReturn("id")
+    whenever(oneginiSdk.oneginiClient.userClient.identityProviders).thenReturn(setOf(oneginiIdentityProviderMock))
+
+    registrationUseCase("differentId", listOf("read"), callbackMock)
+
+    argumentCaptor<Result<OWRegistrationResponse>>().apply {
+      verify(callbackMock).invoke(capture())
+      SdkErrorAssert.assertEquals(IDENTITY_PROVIDER_NOT_FOUND, firstValue.exceptionOrNull())
+    }
+  }
+
+  @Test
+  fun `When given identity provider id is found in SDK identity providers, Then it should call result success with identity provider id as a param`() {
+    whenever(oneginiIdentityProviderMock.id).thenReturn("testId")
+    whenever(oneginiSdk.oneginiClient.userClient.identityProviders).thenReturn(setOf(oneginiIdentityProviderMock))
+    whenever(oneginiSdk.oneginiClient.userClient.registerUser(isNotNull(), eq(arrayOf("read")), any())).thenAnswer {
+      it.getArgument<OneginiRegistrationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0, ""))
     }
 
-    @Test
-    fun `should match the IDs with the identity provider id as a parameter when the given ID is found in the SDK identity providers`() {
-        val setOfIdentityProviders = setOf(oneginiIdentityProviderMock)
+    registrationUseCase("testId", listOf("read"), callbackMock)
 
-        whenever(oneginiIdentityProviderMock.id).thenReturn("testId")
-        whenever(callMock.argument<String>("identityProviderId")).thenReturn("testId")
-        whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
-        whenever(oneginiSdk.oneginiClient.userClient.identityProviders).thenReturn(setOfIdentityProviders)
-
-        registrationUseCase(callMock, resultSpy)
-
-        argumentCaptor<OneginiIdentityProvider> {
-            verify(oneginiSdk.oneginiClient.userClient).registerUser(capture(), eq(arrayOf("read")), any())
-            assertThat(firstValue.id).isEqualTo("testId")
-        }
+    argumentCaptor<Result<OWRegistrationResponse>>().apply {
+      verify(callbackMock).invoke(capture())
+      val testUser = OWUserProfile("QWERTY")
+      val testInfo = OWCustomInfo(0, "")
+      Assert.assertEquals(firstValue.getOrNull(), OWRegistrationResponse(testUser, testInfo))
     }
+  }
 
-    @Test
-    fun `should return error when the given ID is not found in the SDK identity providers`() {
-        val setOfIdentityProviders = setOf(oneginiIdentityProviderMock)
+  @Test
+  fun `When given identity provider id is null, Then it should call 'registerUser' method once`() {
+    registrationUseCase(null, listOf("read"), callbackMock)
 
-        whenever(oneginiIdentityProviderMock.id).thenReturn("test")
-        whenever(callMock.argument<String>("identityProviderId")).thenReturn("testId")
-        whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
-        whenever(oneginiSdk.oneginiClient.userClient.identityProviders).thenReturn(setOfIdentityProviders)
+    verify(oneginiSdk.oneginiClient.userClient).registerUser(isNull(), eq(arrayOf("read")), any())
+  }
 
-        registrationUseCase(callMock, resultSpy)
+  @Test
+  fun `When given scopes contains two strings, Then the scopes param should be array of two scopes`() {
+    registrationUseCase(null, listOf("read", "write"), callbackMock)
 
-        verify(resultSpy).error(eq(IDENTITY_PROVIDER_NOT_FOUND.code.toString()), eq(IDENTITY_PROVIDER_NOT_FOUND.message), any())
+    argumentCaptor<Array<String>> {
+      verify(oneginiSdk.oneginiClient.userClient).registerUser(isNull(), capture(), any())
+      assertThat(firstValue.size).isEqualTo(2)
+      assertThat(firstValue).isEqualTo(arrayOf("read", "write"))
     }
+  }
 
-    @Test
-    fun `should call result success with identity provider id as a param when given identity provider id is found in SDK identity providers`() {
-        val setOfIdentityProviders = setOf(oneginiIdentityProviderMock)
+  @Test
+  fun `When given scopes is null, Then the scopes param should be be an array of null`() {
+    registrationUseCase(null, null, callbackMock)
 
-        whenever(oneginiIdentityProviderMock.id).thenReturn("testId")
-        whenever(callMock.argument<String>("identityProviderId")).thenReturn("testId")
-        whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
-        whenever(oneginiSdk.oneginiClient.userClient.identityProviders).thenReturn(setOfIdentityProviders)
-        whenever(oneginiSdk.oneginiClient.userClient.registerUser(isNotNull(), eq(arrayOf("read")), any())).thenAnswer {
-            it.getArgument<OneginiRegistrationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0, ""))
-        }
-
-        registrationUseCase(callMock, resultSpy)
-
-        val userProfileJson = mapOf("profileId" to "QWERTY", "isDefault" to false)
-        val customInfoJson = mapOf("data" to "", "status" to 0)
-        val expectedResult = Gson().toJson(mapOf("userProfile" to userProfileJson, "customInfo" to customInfoJson))
-        verify(resultSpy).success(expectedResult)
+    argumentCaptor<Array<String>> {
+      verify(oneginiSdk.oneginiClient.userClient).registerUser(isNull(), capture(), any())
+      assertThat(firstValue).isNull()
     }
-
-    @Test
-    fun `should call 'registerUser' method once when given identity provider id is null`() {
-        whenever(callMock.argument<String>("identityProviderId")).thenReturn(null)
-        whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read"))
-
-        registrationUseCase(callMock, resultSpy)
-
-        verify(oneginiSdk.oneginiClient.userClient).registerUser(isNull(), eq(arrayOf("read")), any())
-    }
-
-    @Test
-    fun `should scopes param be array of two scopes when given scopes contains two strings`() {
-        whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(arrayListOf("read", "write"))
-
-        registrationUseCase(callMock, resultSpy)
-
-        argumentCaptor<Array<String>> {
-            verify(oneginiSdk.oneginiClient.userClient).registerUser(isNull(), capture(), any())
-            assertThat(firstValue.size).isEqualTo(2)
-            assertThat(firstValue).isEqualTo(arrayOf("read", "write"))
-        }
-    }
-
-    @Test
-    fun `should scopes param be array of zero lengths when given scopes is null`() {
-        whenever(callMock.argument<ArrayList<String>>("scopes")).thenReturn(null)
-
-        registrationUseCase(callMock, resultSpy)
-
-        argumentCaptor<Array<String>> {
-            verify(oneginiSdk.oneginiClient.userClient).registerUser(isNull(), capture(), any())
-            assertThat(firstValue).isEmpty()
-        }
-    }
+  }
 }

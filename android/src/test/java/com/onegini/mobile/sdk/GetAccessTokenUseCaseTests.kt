@@ -2,49 +2,44 @@ package com.onegini.mobile.sdk
 
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.errors.wrapperError
+import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.useCases.GetAccessTokenUseCase
-import io.flutter.plugin.common.MethodChannel
+import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Answers
 import org.mockito.Mock
-import org.mockito.Spy
 import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.eq
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
 class GetAccessTokenUseCaseTests {
 
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    lateinit var oneginiSdk: OneginiSDK
-    @Spy
-    lateinit var resultSpy: MethodChannel.Result
+  @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+  lateinit var oneginiSdk: OneginiSDK
 
-    lateinit var getAccessTokenUseCase: GetAccessTokenUseCase
-    @Before
-    fun attach() {
-        getAccessTokenUseCase = GetAccessTokenUseCase(oneginiSdk)
-    }
+  lateinit var getAccessTokenUseCase: GetAccessTokenUseCase
 
-    @Test
-    fun `When the accessToken is null, Then should error with NO_USER_PROFILE_IS_AUTHENTICATED`() {
-        whenever(oneginiSdk.oneginiClient.userClient.accessToken).thenReturn(null)
+  @Before
+  fun attach() {
+    getAccessTokenUseCase = GetAccessTokenUseCase(oneginiSdk)
+  }
 
-        getAccessTokenUseCase(resultSpy)
+  @Test
+  fun `When the accessToken is null, Then should error with NO_USER_PROFILE_IS_AUTHENTICATED`() {
+    whenever(oneginiSdk.oneginiClient.userClient.accessToken).thenReturn(null)
 
-        verify(resultSpy).wrapperError(NO_USER_PROFILE_IS_AUTHENTICATED)
-    }
+    val result = getAccessTokenUseCase().exceptionOrNull()
+    SdkErrorAssert.assertEquals(NO_USER_PROFILE_IS_AUTHENTICATED, result)
+  }
 
-    @Test
-    fun `When the accessToken exists, Then should return the accessToken`() {
-        whenever(oneginiSdk.oneginiClient.userClient.accessToken).thenReturn("test access token")
+  @Test
+  fun `When the accessToken exists, Then should return the accessToken`() {
+    whenever(oneginiSdk.oneginiClient.userClient.accessToken).thenReturn("test access token")
 
-        getAccessTokenUseCase(resultSpy)
+    val result = getAccessTokenUseCase()
 
-        verify(resultSpy).success(eq("test access token"))
-    }
+    Assert.assertEquals(result.getOrNull(), "test access token")
+  }
 }

@@ -1,7 +1,11 @@
 import Flutter
 import UIKit
 
-public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
+extension FlutterError: Error {}
+
+public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
+  static var flutterApi: NativeCallFlutterApi?
+
   public static func register(with registrar: FlutterPluginRegistrar) {
     let channel = FlutterMethodChannel(name: "onegini", binaryMessenger: registrar.messenger())
     let eventChannel = FlutterEventChannel(name: "onegini_events",
@@ -9,6 +13,16 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin {
     let instance = SwiftOneginiPlugin()
     registrar.addMethodCallDelegate(instance, channel: channel)
     eventChannel.setStreamHandler(OneginiModuleSwift.sharedInstance)
+
+    // Init Pigeon communication
+    let messenger : FlutterBinaryMessenger = registrar.messenger()
+    let api : UserClientApi & NSObjectProtocol = SwiftOneginiPlugin.init()
+    UserClientApiSetup.setUp(binaryMessenger: messenger, api: api)
+
+    flutterApi = NativeCallFlutterApi(binaryMessenger: registrar.messenger())
+
+    // Example on call flutter function from native during start
+    flutterApi?.testEventFunction(argument: "we initilized the function", completion: {_ in })
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {

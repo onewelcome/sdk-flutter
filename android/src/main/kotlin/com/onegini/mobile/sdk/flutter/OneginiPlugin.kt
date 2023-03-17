@@ -2,6 +2,7 @@ package com.onegini.mobile.sdk.flutter
 
 import androidx.annotation.NonNull
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import com.onegini.mobile.sdk.flutter.module.FlutterOneWelcomeSdkModule
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
@@ -10,7 +11,7 @@ import javax.inject.Inject
 
 
 /** OneginiPlugin */
-class OneginiPlugin : FlutterPlugin {
+class OneginiPlugin : FlutterPlugin, PigeonInterface() {
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -19,11 +20,11 @@ class OneginiPlugin : FlutterPlugin {
     private lateinit var eventChannel: EventChannel
 
     @Inject
-    lateinit var oneginiSDK: OneginiSDK
-
-    @Inject
     lateinit var onMethodCallMapper: OnMethodCallMapper
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
+        // Pigeon setup
+        UserClientApi.setUp(flutterPluginBinding.binaryMessenger, this)
+
         val component = DaggerFlutterOneWelcomeSdkComponent.builder()
             .flutterOneWelcomeSdkModule(FlutterOneWelcomeSdkModule(flutterPluginBinding.applicationContext))
             .build()
@@ -43,7 +44,7 @@ class OneginiPlugin : FlutterPlugin {
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+        UserClientApi.setUp(binding.binaryMessenger, null)
         channel.setMethodCallHandler(null)
     }
-
 }
