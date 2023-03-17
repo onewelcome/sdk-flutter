@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/pigeon.dart';
@@ -7,8 +9,22 @@ import 'model/oneginiAppToWebSingleSignOn.dart';
 import 'onegini.dart';
 
 ///Сlass with basic methods available to the developer.
+
+
+class pinEvent {
+  eventType: 
+}
+
+class pinCreateEvent extends pinEvent {
+  
+}
+
+
 class UserClient {
   final api = UserClientApi();
+
+  // ignore: close_sinks
+  final pinStreamController = StreamController.broadcast();
 
   ///Start registration flow.
   ///
