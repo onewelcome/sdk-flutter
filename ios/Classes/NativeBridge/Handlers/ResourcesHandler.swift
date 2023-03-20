@@ -37,13 +37,13 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         }
     }
 
-    func requestResource(_ my_type: ResourceRequestType, _ details: OWRequestDetails, completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) {
+    func requestResource(_ requestType: ResourceRequestType, _ details: OWRequestDetails, completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) {
         Logger.log("requestResource", sender: self)
 
         let request = generateONGResourceRequest(details)
         let requestCompletion = getRequestCompletion(completion)
 
-        switch my_type {
+        switch requestType {
         case ResourceRequestType.implicit:
             // For consistency with Android we perform this step
             guard let _ = ONGUserClient.sharedInstance().implicitlyAuthenticatedUserProfile() else {
