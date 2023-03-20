@@ -45,6 +45,8 @@ import com.onegini.mobile.sdk.flutter.useCases.ResourceRequestUseCase
 import com.onegini.mobile.sdk.flutter.useCases.SetPreferredAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.StartAppUseCase
 import com.onegini.mobile.sdk.flutter.useCases.SubmitCustomRegistrationActionUseCase
+import com.onegini.mobile.sdk.flutter.useCases.SubmitPinAuthenticationRequestUseCase
+import com.onegini.mobile.sdk.flutter.useCases.SubmitPinRegistrationRequestUseCase
 import com.onegini.mobile.sdk.flutter.useCases.ValidatePinWithPolicyUseCase
 import javax.inject.Inject
 
@@ -97,6 +99,10 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   lateinit var changePinUseCase: ChangePinUseCase
   @Inject
   lateinit var validatePinWithPolicyUseCase: ValidatePinWithPolicyUseCase
+  @Inject
+  lateinit var submitPinAuthenticationRequestUseCase: SubmitPinAuthenticationRequestUseCase
+  @Inject
+  lateinit var submitPinRegistrationRequestUseCase: SubmitPinRegistrationRequestUseCase
   @Inject
   lateinit var resourceRequestUseCase: ResourceRequestUseCase
   @Inject
@@ -253,27 +259,19 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   }
 
   override fun pinDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-73
-    PinAuthenticationRequestHandler.CALLBACK?.denyAuthenticationRequest()
-    callback(Result.success(Unit))
+    callback(submitPinAuthenticationRequestUseCase(null))
   }
 
   override fun pinAcceptAuthenticationRequest(pin: String, callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-73
-    PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin.toCharArray())
-    callback(Result.success(Unit))
+    callback(submitPinAuthenticationRequestUseCase(pin))
   }
 
   override fun pinDenyRegistrationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-73
-    PinRequestHandler.CALLBACK?.denyAuthenticationRequest()
-    callback(Result.success(Unit))
+    callback(submitPinRegistrationRequestUseCase(null))
   }
 
   override fun pinAcceptRegistrationRequest(pin: String, callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-73
-    PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin.toCharArray())
-    callback(Result.success(Unit))
+    callback(submitPinRegistrationRequestUseCase(pin))
   }
 
   override fun cancelBrowserRegistration(callback: (Result<Unit>) -> Unit) {
