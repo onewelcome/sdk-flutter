@@ -4,6 +4,7 @@ import androidx.annotation.NonNull
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import com.onegini.mobile.sdk.flutter.module.FlutterOneWelcomeSdkModule
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceMethodApi
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
@@ -19,6 +20,7 @@ class OneginiPlugin : FlutterPlugin, PigeonInterface() {
     /// when the Flutter Engine is detached from the Activity
     private lateinit var channel: MethodChannel
     private lateinit var eventChannel: EventChannel
+    lateinit var nativeApi : NativeCallFlutterApi
 
     @Inject
     lateinit var onMethodCallMapper: OnMethodCallMapper
@@ -26,9 +28,10 @@ class OneginiPlugin : FlutterPlugin, PigeonInterface() {
         // Pigeon setup
         UserClientApi.setUp(flutterPluginBinding.binaryMessenger, this)
         ResourceMethodApi.setUp(flutterPluginBinding.binaryMessenger, this)
+        nativeApi = NativeCallFlutterApi(flutterPluginBinding.binaryMessenger)
 
         val component = DaggerFlutterOneWelcomeSdkComponent.builder()
-            .flutterOneWelcomeSdkModule(FlutterOneWelcomeSdkModule(flutterPluginBinding.applicationContext))
+            .flutterOneWelcomeSdkModule(FlutterOneWelcomeSdkModule(flutterPluginBinding.applicationContext, nativeApi))
             .build()
         component.inject(this)
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "onegini")
