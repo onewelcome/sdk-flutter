@@ -65,7 +65,7 @@ extension Result where Success == Void {
     public static var success: Result { .success(()) }
 }
 
-func toOWRequestHeaders(_ headers: [AnyHashable : Any]) -> Dictionary<String, String> {
+func toOWRequestHeaders(_ headers: [AnyHashable : Any]) -> [String: String] {
     return headers.filter { $0.key is String && $0.value is String } as? [String: String] ?? [:]
 }
 

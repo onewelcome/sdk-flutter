@@ -66,41 +66,17 @@ private extension ResourcesHandler {
     func generateONGResourceRequest(_ details: OWRequestDetails) -> ONGResourceRequest {
         Logger.log("generateONGResourceRequest", sender: self)
         return ONGResourceRequest(path: details.path,
-                                       method: getRequestMethod(details.method),
-                                       body: details.body?.data(using: .utf8),
-                                       headers: getRequestHeaders(details.headers)
-                                      )
+                                  method: details.method.stringValue,
+                                  body: details.body?.data(using: .utf8),
+                                  headers: getRequestHeaders(details.headers)
+                                 )
     }
 
     func getRequestHeaders(_ headers: [String?: String?]?) -> [String: String]? {
         Logger.log("getRequestHeaders", sender: self)
-        if (headers == nil) {
-            return nil
-        }
+        guard let headers = headers else { return nil }
 
-        var requestHeaders = Dictionary<String, String>()
-
-        headers?.forEach {
-            if ($0.key != nil && $0.value != nil) {
-                requestHeaders[$0.key ?? ""] = $0.value
-            }
-        }
-
-        return requestHeaders
-    }
-
-    func getRequestMethod(_ method: HttpRequestMethod) -> String {
-        Logger.log("getRequestMethod", sender: self)
-        switch method {
-        case HttpRequestMethod.get:
-            return "GET"
-        case HttpRequestMethod.post:
-            return "POST"
-        case HttpRequestMethod.delete:
-            return "DELETE"
-        case HttpRequestMethod.put:
-            return "PUT"
-        }
+        return headers.filter { $0.key != nil && $0.value != nil } as? [String: String] ?? [:]
     }
 
     func getRequestCompletion(_ completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) -> ((ONGResourceResponse?, Error?) -> Void)? {
@@ -124,5 +100,16 @@ private extension ResourcesHandler {
         }
 
         return completionRequest
+    }
+}
+
+private extension HttpRequestMethod {
+    var stringValue: String {
+        switch self {
+        case .get: return "GET"
+        case .post: return "POST"
+        case .delete: return "DELETE"
+        case .put: return "PUT"
+        }
     }
 }
