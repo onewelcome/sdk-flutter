@@ -49,7 +49,7 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
   }
 
   private fun getCompleteResourceUrl(path: String): String {
-    // TODO Add support for multiple base resource urls
+    // TODO Add support for multiple base resource urls; https://onewelcome.atlassian.net/browse/FP-38
     val resourceBaseUrl = oneginiSDK.oneginiClient.configModel.resourceBaseUrl
 
     return when (path.startsWith(resourceBaseUrl)) {
