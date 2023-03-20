@@ -3,11 +3,10 @@ package com.onegini.mobile.sdk
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiLogoutHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiLogoutError
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import com.onegini.mobile.sdk.flutter.useCases.LogoutUseCase
-import junit.framework.Assert.fail
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -17,7 +16,6 @@ import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
-import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -52,7 +50,7 @@ class LogoutUseCaseTests {
     logoutUseCase(callbackMock)
 
     argumentCaptor<Result<Unit>>().apply {
-      verify(callbackMock, times(1)).invoke(capture())
+      verify(callbackMock).invoke(capture())
       Assert.assertEquals(firstValue.getOrNull(), Unit)
     }
   }
@@ -68,15 +66,10 @@ class LogoutUseCaseTests {
     logoutUseCase(callbackMock)
 
     argumentCaptor<Result<Unit>>().apply {
-      verify(callbackMock, times(1)).invoke(capture())
+      verify(callbackMock).invoke(capture())
 
-      when (val error = firstValue.exceptionOrNull()) {
-        is FlutterError -> {
-          Assert.assertEquals(error.code.toInt(), oneginiLogoutError.errorType)
-          Assert.assertEquals(error.message, oneginiLogoutError.message)
-        }
-        else -> fail(OneWelcomeWrapperErrors.UNEXPECTED_ERROR_TYPE.message)
-      }
+      val expected = FlutterError(oneginiLogoutError.errorType.toString(), oneginiLogoutError.message)
+      SdkErrorAssert.assertEquals(expected, firstValue.exceptionOrNull())
     }
   }
 }

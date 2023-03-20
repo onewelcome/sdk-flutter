@@ -98,7 +98,7 @@ class SdkError: Error {
     }
 }
 
-extension ONGResourceResponse {
+private extension ONGResourceResponse {
     func toJSON() -> Dictionary<String, Any?> {
         return ["statusCode": statusCode,
                 "headers": allHeaderFields,

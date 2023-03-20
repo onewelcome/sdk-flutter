@@ -2,10 +2,8 @@ package com.onegini.mobile.sdk
 
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
+import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.useCases.GetAccessTokenUseCase
-import junit.framework.Assert.fail
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -32,13 +30,8 @@ class GetAccessTokenUseCaseTests {
   fun `When the accessToken is null, Then should error with NO_USER_PROFILE_IS_AUTHENTICATED`() {
     whenever(oneginiSdk.oneginiClient.userClient.accessToken).thenReturn(null)
 
-    when (val error = getAccessTokenUseCase().exceptionOrNull()) {
-      is FlutterError -> {
-        Assert.assertEquals(error.code.toInt(), NO_USER_PROFILE_IS_AUTHENTICATED.code)
-        Assert.assertEquals(error.message, NO_USER_PROFILE_IS_AUTHENTICATED.message)
-      }
-      else -> fail(UNEXPECTED_ERROR_TYPE.message)
-    }
+    val result = getAccessTokenUseCase().exceptionOrNull()
+    SdkErrorAssert.assertEquals(NO_USER_PROFILE_IS_AUTHENTICATED, result)
   }
 
   @Test

@@ -6,10 +6,10 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiImplicitTokenRequest
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserImplicitlyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfileUseCase
-import junit.framework.Assert.fail
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -22,7 +22,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
-import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -59,15 +58,11 @@ class AuthenticateUserImplicitlyUseCaseTests {
     authenticateUserImplicitlyUseCase("QWERTY", null, callbackMock)
 
     argumentCaptor<Result<Unit>>().apply {
-      verify(callbackMock, times(1)).invoke(capture())
+      verify(callbackMock).invoke(capture())
 
-      when (val error = firstValue.exceptionOrNull()) {
-        is FlutterError -> {
-          Assert.assertEquals(error.code.toInt(), GENERIC_ERROR.code)
-          Assert.assertEquals(error.message, GENERIC_ERROR.message)
-        }
-        else -> fail(UNEXPECTED_ERROR_TYPE.message)
-      }
+      val expected = FlutterError(GENERIC_ERROR.code.toString(), GENERIC_ERROR.message)
+
+      SdkErrorAssert.assertEquals(expected, firstValue.exceptionOrNull())
     }
   }
 
@@ -78,15 +73,9 @@ class AuthenticateUserImplicitlyUseCaseTests {
     authenticateUserImplicitlyUseCase("QWERTY", null, callbackMock)
 
     argumentCaptor<Result<Unit>>().apply {
-      verify(callbackMock, times(1)).invoke(capture())
+      verify(callbackMock).invoke(capture())
 
-      when (val error = firstValue.exceptionOrNull()) {
-        is FlutterError -> {
-          Assert.assertEquals(error.code.toInt(), USER_PROFILE_DOES_NOT_EXIST.code)
-          Assert.assertEquals(error.message, USER_PROFILE_DOES_NOT_EXIST.message)
-        }
-        else -> fail(UNEXPECTED_ERROR_TYPE.message)
-      }
+      SdkErrorAssert.assertEquals(USER_PROFILE_DOES_NOT_EXIST, firstValue.exceptionOrNull())
     }
   }
 
@@ -106,7 +95,7 @@ class AuthenticateUserImplicitlyUseCaseTests {
     authenticateUserImplicitlyUseCase("QWERTY", listOf("test"), callbackMock)
 
     argumentCaptor<Result<Unit>>().apply {
-      verify(callbackMock, times(1)).invoke(capture())
+      verify(callbackMock).invoke(capture())
       Assert.assertEquals(firstValue.getOrNull(), Unit)
     }
   }

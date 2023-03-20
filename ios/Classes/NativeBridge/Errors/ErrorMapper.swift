@@ -8,15 +8,16 @@ enum OneWelcomeWrapperError: Int {
     case authenticatorNotFound = 8004
     case httpRequestError = 8011
     case errorCodeHttpRequest = 8013
+    case registrationNotInProgress = 8034
     case unauthenticatedImplicitly = 8035
     case methodArgumentNotFound = 8036
+    case authenticationNotInProgress = 8037
     
     // iOS only
     case providedUrlIncorrect = 8014
     case loginCanceled = 8015
     case enrollmentFailed = 8016
     case authenticationCancelled = 8017
-    case changingPinCancelled = 8018
     case registrationCancelled = 8020
     case cantHandleOTP = 8021
     case incorrectResourcesAccess = 8022
@@ -31,69 +32,65 @@ enum OneWelcomeWrapperError: Int {
     case authenticatorRegistrationCancelled = 8031
 
     func message() -> String {
-        var message = ""
-        
         switch self {
         case .genericError:
-            message = "Something went wrong."
+            return "Something went wrong."
         case .userProfileDoesNotExist:
-            message = "The requested User profile does not exist."
+            return "The requested User profile does not exist."
         case .noUserProfileIsAuthenticated:
-            message = "There is currently no User Profile authenticated."
+            return "There is currently no User Profile authenticated."
         case .authenticatorNotFound:
-            message = "The requested authenticator is not found."
+            return "The requested authenticator is not found."
         case .providedUrlIncorrect:
-            message = "Provided url is incorrect."
+            return "Provided url is incorrect."
         case .enrollmentFailed:
-            message = "Enrollment failed. Please try again or contact maintainer."
+            return "Enrollment failed. Please try again or contact maintainer."
         case .loginCanceled:
-            message = "Login cancelled."
+            return "Login cancelled."
         case .authenticationCancelled:
-            message = "Authentication cancelled."
+            return "Authentication cancelled."
         case .authenticatorDeregistrationCancelled:
-            message = "Authenticator deregistration cancelled."
-        case .changingPinCancelled:
-            message = "Changing pin cancelled."
+            return "Authenticator deregistration cancelled."
         case .registrationCancelled:
-            message = "Registration cancelled."
+            return "Registration cancelled."
         case .cantHandleOTP:
-            message = "Can't handle otp authentication request."
+            return "Can't handle otp authentication request."
         case .incorrectResourcesAccess:
-            message = "Incorrect access to resources."
+            return "Incorrect access to resources."
         case .authenticatorNotRegistered:
-            message = "This authenticator is not registered."
+            return "This authenticator is not registered."
         case .failedToParseData:
-            message = "Failed to parse data."
+            return "Failed to parse data."
         case .responseIsNull:
-            message = "Response doesn't contain data."
+            return "Response doesn't contain data."
         case .authenticatorIdIsNull:
-            message = "Authenticator ID is empty."
+            return "Authenticator ID is empty."
         case .emptyInputValue:
-            message = "Empty input value."
+            return "Empty input value."
         case .errorCodeHttpRequest:
-            message = "OneWelcome: HTTP Request failed. Check Response for more info."
+            return "OneWelcome: HTTP Request failed. Check Response for more info."
         case .httpRequestError:
-            message = "OneWelcome: HTTP Request failed. Check iosCode and iosMessage for more info."
+            return "OneWelcome: HTTP Request failed. Check iosCode and iosMessage for more info."
         case .unsupportedPinAction:
-            message = "Unsupported pin action. Contact SDK maintainer."
+            return "Unsupported pin action. Contact SDK maintainer."
         case .unsupportedCustomRegistrationAction:
-            message = "Unsupported custom registration action. Contact SDK maintainer."
+            return "Unsupported custom registration action. Contact SDK maintainer."
         case .authenticatorRegistrationCancelled:
-            message = "The authenticator-registration was cancelled."
+            return "The authenticator-registration was cancelled."
         case .unauthenticatedImplicitly:
-            message = "The requested action requires you to be authenticated implicitly"
+            return "The requested action requires you to be authenticated implicitly"
         case .methodArgumentNotFound:
-            message = "The passed argument from Flutter could not be found"
-        default:
-            message = "Something went wrong."
+            return "The passed argument from Flutter could not be found"
+        case .registrationNotInProgress:
+            return "Registration is currently not in progress"
+        case .authenticationNotInProgress:
+            return "Authentication is currently not in progress"
         }
-        
-        return message
     }
 }
 
 class ErrorMapper {
-    func mapError(_ error: Error, pinChallenge: ONGPinChallenge? = nil, customInfo: ONGCustomInfo? = nil) -> SdkError {
+    func mapError(_ error: Error) -> SdkError {
         Logger.log("Error domain: \(error.domain)")
         
         return SdkError(code: error.code, errorDescription: error.localizedDescription)
@@ -101,10 +98,11 @@ class ErrorMapper {
     
     func mapErrorFromPinChallenge(_ challenge: ONGPinChallenge?) -> SdkError? {
         if let error = challenge?.error, error.code != ONGAuthenticationError.touchIDAuthenticatorFailure.rawValue {
+            // FIXME: this probably shouldn't be here
             guard let maxAttempts = challenge?.maxFailureCount,
                   let previousCount = challenge?.previousFailureCount,
                   maxAttempts != previousCount else {
-                return ErrorMapper().mapError(error, pinChallenge: challenge)
+                return SdkError(code: error.code, errorDescription: error.localizedDescription)
             }
             return SdkError(code: error.code, errorDescription: "Failed attempts", info: ["failedAttempts": previousCount, "maxAttempts": maxAttempts])
         } else {

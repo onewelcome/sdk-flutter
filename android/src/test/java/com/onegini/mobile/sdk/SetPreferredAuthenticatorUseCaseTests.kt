@@ -5,10 +5,8 @@ import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
+import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.useCases.SetPreferredAuthenticatorUseCase
-import junit.framework.Assert.fail
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -41,14 +39,8 @@ class SetPreferredAuthenticatorUseCaseTests {
   @Test
   fun `When no user is authenticated, Then return an error`() {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(null)
-
-    when (val error = setPreferredAuthenticatorUseCase("test").exceptionOrNull()) {
-      is FlutterError -> {
-        Assert.assertEquals(error.code.toInt(), NO_USER_PROFILE_IS_AUTHENTICATED.code)
-        Assert.assertEquals(error.message, NO_USER_PROFILE_IS_AUTHENTICATED.message)
-      }
-      else -> fail(UNEXPECTED_ERROR_TYPE.message)
-    }
+    val result = setPreferredAuthenticatorUseCase("test").exceptionOrNull()
+    SdkErrorAssert.assertEquals(NO_USER_PROFILE_IS_AUTHENTICATED, result)
   }
 
   @Test
@@ -56,15 +48,8 @@ class SetPreferredAuthenticatorUseCaseTests {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
     whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(emptySet())
 
-    setPreferredAuthenticatorUseCase("test")
-
-    when (val error = setPreferredAuthenticatorUseCase("test").exceptionOrNull()) {
-      is FlutterError -> {
-        Assert.assertEquals(error.code.toInt(), AUTHENTICATOR_NOT_FOUND.code)
-        Assert.assertEquals(error.message, AUTHENTICATOR_NOT_FOUND.message)
-      }
-      else -> fail(UNEXPECTED_ERROR_TYPE.message)
-    }
+    val result = setPreferredAuthenticatorUseCase("test").exceptionOrNull()
+    SdkErrorAssert.assertEquals(AUTHENTICATOR_NOT_FOUND, result)
   }
 
   @Test

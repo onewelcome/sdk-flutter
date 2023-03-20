@@ -4,11 +4,10 @@ import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
+import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticator
 import com.onegini.mobile.sdk.flutter.useCases.GetAllAuthenticatorsUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfileUseCase
-import io.flutter.plugin.common.MethodCall
 import junit.framework.Assert.fail
 import org.junit.Assert
 import org.junit.Before
@@ -25,9 +24,6 @@ class GetAllAuthenticatorsUseCaseTests {
   lateinit var oneginiSdk: OneginiSDK
 
   @Mock
-  lateinit var callMock: MethodCall
-
-  @Mock
   lateinit var oneginiAuthenticatorMock: OneginiAuthenticator
 
 
@@ -41,13 +37,8 @@ class GetAllAuthenticatorsUseCaseTests {
 
   @Test
   fun `When an unknown or unregistered profileId is given, Then an error should be thrown`() {
-    when (val error = getAllAuthenticatorsUseCase("QWERTY").exceptionOrNull()) {
-      is FlutterError -> {
-        Assert.assertEquals(error.code.toInt(), USER_PROFILE_DOES_NOT_EXIST.code)
-        Assert.assertEquals(error.message, USER_PROFILE_DOES_NOT_EXIST.message)
-      }
-      else -> fail(UNEXPECTED_ERROR_TYPE.message)
-    }
+    val result = getAllAuthenticatorsUseCase("QWERTY").exceptionOrNull()
+    SdkErrorAssert.assertEquals(USER_PROFILE_DOES_NOT_EXIST, result)
   }
 
   @Test

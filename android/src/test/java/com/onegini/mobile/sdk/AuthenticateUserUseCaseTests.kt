@@ -7,13 +7,13 @@ import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWUserProfile
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfileUseCase
-import junit.framework.Assert.fail
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -24,7 +24,6 @@ import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
-import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
@@ -60,7 +59,7 @@ class AuthenticateUserUseCaseTests {
     authenticateUserUseCase("QWERTY", null, callbackMock)
 
     argumentCaptor<Result<OWRegistrationResponse>>().apply {
-      verify(callbackMock, times(1)).invoke(capture())
+      verify(callbackMock).invoke(capture())
       val testUser = OWUserProfile("QWERTY")
       val testInfo = OWCustomInfo(0, "")
       Assert.assertEquals(firstValue.getOrNull(), OWRegistrationResponse(testUser, testInfo))
@@ -74,15 +73,9 @@ class AuthenticateUserUseCaseTests {
     authenticateUserUseCase("QWERTY", null, callbackMock)
 
     argumentCaptor<Result<OWRegistrationResponse>>().apply {
-      verify(callbackMock, times(1)).invoke(capture())
+      verify(callbackMock).invoke(capture())
 
-      when (val error = firstValue.exceptionOrNull()) {
-        is FlutterError -> {
-          Assert.assertEquals(error.code.toInt(), USER_PROFILE_DOES_NOT_EXIST.code)
-          Assert.assertEquals(error.message, USER_PROFILE_DOES_NOT_EXIST.message)
-        }
-        else -> fail(UNEXPECTED_ERROR_TYPE.message)
-      }
+      SdkErrorAssert.assertEquals(USER_PROFILE_DOES_NOT_EXIST, firstValue.exceptionOrNull())
     }
   }
 
@@ -94,15 +87,9 @@ class AuthenticateUserUseCaseTests {
     authenticateUserUseCase("QWERTY", "TEST", callbackMock)
 
     argumentCaptor<Result<OWRegistrationResponse>>().apply {
-      verify(callbackMock, times(1)).invoke(capture())
+      verify(callbackMock).invoke(capture())
 
-      when (val error = firstValue.exceptionOrNull()) {
-        is FlutterError -> {
-          Assert.assertEquals(error.code.toInt(), AUTHENTICATOR_NOT_FOUND.code)
-          Assert.assertEquals(error.message, AUTHENTICATOR_NOT_FOUND.message)
-        }
-        else -> fail(UNEXPECTED_ERROR_TYPE.message)
-      }
+      SdkErrorAssert.assertEquals(AUTHENTICATOR_NOT_FOUND, firstValue.exceptionOrNull())
     }
   }
 
@@ -128,7 +115,7 @@ class AuthenticateUserUseCaseTests {
     authenticateUserUseCase("QWERTY", "TEST", callbackMock)
 
     argumentCaptor<Result<OWRegistrationResponse>>().apply {
-      verify(callbackMock, times(1)).invoke(capture())
+      verify(callbackMock).invoke(capture())
       val testUser = OWUserProfile("QWERTY")
       val testInfo = OWCustomInfo(0, "")
       Assert.assertEquals(firstValue.getOrNull(), OWRegistrationResponse(testUser, testInfo))
@@ -147,14 +134,10 @@ class AuthenticateUserUseCaseTests {
     authenticateUserUseCase("QWERTY", null, callbackMock)
 
     argumentCaptor<Result<OWRegistrationResponse>>().apply {
-      verify(callbackMock, times(1)).invoke(capture())
-      when (val error = firstValue.exceptionOrNull()) {
-        is FlutterError -> {
-          Assert.assertEquals(error.code.toInt(), oneginiAuthenticationErrorMock.errorType)
-          Assert.assertEquals(error.message, oneginiAuthenticationErrorMock.message)
-        }
-        else -> fail(UNEXPECTED_ERROR_TYPE.message)
-      }
+      verify(callbackMock).invoke(capture())
+
+      val expected = FlutterError(oneginiAuthenticationErrorMock.errorType.toString(), oneginiAuthenticationErrorMock.message)
+      SdkErrorAssert.assertEquals(expected, firstValue.exceptionOrNull())
     }
   }
 }

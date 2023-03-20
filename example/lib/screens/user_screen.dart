@@ -174,11 +174,18 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     Onegini.instance.userClient.changePin(context).catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);
+        // FIXME: this should be extracted into a seperate method and should also use constants (dont exist yet)
+        if (error.code == "8002" ||
+            error.code == "9002" ||
+            error.code == "9003" ||
+            error.code == "9010" ||
+            error.code == "10012") {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => LoginScreen()),
+          );
+        }
       }
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => LoginScreen()),
-      );
     });
   }
 

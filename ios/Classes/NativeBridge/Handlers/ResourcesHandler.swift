@@ -46,7 +46,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         switch requestType {
         case ResourceRequestType.implicit:
             // For consistency with Android we perform this step
-            guard let _ = ONGUserClient.sharedInstance().implicitlyAuthenticatedUserProfile() else {
+            if ONGUserClient.sharedInstance().implicitlyAuthenticatedUserProfile() == nil {
                 completion(.failure(FlutterError(SdkError(.unauthenticatedImplicitly))))
                 return
             }
@@ -60,18 +60,19 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             ONGDeviceClient.sharedInstance().fetchUnauthenticatedResource(request, completion: requestCompletion)
         }
     }
+}
 
-    //MARK: - Bridge
-    private func generateONGResourceRequest(_ details: OWRequestDetails) -> ONGResourceRequest {
+private extension ResourcesHandler {
+    func generateONGResourceRequest(_ details: OWRequestDetails) -> ONGResourceRequest {
         Logger.log("generateONGResourceRequest", sender: self)
-        return ONGResourceRequest.init(path: details.path,
+        return ONGResourceRequest(path: details.path,
                                        method: getRequestMethod(details.method),
                                        body: details.body?.data(using: .utf8),
                                        headers: getRequestHeaders(details.headers)
                                       )
     }
 
-    private func getRequestHeaders(_ headers: Dictionary<String?, String?>?) -> Dictionary<String, String>? {
+    func getRequestHeaders(_ headers: [String?: String?]?) -> [String: String]? {
         Logger.log("getRequestHeaders", sender: self)
         if (headers == nil) {
             return nil
@@ -88,7 +89,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         return requestHeaders
     }
 
-    private func getRequestMethod(_ method: HttpRequestMethod) -> String {
+    func getRequestMethod(_ method: HttpRequestMethod) -> String {
         Logger.log("getRequestMethod", sender: self)
         switch method {
         case HttpRequestMethod.get:
@@ -102,7 +103,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         }
     }
 
-    private func getRequestCompletion(_ completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) -> ((ONGResourceResponse?, Error?) -> Void)? {
+    func getRequestCompletion(_ completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) -> ((ONGResourceResponse?, Error?) -> Void)? {
         Logger.log("getCompletionRequest", sender: self)
         let completionRequest: ((ONGResourceResponse?, Error?) -> Void)? = { response, error in
             if let error = error {
