@@ -78,7 +78,7 @@ SPEC CHECKSUMS:
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   Typhoon: 1973c93ecfb3edb963d78b10e715bc2911475bd2
-  url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
+  url_launcher_ios: 839c58cdb4279282219f5e248c3321761ff3c4de
 
 PODFILE CHECKSUM: 1cb5957d05b3b5aee795396ab15eb158c5d9d312
 

@@ -4,6 +4,7 @@ import androidx.annotation.NonNull
 import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import com.onegini.mobile.sdk.flutter.module.FlutterOneWelcomeSdkModule
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceMethodApi
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodChannel
@@ -24,6 +25,7 @@ class OneginiPlugin : FlutterPlugin, PigeonInterface() {
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         // Pigeon setup
         UserClientApi.setUp(flutterPluginBinding.binaryMessenger, this)
+        ResourceMethodApi.setUp(flutterPluginBinding.binaryMessenger, this)
 
         val component = DaggerFlutterOneWelcomeSdkComponent.builder()
             .flutterOneWelcomeSdkModule(FlutterOneWelcomeSdkModule(flutterPluginBinding.applicationContext))

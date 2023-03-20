@@ -29,3 +29,21 @@ We can use @FlutterApi to call functions on the dart side from the Native parts.
 https://github.com/flutter/flutter/issues/108531
 
 where https://github.com/zero-li/flutter_pigeon_plugin  gives a simple example project (with chines documentation) but gives a good idea on how it works as a reference.
+
+#### Android
+This can be setup through setting the native api during the onattachengine step
+```
+@Inject
+lateinit var nativeApi: NativeCallFlutterApi
+
+onattachengine (..) {
+  ..
+  nativeApi = NativeCallFlutterApi(flutterPluginBinding.binaryMessenger)
+  ..
+}
+```
+
+then to call flutter from the native side you perform a:
+
+```// Example Tell flutter to start this method from native
+onewelcomeEventApi.testEventFunction("customOneStepOnFinish") { }```

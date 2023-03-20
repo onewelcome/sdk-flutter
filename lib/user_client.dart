@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:onegini/pigeon.dart';
 
 import 'constants/constants.dart';
-import 'model/oneginiAppToWebSingleSignOn.dart';
 import 'onegini.dart';
 
 ///Сlass with basic methods available to the developer.

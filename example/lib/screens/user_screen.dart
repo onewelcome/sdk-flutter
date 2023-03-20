@@ -4,7 +4,7 @@ import 'dart:convert';
 import "package:collection/collection.dart";
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:onegini/model/onegini_list_response.dart';
+import 'package:onegini/model/request_details.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini_example/components/display_toast.dart';
 import 'package:onegini_example/models/application_details.dart';
@@ -12,6 +12,7 @@ import 'package:onegini_example/models/client_resource.dart';
 import 'package:onegini_example/screens/qr_scan_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:onegini/pigeon.dart';
+import 'package:onegini/model/request_details.dart';
 
 import '../main.dart';
 import 'login_screen.dart';
@@ -420,37 +421,35 @@ class Info extends StatefulWidget {
 
 class _InfoState extends State<Info> {
   Future<ApplicationDetails> getApplicationDetails() async {
-    var response = "";
     await Onegini.instance.userClient
         .authenticateDevice(["read", "write", "application-details"]);
-    response = await Onegini.instance.resourcesMethods
-        .getResourceAnonymous("application-details");
-    var res = json.decode(response);
-    return applicationDetailsFromJson(res["body"]);
+    var response = await Onegini.instance.resourcesMethods.requestResource(ResourceRequestType.anonymous, RequestDetails(path: "application-details", method: HttpRequestMethod.get));
+    var res = json.decode(response.body);
+    return applicationDetailsFromJson(res);
   }
 
   Future<ClientResource> getClientResource() async {
     var response = await Onegini.instance.resourcesMethods
-        .getResource("devices")
+        .requestResourceAuthenticated(RequestDetails(path: "devices", method: HttpRequestMethod.get))
         .catchError((error) {
       print('Caught error: $error');
 
       showFlutterToast(error.message);
     });
 
-    var res = json.decode(response);
-    return clientResourceFromJson(res["body"]);
+    return clientResourceFromJson(response.body);
   }
 
   Future<String> makeUnaunthenticatedRequest() async {
     var headers = {'Declareren-Appversion': 'CZ.app'};
     var response = await Onegini.instance.resourcesMethods
-        .getUnauthenticatedResource("devices", headers: headers, method: 'GET')
+        .requestResourceUnauthenticated(RequestDetails(path: "devices", method: HttpRequestMethod.get, headers: headers))
         .catchError((onError) {
       debugPrint(onError);
     });
-    var res = json.decode(response);
-    return res["body"];
+
+    var res = json.decode(response.body);
+    return res;
   }
 
   @override
@@ -524,7 +523,6 @@ class _InfoState extends State<Info> {
                 height: 20,
               ),
               FutureBuilder<String>(
-                //implicit
                 future: makeUnaunthenticatedRequest(),
                 builder: (context, snapshot) {
                   return snapshot.hasData

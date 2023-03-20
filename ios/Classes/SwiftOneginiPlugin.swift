@@ -52,8 +52,21 @@ extension OWIdentityProvider {
     }
 }
 
+extension OWRequestResponse {
+    init(_ response: ONGResourceResponse) {
+        headers = toOWRequestHeaders(response.allHeaderFields)
+        body = String(data: response.data ?? Data(), encoding: .utf8) ?? ""
+        status = Int32(response.statusCode)
+        ok = response.statusCode <= 299 && response.statusCode >= 200
+    }
+}
+
 extension Result where Success == Void {
     public static var success: Result { .success(()) }
+}
+
+func toOWRequestHeaders(_ headers: [AnyHashable : Any]) -> [String: String] {
+    return headers.filter { $0.key is String && $0.value is String } as? [String: String] ?? [:]
 }
 
 func toOWCustomInfo(_ info: CustomInfo?) -> OWCustomInfo? {
@@ -66,8 +79,12 @@ func toOWCustomInfo(_ info: ONGCustomInfo?) -> OWCustomInfo? {
     return OWCustomInfo(status: Int32(info.status), data: info.data)
 }
 
-
-public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
+public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, ResourceMethodApi {
+    func requestResource(type: ResourceRequestType, details: OWRequestDetails, completion: @escaping (Result<OWRequestResponse, Error>) -> Void) {
+        OneginiModuleSwift.sharedInstance.requestResource(type, details) { result in
+            completion(result.mapError { $0 })
+        }
+    }
 
     func submitCustomRegistrationAction(identityProviderId: String, data: String?, completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.submitCustomRegistrationSuccess(data)
@@ -252,11 +269,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             completion(result.mapError { $0 })
         }
     }
-    
-    // FIXME: Remove when deleted from api
-    func fetchUserProfiles(completion: @escaping (Result<[OWUserProfile], Error>) -> Void) {
-        
-    }
 
     static var flutterApi: NativeCallFlutterApi?
     
@@ -269,9 +281,12 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
         eventChannel.setStreamHandler(OneginiModuleSwift.sharedInstance)
         
         // Init Pigeon communication
-        let messenger : FlutterBinaryMessenger = registrar.messenger()
-        let api : UserClientApi & NSObjectProtocol = SwiftOneginiPlugin.init()
-        UserClientApiSetup.setUp(binaryMessenger: messenger, api: api)
+        let messenger: FlutterBinaryMessenger = registrar.messenger()
+        let userClientApi: UserClientApi & NSObjectProtocol = SwiftOneginiPlugin.init()
+        UserClientApiSetup.setUp(binaryMessenger: messenger, api: userClientApi)
+
+        let resourceMethodApi: ResourceMethodApi & NSObjectProtocol = SwiftOneginiPlugin.init()
+        ResourceMethodApiSetup.setUp(binaryMessenger: messenger, api: resourceMethodApi)
         
         flutterApi = NativeCallFlutterApi(binaryMessenger: registrar.messenger())
         
@@ -297,10 +312,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi {
             
             // otp
         case Constants.Routes.handleMobileAuthWithOtp: handleMobileAuthWithOtp(call, result)
-            
-            // resources
-        case Constants.Routes.getResourceAnonymous, Constants.Routes.getResource, Constants.Routes.getImplicitResource, Constants.Routes.unauthenticatedRequest:
-            getResource(call, result)
             
         default: do {
             Logger.log("Method wasn't handled: " + call.method)

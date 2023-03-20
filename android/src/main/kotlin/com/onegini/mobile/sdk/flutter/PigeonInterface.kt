@@ -10,14 +10,17 @@ import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestH
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
-import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAppToWebSingleSignOn
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticator
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWIdentityProvider
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestDetails
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWUserProfile
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceMethodApi
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceRequestType
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateDeviceUseCase
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserImplicitlyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserUseCase
@@ -29,26 +32,23 @@ import com.onegini.mobile.sdk.flutter.useCases.GetAccessTokenUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAllAuthenticatorsUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAuthenticatedUserProfileUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetIdentityProvidersUseCase
-import com.onegini.mobile.sdk.flutter.useCases.GetImplicitResourceUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetNotRegisteredAuthenticatorsUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetRedirectUrlUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetRegisteredAuthenticatorsUseCase
-import com.onegini.mobile.sdk.flutter.useCases.GetResourceAnonymousUseCase
-import com.onegini.mobile.sdk.flutter.useCases.GetResourceUseCase
-import com.onegini.mobile.sdk.flutter.useCases.GetUnauthenticatedResourceUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfilesUseCase
 import com.onegini.mobile.sdk.flutter.useCases.HandleRegisteredUrlUseCase
 import com.onegini.mobile.sdk.flutter.useCases.IsAuthenticatorRegisteredUseCase
 import com.onegini.mobile.sdk.flutter.useCases.LogoutUseCase
 import com.onegini.mobile.sdk.flutter.useCases.RegisterAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.RegistrationUseCase
+import com.onegini.mobile.sdk.flutter.useCases.ResourceRequestUseCase
 import com.onegini.mobile.sdk.flutter.useCases.SetPreferredAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.StartAppUseCase
 import com.onegini.mobile.sdk.flutter.useCases.SubmitCustomRegistrationActionUseCase
 import com.onegini.mobile.sdk.flutter.useCases.ValidatePinWithPolicyUseCase
 import javax.inject.Inject
 
-open class PigeonInterface : UserClientApi {
+open class PigeonInterface : UserClientApi, ResourceMethodApi {
   @Inject
   lateinit var authenticateDeviceUseCase: AuthenticateDeviceUseCase
   @Inject
@@ -70,19 +70,11 @@ open class PigeonInterface : UserClientApi {
   @Inject
   lateinit var getIdentityProvidersUseCase: GetIdentityProvidersUseCase
   @Inject
-  lateinit var getImplicitResourceUseCase: GetImplicitResourceUseCase
-  @Inject
   lateinit var getNotRegisteredAuthenticatorsUseCase: GetNotRegisteredAuthenticatorsUseCase
   @Inject
   lateinit var getRedirectUrlUseCase: GetRedirectUrlUseCase
   @Inject
   lateinit var getRegisteredAuthenticatorsUseCase: GetRegisteredAuthenticatorsUseCase
-  @Inject
-  lateinit var getResourceAnonymousUseCase: GetResourceAnonymousUseCase
-  @Inject
-  lateinit var getResourceUseCase: GetResourceUseCase
-  @Inject
-  lateinit var getUnauthenticatedResourceUseCase: GetUnauthenticatedResourceUseCase
   @Inject
   lateinit var getUserProfilesUseCase: GetUserProfilesUseCase
   @Inject
@@ -96,8 +88,6 @@ open class PigeonInterface : UserClientApi {
   @Inject
   lateinit var registrationUseCase: RegistrationUseCase
   @Inject
-  lateinit var resourceHelper: ResourceHelper
-  @Inject
   lateinit var setPreferredAuthenticatorUseCase: SetPreferredAuthenticatorUseCase
   @Inject
   lateinit var startAppUseCase: StartAppUseCase
@@ -107,6 +97,8 @@ open class PigeonInterface : UserClientApi {
   lateinit var changePinUseCase: ChangePinUseCase
   @Inject
   lateinit var validatePinWithPolicyUseCase: ValidatePinWithPolicyUseCase
+  @Inject
+  lateinit var resourceRequestUseCase: ResourceRequestUseCase
   @Inject
   lateinit var oneginiSDK: OneginiSDK
 
@@ -288,5 +280,9 @@ open class PigeonInterface : UserClientApi {
     // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-74
     BrowserRegistrationRequestHandler.onRegistrationCanceled()
     callback(Result.success(Unit))
+  }
+
+  override fun requestResource(type: ResourceRequestType, details: OWRequestDetails, callback: (Result<OWRequestResponse>) -> Unit) {
+    resourceRequestUseCase(type, details, callback)
   }
 }

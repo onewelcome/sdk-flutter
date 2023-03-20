@@ -8,6 +8,20 @@ import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
 import 'package:flutter/foundation.dart' show ReadBuffer, WriteBuffer;
 import 'package:flutter/services.dart';
 
+enum HttpRequestMethod {
+  get,
+  post,
+  put,
+  delete,
+}
+
+enum ResourceRequestType {
+  authenticated,
+  implicit,
+  anonymous,
+  unauthenticated,
+}
+
 /// Result objects
 class OWUserProfile {
   OWUserProfile({
@@ -173,6 +187,78 @@ class OWRegistrationResponse {
       customInfo: result[1] != null
           ? OWCustomInfo.decode(result[1]! as List<Object?>)
           : null,
+    );
+  }
+}
+
+class OWRequestDetails {
+  OWRequestDetails({
+    required this.path,
+    required this.method,
+    this.headers,
+    this.body,
+  });
+
+  String path;
+
+  HttpRequestMethod method;
+
+  Map<String?, String?>? headers;
+
+  String? body;
+
+  Object encode() {
+    return <Object?>[
+      path,
+      method.index,
+      headers,
+      body,
+    ];
+  }
+
+  static OWRequestDetails decode(Object result) {
+    result as List<Object?>;
+    return OWRequestDetails(
+      path: result[0]! as String,
+      method: HttpRequestMethod.values[result[1]! as int],
+      headers: (result[2] as Map<Object?, Object?>?)?.cast<String?, String?>(),
+      body: result[3] as String?,
+    );
+  }
+}
+
+class OWRequestResponse {
+  OWRequestResponse({
+    required this.headers,
+    required this.body,
+    required this.ok,
+    required this.status,
+  });
+
+  Map<String?, String?> headers;
+
+  String body;
+
+  bool ok;
+
+  int status;
+
+  Object encode() {
+    return <Object?>[
+      headers,
+      body,
+      ok,
+      status,
+    ];
+  }
+
+  static OWRequestResponse decode(Object result) {
+    result as List<Object?>;
+    return OWRequestResponse(
+      headers: (result[0] as Map<Object?, Object?>?)!.cast<String?, String?>(),
+      body: result[1]! as String,
+      ok: result[2]! as bool,
+      status: result[3]! as int,
     );
   }
 }
@@ -1046,6 +1132,34 @@ class UserClientApi {
   }
 }
 
+class _ResourceMethodApiCodec extends StandardMessageCodec {
+  const _ResourceMethodApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is OWRequestDetails) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else if (value is OWRequestResponse) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128: 
+        return OWRequestDetails.decode(readValue(buffer)!);
+      case 129: 
+        return OWRequestResponse.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
 class ResourceMethodApi {
   /// Constructor for [ResourceMethodApi].  The [binaryMessenger] named argument is
   /// available for dependency injection.  If it is left null, the default
@@ -1054,14 +1168,14 @@ class ResourceMethodApi {
       : _binaryMessenger = binaryMessenger;
   final BinaryMessenger? _binaryMessenger;
 
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
+  static const MessageCodec<Object?> codec = _ResourceMethodApiCodec();
 
-  Future<String?> getResourceAnonymous() async {
+  Future<OWRequestResponse> requestResource(ResourceRequestType arg_type, OWRequestDetails arg_details) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.ResourceMethodApi.getResourceAnonymous', codec,
+        'dev.flutter.pigeon.ResourceMethodApi.requestResource', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+        await channel.send(<Object?>[arg_type.index, arg_details]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1073,74 +1187,13 @@ class ResourceMethodApi {
         message: replyList[1] as String?,
         details: replyList[2],
       );
-    } else {
-      return (replyList[0] as String?);
-    }
-  }
-
-  Future<String?> getResource() async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.ResourceMethodApi.getResource', codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
-    if (replyList == null) {
+    } else if (replyList[0] == null) {
       throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as String?);
-    }
-  }
-
-  Future<String?> getResourceImplicit() async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.ResourceMethodApi.getResourceImplicit', codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return (replyList[0] as String?);
-    }
-  }
-
-  Future<String?> getUnauthenticatedResource() async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.ResourceMethodApi.getUnauthenticatedResource', codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return (replyList[0] as String?);
+      return (replyList[0] as OWRequestResponse?)!;
     }
   }
 }

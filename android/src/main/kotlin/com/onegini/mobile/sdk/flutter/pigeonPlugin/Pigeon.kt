@@ -37,6 +37,32 @@ class FlutterError (
   val details: Any? = null
 ) : Throwable()
 
+enum class HttpRequestMethod(val raw: Int) {
+  GET(0),
+  POST(1),
+  PUT(2),
+  DELETE(3);
+
+  companion object {
+    fun ofRaw(raw: Int): HttpRequestMethod? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
+enum class ResourceRequestType(val raw: Int) {
+  AUTHENTICATED(0),
+  IMPLICIT(1),
+  ANONYMOUS(2),
+  UNAUTHENTICATED(3);
+
+  companion object {
+    fun ofRaw(raw: Int): ResourceRequestType? {
+      return values().firstOrNull { it.raw == raw }
+    }
+  }
+}
+
 /**
  * Result objects
  *
@@ -177,6 +203,62 @@ data class OWRegistrationResponse (
     return listOf<Any?>(
       userProfile?.toList(),
       customInfo?.toList(),
+    )
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class OWRequestDetails (
+  val path: String,
+  val method: HttpRequestMethod,
+  val headers: Map<String?, String?>? = null,
+  val body: String? = null
+
+) {
+  companion object {
+    @Suppress("UNCHECKED_CAST")
+    fun fromList(list: List<Any?>): OWRequestDetails {
+      val path = list[0] as String
+      val method = HttpRequestMethod.ofRaw(list[1] as Int)!!
+      val headers = list[2] as? Map<String?, String?>
+      val body = list[3] as? String
+      return OWRequestDetails(path, method, headers, body)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf<Any?>(
+      path,
+      method?.raw,
+      headers,
+      body,
+    )
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class OWRequestResponse (
+  val headers: Map<String?, String?>,
+  val body: String,
+  val ok: Boolean,
+  val status: Long
+
+) {
+  companion object {
+    @Suppress("UNCHECKED_CAST")
+    fun fromList(list: List<Any?>): OWRequestResponse {
+      val headers = list[0] as Map<String?, String?>
+      val body = list[1] as String
+      val ok = list[2] as Boolean
+      val status = list[3].let { if (it is Int) it.toLong() else it as Long }
+      return OWRequestResponse(headers, body, ok, status)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf<Any?>(
+      headers,
+      body,
+      ok,
+      status,
     )
   }
 }
@@ -975,84 +1057,59 @@ interface UserClientApi {
     }
   }
 }
+@Suppress("UNCHECKED_CAST")
+private object ResourceMethodApiCodec : StandardMessageCodec() {
+  override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
+    return when (type) {
+      128.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          OWRequestDetails.fromList(it)
+        }
+      }
+      129.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          OWRequestResponse.fromList(it)
+        }
+      }
+      else -> super.readValueOfType(type, buffer)
+    }
+  }
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+    when (value) {
+      is OWRequestDetails -> {
+        stream.write(128)
+        writeValue(stream, value.toList())
+      }
+      is OWRequestResponse -> {
+        stream.write(129)
+        writeValue(stream, value.toList())
+      }
+      else -> super.writeValue(stream, value)
+    }
+  }
+}
+
 /** Generated interface from Pigeon that represents a handler of messages from Flutter. */
 interface ResourceMethodApi {
-  fun getResourceAnonymous(callback: (Result<String?>) -> Unit)
-  fun getResource(callback: (Result<String?>) -> Unit)
-  fun getResourceImplicit(callback: (Result<String?>) -> Unit)
-  fun getUnauthenticatedResource(callback: (Result<String?>) -> Unit)
+  fun requestResource(type: ResourceRequestType, details: OWRequestDetails, callback: (Result<OWRequestResponse>) -> Unit)
 
   companion object {
     /** The codec used by ResourceMethodApi. */
     val codec: MessageCodec<Any?> by lazy {
-      StandardMessageCodec()
+      ResourceMethodApiCodec
     }
     /** Sets up an instance of `ResourceMethodApi` to handle messages through the `binaryMessenger`. */
     @Suppress("UNCHECKED_CAST")
     fun setUp(binaryMessenger: BinaryMessenger, api: ResourceMethodApi?) {
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ResourceMethodApi.getResourceAnonymous", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ResourceMethodApi.requestResource", codec)
         if (api != null) {
-          channel.setMessageHandler { _, reply ->
+          channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
-            api.getResourceAnonymous() { result: Result<String?> ->
-              val error = result.exceptionOrNull()
-              if (error != null) {
-                reply.reply(wrapError(error))
-              } else {
-                val data = result.getOrNull()
-                reply.reply(wrapResult(data))
-              }
-            }
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ResourceMethodApi.getResource", codec)
-        if (api != null) {
-          channel.setMessageHandler { _, reply ->
-            var wrapped = listOf<Any?>()
-            api.getResource() { result: Result<String?> ->
-              val error = result.exceptionOrNull()
-              if (error != null) {
-                reply.reply(wrapError(error))
-              } else {
-                val data = result.getOrNull()
-                reply.reply(wrapResult(data))
-              }
-            }
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ResourceMethodApi.getResourceImplicit", codec)
-        if (api != null) {
-          channel.setMessageHandler { _, reply ->
-            var wrapped = listOf<Any?>()
-            api.getResourceImplicit() { result: Result<String?> ->
-              val error = result.exceptionOrNull()
-              if (error != null) {
-                reply.reply(wrapError(error))
-              } else {
-                val data = result.getOrNull()
-                reply.reply(wrapResult(data))
-              }
-            }
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ResourceMethodApi.getUnauthenticatedResource", codec)
-        if (api != null) {
-          channel.setMessageHandler { _, reply ->
-            var wrapped = listOf<Any?>()
-            api.getUnauthenticatedResource() { result: Result<String?> ->
+            val args = message as List<Any?>
+            val typeArg = ResourceRequestType.ofRaw(args[0] as Int)!!
+            val detailsArg = args[1] as OWRequestDetails
+            api.requestResource(typeArg, detailsArg) { result: Result<OWRequestResponse> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
