@@ -10,7 +10,6 @@ import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestH
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
-import com.onegini.mobile.sdk.flutter.helpers.ResourceHelper
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAppToWebSingleSignOn
@@ -33,13 +32,9 @@ import com.onegini.mobile.sdk.flutter.useCases.GetAccessTokenUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAllAuthenticatorsUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAuthenticatedUserProfileUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetIdentityProvidersUseCase
-import com.onegini.mobile.sdk.flutter.useCases.GetImplicitResourceUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetNotRegisteredAuthenticatorsUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetRedirectUrlUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetRegisteredAuthenticatorsUseCase
-import com.onegini.mobile.sdk.flutter.useCases.GetResourceAnonymousUseCase
-import com.onegini.mobile.sdk.flutter.useCases.GetResourceUseCase
-import com.onegini.mobile.sdk.flutter.useCases.GetUnauthenticatedResourceUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfilesUseCase
 import com.onegini.mobile.sdk.flutter.useCases.HandleRegisteredUrlUseCase
 import com.onegini.mobile.sdk.flutter.useCases.IsAuthenticatorRegisteredUseCase

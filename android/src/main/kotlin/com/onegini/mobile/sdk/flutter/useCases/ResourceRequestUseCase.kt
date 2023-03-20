@@ -61,15 +61,10 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
   private fun getHeaders(headers: Map<String?, String?>?): Headers {
     val headerBuilder = Headers.Builder()
 
-    headers?.entries?.forEach {
-      val headerKey = it.key
-      val headerValue = it.value
-
-      // Pigeon 9.0.5 limits enforcing non null values in maps
-      if (headerKey is String && headerValue is String) {
-        headerBuilder.add(headerKey, headerValue)
-      }
-    }
+    // Pigeon 9.0.5 limits enforcing non null values in maps
+    headers?.entries
+      ?.filter { it.key is String && it.value is String}
+      ?.forEach { headerBuilder.add(it.key as String, it.value as String) }
 
     return headerBuilder.build()
   }

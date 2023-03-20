@@ -73,10 +73,11 @@ private extension ResourcesHandler {
     }
 
     func getRequestHeaders(_ headers: [String?: String?]?) -> [String: String]? {
+        // Pigeon 9.0.5 limits enforcing non null values in maps; from Flutter we only pass [String: String]
         Logger.log("getRequestHeaders", sender: self)
         guard let headers = headers else { return nil }
 
-        return headers.filter { $0.key != nil && $0.value != nil } as? [String: String] ?? [:]
+        return headers.filter { $0.key != nil && $0.value != nil } as? [String: String]
     }
 
     func getRequestCompletion(_ completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) -> ((ONGResourceResponse?, Error?) -> Void)? {

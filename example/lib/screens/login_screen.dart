@@ -143,11 +143,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<String> getImplicitUserDetails(String profileId) async {
     var returnString = "";
     try {
-      print("boop");
-      var userProfileId = await Onegini.instance.userClient
-          .authenticateUserImplicitly(profileId, ["read"]);
-
-      var response = await Onegini.instance.resourcesMethods.resourceRequest(
+      await Onegini.instance.userClient.authenticateUserImplicitly(profileId, ["read"]);
+      var response = await Onegini.instance.resourcesMethods.requestResource(
         ResourceRequestType.implicit,
         RequestDetails(path: "user-id-decorated", method: HttpRequestMethod.get));
 

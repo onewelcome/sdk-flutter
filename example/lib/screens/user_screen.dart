@@ -423,14 +423,14 @@ class _InfoState extends State<Info> {
   Future<ApplicationDetails> getApplicationDetails() async {
     await Onegini.instance.userClient
         .authenticateDevice(["read", "write", "application-details"]);
-    var response = await Onegini.instance.resourcesMethods.resourceRequest(ResourceRequestType.anonymous, RequestDetails(path: "application-details", method: HttpRequestMethod.get));
+    var response = await Onegini.instance.resourcesMethods.requestResource(ResourceRequestType.anonymous, RequestDetails(path: "application-details", method: HttpRequestMethod.get));
     var res = json.decode(response.body);
     return applicationDetailsFromJson(res);
   }
 
   Future<ClientResource> getClientResource() async {
     var response = await Onegini.instance.resourcesMethods
-        .getResource(RequestDetails(path: "devices", method: HttpRequestMethod.get))
+        .requestResourceAuthenticated(RequestDetails(path: "devices", method: HttpRequestMethod.get))
         .catchError((error) {
       print('Caught error: $error');
 
@@ -443,7 +443,7 @@ class _InfoState extends State<Info> {
   Future<String> makeUnaunthenticatedRequest() async {
     var headers = {'Declareren-Appversion': 'CZ.app'};
     var response = await Onegini.instance.resourcesMethods
-        .getResourceUnauthenticated(RequestDetails(path: "devices", method: HttpRequestMethod.get, headers: headers))
+        .requestResourceUnauthenticated(RequestDetails(path: "devices", method: HttpRequestMethod.get, headers: headers))
         .catchError((onError) {
       debugPrint(onError);
     });

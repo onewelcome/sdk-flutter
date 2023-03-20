@@ -56,12 +56,25 @@ class SdkError: Error {
         setResponseDetails(response, iosCode, iosMessage)
     }
 
-    private func setGenericDetails() {
+    func flutterError() -> FlutterError {
+        let _error = FlutterError(code: "\(self.code)", message: self.errorDescription, details: details)
+
+        return _error
+    }
+
+    static func convertToFlutter(_ error: SdkError?) -> FlutterError {
+        let _error = error ?? SdkError(.genericError)
+        return _error.flutterError()
+    }
+}
+
+private extension SdkError {
+    func setGenericDetails() {
         details["code"] = String(code)
         details["message"] = errorDescription
     }
 
-    private func setInfoDetails(_ info: [String: Any?]?) {
+    func setInfoDetails(_ info: [String: Any?]?) {
         if (info == nil) {
             details["userInfo"] = [:]
         } else {
@@ -69,7 +82,7 @@ class SdkError: Error {
         }
     }
 
-    private func setResponseDetails(_ response: ONGResourceResponse?, _ iosCode: Int?, _ iosMessage: String?) {
+    func setResponseDetails(_ response: ONGResourceResponse?, _ iosCode: Int?, _ iosMessage: String?) {
         if (response == nil) {
             details["response"] = Dictionary<String, Any?>()
         } else {
@@ -84,17 +97,6 @@ class SdkError: Error {
         if iosMessage != nil {
             details["iosMessage"] = iosMessage
         }
-    }
-
-    func flutterError() -> FlutterError {
-        let _error = FlutterError(code: "\(self.code)", message: self.errorDescription, details: details)
-
-        return _error
-    }
-
-    static func convertToFlutter(_ error: SdkError?) -> FlutterError {
-        let _error = error ?? SdkError(.genericError)
-        return _error.flutterError()
     }
 }
 
