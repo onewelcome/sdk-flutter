@@ -8,8 +8,6 @@ import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
 import com.onegini.mobile.sdk.flutter.handlers.BrowserRegistrationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
-import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
-import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAppToWebSingleSignOn
@@ -45,8 +43,10 @@ import com.onegini.mobile.sdk.flutter.useCases.ResourceRequestUseCase
 import com.onegini.mobile.sdk.flutter.useCases.SetPreferredAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.StartAppUseCase
 import com.onegini.mobile.sdk.flutter.useCases.SubmitCustomRegistrationActionUseCase
-import com.onegini.mobile.sdk.flutter.useCases.SubmitPinAuthenticationRequestUseCase
-import com.onegini.mobile.sdk.flutter.useCases.SubmitPinRegistrationRequestUseCase
+import com.onegini.mobile.sdk.flutter.useCases.PinAuthenticationRequestAcceptUseCase
+import com.onegini.mobile.sdk.flutter.useCases.PinAuthenticationRequestDenyUseCase
+import com.onegini.mobile.sdk.flutter.useCases.PinRegistrationRequestAcceptUseCase
+import com.onegini.mobile.sdk.flutter.useCases.PinRegistrationRequestDenyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.ValidatePinWithPolicyUseCase
 import javax.inject.Inject
 
@@ -100,9 +100,13 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   @Inject
   lateinit var validatePinWithPolicyUseCase: ValidatePinWithPolicyUseCase
   @Inject
-  lateinit var submitPinAuthenticationRequestUseCase: SubmitPinAuthenticationRequestUseCase
+  lateinit var pinAuthenticationRequestAcceptUseCase: PinAuthenticationRequestAcceptUseCase
   @Inject
-  lateinit var submitPinRegistrationRequestUseCase: SubmitPinRegistrationRequestUseCase
+  lateinit var pinAuthenticationRequestDenyUseCase: PinAuthenticationRequestDenyUseCase
+  @Inject
+  lateinit var pinRegistrationRequestAcceptUseCase: PinRegistrationRequestAcceptUseCase
+  @Inject
+  lateinit var pinRegistrationRequestDenyUseCase: PinRegistrationRequestDenyUseCase
   @Inject
   lateinit var resourceRequestUseCase: ResourceRequestUseCase
   @Inject
@@ -259,19 +263,19 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   }
 
   override fun pinDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    callback(submitPinAuthenticationRequestUseCase(null))
+    callback(pinAuthenticationRequestDenyUseCase())
   }
 
   override fun pinAcceptAuthenticationRequest(pin: String, callback: (Result<Unit>) -> Unit) {
-    callback(submitPinAuthenticationRequestUseCase(pin))
+    callback(pinAuthenticationRequestAcceptUseCase(pin))
   }
 
   override fun pinDenyRegistrationRequest(callback: (Result<Unit>) -> Unit) {
-    callback(submitPinRegistrationRequestUseCase(null))
+    callback(pinRegistrationRequestDenyUseCase())
   }
 
   override fun pinAcceptRegistrationRequest(pin: String, callback: (Result<Unit>) -> Unit) {
-    callback(submitPinRegistrationRequestUseCase(pin))
+    callback(pinRegistrationRequestAcceptUseCase(pin))
   }
 
   override fun cancelBrowserRegistration(callback: (Result<Unit>) -> Unit) {
