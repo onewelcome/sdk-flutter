@@ -350,6 +350,17 @@ class Home extends StatelessWidget {
     showFlutterToast(accessToken);
   }
 
+  performUnauthenticatedRequest() async {
+    var response = await Onegini.instance.resourcesMethods
+        .requestResourceUnauthenticated(RequestDetails(path: "unauthenticated", method: HttpRequestMethod.get))
+        .catchError((error) {
+          print("An error occured $error");
+          showFlutterToast("An error occured $error");
+    });
+
+    showFlutterToast("Response: ${response.body}");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -400,6 +411,12 @@ class Home extends StatelessWidget {
               },
               child: Text('Access Token'),
             ),
+            ElevatedButton(
+              onPressed: () {
+                performUnauthenticatedRequest();
+              },
+              child: Text('Perform Unauthenticated Request'),
+            ),
             SizedBox(
               height: 20,
             ),
@@ -438,17 +455,6 @@ class _InfoState extends State<Info> {
     });
 
     return clientResourceFromJson(response.body);
-  }
-
-  Future<String> makeUnaunthenticatedRequest() async {
-    var response = await Onegini.instance.resourcesMethods
-        .requestResourceUnauthenticated(RequestDetails(path: "devices", method: HttpRequestMethod.get))
-        .catchError((error) {
-          print(error);
-    });
-
-    var res = json.decode(response.body);
-    return res;
   }
 
   @override
@@ -516,26 +522,6 @@ class _InfoState extends State<Info> {
                           ],
                         )
                       : Text("");
-                },
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              FutureBuilder<String>(
-                future: makeUnaunthenticatedRequest(),
-                builder: (context, snapshot) {
-                  return snapshot.hasData
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "UnaunthenticatedRequest - Users:",
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            Text(snapshot.data, style: TextStyle(fontSize: 20)),
-                          ],
-                        )
-                      : SizedBox.shrink();
                 },
               ),
               Expanded(
