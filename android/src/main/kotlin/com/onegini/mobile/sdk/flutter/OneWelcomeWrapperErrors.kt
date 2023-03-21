@@ -12,6 +12,7 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
     USER_NOT_AUTHENTICATED_IMPLICITLY(8035, "The requested action requires you to be authenticated implicitly"),
     METHOD_ARGUMENT_NOT_FOUND(8036, "The passed argument from Flutter could not be found"),
     AUTHENTICATION_NOT_IN_PROGRESS(8037, "Authentication is currently not in progress"),
+    FINGERPRINT_AUTHENTICATION_NOT_IN_PROGRESS(8038, "Fingerprint Authentication is currently not in progress"),
 
     // Errors that only occur on Android
     IDENTITY_PROVIDER_NOT_FOUND(8005, "The requested identity provider is not found"),
