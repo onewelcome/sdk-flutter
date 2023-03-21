@@ -273,25 +273,17 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
     static var flutterApi: NativeCallFlutterApi?
     
     public static func register(with registrar: FlutterPluginRegistrar) {
+        // FIXME: We can remove this once we have moved all functions to Pigeon
+        // Init old communication
         let channel = FlutterMethodChannel(name: "onegini", binaryMessenger: registrar.messenger())
-        let eventChannel = FlutterEventChannel(name: "onegini_events",
-                                               binaryMessenger: registrar.messenger())
         let instance = SwiftOneginiPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
-        eventChannel.setStreamHandler(OneginiModuleSwift.sharedInstance)
-        
         // Init Pigeon communication
         let messenger: FlutterBinaryMessenger = registrar.messenger()
-        let userClientApi: UserClientApi & NSObjectProtocol = SwiftOneginiPlugin.init()
-        UserClientApiSetup.setUp(binaryMessenger: messenger, api: userClientApi)
-
-        let resourceMethodApi: ResourceMethodApi & NSObjectProtocol = SwiftOneginiPlugin.init()
-        ResourceMethodApiSetup.setUp(binaryMessenger: messenger, api: resourceMethodApi)
-        
+        let api = SwiftOneginiPlugin.init()
+        UserClientApiSetup.setUp(binaryMessenger: messenger, api: api)
+        ResourceMethodApiSetup.setUp(binaryMessenger: messenger, api: api)
         flutterApi = NativeCallFlutterApi(binaryMessenger: registrar.messenger())
-        
-        // Example on call flutter function from native during start
-        flutterApi?.testEventFunction(argument: "we initilized the function", completion: {_ in })
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {

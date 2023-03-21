@@ -11,49 +11,42 @@ extension OneginiModuleSwift {
     }
 
     func registerUser(_ identityProviderId: String? = nil, scopes: [String]? = nil, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
-        bridgeConnector.toRegistrationConnector.registrationHandler.registerUser(identityProviderId, scopes: scopes, completion: completion)
+        bridgeConnector.toRegistrationHandler.registerUser(identityProviderId, scopes: scopes, completion: completion)
     }
     
     func handleRegisteredProcessUrl(_ url: String, webSignInType: Int) -> Result<Void, FlutterError> {
-        return bridgeConnector.toRegistrationConnector.registrationHandler.processRedirectURL(url: url, webSignInType: webSignInType)
+        return bridgeConnector.toRegistrationHandler.processRedirectURL(url: url, webSignInType: webSignInType)
     }
     
     public func handleDeepLinkCallbackUrl(_ url: URL) -> Bool {
         guard let schemeLibrary = URL.init(string: ONGClient.sharedInstance().configModel.redirectURL)?.scheme else {
-            generateEventError(value: "RedirectURL's scheme of configModel is empty: \(String(describing: ONGClient.sharedInstance().configModel.redirectURL))")
+            //FIXME: find out what to do here.
+//            generateEventError(value: "RedirectURL's scheme of configModel is empty: \(String(describing: ONGClient.sharedInstance().configModel.redirectURL))")
             return false
         }
         
         guard let scheme = url.scheme,
               scheme.compare(schemeLibrary, options: .caseInsensitive) == .orderedSame else {
             let value = ["url_scheme": url.scheme, "library_scheme": schemeLibrary, "url": url.absoluteString]
-            generateEventError(value: value)
+            //FIXME: find out what to do here.
+//            generateEventError(value: value)
             return false
         }
         
-        bridgeConnector.toRegistrationConnector.registrationHandler.handleRedirectURL(url: url)
+        bridgeConnector.toRegistrationHandler.handleRedirectURL(url: url)
         return true
     }
     
-    private func generateEventError(value: Any?) {
-        var errorParameters = [String: Any]()
-        errorParameters["eventName"] = "eventError"
-        errorParameters["eventValue"] = value
-        
-        let data = String.stringify(json: errorParameters)
-        OneginiModuleSwift.sharedInstance.sendBridgeEvent(eventName: OneginiBridgeEvents.pinNotification, data: data)
-    }
-    
     func submitCustomRegistrationSuccess(_ data: String?) {
-        bridgeConnector.toRegistrationConnector.registrationHandler.submitCustomRegistrationSuccess(data)
+        bridgeConnector.toRegistrationHandler.submitCustomRegistrationSuccess(data)
     }
     
     func submitCustomRegistrationError(_ error: String) {
-        bridgeConnector.toRegistrationConnector.registrationHandler.cancelCustomRegistration(error)
+        bridgeConnector.toRegistrationHandler.cancelCustomRegistration(error)
     }
     
     public func cancelBrowserRegistration() -> Void {
-        bridgeConnector.toRegistrationConnector.registrationHandler.cancelBrowserRegistration()
+        bridgeConnector.toRegistrationHandler.cancelBrowserRegistration()
     }
     
     func registerAuthenticator(_ authenticatorId: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {

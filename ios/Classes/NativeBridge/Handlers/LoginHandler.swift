@@ -26,20 +26,20 @@ class LoginHandler: NSObject {
     func handleDidReceiveChallenge(_ challenge: ONGPinChallenge) {
         pinChallenge = challenge
         if let pinError = ErrorMapper().mapErrorFromPinChallenge(challenge) {
-            BridgeConnector.shared?.toPinConnector.sendNotification(event: PinNotification.nextAuthenticationAttempt, error: pinError)
+            // FIXME: send correct event here
         } else {
-            BridgeConnector.shared?.toPinConnector.sendNotification(event: PinNotification.openAuth, error: nil)
+            SwiftOneginiPlugin.flutterApi?.n2fOpenPinScreenAuth {}
         }
     }
     
     func handleDidAuthenticateUser() {
         pinChallenge = nil
-        BridgeConnector.shared?.toPinConnector.sendNotification(event: PinNotification.closeAuth, error: nil)
+        SwiftOneginiPlugin.flutterApi?.n2fClosePinAuth {}
     }
     
     func handleDidFailToAuthenticateUser() {
         guard pinChallenge != nil else { return }
-        BridgeConnector.shared?.toPinConnector.sendNotification(event: PinNotification.closeAuth, error: nil)
+        SwiftOneginiPlugin.flutterApi?.n2fClosePinAuth {}
         pinChallenge = nil
     }
 }

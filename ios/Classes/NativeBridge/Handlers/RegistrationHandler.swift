@@ -9,10 +9,6 @@ protocol RegistrationConnectorToHandlerProtocol {
     func currentChallenge() -> ONGCustomRegistrationChallenge?
 }
 
-protocol CustomRegistrationNotificationReceiverProtocol: class {
-    func sendCustomRegistrationNotification(_ event: CustomRegistrationNotification,_ data: Dictionary<String, Any?>?)
-}
-
 enum WebSignInType: Int {
     case insideApp
     case safari
@@ -34,8 +30,6 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
 
     var signUpCompletion: ((Result<OWRegistrationResponse, FlutterError>) -> Void)?
     
-    unowned var customNotificationReceiver: CustomRegistrationNotificationReceiverProtocol?
-
     // Should not be needed
     func currentChallenge() -> ONGCustomRegistrationChallenge? {
         return self.customRegistrationChallenge
@@ -113,10 +107,10 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
         createPinChallenge = challenge
         if let pinError = mapErrorFromPinChallenge(challenge) {
             // FIXME: I believe we are dealing here with an invalid pin that was supplied, we should send such an event.
-            BridgeConnector.shared?.toPinConnector.sendNotification(event: PinNotification.showError, error: pinError)
+            SwiftOneginiPlugin.flutterApi?.n2fShowError(error: OWOneginiError(code: String(pinError.code), message: pinError.errorDescription)) {}
         } else {
             // FIXME: we should be sending the pin length here.
-            BridgeConnector.shared?.toPinConnector.sendNotification(event: PinNotification.open, error: nil)
+            SwiftOneginiPlugin.flutterApi?.n2fOpenPinRequestScreen {}
         }
     }
     
@@ -127,18 +121,14 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
         createPinChallenge = nil
         customRegistrationChallenge = nil
         browserRegistrationChallenge = nil
-        BridgeConnector.shared?.toPinConnector.sendNotification(event: PinNotification.close, error: nil)
+        SwiftOneginiPlugin.flutterApi?.n2fClosePin {}
     }
 
     func handleDidRegisterUser() {
         createPinChallenge = nil
         customRegistrationChallenge = nil
         browserRegistrationChallenge = nil
-        BridgeConnector.shared?.toPinConnector.sendNotification(event: PinNotification.close, error: nil)
-    }
-
-    private func sendCustomRegistrationNotification(_ event: CustomRegistrationNotification,_ data: Dictionary<String, Any?>?) {
-        customNotificationReceiver?.sendCustomRegistrationNotification(event, data)
+        SwiftOneginiPlugin.flutterApi?.n2fClosePin {}
     }
 }
 
@@ -194,10 +184,7 @@ extension RegistrationHandler: ONGRegistrationDelegate {
         browserRegistrationChallenge = challenge
         debugPrint(challenge.url)
 
-        var result = Dictionary<String, Any?>()
-        result["eventValue"] = challenge.url.absoluteString
-
-        sendCustomRegistrationNotification(CustomRegistrationNotification.eventHandleRegisteredUrl, result)
+        SwiftOneginiPlugin.flutterApi?.n2fHandleRegisteredUrl(url: challenge.url.absoluteString) {}
     }
 
     func userClient(_: ONGUserClient, didReceivePinRegistrationChallenge challenge: ONGCreatePinChallenge) {
@@ -215,19 +202,13 @@ extension RegistrationHandler: ONGRegistrationDelegate {
     func userClient(_: ONGUserClient, didReceiveCustomRegistrationInitChallenge challenge: ONGCustomRegistrationChallenge) {
         Logger.log("didReceiveCustomRegistrationInitChallenge ONGCustomRegistrationChallenge", sender: self)
         customRegistrationChallenge = challenge
-        
-        let result = makeCustomInfoResponse(challenge)
-        
-        sendCustomRegistrationNotification(CustomRegistrationNotification.initRegistration, result)
+                SwiftOneginiPlugin.flutterApi?.n2fEventInitCustomRegistration(customInfo: toOWCustomInfo(challenge.info), providerId: challenge.identityProvider.identifier) {}
     }
 
     func userClient(_: ONGUserClient, didReceiveCustomRegistrationFinish challenge: ONGCustomRegistrationChallenge) {
         Logger.log("didReceiveCustomRegistrationFinish ONGCustomRegistrationChallenge", sender: self)
         customRegistrationChallenge = challenge
-
-        let result = makeCustomInfoResponse(challenge)
-
-        sendCustomRegistrationNotification(CustomRegistrationNotification.finishRegistration, result)
+        SwiftOneginiPlugin.flutterApi?.n2fEventFinishCustomRegistration(customInfo: toOWCustomInfo(challenge.info), providerId: challenge.identityProvider.identifier) {}
     }
 
     func userClient(_ userClient: ONGUserClient, didFailToRegisterWith identityProvider: ONGIdentityProvider, error: Error) {
@@ -238,17 +219,6 @@ extension RegistrationHandler: ONGRegistrationDelegate {
             let mappedError = ErrorMapper().mapError(error)
             signUpCompletion?(.failure(FlutterError(mappedError)))
         }
-    }
-    
-    private func makeCustomInfoResponse(_ challenge: ONGCustomRegistrationChallenge) -> Dictionary<String, Any?> {
-        var result = Dictionary<String, Any?>()
-        var customInfo = Dictionary<String, Any?>()
-        customInfo["status"] = challenge.info?.status
-        customInfo["data"] = challenge.info?.data
-        customInfo["providerId"] = challenge.identityProvider.identifier
-        result["eventValue"] = String.stringify(json: customInfo)
-
-        return result
     }
 }
     
