@@ -5,13 +5,13 @@ import com.onegini.mobile.sdk.android.handlers.request.OneginiMobileAuthWithOtpR
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiAcceptDenyCallback
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthenticationRequest
 import com.onegini.mobile.sdk.flutter.constants.Constants
-import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.models.OneginiEvent
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MobileAuthOtpRequestHandler @Inject constructor(): OneginiMobileAuthWithOtpRequestHandler {
+class MobileAuthOtpRequestHandler @Inject constructor(private val nativeApi: NativeCallFlutterApi): OneginiMobileAuthWithOtpRequestHandler {
     private var userProfileId: String? = null
     private var message: String? = null
     override fun startAuthentication(
@@ -22,12 +22,11 @@ class MobileAuthOtpRequestHandler @Inject constructor(): OneginiMobileAuthWithOt
         CALLBACK = oneginiAcceptDenyCallback
         userProfileId = oneginiMobileAuthenticationRequest.userProfile.profileId
         message = oneginiMobileAuthenticationRequest.message
-        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_OPEN_AUTH_OTP, message
-                ?: "")))
+        nativeApi.n2fOpenAuthOtp(message ?: "") {}
     }
 
     override fun finishAuthentication() {
-        OneginiEventsSender.events?.success(Constants.EVENT_CLOSE_AUTH_OTP)
+        nativeApi.n2fCloseAuthOtp {}
     }
 
     companion object {

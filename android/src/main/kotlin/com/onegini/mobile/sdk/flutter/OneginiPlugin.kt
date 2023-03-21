@@ -1,7 +1,6 @@
 package com.onegini.mobile.sdk.flutter
 
 import androidx.annotation.NonNull
-import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import com.onegini.mobile.sdk.flutter.module.FlutterOneWelcomeSdkModule
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
@@ -36,16 +35,6 @@ class OneginiPlugin : FlutterPlugin, PigeonInterface() {
         component.inject(this)
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "onegini")
         channel.setMethodCallHandler(onMethodCallMapper)
-        eventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "onegini_events")
-        eventChannel.setStreamHandler(object : EventChannel.StreamHandler {
-            override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
-                OneginiEventsSender.setEventSink(events)
-            }
-
-            override fun onCancel(arguments: Any?) {
-                OneginiEventsSender.setEventSink(null)
-            }
-        })
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
