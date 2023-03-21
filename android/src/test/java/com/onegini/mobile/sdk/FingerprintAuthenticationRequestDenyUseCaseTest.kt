@@ -18,9 +18,6 @@ class FingerprintAuthenticationRequestDenyUseCaseTest {
   @Mock
   lateinit var oneginiFingerprintCallbackMock: OneginiFingerprintCallback
 
-  @Mock
-  lateinit var callbackMock: (Result<Unit>) -> Unit
-
   lateinit var fingerprintAuthenticationRequestDenyUseCase: FingerprintAuthenticationRequestDenyUseCase
 
   @Before

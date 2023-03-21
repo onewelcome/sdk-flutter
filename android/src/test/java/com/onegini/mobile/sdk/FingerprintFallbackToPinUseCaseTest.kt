@@ -18,9 +18,6 @@ class FingerprintFallbackToPinUseCaseTest {
   @Mock
   lateinit var oneginiFingerprintCallbackMock: OneginiFingerprintCallback
 
-  @Mock
-  lateinit var callbackMock: (Result<Unit>) -> Unit
-
   lateinit var fingerprintFallbackToPinUseCase: FingerprintFallbackToPinUseCase
 
   @Before
