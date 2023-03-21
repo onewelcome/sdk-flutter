@@ -20,16 +20,14 @@ extension OneginiModuleSwift {
     
     public func handleDeepLinkCallbackUrl(_ url: URL) -> Bool {
         guard let schemeLibrary = URL.init(string: ONGClient.sharedInstance().configModel.redirectURL)?.scheme else {
-            //FIXME: find out what to do here.
-//            generateEventError(value: "RedirectURL's scheme of configModel is empty: \(String(describing: ONGClient.sharedInstance().configModel.redirectURL))")
+            //FIXME: We should propagate an error here to the caller, not through events.
             return false
         }
         
         guard let scheme = url.scheme,
               scheme.compare(schemeLibrary, options: .caseInsensitive) == .orderedSame else {
             let value = ["url_scheme": url.scheme, "library_scheme": schemeLibrary, "url": url.absoluteString]
-            //FIXME: find out what to do here.
-//            generateEventError(value: value)
+            //FIXME: We should propagate an error here to the caller, not through events.
             return false
         }
         
