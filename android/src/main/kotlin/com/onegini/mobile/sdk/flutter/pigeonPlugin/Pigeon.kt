@@ -351,7 +351,8 @@ interface UserClientApi {
   fun deregisterAuthenticator(authenticatorId: String, callback: (Result<Unit>) -> Unit)
   fun registerAuthenticator(authenticatorId: String, callback: (Result<Unit>) -> Unit)
   fun logout(callback: (Result<Unit>) -> Unit)
-  fun mobileAuthWithOtp(data: String, callback: (Result<String?>) -> Unit)
+  fun enrollMobileAuthentication(callback: (Result<Unit>) -> Unit)
+  fun handleMobileAuthWithOtp(data: String, callback: (Result<Unit>) -> Unit)
   fun getAppToWebSingleSignOn(url: String, callback: (Result<OWAppToWebSingleSignOn>) -> Unit)
   fun getAccessToken(callback: (Result<String>) -> Unit)
   fun getRedirectUrl(callback: (Result<String>) -> Unit)
@@ -669,19 +670,36 @@ interface UserClientApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.mobileAuthWithOtp", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.enrollMobileAuthentication", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped = listOf<Any?>()
+            api.enrollMobileAuthentication() { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.handleMobileAuthWithOtp", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             var wrapped = listOf<Any?>()
             val args = message as List<Any?>
             val dataArg = args[0] as String
-            api.mobileAuthWithOtp(dataArg) { result: Result<String?> ->
+            api.handleMobileAuthWithOtp(dataArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
               } else {
-                val data = result.getOrNull()
-                reply.reply(wrapResult(data))
+                reply.reply(wrapResult(null))
               }
             }
           }

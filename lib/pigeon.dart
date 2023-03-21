@@ -665,9 +665,31 @@ class UserClientApi {
     }
   }
 
-  Future<String?> mobileAuthWithOtp(String arg_data) async {
+  Future<void> enrollMobileAuthentication() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.mobileAuthWithOtp', codec,
+        'dev.flutter.pigeon.UserClientApi.enrollMobileAuthentication', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> handleMobileAuthWithOtp(String arg_data) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.UserClientApi.handleMobileAuthWithOtp', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_data]) as List<Object?>?;
@@ -683,7 +705,7 @@ class UserClientApi {
         details: replyList[2],
       );
     } else {
-      return (replyList[0] as String?);
+      return;
     }
   }
 

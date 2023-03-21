@@ -143,9 +143,11 @@ abstract class UserClientApi {
   @async
   void logout();
 
-  // todo investigate if string can be non null
   @async
-  String? mobileAuthWithOtp(String data);
+  void enrollMobileAuthentication();
+
+  @async
+  void handleMobileAuthWithOtp(String data);
 
   @async
   OWAppToWebSingleSignOn getAppToWebSingleSignOn(String url);

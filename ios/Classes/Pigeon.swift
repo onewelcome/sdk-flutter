@@ -329,7 +329,8 @@ protocol UserClientApi {
   func deregisterAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void)
   func registerAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void)
   func logout(completion: @escaping (Result<Void, Error>) -> Void)
-  func mobileAuthWithOtp(data: String, completion: @escaping (Result<String?, Error>) -> Void)
+  func enrollMobileAuthentication(completion: @escaping (Result<Void, Error>) -> Void)
+  func handleMobileAuthWithOtp(data: String, completion: @escaping (Result<Void, Error>) -> Void)
   func getAppToWebSingleSignOn(url: String, completion: @escaping (Result<OWAppToWebSingleSignOn, Error>) -> Void)
   func getAccessToken(completion: @escaping (Result<String, Error>) -> Void)
   func getRedirectUrl(completion: @escaping (Result<String, Error>) -> Void)
@@ -596,22 +597,37 @@ class UserClientApiSetup {
     } else {
       logoutChannel.setMessageHandler(nil)
     }
-    let mobileAuthWithOtpChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.mobileAuthWithOtp", binaryMessenger: binaryMessenger, codec: codec)
+    let enrollMobileAuthenticationChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.enrollMobileAuthentication", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      mobileAuthWithOtpChannel.setMessageHandler { message, reply in
-        let args = message as! [Any?]
-        let dataArg = args[0] as! String
-        api.mobileAuthWithOtp(data: dataArg) { result in
+      enrollMobileAuthenticationChannel.setMessageHandler { _, reply in
+        api.enrollMobileAuthentication() { result in
           switch result {
-            case .success(let res):
-              reply(wrapResult(res))
+            case .success:
+              reply(wrapResult(nil))
             case .failure(let error):
               reply(wrapError(error))
           }
         }
       }
     } else {
-      mobileAuthWithOtpChannel.setMessageHandler(nil)
+      enrollMobileAuthenticationChannel.setMessageHandler(nil)
+    }
+    let handleMobileAuthWithOtpChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.handleMobileAuthWithOtp", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      handleMobileAuthWithOtpChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let dataArg = args[0] as! String
+        api.handleMobileAuthWithOtp(data: dataArg) { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      handleMobileAuthWithOtpChannel.setMessageHandler(nil)
     }
     let getAppToWebSingleSignOnChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.getAppToWebSingleSignOn", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
