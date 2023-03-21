@@ -28,6 +28,9 @@ import com.onegini.mobile.sdk.flutter.useCases.CancelCustomRegistrationActionUse
 import com.onegini.mobile.sdk.flutter.useCases.ChangePinUseCase
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterUserUseCase
+import com.onegini.mobile.sdk.flutter.useCases.FingerprintAuthenticationRequestAcceptUseCase
+import com.onegini.mobile.sdk.flutter.useCases.FingerprintAuthenticationRequestDenyUseCase
+import com.onegini.mobile.sdk.flutter.useCases.FingerprintFallbackToPinUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAccessTokenUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAllAuthenticatorsUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAuthenticatedUserProfileUseCase
@@ -97,6 +100,12 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   lateinit var changePinUseCase: ChangePinUseCase
   @Inject
   lateinit var validatePinWithPolicyUseCase: ValidatePinWithPolicyUseCase
+  @Inject
+  lateinit var fingerprintAuthenticationRequestDenyUseCase: FingerprintAuthenticationRequestDenyUseCase
+  @Inject
+  lateinit var fingerprintAuthenticationRequestAcceptUseCase: FingerprintAuthenticationRequestAcceptUseCase
+  @Inject
+  lateinit var fingerprintFallbackToPinUseCase: FingerprintFallbackToPinUseCase
   @Inject
   lateinit var resourceRequestUseCase: ResourceRequestUseCase
   @Inject
@@ -223,21 +232,15 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   }
 
   override fun fingerprintFallbackToPin(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-72
-    FingerprintAuthenticationRequestHandler.fingerprintCallback?.fallbackToPin()
-    callback(Result.success(Unit))
+    callback(fingerprintFallbackToPinUseCase())
   }
 
   override fun fingerprintDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-72
-    FingerprintAuthenticationRequestHandler.fingerprintCallback?.denyAuthenticationRequest()
-    callback(Result.success(Unit))
+    callback(fingerprintAuthenticationRequestDenyUseCase())
   }
 
   override fun fingerprintAcceptAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-72
-    FingerprintAuthenticationRequestHandler.fingerprintCallback?.acceptAuthenticationRequest()
-    callback(Result.success(Unit))
+    callback(fingerprintAuthenticationRequestAcceptUseCase())
   }
 
   override fun otpDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
