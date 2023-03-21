@@ -5,7 +5,6 @@ import android.util.Patterns
 import com.onegini.mobile.sdk.android.handlers.OneginiAppToWebSingleSignOnHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAppToWebSingleSignOnError
 import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
-import com.onegini.mobile.sdk.flutter.handlers.BrowserRegistrationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
@@ -24,6 +23,7 @@ import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceRequestType
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateDeviceUseCase
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserImplicitlyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserUseCase
+import com.onegini.mobile.sdk.flutter.useCases.CancelBrowserRegistrationUseCase
 import com.onegini.mobile.sdk.flutter.useCases.CancelCustomRegistrationActionUseCase
 import com.onegini.mobile.sdk.flutter.useCases.ChangePinUseCase
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterAuthenticatorUseCase
@@ -63,6 +63,8 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   lateinit var deregisterUserUseCase: DeregisterUserUseCase
   @Inject
   lateinit var getAccessTokenUseCase: GetAccessTokenUseCase
+  @Inject
+  lateinit var cancelBrowserRegistrationUseCase: CancelBrowserRegistrationUseCase
   @Inject
   lateinit var getAllAuthenticatorsUseCase: GetAllAuthenticatorsUseCase
   @Inject
@@ -277,9 +279,7 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   }
 
   override fun cancelBrowserRegistration(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-74
-    BrowserRegistrationRequestHandler.onRegistrationCanceled()
-    callback(Result.success(Unit))
+    callback(cancelBrowserRegistrationUseCase())
   }
 
   override fun requestResource(type: ResourceRequestType, details: OWRequestDetails, callback: (Result<OWRequestResponse>) -> Unit) {
