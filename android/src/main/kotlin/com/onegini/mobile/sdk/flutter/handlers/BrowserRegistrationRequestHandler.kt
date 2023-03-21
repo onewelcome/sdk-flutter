@@ -19,6 +19,8 @@ class BrowserRegistrationRequestHandler @Inject constructor(): OneginiBrowserReg
 
         /**
          * Finish registration action with result from web browser
+         * TODO: Move this to use-case after browser logic rework
+         * https://onewelcome.atlassian.net/browse/FP-35
          */
         fun handleRegistrationCallback(uri: Uri) {
             if (CALLBACK != null) {
