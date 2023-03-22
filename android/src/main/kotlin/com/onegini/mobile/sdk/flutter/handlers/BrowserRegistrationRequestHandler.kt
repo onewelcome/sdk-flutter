@@ -15,24 +15,16 @@ import javax.inject.Singleton
 class BrowserRegistrationRequestHandler @Inject constructor(): OneginiBrowserRegistrationRequestHandler {
 
     companion object {
-        private var CALLBACK: OneginiBrowserRegistrationCallback? = null
+        var CALLBACK: OneginiBrowserRegistrationCallback? = null
 
         /**
          * Finish registration action with result from web browser
+         * TODO: Move this to use-case after browser logic rework
+         * https://onewelcome.atlassian.net/browse/FP-35
          */
         fun handleRegistrationCallback(uri: Uri) {
             if (CALLBACK != null) {
                 CALLBACK?.handleRegistrationCallback(uri)
-                CALLBACK = null
-            }
-        }
-
-        /**
-         * Cancel registration action in case of web browser error
-         */
-        fun onRegistrationCanceled() {
-            if (CALLBACK != null) {
-                CALLBACK?.denyRegistration()
                 CALLBACK = null
             }
         }
