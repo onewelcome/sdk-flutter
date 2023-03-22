@@ -159,13 +159,13 @@ abstract class OneginiEventListener implements NativeCallFlutterApi {
 
   @override
   void n2fEventError(OWOneginiError error) {
-    eventError(
-        _context, PlatformException(code: error.code, message: error.message));
+    eventError(_context,
+        PlatformException(code: error.code.toString(), message: error.message));
   }
 
   @override
   void n2fShowError(OWOneginiError error) {
     // FIXME: use correct error code here.
-    showError(_context, OneginiError(code: 9999, message: error.message));
+    showError(_context, OneginiError(code: error.code, message: error.message));
   }
 }

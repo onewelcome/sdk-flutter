@@ -22,7 +22,7 @@ class PinRequestHandler @Inject constructor(private val nativeApi: NativeCallFlu
     }
 
     override fun onNextPinCreationAttempt(oneginiPinValidationError: OneginiPinValidationError) {
-        nativeApi.n2fEventError(OWOneginiError(oneginiPinValidationError.errorType.toString(), oneginiPinValidationError.message ?: "")) {}
+        nativeApi.n2fEventError(OWOneginiError(oneginiPinValidationError.errorType.toLong(), oneginiPinValidationError.message ?: "")) {}
     }
 
     override fun finishPinCreation() {

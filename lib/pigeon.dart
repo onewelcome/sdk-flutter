@@ -300,7 +300,7 @@ class OWOneginiError {
     required this.message,
   });
 
-  String code;
+  int code;
 
   String message;
 
@@ -314,7 +314,7 @@ class OWOneginiError {
   static OWOneginiError decode(Object result) {
     result as List<Object?>;
     return OWOneginiError(
-      code: result[0]! as String,
+      code: result[0]! as int,
       message: result[1]! as String,
     );
   }

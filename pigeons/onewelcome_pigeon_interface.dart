@@ -106,7 +106,7 @@ class OWAuthenticationAttempt {
 }
 
 class OWOneginiError {
-  String code;
+  int code;
   String message;
   OWOneginiError({required this.code, required this.message});
 }

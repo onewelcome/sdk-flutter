@@ -106,8 +106,8 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
     func handleDidReceivePinRegistrationChallenge(_ challenge: ONGCreatePinChallenge) {
         createPinChallenge = challenge
         if let pinError = mapErrorFromPinChallenge(challenge) {
-            // FIXME: I believe we are dealing here with an invalid pin that was supplied, we should send such an event.
-            SwiftOneginiPlugin.flutterApi?.n2fShowError(error: OWOneginiError(code: String(pinError.code), message: pinError.errorDescription)) {}
+            // FIXME: I believe we are dealing here with an invalid pin that was supplied, we should send such an event. FP-34
+            SwiftOneginiPlugin.flutterApi?.n2fShowError(error: OWOneginiError(code: Int32(pinError.code), message: pinError.errorDescription)) {}
         } else {
             // FIXME: we should be sending the pin length here.
             SwiftOneginiPlugin.flutterApi?.n2fOpenPinRequestScreen {}

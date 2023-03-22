@@ -278,11 +278,11 @@ struct OWAuthenticationAttempt {
 
 /// Generated class from Pigeon that represents data sent in messages.
 struct OWOneginiError {
-  var code: String
+  var code: Int32
   var message: String
 
   static func fromList(_ list: [Any?]) -> OWOneginiError? {
-    let code = list[0] as! String
+    let code = list[0] as! Int32
     let message = list[1] as! String
 
     return OWOneginiError(

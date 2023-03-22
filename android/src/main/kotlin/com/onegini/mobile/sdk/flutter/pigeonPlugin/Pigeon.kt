@@ -290,14 +290,14 @@ data class OWAuthenticationAttempt (
 
 /** Generated class from Pigeon that represents data sent in messages. */
 data class OWOneginiError (
-  val code: String,
+  val code: Long,
   val message: String
 
 ) {
   companion object {
     @Suppress("UNCHECKED_CAST")
     fun fromList(list: List<Any?>): OWOneginiError {
-      val code = list[0] as String
+      val code = list[0].let { if (it is Int) it.toLong() else it as Long }
       val message = list[1] as String
       return OWOneginiError(code, message)
     }
