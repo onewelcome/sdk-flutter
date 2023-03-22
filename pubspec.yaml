@@ -1,6 +1,6 @@
 name: onegini
 description: The Onegini Flutter Plugin is a plugin that allows you to utilize the Onegini Mobile SDKs in your Flutter applications.
-version: 2.0.0
+version: 2.0.1
 homepage: https://www.onegini.com
 
 environment:
@@ -12,6 +12,11 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
+  pigeon:
+    git:
+      url: git@github.com:flutter/packages.git
+      path: packages/pigeon
+      ref: 43bfaaf55c0bd6b550bf2cb9af940a00b046bd07
   flutter_test:
     sdk: flutter
 

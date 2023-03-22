@@ -1,6 +1,5 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
-import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticationError
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
@@ -9,8 +8,9 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWUserProfile
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -19,59 +19,57 @@ class AuthenticateUserUseCase @Inject constructor(
   private val oneginiSDK: OneginiSDK,
   private val getUserProfileUseCase: GetUserProfileUseCase
 ) {
-  operator fun invoke(call: MethodCall, result: MethodChannel.Result) {
-    val authenticatorId = call.argument<String>("registeredAuthenticatorId")
-    val profileId = call.argument<String>("profileId")
-      ?: return SdkError(METHOD_ARGUMENT_NOT_FOUND).flutterError(result)
-
+  operator fun invoke(profileId: String, authenticatorId: String?, callback: (Result<OWRegistrationResponse>) -> Unit) {
     val userProfile = try {
       getUserProfileUseCase(profileId)
     } catch (error: SdkError) {
-      return error.flutterError(result)
+      return callback(Result.failure(error.pigeonError()))
     }
 
-    val authenticator = getRegisteredAuthenticatorById(authenticatorId, userProfile)
+    val authenticator = oneginiSDK.oneginiClient.userClient.getRegisteredAuthenticators(userProfile)
+      .find { it.id == authenticatorId }
 
     when {
-      authenticatorId != null && authenticator == null -> SdkError(AUTHENTICATOR_NOT_FOUND).flutterError(result)
-      else -> authenticate(userProfile, authenticator, result)
+      authenticatorId != null && authenticator == null -> callback(Result.failure(SdkError(AUTHENTICATOR_NOT_FOUND).pigeonError()))
+      else -> authenticate(userProfile, authenticator, callback)
     }
   }
 
-  private fun getRegisteredAuthenticatorById(registeredAuthenticatorsId: String?, userProfile: UserProfile): OneginiAuthenticator? {
-    if (registeredAuthenticatorsId == null) return null
-    val registeredAuthenticators = oneginiSDK.oneginiClient.userClient.getRegisteredAuthenticators(userProfile)
-    for (registeredAuthenticator in registeredAuthenticators) {
-      if (registeredAuthenticator.id == registeredAuthenticatorsId) {
-        return registeredAuthenticator
-      }
-    }
-    return null
-  }
-
-  private fun authenticate(userProfile: UserProfile, authenticator: OneginiAuthenticator?, result: MethodChannel.Result) {
+  private fun authenticate(
+    userProfile: UserProfile,
+    authenticator: OneginiAuthenticator?,
+    callback: (Result<OWRegistrationResponse>) -> Unit
+  ) {
     if (authenticator == null) {
-      oneginiSDK.oneginiClient.userClient.authenticateUser(userProfile, getOneginiAuthenticationHandler(result))
+      oneginiSDK.oneginiClient.userClient.authenticateUser(userProfile, getOneginiAuthenticationHandler(callback))
     } else {
-      oneginiSDK.oneginiClient.userClient.authenticateUser(userProfile, authenticator, getOneginiAuthenticationHandler(result))
+      oneginiSDK.oneginiClient.userClient.authenticateUser(userProfile, authenticator, getOneginiAuthenticationHandler(callback))
     }
   }
 
-  private fun getOneginiAuthenticationHandler(result: MethodChannel.Result): OneginiAuthenticationHandler {
+  private fun getOneginiAuthenticationHandler(callback: (Result<OWRegistrationResponse>) -> Unit): OneginiAuthenticationHandler {
     return object : OneginiAuthenticationHandler {
       override fun onSuccess(userProfile: UserProfile, customInfo: CustomInfo?) {
-        //todo check unit tests
-        val userProfileJson = mapOf("profileId" to userProfile.profileId, "isDefault" to userProfile.isDefault)
-        val customInfoJson = mapOf("data" to customInfo?.data, "status" to customInfo?.status)
-        val returnedResult = Gson().toJson(mapOf("userProfile" to userProfileJson, "customInfo" to customInfoJson))
-        result.success(returnedResult)
+        val owProfile = OWUserProfile(userProfile.profileId)
+
+        when (customInfo) {
+          null -> callback(Result.success(OWRegistrationResponse(owProfile)))
+          else -> {
+            val owCustomInfo = OWCustomInfo(customInfo.status.toLong(), customInfo.data)
+            callback(Result.success(OWRegistrationResponse(owProfile, owCustomInfo)))
+          }
+        }
       }
 
       override fun onError(error: OneginiAuthenticationError) {
-        SdkError(
-          code = error.errorType,
-          message = error.message
-        ).flutterError(result)
+        callback(
+          Result.failure(
+            SdkError(
+              code = error.errorType,
+              message = error.message
+            ).pigeonError()
+          )
+        )
       }
     }
   }

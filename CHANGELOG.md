@@ -1,3 +1,6 @@
+## 2.0.1, March 2, 2023
+Updated the README
+
 ## 2.0.0, March 2, 2023
 You can find the full changelog [here](https://developer.onewelcome.com/flutter/plugin/v2-x) and an overview containing the upgrade instructions [here](https://developer.onewelcome.com/flutter/plugin/v2-0).
 

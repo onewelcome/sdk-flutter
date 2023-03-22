@@ -6,7 +6,7 @@ in pubspec.yaml add this:
 
 dependencies:
 
-    onegini: 2.0.0
+    onegini: 2.0.1
 
 `flutter clean`
 
@@ -18,11 +18,11 @@ Onegini class - main class for comunication between flutter and Native platforms
 ## SDK Configuration
 
 1. Get access to https://repo.onewelcome.com/artifactory/onegini-sdk
-2. Use https://github.com/Onegini/onegini-sdk-configurator on your application (instructions can be found there)
+2. Use https://github.com/onewelcome/sdk-configurator on your application (instructions can be found there)
 
 ## Onegini Documentation
-1. Android https://docs.onegini.com/msp/stable/android-sdk/.com/msp/stable/ios-sdk/
-2. iOS https://docs.onegini.com/msp/stable/ios-sdk/
+1. Android https://developer.onewelcome.com/android/sdk
+2. iOS https://developer.onewelcome.com/ios/sdk
 
 ## App Configuration
 
@@ -41,7 +41,8 @@ Onegini class - main class for comunication between flutter and Native platforms
     1.2 Add to `android` -> `defaultConfig` section:
     
     
-    minSdkVersion 21
+    minSdkVersion 23
+    compileSdkVersion 33
     multiDexEnabled true
     
 
@@ -51,23 +52,20 @@ Onegini class - main class for comunication between flutter and Native platforms
     
 
 3. Add to `android/build.gradle`[allprojects.repositories]:
-
+    ext.kotlin_version = '1.8.0'
     
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.0.1'
+        classpath 'com.android.tools.build:gradle:7.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 
-    
-
-    
     mavenCentral()
             maven {
             /*
-            Before the release please change the url below to: https://repo.onegini.com/artifactory/onegini-sdk
-            Please change it back to https://repo.onegini.com/artifactory/public after the release
+            Before the release please change the url below to: https://repo.onewelcome.com/artifactory/onegini-sdk
+            Please change it back to https://repo.onewelcome.com/artifactory/public after the release
             */
-            url "https://repo.onegini.com/artifactory/onegini-sdk"
+            url "https://repo.onewelcome.com/artifactory/onegini-sdk"
             credentials {
                 username "YOUR_USERNAME"
                 password "YOUR_PASSWORD"
@@ -97,7 +95,7 @@ Onegini class - main class for comunication between flutter and Native platforms
     ```
 2. The Onegini SDK repository is not a public repository. You must provide credentials in order to access the repo. Create a file named .netrc in your Home folder (~/) and add the following contents to it:
     ```
-    machine repo.onegini.com
+    machine repo.onewelcome.com
     login <username>
     password <password>
     ```
@@ -139,4 +137,4 @@ Onegini class - main class for comunication between flutter and Native platforms
 
 6. Run `pod install`    
 
-7. Add `SecurityController.h` and `SecurityController.m` as described [HERE](https://docs.onegini.com/msp/stable/ios-sdk/reference/security-controls.html) to native's part of code.
+7. Add `SecurityController.h` and `SecurityController.m` as described [HERE](https://developer.onewelcome.com/ios/sdk/security-controls) to native's part of code.

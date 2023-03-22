@@ -23,7 +23,7 @@ void main() {
     });
   }
 
-  group('ResourcesMethods getResourceAnonymous', () {
+  group('ResourcesMethods requestResourceAnonymous', () {
     test(
       'return String',
       () async {
@@ -32,7 +32,7 @@ void main() {
             Constants.getResourceAnonymous, Future.value('success'));
 
         //act
-        var result = await resourcesMethods.getResourceAnonymous('');
+        var result = await resourcesMethods.requestResourceAnonymous('');
 
         //assert
         expect(result, 'success');
@@ -46,7 +46,7 @@ void main() {
         setupMethodChannel(Constants.getResourceAnonymous, Future.value(null));
 
         //act
-        var result = await resourcesMethods.getResourceAnonymous('');
+        var result = await resourcesMethods.requestResourceAnonymous('');
 
         //assert
         expect(result, null);
@@ -61,13 +61,13 @@ void main() {
             Future.error(PlatformException(code: '1')));
 
         //assert
-        expect(() async => await resourcesMethods.getResourceAnonymous(''),
+        expect(() async => await resourcesMethods.requestResourceAnonymous(''),
             throwsA(isA<PlatformException>()));
       },
     );
   });
 
-  group('ResourcesMethods getResource', () {
+  group('ResourcesMethods requestResource', () {
     test(
       'return String',
       () async {
@@ -75,7 +75,7 @@ void main() {
         setupMethodChannel(Constants.getResource, Future.value('success'));
 
         //act
-        var result = await resourcesMethods.getResource('');
+        var result = await resourcesMethods.requestResource('');
 
         //assert
         expect(result, 'success');
@@ -89,7 +89,7 @@ void main() {
         setupMethodChannel(Constants.getResource, Future.value(null));
 
         //act
-        var result = await resourcesMethods.getResource('');
+        var result = await resourcesMethods.requestResource('');
 
         //assert
         expect(result, null);
@@ -104,13 +104,13 @@ void main() {
             Constants.getResource, Future.error(PlatformException(code: '1')));
 
         //assert
-        expect(() async => await resourcesMethods.getResource(''),
+        expect(() async => await resourcesMethods.requestResource(''),
             throwsA(isA<PlatformException>()));
       },
     );
   });
 
-  group('ResourcesMethods getUnauthenticatedResource', () {
+  group('ResourcesMethods requestResourceUnauthenticated', () {
     test(
       'return String',
       () async {
@@ -119,7 +119,7 @@ void main() {
             Constants.getUnauthenticatedResource, Future.value('success'));
 
         //act
-        var result = await resourcesMethods.getUnauthenticatedResource('');
+        var result = await resourcesMethods.requestResourceUnauthenticated('');
 
         //assert
         expect(result, 'success');
@@ -134,7 +134,7 @@ void main() {
             Constants.getUnauthenticatedResource, Future.value(null));
 
         //act
-        var result = await resourcesMethods.getUnauthenticatedResource('');
+        var result = await resourcesMethods.requestResourceUnauthenticated('');
 
         //assert
         expect(result, null);
@@ -150,7 +150,7 @@ void main() {
 
         //assert
         expect(
-            () async => await resourcesMethods.getUnauthenticatedResource(''),
+            () async => await resourcesMethods.requestResourceUnauthenticated(''),
             throwsA(isA<PlatformException>()));
       },
     );

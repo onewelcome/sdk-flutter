@@ -65,7 +65,7 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
     if (widget.confirmation) {
       if (pin == widget.previousCode) {
         OneginiPinRegistrationCallback()
-            .acceptAuthenticationRequest(context, pin: pin)
+            .acceptAuthenticationRequest(context, pin)
             .catchError((error) {
           if (error is PlatformException) {
             showFlutterToast(error.message);
@@ -83,24 +83,22 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
           );
       }
     } else {
-      await Onegini.instance.userClient
-          .validatePinWithPolicy(pin)
-          .catchError((error) {
-        if (error is PlatformException) {
-          clearAllDigits();
-          showFlutterToast(error.message);
-        }
-      });
-      Navigator.of(context)
-        ..pop()
-        ..push(
-          MaterialPageRoute(
-              builder: (context) => PinRequestScreen(
-                    confirmation: true,
-                    previousCode: pin,
-                    customAuthenticator: this.widget.customAuthenticator,
-                  )),
-        );
+      try {
+        await Onegini.instance.userClient.validatePinWithPolicy(pin);
+        Navigator.of(context)
+          ..pop()
+          ..push(
+            MaterialPageRoute(
+                builder: (context) => PinRequestScreen(
+                      confirmation: true,
+                      previousCode: pin,
+                      customAuthenticator: this.widget.customAuthenticator,
+                    )),
+          );
+      } on PlatformException catch (error) {
+        clearAllDigits();
+        showFlutterToast(error.message);
+      }
     }
   }
 

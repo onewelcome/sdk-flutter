@@ -3,25 +3,19 @@ import OneginiSDKiOS
 
 //MARK: -
 protocol AppToWebHandlerProtocol: AnyObject {
-    func signInAppToWeb(targetURL: URL?, completion: @escaping (Dictionary<String, Any>?, SdkError?) -> Void)
+    func signInAppToWeb(targetURL: URL, completion: @escaping (Result<OWAppToWebSingleSignOn, FlutterError>) -> Void)
 }
 
 //MARK: - 
 class AppToWebHandler: AppToWebHandlerProtocol {
-    func signInAppToWeb(targetURL: URL?, completion: @escaping (Dictionary<String, Any>?, SdkError?) -> Void) {
-        guard let _targetURL = targetURL else {
-            completion(nil, SdkError(.providedUrlIncorrect))
-            return
-        }
-
-        ONGUserClient.sharedInstance()
-            .appToWebSingleSignOn(withTargetUrl: _targetURL) { (url, token, error) in
-            if let _url = url, let _token = token {
-                completion(["token": _token, "redirectUrl": _url.absoluteString ], nil)
-            } else if let _error = error {
-                // Handle error
-                let sdkError = SdkError(code: OneWelcomeWrapperError.genericError.rawValue, errorDescription: _error.localizedDescription)
-                completion(nil, sdkError)
+    func signInAppToWeb(targetURL: URL, completion: @escaping (Result<OWAppToWebSingleSignOn, FlutterError>) -> Void) {
+        ONGUserClient.sharedInstance().appToWebSingleSignOn(withTargetUrl: targetURL) { (url, token, error) in
+            if let url = url, let token = token {
+                completion(.success(OWAppToWebSingleSignOn(token: token, redirectUrl: url.absoluteString)))
+            } else if let error = error {
+                completion(.failure(SdkError(code: error.code, errorDescription: error.localizedDescription).flutterError()))
+            } else {
+                completion(.failure(SdkError(.genericError).flutterError()))
             }
         }
     }
