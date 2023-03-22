@@ -280,7 +280,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
         registrar.addMethodCallDelegate(instance, channel: channel)
         // Init Pigeon communication
         let messenger: FlutterBinaryMessenger = registrar.messenger()
-        let api = SwiftOneginiPlugin.init()
+        let api = SwiftOneginiPlugin()
         UserClientApiSetup.setUp(binaryMessenger: messenger, api: api)
         ResourceMethodApiSetup.setUp(binaryMessenger: messenger, api: api)
         flutterApi = NativeCallFlutterApi(binaryMessenger: registrar.messenger())

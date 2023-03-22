@@ -25,7 +25,7 @@ class LoginHandler: NSObject {
     
     func handleDidReceiveChallenge(_ challenge: ONGPinChallenge) {
         pinChallenge = challenge
-        guard let error = challenge.error , error.code != ONGAuthenticationError.touchIDAuthenticatorFailure.rawValue else {
+        guard challenge.error?.code != ONGAuthenticationError.touchIDAuthenticatorFailure.rawValue else {
             SwiftOneginiPlugin.flutterApi?.n2fOpenPinScreenAuth {}
             return
         }
