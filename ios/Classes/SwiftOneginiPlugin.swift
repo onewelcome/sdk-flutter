@@ -26,11 +26,11 @@ extension OWUserProfile {
 
 extension OWCustomInfo {
     init(_ info: CustomInfo) {
-        status = Int32(info.status)
+        status = Int64(info.status)
         data = info.data
     }
     init(_ info: ONGCustomInfo) {
-        status = Int32(info.status)
+        status = Int64(info.status)
         data = info.data
     }
 }
@@ -41,7 +41,7 @@ extension OWAuthenticator {
         name = authenticator.name
         isPreferred = authenticator.isPreferred
         isRegistered = authenticator.isRegistered
-        authenticatorType = Int32(authenticator.type.rawValue)
+        authenticatorType = Int64(authenticator.type.rawValue)
     }
 }
 
@@ -56,7 +56,7 @@ extension OWRequestResponse {
     init(_ response: ONGResourceResponse) {
         headers = toOWRequestHeaders(response.allHeaderFields)
         body = String(data: response.data ?? Data(), encoding: .utf8) ?? ""
-        status = Int32(response.statusCode)
+        status = Int64(response.statusCode)
         ok = response.statusCode <= 299 && response.statusCode >= 200
     }
 }
@@ -71,12 +71,12 @@ func toOWRequestHeaders(_ headers: [AnyHashable : Any]) -> [String: String] {
 
 func toOWCustomInfo(_ info: CustomInfo?) -> OWCustomInfo? {
     guard let info = info else { return nil }
-    return OWCustomInfo(status: Int32(info.status), data: info.data)
+    return OWCustomInfo(status: Int64(info.status), data: info.data)
 }
 
 func toOWCustomInfo(_ info: ONGCustomInfo?) -> OWCustomInfo? {
     guard let info = info else { return nil }
-    return OWCustomInfo(status: Int32(info.status), data: info.data)
+    return OWCustomInfo(status: Int64(info.status), data: info.data)
 }
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, ResourceMethodApi {
@@ -176,7 +176,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
         }
     }
 
-    func handleRegisteredUserUrl(url: String, signInType: Int32, completion: @escaping (Result<Void, Error>) -> Void) {
+    func handleRegisteredUserUrl(url: String, signInType: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
         completion(OneginiModuleSwift.sharedInstance.handleRegisteredProcessUrl(url, webSignInType: Int(signInType)).mapError({$0}))
     }
 
