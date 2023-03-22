@@ -6,7 +6,6 @@ protocol BridgeToAuthenticatorsHandlerProtocol: AnyObject {
     func registerAuthenticator(_ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
     func deregisterAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
     func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
-    func getAuthenticatorsListForUserProfile(_ userProfile: ONGUserProfile) -> Array<ONGAuthenticator>
     func isAuthenticatorRegistered(_ authenticatorType: ONGAuthenticatorType, _ userProfile: ONGUserProfile) -> Bool
     var notificationReceiver: AuthenticatorsNotificationReceiverProtocol? { get }
 }
@@ -45,17 +44,7 @@ class AuthenticatorsHandler: NSObject {
             customAuthChallenge.sender.cancel(customAuthChallenge, underlyingError: nil)
         }
     }
-    
-    fileprivate func sortAuthenticatorsList(_ authenticators: Array<ONGAuthenticator>) -> Array<ONGAuthenticator> {
-        return authenticators.sorted {
-            if $0.type.rawValue == $1.type.rawValue {
-                return $0.name < $1.name
-            } else {
-                return $0.type.rawValue < $1.type.rawValue
-            }
-        }
-    }
-    
+
     private func sendConnectorNotification(_ event: MobileAuthNotification, _ requestMessage: String?, _ error: SdkError?) {
         
         notificationReceiver?.sendNotification(event: event, requestMessage: requestMessage, error: error)
@@ -109,11 +98,6 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
         
         ONGUserClient.sharedInstance().preferredAuthenticator = authenticator
         completion(.success)
-    }
-    
-    func getAuthenticatorsListForUserProfile(_ userProfile: ONGUserProfile) -> Array<ONGAuthenticator> {
-        let authenticatros = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile)
-        return sortAuthenticatorsList(Array(authenticatros))
     }
     
     func isAuthenticatorRegistered(_ authenticatorType: ONGAuthenticatorType, _ userProfile: ONGUserProfile) -> Bool {
