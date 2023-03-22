@@ -6,13 +6,8 @@ import com.onegini.mobile.sdk.android.handlers.OneginiAppToWebSingleSignOnHandle
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAppToWebSingleSignOnError
 import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
-import com.onegini.mobile.sdk.flutter.handlers.BrowserRegistrationRequestHandler
-import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
-import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
-import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAppToWebSingleSignOn
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticator
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
@@ -23,13 +18,18 @@ import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWUserProfile
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceMethodApi
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceRequestType
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateDeviceUseCase
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserImplicitlyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserUseCase
+import com.onegini.mobile.sdk.flutter.useCases.CancelBrowserRegistrationUseCase
 import com.onegini.mobile.sdk.flutter.useCases.CancelCustomRegistrationActionUseCase
 import com.onegini.mobile.sdk.flutter.useCases.ChangePinUseCase
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterUserUseCase
+import com.onegini.mobile.sdk.flutter.useCases.FingerprintAuthenticationRequestAcceptUseCase
+import com.onegini.mobile.sdk.flutter.useCases.FingerprintAuthenticationRequestDenyUseCase
+import com.onegini.mobile.sdk.flutter.useCases.FingerprintFallbackToPinUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAccessTokenUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAllAuthenticatorsUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAuthenticatedUserProfileUseCase
@@ -41,6 +41,10 @@ import com.onegini.mobile.sdk.flutter.useCases.GetUserProfilesUseCase
 import com.onegini.mobile.sdk.flutter.useCases.HandleRegisteredUrlUseCase
 import com.onegini.mobile.sdk.flutter.useCases.IsAuthenticatorRegisteredUseCase
 import com.onegini.mobile.sdk.flutter.useCases.LogoutUseCase
+import com.onegini.mobile.sdk.flutter.useCases.PinAuthenticationRequestAcceptUseCase
+import com.onegini.mobile.sdk.flutter.useCases.PinAuthenticationRequestDenyUseCase
+import com.onegini.mobile.sdk.flutter.useCases.PinRegistrationRequestAcceptUseCase
+import com.onegini.mobile.sdk.flutter.useCases.PinRegistrationRequestDenyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.RegisterAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.RegistrationUseCase
 import com.onegini.mobile.sdk.flutter.useCases.ResourceRequestUseCase
@@ -65,6 +69,8 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   lateinit var deregisterUserUseCase: DeregisterUserUseCase
   @Inject
   lateinit var getAccessTokenUseCase: GetAccessTokenUseCase
+  @Inject
+  lateinit var cancelBrowserRegistrationUseCase: CancelBrowserRegistrationUseCase
   @Inject
   lateinit var getAllAuthenticatorsUseCase: GetAllAuthenticatorsUseCase
   @Inject
@@ -99,6 +105,20 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   lateinit var changePinUseCase: ChangePinUseCase
   @Inject
   lateinit var validatePinWithPolicyUseCase: ValidatePinWithPolicyUseCase
+  @Inject
+  lateinit var pinAuthenticationRequestAcceptUseCase: PinAuthenticationRequestAcceptUseCase
+  @Inject
+  lateinit var pinAuthenticationRequestDenyUseCase: PinAuthenticationRequestDenyUseCase
+  @Inject
+  lateinit var pinRegistrationRequestAcceptUseCase: PinRegistrationRequestAcceptUseCase
+  @Inject
+  lateinit var pinRegistrationRequestDenyUseCase: PinRegistrationRequestDenyUseCase
+  @Inject
+  lateinit var fingerprintAuthenticationRequestDenyUseCase: FingerprintAuthenticationRequestDenyUseCase
+  @Inject
+  lateinit var fingerprintAuthenticationRequestAcceptUseCase: FingerprintAuthenticationRequestAcceptUseCase
+  @Inject
+  lateinit var fingerprintFallbackToPinUseCase: FingerprintFallbackToPinUseCase
   @Inject
   lateinit var resourceRequestUseCase: ResourceRequestUseCase
   @Inject
@@ -225,21 +245,15 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   }
 
   override fun fingerprintFallbackToPin(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-72
-    FingerprintAuthenticationRequestHandler.fingerprintCallback?.fallbackToPin()
-    callback(Result.success(Unit))
+    callback(fingerprintFallbackToPinUseCase())
   }
 
   override fun fingerprintDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-72
-    FingerprintAuthenticationRequestHandler.fingerprintCallback?.denyAuthenticationRequest()
-    callback(Result.success(Unit))
+    callback(fingerprintAuthenticationRequestDenyUseCase())
   }
 
   override fun fingerprintAcceptAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-72
-    FingerprintAuthenticationRequestHandler.fingerprintCallback?.acceptAuthenticationRequest()
-    callback(Result.success(Unit))
+    callback(fingerprintAuthenticationRequestAcceptUseCase())
   }
 
   override fun otpDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
@@ -255,33 +269,23 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   }
 
   override fun pinDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-73
-    PinAuthenticationRequestHandler.CALLBACK?.denyAuthenticationRequest()
-    callback(Result.success(Unit))
+    callback(pinAuthenticationRequestDenyUseCase())
   }
 
   override fun pinAcceptAuthenticationRequest(pin: String, callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-73
-    PinAuthenticationRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin.toCharArray())
-    callback(Result.success(Unit))
+    callback(pinAuthenticationRequestAcceptUseCase(pin))
   }
 
   override fun pinDenyRegistrationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-73
-    PinRequestHandler.CALLBACK?.denyAuthenticationRequest()
-    callback(Result.success(Unit))
+    callback(pinRegistrationRequestDenyUseCase())
   }
 
   override fun pinAcceptRegistrationRequest(pin: String, callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-73
-    PinRequestHandler.CALLBACK?.acceptAuthenticationRequest(pin.toCharArray())
-    callback(Result.success(Unit))
+    callback(pinRegistrationRequestAcceptUseCase(pin))
   }
 
   override fun cancelBrowserRegistration(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-74
-    BrowserRegistrationRequestHandler.onRegistrationCanceled()
-    callback(Result.success(Unit))
+    callback(cancelBrowserRegistrationUseCase())
   }
 
   override fun requestResource(type: ResourceRequestType, details: OWRequestDetails, callback: (Result<OWRequestResponse>) -> Unit) {
