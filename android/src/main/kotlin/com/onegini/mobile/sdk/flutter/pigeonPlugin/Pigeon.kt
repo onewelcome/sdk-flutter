@@ -269,6 +269,53 @@ data class OWRequestResponse (
   }
 }
 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class OWAuthenticationAttempt (
+  val failedAttempts: Long,
+  val maxAttempts: Long,
+  val remainingAttempts: Long
+
+) {
+  companion object {
+    @Suppress("UNCHECKED_CAST")
+    fun fromList(list: List<Any?>): OWAuthenticationAttempt {
+      val failedAttempts = list[0].let { if (it is Int) it.toLong() else it as Long }
+      val maxAttempts = list[1].let { if (it is Int) it.toLong() else it as Long }
+      val remainingAttempts = list[2].let { if (it is Int) it.toLong() else it as Long }
+      return OWAuthenticationAttempt(failedAttempts, maxAttempts, remainingAttempts)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf<Any?>(
+      failedAttempts,
+      maxAttempts,
+      remainingAttempts,
+    )
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class OWOneginiError (
+  val code: Long,
+  val message: String
+
+) {
+  companion object {
+    @Suppress("UNCHECKED_CAST")
+    fun fromList(list: List<Any?>): OWOneginiError {
+      val code = list[0].let { if (it is Int) it.toLong() else it as Long }
+      val message = list[1] as String
+      return OWOneginiError(code, message)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf<Any?>(
+      code,
+      message,
+    )
+  }
+}
+
 @Suppress("UNCHECKED_CAST")
 private object UserClientApiCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
@@ -1097,6 +1144,47 @@ interface ResourceMethodApi {
     }
   }
 }
+@Suppress("UNCHECKED_CAST")
+private object NativeCallFlutterApiCodec : StandardMessageCodec() {
+  override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
+    return when (type) {
+      128.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          OWAuthenticationAttempt.fromList(it)
+        }
+      }
+      129.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          OWCustomInfo.fromList(it)
+        }
+      }
+      130.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          OWOneginiError.fromList(it)
+        }
+      }
+      else -> super.readValueOfType(type, buffer)
+    }
+  }
+  override fun writeValue(stream: ByteArrayOutputStream, value: Any?)   {
+    when (value) {
+      is OWAuthenticationAttempt -> {
+        stream.write(128)
+        writeValue(stream, value.toList())
+      }
+      is OWCustomInfo -> {
+        stream.write(129)
+        writeValue(stream, value.toList())
+      }
+      is OWOneginiError -> {
+        stream.write(130)
+        writeValue(stream, value.toList())
+      }
+      else -> super.writeValue(stream, value)
+    }
+  }
+}
+
 /**
  * Native calls to Flutter
  *
@@ -1107,14 +1195,126 @@ class NativeCallFlutterApi(private val binaryMessenger: BinaryMessenger) {
   companion object {
     /** The codec used by NativeCallFlutterApi. */
     val codec: MessageCodec<Any?> by lazy {
-      StandardMessageCodec()
+      NativeCallFlutterApiCodec
     }
   }
-  fun testEventFunction(argumentArg: String, callback: (String) -> Unit) {
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.testEventFunction", codec)
-    channel.send(listOf(argumentArg)) {
-      val result = it as String
-      callback(result)
+  /**Called to handle registration URL */
+  fun n2fHandleRegisteredUrl(urlArg: String, callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fHandleRegisteredUrl", codec)
+    channel.send(listOf(urlArg)) {
+      callback()
+    }
+  }
+  /** Called to open OTP authentication. */
+  fun n2fOpenAuthOtp(messageArg: String, callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenAuthOtp", codec)
+    channel.send(listOf(messageArg)) {
+      callback()
+    }
+  }
+  /** Called to close OTP authentication. */
+  fun n2fCloseAuthOtp(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fCloseAuthOtp", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /** Called to open pin registration screen. */
+  fun n2fOpenPinRequestScreen(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinRequestScreen", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /** Called to open pin authentication screen. */
+  fun n2fOpenPinScreenAuth(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinScreenAuth", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /** Called to open pin authentication screen. */
+  fun n2fOpenPinAuthenticator(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinAuthenticator", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /** Called to attempt next authentication. */
+  fun n2fNextAuthenticationAttempt(authenticationAttemptArg: OWAuthenticationAttempt, callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fNextAuthenticationAttempt", codec)
+    channel.send(listOf(authenticationAttemptArg)) {
+      callback()
+    }
+  }
+  /** Called to close pin registration screen. */
+  fun n2fClosePin(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePin", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /** Called to close pin authentication screen. */
+  fun n2fClosePinAuth(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePinAuth", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /** Called to open fingerprint screen. */
+  fun n2fOpenFingerprintScreen(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenFingerprintScreen", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /** Called to scan fingerprint. */
+  fun n2fShowScanningFingerprint(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fShowScanningFingerprint", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /** Called when fingerprint was received. */
+  fun n2fReceivedFingerprint(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fReceivedFingerprint", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /** Called to close fingerprint screen. */
+  fun n2fCloseFingerprintScreen(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fCloseFingerprintScreen", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /** Called when the InitCustomRegistration event occurs and a response should be given (only for two-step) */
+  fun n2fEventInitCustomRegistration(customInfoArg: OWCustomInfo?, providerIdArg: String, callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fEventInitCustomRegistration", codec)
+    channel.send(listOf(customInfoArg, providerIdArg)) {
+      callback()
+    }
+  }
+  /** Called when the FinishCustomRegistration event occurs and a response should be given */
+  fun n2fEventFinishCustomRegistration(customInfoArg: OWCustomInfo?, providerIdArg: String, callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fEventFinishCustomRegistration", codec)
+    channel.send(listOf(customInfoArg, providerIdArg)) {
+      callback()
+    }
+  }
+  /** Called when error event was received. */
+  fun n2fEventError(errorArg: OWOneginiError, callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fEventError", codec)
+    channel.send(listOf(errorArg)) {
+      callback()
+    }
+  }
+  /** Called whenever error occured. */
+  fun n2fShowError(errorArg: OWOneginiError, callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fShowError", codec)
+    channel.send(listOf(errorArg)) {
+      callback()
     }
   }
 }

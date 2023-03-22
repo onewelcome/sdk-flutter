@@ -1,32 +1,27 @@
 package com.onegini.mobile.sdk.flutter.providers
 
-import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomRegistrationAction
 import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomTwoStepRegistrationAction
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiCustomRegistrationCallback
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
-import com.onegini.mobile.sdk.flutter.constants.Constants
-import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
-import com.onegini.mobile.sdk.flutter.models.CustomRegistrationModel
-import com.onegini.mobile.sdk.flutter.models.OneginiEvent
+import com.onegini.mobile.sdk.flutter.mapToOwCustomInfo
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
+import javax.inject.Inject
 
-class CustomTwoStepRegistrationActionImpl(private val providerId: String) : OneginiCustomTwoStepRegistrationAction, CustomRegistrationAction {
+class CustomTwoStepRegistrationActionImpl(private val providerId: String, private val nativeApi: NativeCallFlutterApi) : OneginiCustomTwoStepRegistrationAction, CustomRegistrationAction {
     var callback: OneginiCustomRegistrationCallback? = null
 
     override fun initRegistration(callback: OneginiCustomRegistrationCallback, info: CustomInfo?) {
         this.callback = callback
-
-        val data = Gson().toJson(CustomRegistrationModel(info?.data.orEmpty(), info?.status, providerId))
-        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_INIT_CUSTOM_REGISTRATION, data)))
+        nativeApi.n2fEventInitCustomRegistration(info?.mapToOwCustomInfo(), providerId) {}
     }
 
-    override fun finishRegistration(callback: OneginiCustomRegistrationCallback, customInfo: CustomInfo?) {
+    override fun finishRegistration(callback: OneginiCustomRegistrationCallback, info: CustomInfo?) {
         this.callback = callback
-
-        val data = Gson().toJson(CustomRegistrationModel(customInfo?.data.orEmpty(), customInfo?.status, providerId))
-        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_FINISH_CUSTOM_REGISTRATION, data)))
+        nativeApi.n2fEventFinishCustomRegistration(info?.mapToOwCustomInfo(), providerId) {}
     }
 
     override fun getCustomRegistrationAction(): OneginiCustomRegistrationAction {

@@ -19,9 +19,6 @@ import OneginiSDKiOS
 
         let eventChannel = FlutterEventChannel(name: exampleCustomEventIdentifier,
                                                   binaryMessenger: controller.binaryMessenger)
-        eventChannel.setStreamHandler(OneginiModuleSwift.sharedInstance)
-
-        OneginiModuleSwift.sharedInstance.eventSinkCustomIdentifier = exampleCustomEventIdentifier
 
         GeneratedPluginRegistrant.register(with: self)
         return super.application(application, didFinishLaunchingWithOptions: launchOptions)
