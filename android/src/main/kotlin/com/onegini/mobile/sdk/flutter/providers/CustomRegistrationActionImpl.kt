@@ -5,6 +5,7 @@ import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiCustomReg
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.mapToOwCustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
 
@@ -13,10 +14,7 @@ class CustomRegistrationActionImpl(private val providerId: String, private val n
 
   override fun finishRegistration(callback: OneginiCustomRegistrationCallback, info: CustomInfo?) {
     this.callback = callback
-    val customInfoResponse = info?.let {
-      OWCustomInfo(info.status.toLong(), info.data)
-    }
-    nativeApi.n2fEventFinishCustomRegistration(customInfoResponse, providerId) {}
+    nativeApi.n2fEventFinishCustomRegistration(info?.mapToOwCustomInfo(), providerId) {}
   }
 
   override fun getCustomRegistrationAction(): OneginiCustomRegistrationAction {

@@ -6,28 +6,22 @@ import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiCustomReg
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.mapToOwCustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
 import javax.inject.Inject
 
-class CustomTwoStepRegistrationActionImpl constructor(private val providerId: String, private val nativeApi: NativeCallFlutterApi) : OneginiCustomTwoStepRegistrationAction, CustomRegistrationAction {
+class CustomTwoStepRegistrationActionImpl(private val providerId: String, private val nativeApi: NativeCallFlutterApi) : OneginiCustomTwoStepRegistrationAction, CustomRegistrationAction {
     var callback: OneginiCustomRegistrationCallback? = null
 
     override fun initRegistration(callback: OneginiCustomRegistrationCallback, info: CustomInfo?) {
         this.callback = callback
-        val customInfoResponse = info?.let {
-            OWCustomInfo(info.status.toLong(), info.data)
-        }
-        nativeApi.n2fEventInitCustomRegistration(customInfoResponse, providerId) {}
+        nativeApi.n2fEventInitCustomRegistration(info?.mapToOwCustomInfo(), providerId) {}
     }
 
     override fun finishRegistration(callback: OneginiCustomRegistrationCallback, info: CustomInfo?) {
         this.callback = callback
-
-        val customInfoResponse = info?.let {
-            OWCustomInfo(info.status.toLong(), info.data)
-        }
-        nativeApi.n2fEventFinishCustomRegistration(customInfoResponse, providerId) {}
+        nativeApi.n2fEventFinishCustomRegistration(info?.mapToOwCustomInfo(), providerId) {}
     }
 
     override fun getCustomRegistrationAction(): OneginiCustomRegistrationAction {
