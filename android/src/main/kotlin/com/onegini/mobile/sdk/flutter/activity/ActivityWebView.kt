@@ -7,15 +7,15 @@ import android.os.Bundle
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import com.onegini.mobile.sdk.flutter.OneginiMethodsWrapper
 import com.onegini.mobile.sdk.flutter.R
 import com.onegini.mobile.sdk.flutter.handlers.BrowserRegistrationRequestHandler
+import com.onegini.mobile.sdk.flutter.useCases.CancelBrowserRegistrationUseCase
 import javax.inject.Inject
 
 
 class ActivityWebView: Activity() {
     @Inject
-    lateinit var oneginiMethodsWrapper: OneginiMethodsWrapper
+    lateinit var cancelBrowserRegistrationUseCase: CancelBrowserRegistrationUseCase
 
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +38,7 @@ class ActivityWebView: Activity() {
         }
         val url = intent.getStringExtra("url")
         if (url == null || url.isEmpty()) {
-            oneginiMethodsWrapper.cancelBrowserRegistration()
+            cancelBrowserRegistrationUseCase()
             finish()
         } else {
             myWebView.loadUrl(url)
