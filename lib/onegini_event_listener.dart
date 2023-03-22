@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:onegini/model/onegini_error.dart' as fpError;
+import 'package:onegini/model/onegini_error.dart' as deprecatedError;
 import 'package:onegini/pigeon.dart';
 import 'constants/constants.dart';
 import 'model/authentication_attempt.dart';
@@ -68,7 +68,8 @@ abstract class OneginiEventListener implements NativeCallFlutterApi {
   void eventError(BuildContext? buildContext, PlatformException error);
 
   /// Called whenever error occured.
-  void showError(BuildContext? buildContext, fpError.OneginiError? error);
+  void showError(
+      BuildContext? buildContext, deprecatedError.OneginiError? error);
 
   /// Called when custom event was received.
   void eventOther(BuildContext? buildContext, Event event);
@@ -165,7 +166,6 @@ abstract class OneginiEventListener implements NativeCallFlutterApi {
 
   @override
   void n2fShowError(OWOneginiError error) {
-    // FIXME: use correct error code here.
     showError(_context, OneginiError(code: error.code, message: error.message));
   }
 }
