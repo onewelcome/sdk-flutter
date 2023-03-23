@@ -48,12 +48,6 @@ class OneginiListener extends OneginiEventListener {
   }
 
   @override
-  void showError(BuildContext buildContext, OneginiError error) {
-    showFlutterToast(
-        "${error.message} Code: ${error.code} " ?? "Something went wrong");
-  }
-
-  @override
   void openPinScreenAuth(BuildContext buildContext) {
     Navigator.push(
       buildContext,
@@ -181,5 +175,10 @@ class OneginiListener extends OneginiEventListener {
   void handleRegisteredUrl(BuildContext buildContext, String url) async {
     await Onegini.instance.userClient.handleRegisteredUserUrl(buildContext, url,
         signInType: WebSignInType.insideApp);
+  }
+
+  @override
+  void pinNotAllowed(OWOneginiError error) {
+    showFlutterToast("${error.message} Code: ${error.code}");
   }
 }
