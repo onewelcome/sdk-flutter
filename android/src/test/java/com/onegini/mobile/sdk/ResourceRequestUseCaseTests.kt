@@ -122,7 +122,6 @@ class ResourceRequestUseCaseTests {
 
   private fun setupErrorFullResponseMock() {
     whenever(responseMock.code).thenReturn(400)
-    whenever(responseMock.isSuccessful).thenReturn(false)
     val headers = Headers.Builder().add("headerKey", "headerValue").build()
     whenever(responseMock.headers).thenReturn(headers)
   }
