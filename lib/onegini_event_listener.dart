@@ -67,12 +67,10 @@ abstract class OneginiEventListener implements NativeCallFlutterApi {
   /// Called when error event was received.
   void eventError(BuildContext? buildContext, PlatformException error);
 
-  /// Called whenever error occured.
-  void showError(
-      BuildContext? buildContext, deprecatedError.OneginiError? error);
-
   /// Called when custom event was received.
   void eventOther(BuildContext? buildContext, Event event);
+
+  void eventPinNotAllowed(OWOneginiError error);
 
   @override
   void n2fCloseAuthOtp() {
@@ -159,13 +157,7 @@ abstract class OneginiEventListener implements NativeCallFlutterApi {
   }
 
   @override
-  void n2fEventError(OWOneginiError error) {
-    eventError(_context,
-        PlatformException(code: error.code.toString(), message: error.message));
-  }
-
-  @override
-  void n2fShowError(OWOneginiError error) {
-    showError(_context, OneginiError(code: error.code, message: error.message));
+  void n2fEventPinNotAllowed(OWOneginiError error) {
+    eventPinNotAllowed(error);
   }
 }
