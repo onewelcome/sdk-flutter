@@ -8,6 +8,9 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthWithOtpErr
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import io.flutter.plugin.common.MethodChannel
 
+// TODO delete this class once the iOS rework is finished and we transferred to pigeon api
+// to insure consistent behaviour (new usecases dont auto enroll)
+// https://onewelcome.atlassian.net/jira/software/c/projects/MS/boards/116?modal=detail&selectedIssue=FP-69
 object MobileAuthenticationObject {
 
     fun mobileAuthWithOtp(data: String?, result: MethodChannel.Result, oneginiClient: OneginiClient) {
