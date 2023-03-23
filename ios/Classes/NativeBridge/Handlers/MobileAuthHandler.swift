@@ -1,7 +1,6 @@
 import Foundation
 import OneginiSDKiOS
 
-//MARK: -
 protocol MobileAuthConnectorToHandlerProtocol: AnyObject {
     func enrollForMobileAuth(_ completion: @escaping (Bool?, SdkError?) -> Void)
     func isUserEnrolledForMobileAuth() -> Bool
@@ -10,34 +9,21 @@ protocol MobileAuthConnectorToHandlerProtocol: AnyObject {
     func handleQrOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Any?, SdkError?) -> Void)
 }
 
-protocol MobileAuthNotificationReceiverProtocol: class {
-    func sendNotification(event: MobileAuthNotification, requestMessage: String?, error: SdkError?)
-}
-
 enum MobileAuthAuthenticatorType: String {
     case fingerprint = "biometric"
     case pin = "PIN"
     case confirmation = ""
 }
 
-//MARK: -
 class MobileAuthHandler: NSObject {
-    var userProfile: ONGUserProfile?
-    var message: String?
     var authenticatorType: MobileAuthAuthenticatorType?
     var confirmation: ((Bool) -> Void)?
     var mobileAuthCompletion: ((Any?, SdkError?) -> Void)?
-    
-    unowned var notificationReceiver: MobileAuthNotificationReceiverProtocol?
-    
+        
     fileprivate func handleConfirmationMobileAuth(_ cancelled: Bool) {
         guard let confirmation = confirmation else { fatalError() }
         
         confirmation(cancelled)
-    }
-    
-    private func sendConnectorNotification(_ event: MobileAuthNotification, _ requestMessage: String?, _ error: SdkError?) {
-        notificationReceiver?.sendNotification(event: event, requestMessage: requestMessage, error: error)
     }
 }
 
@@ -111,12 +97,11 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
 //MARK: - ONGMobileAuthRequestDelegate
 extension MobileAuthHandler: ONGMobileAuthRequestDelegate {
     func userClient(_: ONGUserClient, didReceiveConfirmationChallenge confirmation: @escaping (Bool) -> Void, for request: ONGMobileAuthRequest) {
-        message = request.message
-        userProfile = request.userProfile
         authenticatorType = .confirmation
         self.confirmation = confirmation
         mobileAuthCompletion?(request.message, nil)
-        sendConnectorNotification(MobileAuthNotification.startAuthentication, request.message, nil)
+        //FIXME: This message can clearly be nullable, we should support this.
+        SwiftOneginiPlugin.flutterApi?.n2fOpenAuthOtp(message: request.message ?? "") {}
     }
 
     func userClient(_: ONGUserClient, didReceive challenge: ONGPinChallenge, for request: ONGMobileAuthRequest) {
@@ -132,6 +117,7 @@ extension MobileAuthHandler: ONGMobileAuthRequestDelegate {
     }
 
     func userClient(_ userClient: ONGUserClient, didFailToHandle request: ONGMobileAuthRequest, authenticator: ONGAuthenticator?, error: Error) {
+        SwiftOneginiPlugin.flutterApi?.n2fCloseAuthOtp {}
         if error.code == ONGGenericError.actionCancelled.rawValue {
             mobileAuthCompletion?(false, SdkError(.authenticationCancelled))
         } else {
@@ -141,6 +127,7 @@ extension MobileAuthHandler: ONGMobileAuthRequestDelegate {
     }
 
     func userClient(_ userClient: ONGUserClient, didHandle request: ONGMobileAuthRequest, authenticator: ONGAuthenticator?, info customAuthenticatorInfo: ONGCustomInfo?) {
-        mobileAuthCompletion?(message, nil)
+        SwiftOneginiPlugin.flutterApi?.n2fCloseAuthOtp {}
+        mobileAuthCompletion?(request.message, nil)
     }
 }

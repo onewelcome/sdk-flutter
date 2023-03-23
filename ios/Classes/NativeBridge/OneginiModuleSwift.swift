@@ -2,34 +2,15 @@ import Foundation
 import OneginiSDKiOS
 import Flutter
 
-protocol ConnectorToFlutterBridgeProtocol: NSObject {
-  func sendBridgeEvent(eventName: OneginiBridgeEvents, data: Any!) -> Void
-}
-
-enum OneginiBridgeEvents : String {
-    case pinNotification = "ONEGINI_PIN_NOTIFICATION"
-    case customRegistrationNotification = "ONEGINI_CUSTOM_REGISTRATION_NOTIFICATION"
-    case authWithOtpNotification = "ONEGINI_MOBILE_AUTH_OTP_NOTIFICATION"
-    case otpOpen = "OPEN_OTP"
-    case errorNotification = "ONEGINI_ERROR_NOTIFICATION"
-}
-
-//MARK: -
-public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, FlutterStreamHandler {
+public class OneginiModuleSwift: NSObject {
  
     var bridgeConnector: BridgeConnector
-    private var eventSink: FlutterEventSink?
-    public var eventSinkNativePart: FlutterEventSink?
-    public var eventSinkCustomIdentifier: String?
-    public var customRegIdentifiers = [String]()
-    //public var schemeDeepLink: String!
-    
+    public var customRegIdentifiers = [String]()    
     static public let sharedInstance = OneginiModuleSwift()
     
     override init() {
         self.bridgeConnector = BridgeConnector()
         super.init()
-        self.bridgeConnector.bridge = self
     }
     
     func configureCustomRegIdentifiers(_ list: [String]) {
@@ -64,33 +45,6 @@ public class OneginiModuleSwift: NSObject, ConnectorToFlutterBridgeProtocol, Flu
     func getUserProfiles() -> Result<[OWUserProfile], FlutterError> {
         let profiles = ONGUserClient.sharedInstance().userProfiles()
         return .success(profiles.compactMap { OWUserProfile($0) } )
-    }
-    
-    public func onListen(withArguments arguments: Any?, eventSink events: @escaping FlutterEventSink) -> FlutterError? {
-        if let _value = eventSinkCustomIdentifier, let _arg = arguments as! String?, _value == _arg {
-            self.eventSinkNativePart = events
-        } else if let _arg = arguments as! String?, _arg == "onegini_events" {
-            eventSink = events
-        }
-        return nil
-    }
-
-    public func onCancel(withArguments arguments: Any?) -> FlutterError? {
-        return nil
-    }
-    
-    func sendBridgeEvent(eventName: OneginiBridgeEvents, data: Any!) -> Void {
-        Logger.log("event.name: \(eventName)")
-       if eventName == OneginiBridgeEvents.otpOpen {
-           eventSinkNativePart?(data)
-           return;
-       }
-       
-       guard let _eventSink = eventSink else {
-         return
-       }
-       
-       _eventSink(data)
     }
 }
 

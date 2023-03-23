@@ -16,6 +16,7 @@ import io.flutter.plugin.common.MethodChannel
 import java.util.concurrent.TimeUnit
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,6 +28,7 @@ class OneginiSDK @Inject constructor(
     private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler,
     private val createPinRequestHandler: PinRequestHandler,
     private val mobileAuthWithOtpRequestHandler: MobileAuthOtpRequestHandler,
+    private val nativeApi: NativeCallFlutterApi,
 ){
 
     val oneginiClient: OneginiClient
@@ -69,8 +71,8 @@ class OneginiSDK @Inject constructor(
     private fun initProviders(clientBuilder: OneginiClientBuilder, customIdentityProviderConfigs: List<CustomIdentityProviderConfig>) {
         customIdentityProviderConfigs.forEach {
             val action = when (it.isTwoStep) {
-                true -> CustomTwoStepRegistrationActionImpl(it.providerId)
-                false -> CustomRegistrationActionImpl(it.providerId)
+                true -> CustomTwoStepRegistrationActionImpl(it.providerId, nativeApi)
+                false -> CustomRegistrationActionImpl(it.providerId, nativeApi)
             }
 
             customRegistrationActions.add(action)

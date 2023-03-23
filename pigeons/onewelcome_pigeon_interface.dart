@@ -71,12 +71,7 @@ enum HttpRequestMethod {
   delete,
 }
 
-enum ResourceRequestType {
-  authenticated,
-  implicit,
-  anonymous,
-  unauthenticated
-}
+enum ResourceRequestType { authenticated, implicit, anonymous, unauthenticated }
 
 class OWRequestDetails {
   String path;
@@ -93,7 +88,27 @@ class OWRequestResponse {
   bool ok;
   int status;
 
-  OWRequestResponse({required this.headers, required this.body, required this.ok, required this.status});
+  OWRequestResponse(
+      {required this.headers,
+      required this.body,
+      required this.ok,
+      required this.status});
+}
+
+class OWAuthenticationAttempt {
+  int failedAttempts;
+  int maxAttempts;
+  int remainingAttempts;
+  OWAuthenticationAttempt(
+      {required this.failedAttempts,
+      required this.maxAttempts,
+      required this.remainingAttempts});
+}
+
+class OWOneginiError {
+  int code;
+  String message;
+  OWOneginiError({required this.code, required this.message});
 }
 
 /// Flutter calls native
@@ -216,12 +231,64 @@ abstract class UserClientApi {
 @HostApi()
 abstract class ResourceMethodApi {
   @async
-  OWRequestResponse requestResource(ResourceRequestType type, OWRequestDetails details);
+  OWRequestResponse requestResource(
+      ResourceRequestType type, OWRequestDetails details);
 }
 
 /// Native calls to Flutter
 @FlutterApi()
 abstract class NativeCallFlutterApi {
-  @async
-  String testEventFunction(String argument);
+  ///Called to handle registration URL
+  void n2fHandleRegisteredUrl(String url);
+
+  /// Called to open OTP authentication.
+  void n2fOpenAuthOtp(String message);
+
+  /// Called to close OTP authentication.
+  void n2fCloseAuthOtp();
+
+  /// Called to open pin registration screen.
+  void n2fOpenPinRequestScreen();
+
+  /// Called to open pin authentication screen.
+  void n2fOpenPinScreenAuth();
+
+  /// Called to open pin authentication screen.
+  void n2fOpenPinAuthenticator();
+
+  /// Called to attempt next authentication.
+  void n2fNextAuthenticationAttempt(
+      OWAuthenticationAttempt authenticationAttempt);
+
+  /// Called to close pin registration screen.
+  void n2fClosePin();
+
+  /// Called to close pin authentication screen.
+  void n2fClosePinAuth();
+
+  /// Called to open fingerprint screen.
+  void n2fOpenFingerprintScreen();
+
+  /// Called to scan fingerprint.
+  void n2fShowScanningFingerprint();
+
+  /// Called when fingerprint was received.
+  void n2fReceivedFingerprint();
+
+  /// Called to close fingerprint screen.
+  void n2fCloseFingerprintScreen();
+
+  /// Called when the InitCustomRegistration event occurs and a response should be given (only for two-step)
+  void n2fEventInitCustomRegistration(
+      OWCustomInfo? customInfo, String providerId);
+
+  /// Called when the FinishCustomRegistration event occurs and a response should be given
+  void n2fEventFinishCustomRegistration(
+      OWCustomInfo? customInfo, String providerId);
+
+  /// Called when error event was received.
+  void n2fEventError(OWOneginiError error);
+
+  /// Called whenever error occured.
+  void n2fShowError(OWOneginiError error);
 }
