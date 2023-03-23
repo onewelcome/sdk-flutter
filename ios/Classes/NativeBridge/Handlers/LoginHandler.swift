@@ -30,9 +30,9 @@ class LoginHandler: NSObject {
             return
         }
         let authAttempt = OWAuthenticationAttempt(
-            failedAttempts: Int32(challenge.previousFailureCount),
-            maxAttempts: Int32(challenge.maxFailureCount),
-            remainingAttempts: Int32(challenge.remainingFailureCount))
+            failedAttempts: Int64(challenge.previousFailureCount),
+            maxAttempts: Int64(challenge.maxFailureCount),
+            remainingAttempts: Int64(challenge.remainingFailureCount))
         SwiftOneginiPlugin.flutterApi?.n2fNextAuthenticationAttempt(authenticationAttempt: authAttempt) {}
     }
     
