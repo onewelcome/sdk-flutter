@@ -263,6 +263,63 @@ class OWRequestResponse {
   }
 }
 
+class OWAuthenticationAttempt {
+  OWAuthenticationAttempt({
+    required this.failedAttempts,
+    required this.maxAttempts,
+    required this.remainingAttempts,
+  });
+
+  int failedAttempts;
+
+  int maxAttempts;
+
+  int remainingAttempts;
+
+  Object encode() {
+    return <Object?>[
+      failedAttempts,
+      maxAttempts,
+      remainingAttempts,
+    ];
+  }
+
+  static OWAuthenticationAttempt decode(Object result) {
+    result as List<Object?>;
+    return OWAuthenticationAttempt(
+      failedAttempts: result[0]! as int,
+      maxAttempts: result[1]! as int,
+      remainingAttempts: result[2]! as int,
+    );
+  }
+}
+
+class OWOneginiError {
+  OWOneginiError({
+    required this.code,
+    required this.message,
+  });
+
+  int code;
+
+  String message;
+
+  Object encode() {
+    return <Object?>[
+      code,
+      message,
+    ];
+  }
+
+  static OWOneginiError decode(Object result) {
+    result as List<Object?>;
+    return OWOneginiError(
+      code: result[0]! as int,
+      message: result[1]! as String,
+    );
+  }
+}
+
 class _UserClientApiCodec extends StandardMessageCodec {
   const _UserClientApiCodec();
   @override
@@ -1198,29 +1255,367 @@ class ResourceMethodApi {
   }
 }
 
+class _NativeCallFlutterApiCodec extends StandardMessageCodec {
+  const _NativeCallFlutterApiCodec();
+  @override
+  void writeValue(WriteBuffer buffer, Object? value) {
+    if (value is OWAuthenticationAttempt) {
+      buffer.putUint8(128);
+      writeValue(buffer, value.encode());
+    } else if (value is OWCustomInfo) {
+      buffer.putUint8(129);
+      writeValue(buffer, value.encode());
+    } else if (value is OWOneginiError) {
+      buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else {
+      super.writeValue(buffer, value);
+    }
+  }
+
+  @override
+  Object? readValueOfType(int type, ReadBuffer buffer) {
+    switch (type) {
+      case 128: 
+        return OWAuthenticationAttempt.decode(readValue(buffer)!);
+      case 129: 
+        return OWCustomInfo.decode(readValue(buffer)!);
+      case 130: 
+        return OWOneginiError.decode(readValue(buffer)!);
+      default:
+        return super.readValueOfType(type, buffer);
+    }
+  }
+}
+
 /// Native calls to Flutter
 abstract class NativeCallFlutterApi {
-  static const MessageCodec<Object?> codec = StandardMessageCodec();
+  static const MessageCodec<Object?> codec = _NativeCallFlutterApiCodec();
 
-  Future<String> testEventFunction(String argument);
+  ///Called to handle registration URL
+  void n2fHandleRegisteredUrl(String url);
+
+  /// Called to open OTP authentication.
+  void n2fOpenAuthOtp(String message);
+
+  /// Called to close OTP authentication.
+  void n2fCloseAuthOtp();
+
+  /// Called to open pin registration screen.
+  void n2fOpenPinRequestScreen();
+
+  /// Called to open pin authentication screen.
+  void n2fOpenPinScreenAuth();
+
+  /// Called to open pin authentication screen.
+  void n2fOpenPinAuthenticator();
+
+  /// Called to attempt next authentication.
+  void n2fNextAuthenticationAttempt(OWAuthenticationAttempt authenticationAttempt);
+
+  /// Called to close pin registration screen.
+  void n2fClosePin();
+
+  /// Called to close pin authentication screen.
+  void n2fClosePinAuth();
+
+  /// Called to open fingerprint screen.
+  void n2fOpenFingerprintScreen();
+
+  /// Called to scan fingerprint.
+  void n2fShowScanningFingerprint();
+
+  /// Called when fingerprint was received.
+  void n2fReceivedFingerprint();
+
+  /// Called to close fingerprint screen.
+  void n2fCloseFingerprintScreen();
+
+  /// Called when the InitCustomRegistration event occurs and a response should be given (only for two-step)
+  void n2fEventInitCustomRegistration(OWCustomInfo? customInfo, String providerId);
+
+  /// Called when the FinishCustomRegistration event occurs and a response should be given
+  void n2fEventFinishCustomRegistration(OWCustomInfo? customInfo, String providerId);
+
+  /// Called when error event was received.
+  void n2fEventError(OWOneginiError error);
+
+  /// Called whenever error occured.
+  void n2fShowError(OWOneginiError error);
 
   static void setup(NativeCallFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.NativeCallFlutterApi.testEventFunction', codec,
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fHandleRegisteredUrl', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.NativeCallFlutterApi.testEventFunction was null.');
+          'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fHandleRegisteredUrl was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final String? arg_argument = (args[0] as String?);
-          assert(arg_argument != null,
-              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.testEventFunction was null, expected non-null String.');
-          final String output = await api.testEventFunction(arg_argument!);
-          return output;
+          final String? arg_url = (args[0] as String?);
+          assert(arg_url != null,
+              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fHandleRegisteredUrl was null, expected non-null String.');
+          api.n2fHandleRegisteredUrl(arg_url!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenAuthOtp', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenAuthOtp was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final String? arg_message = (args[0] as String?);
+          assert(arg_message != null,
+              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenAuthOtp was null, expected non-null String.');
+          api.n2fOpenAuthOtp(arg_message!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fCloseAuthOtp', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          api.n2fCloseAuthOtp();
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinRequestScreen', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          api.n2fOpenPinRequestScreen();
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinScreenAuth', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          api.n2fOpenPinScreenAuth();
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinAuthenticator', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          api.n2fOpenPinAuthenticator();
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fNextAuthenticationAttempt', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fNextAuthenticationAttempt was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final OWAuthenticationAttempt? arg_authenticationAttempt = (args[0] as OWAuthenticationAttempt?);
+          assert(arg_authenticationAttempt != null,
+              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fNextAuthenticationAttempt was null, expected non-null OWAuthenticationAttempt.');
+          api.n2fNextAuthenticationAttempt(arg_authenticationAttempt!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePin', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          api.n2fClosePin();
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePinAuth', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          api.n2fClosePinAuth();
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenFingerprintScreen', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          api.n2fOpenFingerprintScreen();
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fShowScanningFingerprint', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          api.n2fShowScanningFingerprint();
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fReceivedFingerprint', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          api.n2fReceivedFingerprint();
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fCloseFingerprintScreen', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          api.n2fCloseFingerprintScreen();
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fEventInitCustomRegistration', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fEventInitCustomRegistration was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final OWCustomInfo? arg_customInfo = (args[0] as OWCustomInfo?);
+          final String? arg_providerId = (args[1] as String?);
+          assert(arg_providerId != null,
+              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fEventInitCustomRegistration was null, expected non-null String.');
+          api.n2fEventInitCustomRegistration(arg_customInfo, arg_providerId!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fEventFinishCustomRegistration', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fEventFinishCustomRegistration was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final OWCustomInfo? arg_customInfo = (args[0] as OWCustomInfo?);
+          final String? arg_providerId = (args[1] as String?);
+          assert(arg_providerId != null,
+              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fEventFinishCustomRegistration was null, expected non-null String.');
+          api.n2fEventFinishCustomRegistration(arg_customInfo, arg_providerId!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fEventError', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fEventError was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final OWOneginiError? arg_error = (args[0] as OWOneginiError?);
+          assert(arg_error != null,
+              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fEventError was null, expected non-null OWOneginiError.');
+          api.n2fEventError(arg_error!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fShowError', codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+          'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fShowError was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final OWOneginiError? arg_error = (args[0] as OWOneginiError?);
+          assert(arg_error != null,
+              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fShowError was null, expected non-null OWOneginiError.');
+          api.n2fShowError(arg_error!);
+          return;
         });
       }
     }

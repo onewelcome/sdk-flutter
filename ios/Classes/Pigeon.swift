@@ -250,6 +250,54 @@ struct OWRequestResponse {
   }
 }
 
+/// Generated class from Pigeon that represents data sent in messages.
+struct OWAuthenticationAttempt {
+  var failedAttempts: Int32
+  var maxAttempts: Int32
+  var remainingAttempts: Int32
+
+  static func fromList(_ list: [Any?]) -> OWAuthenticationAttempt? {
+    let failedAttempts = list[0] as! Int32
+    let maxAttempts = list[1] as! Int32
+    let remainingAttempts = list[2] as! Int32
+
+    return OWAuthenticationAttempt(
+      failedAttempts: failedAttempts,
+      maxAttempts: maxAttempts,
+      remainingAttempts: remainingAttempts
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      failedAttempts,
+      maxAttempts,
+      remainingAttempts,
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
+struct OWOneginiError {
+  var code: Int32
+  var message: String
+
+  static func fromList(_ list: [Any?]) -> OWOneginiError? {
+    let code = list[0] as! Int32
+    let message = list[1] as! String
+
+    return OWOneginiError(
+      code: code,
+      message: message
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      code,
+      message,
+    ]
+  }
+}
+
 private class UserClientApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
@@ -997,6 +1045,52 @@ class ResourceMethodApiSetup {
     }
   }
 }
+private class NativeCallFlutterApiCodecReader: FlutterStandardReader {
+  override func readValue(ofType type: UInt8) -> Any? {
+    switch type {
+      case 128:
+        return OWAuthenticationAttempt.fromList(self.readValue() as! [Any])
+      case 129:
+        return OWCustomInfo.fromList(self.readValue() as! [Any])
+      case 130:
+        return OWOneginiError.fromList(self.readValue() as! [Any])
+      default:
+        return super.readValue(ofType: type)
+    }
+  }
+}
+
+private class NativeCallFlutterApiCodecWriter: FlutterStandardWriter {
+  override func writeValue(_ value: Any) {
+    if let value = value as? OWAuthenticationAttempt {
+      super.writeByte(128)
+      super.writeValue(value.toList())
+    } else if let value = value as? OWCustomInfo {
+      super.writeByte(129)
+      super.writeValue(value.toList())
+    } else if let value = value as? OWOneginiError {
+      super.writeByte(130)
+      super.writeValue(value.toList())
+    } else {
+      super.writeValue(value)
+    }
+  }
+}
+
+private class NativeCallFlutterApiCodecReaderWriter: FlutterStandardReaderWriter {
+  override func reader(with data: Data) -> FlutterStandardReader {
+    return NativeCallFlutterApiCodecReader(data: data)
+  }
+
+  override func writer(with data: NSMutableData) -> FlutterStandardWriter {
+    return NativeCallFlutterApiCodecWriter(data: data)
+  }
+}
+
+class NativeCallFlutterApiCodec: FlutterStandardMessageCodec {
+  static let shared = NativeCallFlutterApiCodec(readerWriter: NativeCallFlutterApiCodecReaderWriter())
+}
+
 /// Native calls to Flutter
 ///
 /// Generated class from Pigeon that represents Flutter messages that can be called from Swift.
@@ -1005,11 +1099,126 @@ class NativeCallFlutterApi {
   init(binaryMessenger: FlutterBinaryMessenger){
     self.binaryMessenger = binaryMessenger
   }
-  func testEventFunction(argument argumentArg: String, completion: @escaping (String) -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.testEventFunction", binaryMessenger: binaryMessenger)
-    channel.sendMessage([argumentArg] as [Any?]) { response in
-      let result = response as! String
-      completion(result)
+  var codec: FlutterStandardMessageCodec {
+    return NativeCallFlutterApiCodec.shared
+  }
+  ///Called to handle registration URL
+  func n2fHandleRegisteredUrl(url urlArg: String, completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fHandleRegisteredUrl", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([urlArg] as [Any?]) { _ in
+      completion()
+    }
+  }
+  /// Called to open OTP authentication.
+  func n2fOpenAuthOtp(message messageArg: String, completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenAuthOtp", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([messageArg] as [Any?]) { _ in
+      completion()
+    }
+  }
+  /// Called to close OTP authentication.
+  func n2fCloseAuthOtp(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fCloseAuthOtp", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Called to open pin registration screen.
+  func n2fOpenPinRequestScreen(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinRequestScreen", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Called to open pin authentication screen.
+  func n2fOpenPinScreenAuth(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinScreenAuth", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Called to open pin authentication screen.
+  func n2fOpenPinAuthenticator(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinAuthenticator", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Called to attempt next authentication.
+  func n2fNextAuthenticationAttempt(authenticationAttempt authenticationAttemptArg: OWAuthenticationAttempt, completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fNextAuthenticationAttempt", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([authenticationAttemptArg] as [Any?]) { _ in
+      completion()
+    }
+  }
+  /// Called to close pin registration screen.
+  func n2fClosePin(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePin", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Called to close pin authentication screen.
+  func n2fClosePinAuth(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePinAuth", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Called to open fingerprint screen.
+  func n2fOpenFingerprintScreen(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenFingerprintScreen", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Called to scan fingerprint.
+  func n2fShowScanningFingerprint(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fShowScanningFingerprint", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Called when fingerprint was received.
+  func n2fReceivedFingerprint(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fReceivedFingerprint", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Called to close fingerprint screen.
+  func n2fCloseFingerprintScreen(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fCloseFingerprintScreen", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Called when the InitCustomRegistration event occurs and a response should be given (only for two-step)
+  func n2fEventInitCustomRegistration(customInfo customInfoArg: OWCustomInfo?, providerId providerIdArg: String, completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fEventInitCustomRegistration", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([customInfoArg, providerIdArg] as [Any?]) { _ in
+      completion()
+    }
+  }
+  /// Called when the FinishCustomRegistration event occurs and a response should be given
+  func n2fEventFinishCustomRegistration(customInfo customInfoArg: OWCustomInfo?, providerId providerIdArg: String, completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fEventFinishCustomRegistration", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([customInfoArg, providerIdArg] as [Any?]) { _ in
+      completion()
+    }
+  }
+  /// Called when error event was received.
+  func n2fEventError(error errorArg: OWOneginiError, completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fEventError", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([errorArg] as [Any?]) { _ in
+      completion()
+    }
+  }
+  /// Called whenever error occured.
+  func n2fShowError(error errorArg: OWOneginiError, completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fShowError", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([errorArg] as [Any?]) { _ in
+      completion()
     }
   }
 }

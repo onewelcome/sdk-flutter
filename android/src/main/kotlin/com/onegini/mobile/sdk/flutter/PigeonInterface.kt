@@ -5,12 +5,12 @@ import android.util.Patterns
 import com.onegini.mobile.sdk.android.handlers.OneginiAppToWebSingleSignOnHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAppToWebSingleSignOnError
 import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
-import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
+import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAppToWebSingleSignOn
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticator
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWIdentityProvider
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestDetails
@@ -18,6 +18,7 @@ import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWUserProfile
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceMethodApi
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceRequestType
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateDeviceUseCase
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserImplicitlyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserUseCase
@@ -40,16 +41,16 @@ import com.onegini.mobile.sdk.flutter.useCases.GetUserProfilesUseCase
 import com.onegini.mobile.sdk.flutter.useCases.HandleRegisteredUrlUseCase
 import com.onegini.mobile.sdk.flutter.useCases.IsAuthenticatorRegisteredUseCase
 import com.onegini.mobile.sdk.flutter.useCases.LogoutUseCase
+import com.onegini.mobile.sdk.flutter.useCases.PinAuthenticationRequestAcceptUseCase
+import com.onegini.mobile.sdk.flutter.useCases.PinAuthenticationRequestDenyUseCase
+import com.onegini.mobile.sdk.flutter.useCases.PinRegistrationRequestAcceptUseCase
+import com.onegini.mobile.sdk.flutter.useCases.PinRegistrationRequestDenyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.RegisterAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.RegistrationUseCase
 import com.onegini.mobile.sdk.flutter.useCases.ResourceRequestUseCase
 import com.onegini.mobile.sdk.flutter.useCases.SetPreferredAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.StartAppUseCase
 import com.onegini.mobile.sdk.flutter.useCases.SubmitCustomRegistrationActionUseCase
-import com.onegini.mobile.sdk.flutter.useCases.PinAuthenticationRequestAcceptUseCase
-import com.onegini.mobile.sdk.flutter.useCases.PinAuthenticationRequestDenyUseCase
-import com.onegini.mobile.sdk.flutter.useCases.PinRegistrationRequestAcceptUseCase
-import com.onegini.mobile.sdk.flutter.useCases.PinRegistrationRequestDenyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.ValidatePinWithPolicyUseCase
 import javax.inject.Inject
 
@@ -290,4 +291,7 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   override fun requestResource(type: ResourceRequestType, details: OWRequestDetails, callback: (Result<OWRequestResponse>) -> Unit) {
     resourceRequestUseCase(type, details, callback)
   }
+}
+fun CustomInfo.mapToOwCustomInfo(): OWCustomInfo {
+  return OWCustomInfo(this.status.toLong(), this.data)
 }

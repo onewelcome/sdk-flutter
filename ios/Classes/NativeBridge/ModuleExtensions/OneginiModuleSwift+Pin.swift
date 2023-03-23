@@ -13,11 +13,11 @@ extension OneginiModuleSwift {
     }
     
     func pinAcceptRegistrationRequest(_ pin: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        bridgeConnector.toRegistrationConnector.registrationHandler.handlePin(pin: pin, completion: completion)
+        bridgeConnector.toRegistrationHandler.handlePin(pin: pin, completion: completion)
     }
     
     func pinDenyRegistrationRequest(_ completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        bridgeConnector.toRegistrationConnector.registrationHandler.cancelPinRegistration(completion: completion)
+        bridgeConnector.toRegistrationHandler.cancelPinRegistration(completion: completion)
     }
     
     

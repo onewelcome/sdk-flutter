@@ -3,19 +3,30 @@ import OneginiSDKiOS
 import Flutter
 
 extension OneginiModuleSwift {
+    public func handleMobileAuthWithOtp2(otp: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        bridgeConnector.toMobileAuthHandler.handleMobileAuthWithOtp2(otp: otp, completion: completion)
+    }
+    
+    public func enrollMobileAuthentication() -> Void) {
+        bridgeConnector.toMobileAuthHandler.handleMobileAuthWithOtp2(otp: otp, completion: completion)
+    }
+    
+    
+    // fixme isnt getting used?
     public func otpResourceCodeConfirmation(code: String?, callback: @escaping FlutterResult) {
         
         // FIXME: Check what's going on here, why is custom registration challange put in mobile auth
-        bridgeConnector.toMobileAuthConnector.mobileAuthHandler.handleOTPMobileAuth(code ?? "", customRegistrationChallenge: bridgeConnector.toRegistrationConnector.registrationHandler.currentChallenge()) {
+        bridgeConnector.toMobileAuthHandler.handleOTPMobileAuth(code ?? "", customRegistrationChallenge: bridgeConnector.toRegistrationHandler.currentChallenge()) {
             (_ , error) -> Void in
 
             error != nil ? callback(error?.flutterError()) : callback(nil)
         }
     }
     
+    // this is handleMobileAuthWithOtp
     public func otpQRResourceCodeConfirmation(code: String?, callback: @escaping FlutterResult) {
-            
-        guard bridgeConnector.toMobileAuthConnector.mobileAuthHandler.isUserEnrolledForMobileAuth() else {
+        // remove logic for isuserenrolled
+        guard bridgeConnector.toMobileAuthHandler.isUserEnrolledForMobileAuth() else {
             ONGUserClient.sharedInstance().enroll { [weak self] (value, error) in
                 
                 if let _error = error {
@@ -31,17 +42,19 @@ extension OneginiModuleSwift {
         handleQRCode(code, callback: callback)
     }
     
+    // this is handleMobileAuthWithOtp 2
     private func handleQRCode(_ code: String?, callback: @escaping FlutterResult) {
         // FIXME: Check what's going on here, why is custom registration challange put in mobile auth
-        let challenge = bridgeConnector.toRegistrationConnector.registrationHandler.currentChallenge()
+        let challenge = bridgeConnector.toRegistrationHandler.currentChallenge()
         var handleMobileAuthConfirmation = false
         
-        bridgeConnector.toMobileAuthConnector.mobileAuthHandler.handleQrOTPMobileAuth(code ?? "", customRegistrationChallenge: challenge) { [weak self]
+        bridgeConnector.toMobileAuthHandler.handleQrOTPMobileAuth(code ?? "", customRegistrationChallenge: challenge) { [weak self]
             (value, error) -> Void in
             
             if(error == nil && !handleMobileAuthConfirmation) {
+                // if correct this case???
                 handleMobileAuthConfirmation = true
-                self?.bridgeConnector.toMobileAuthConnector.mobileAuthHandler.handleMobileAuthConfirmation(cancelled: true)
+                self?.bridgeConnector.toMobileAuthHandler.handleMobileAuthConfirmation(cancelled: true)
             } else {
                 error != nil ? callback(error?.flutterError()) : callback(value)
             }
@@ -49,11 +62,11 @@ extension OneginiModuleSwift {
     }
     
     func acceptMobileAuthConfirmation() -> Void {
-        bridgeConnector.toMobileAuthConnector.mobileAuthHandler.handleMobileAuthConfirmation(cancelled: false)
+        bridgeConnector.toMobileAuthHandler.handleMobileAuthConfirmation(cancelled: false)
     }
 
     @objc
     func denyMobileAuthConfirmation() -> Void {
-        bridgeConnector.toMobileAuthConnector.mobileAuthHandler.handleMobileAuthConfirmation(cancelled: true)
+        bridgeConnector.toMobileAuthHandler.handleMobileAuthConfirmation(cancelled: true)
     }
 }

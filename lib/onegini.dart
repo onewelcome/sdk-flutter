@@ -7,6 +7,7 @@ import 'package:onegini/constants/constants.dart';
 import 'package:onegini/onegini_event_listener.dart';
 import 'package:onegini/resources_methods.dart';
 import 'package:onegini/user_client.dart';
+import 'package:onegini/pigeon.dart';
 
 import 'model/onegini_removed_user_profile.dart';
 
@@ -50,8 +51,13 @@ class Onegini {
     try {
       var customIdentityProviderConfigsJson;
       if (customIdentityProviderConfigs != null) {
-        customIdentityProviderConfigsJson = [for (var customIdentityProviderConfig in customIdentityProviderConfigs) json.encode(customIdentityProviderConfig)];
+        customIdentityProviderConfigsJson = [
+          for (var customIdentityProviderConfig
+              in customIdentityProviderConfigs)
+            json.encode(customIdentityProviderConfig)
+        ];
       }
+      NativeCallFlutterApi.setup(_eventListener);
 
       String removedUserProfiles = await channel
           .invokeMethod(Constants.startAppMethod, <String, dynamic>{
@@ -61,7 +67,6 @@ class Onegini {
         'connectionTimeout': connectionTimeout,
         'readTimeout': readTimeout
       });
-      eventListener.listen();
       return removedUserProfileListFromJson(removedUserProfiles);
     } on TypeError catch (error) {
       throw PlatformException(
