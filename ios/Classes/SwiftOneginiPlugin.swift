@@ -81,15 +81,15 @@ func toOWCustomInfo(_ info: ONGCustomInfo?) -> OWCustomInfo? {
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, ResourceMethodApi {
     func enrollMobileAuthentication(completion: @escaping (Result<Void, Error>) -> Void) {
-        // Will be implemented during the OTP rework in
-        // https://onewelcome.atlassian.net/browse/FP-69
-        completion(.success)
+        OneginiModuleSwift.sharedInstance.enrollMobileAuthentication() { result in
+            completion(result.mapError { $0 })
+        }
     }
 
     func handleMobileAuthWithOtp(data: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        // Will be implemented during the OTP rework in
-        // https://onewelcome.atlassian.net/browse/FP-69
-        completion(.success)
+        OneginiModuleSwift.sharedInstance.handleMobileAuthWithOtp2(data) { result in
+            completion(result.mapError { $0 })
+        }
     }
 
     func requestResource(type: ResourceRequestType, details: OWRequestDetails, completion: @escaping (Result<OWRequestResponse, Error>) -> Void) {
@@ -129,15 +129,15 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
     }
 
     func otpDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.denyMobileAuthConfirmation()
-        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in https://onewelcome.atlassian.net/browse/FP-69
-        completion(.success)
+        OneginiModuleSwift.sharedInstance.denyMobileAuthRequest() { result in
+            completion(result.mapError { $0 })
+        }
     }
 
     func otpAcceptAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.acceptMobileAuthConfirmation()
-        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in https://onewelcome.atlassian.net/browse/FP-69
-        completion(.success)
+        OneginiModuleSwift.sharedInstance.acceptMobileAuthRequest() { result in
+            completion(result.mapError { $0 })
+        }
     }
 
     func pinDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {

@@ -300,15 +300,13 @@ class Home extends StatelessWidget {
       MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
     );
     if (data != null) {
-      var isSuccess = await Onegini.instance.userClient
-          .mobileAuthWithOtp(data)
-          .catchError((error) {
-        if (error is PlatformException) {
-          showFlutterToast(error.message);
-        }
-      });
-      if (isSuccess != null && isSuccess.isNotEmpty)
-        showFlutterToast(isSuccess);
+      await Onegini.instance.userClient
+        .handleMobileAuthWithOtp(data)
+        .catchError((error) {
+          if (error is PlatformException) {
+            showFlutterToast(error.message);
+          }
+      }).then((value) => showFlutterToast("OTP Authentication is successfull"));
     }
   }
 

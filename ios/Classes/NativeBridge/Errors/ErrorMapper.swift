@@ -12,6 +12,7 @@ enum OneWelcomeWrapperError: Int {
     case unauthenticatedImplicitly = 8035
     case methodArgumentNotFound = 8036
     case authenticationNotInProgress = 8037
+    case otpAuthenticationNotInProgress = 8039
     
     // iOS only
     case providedUrlIncorrect = 8014
@@ -85,6 +86,8 @@ enum OneWelcomeWrapperError: Int {
             return "Registration is currently not in progress"
         case .authenticationNotInProgress:
             return "Authentication is currently not in progress"
+        case .otpAuthenticationNotInProgress:
+            return "OTP Authentication is currently not in progress"
         }
     }
 }

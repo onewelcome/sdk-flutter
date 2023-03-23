@@ -3,12 +3,20 @@ import OneginiSDKiOS
 import Flutter
 
 extension OneginiModuleSwift {
-    public func handleMobileAuthWithOtp2(otp: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+    func handleMobileAuthWithOtp2(_ otp: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
         bridgeConnector.toMobileAuthHandler.handleMobileAuthWithOtp2(otp: otp, completion: completion)
     }
-    
-    public func enrollMobileAuthentication() -> Void) {
-        bridgeConnector.toMobileAuthHandler.handleMobileAuthWithOtp2(otp: otp, completion: completion)
+
+    func enrollMobileAuthentication(completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        bridgeConnector.toMobileAuthHandler.enrollMobileAuthentication(completion: completion)
+    }
+
+    func acceptMobileAuthRequest(completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        bridgeConnector.toMobileAuthHandler.handleMobileAuthConfirmation(cancelled: false)
+    }
+
+    func denyMobileAuthRequest(completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        bridgeConnector.toMobileAuthHandler.handleMobileAuthConfirmation(cancelled: false)
     }
     
     

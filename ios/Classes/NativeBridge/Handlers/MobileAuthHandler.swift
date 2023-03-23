@@ -20,9 +20,10 @@ class MobileAuthHandler: NSObject {
     var authenticatorType: MobileAuthAuthenticatorType?
     var confirmation: ((Bool) -> Void)?
     var mobileAuthCompletion: ((Any?, SdkError?) -> Void)?
-    
+
+    var mobileAuthCallback: ((Bool) -> Void)?
     var handleMobileAuthCompletion: ((Result<Void, FlutterError>) -> Void)?
-        
+
     fileprivate func handleConfirmationMobileAuth(_ cancelled: Bool) {
         guard let confirmation = confirmation else { fatalError() }
         
@@ -33,6 +34,7 @@ class MobileAuthHandler: NSObject {
 //MARK: - MobileAuthConnectorToHandlerProtocol
 extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
     func handleMobileAuthWithOtp2(otp: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        Logger.log("handleMobileAuthWithOtp", sender: self)
         handleMobileAuthCompletion = completion
 
         guard ONGUserClient.sharedInstance().canHandleOTPMobileAuthRequest(otp) else {
@@ -45,6 +47,7 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
     }
 
     func enrollMobileAuthentication(completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        Logger.log("enrollMobileAuthentication", sender: self)
         guard let _ = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
             completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
             return
@@ -65,8 +68,31 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
             completion(.failure(FlutterError(mappedError)))
         }
     }
-    
-    
+
+    func acceptMobileAuthRequest(completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        Logger.log("acceptMobileAuthRequest", sender: self)
+        guard let callback = mobileAuthCallback else {
+            completion(.failure(FlutterError(SdkError(.otpAuthenticationNotInProgress))))
+            return
+        }
+
+        callback(true)
+        mobileAuthCallback = nil
+        completion(.success)
+    }
+
+    func denyMobileAuthRequest(completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        Logger.log("denyMobileAuthRequest", sender: self)
+        guard let callback = mobileAuthCallback else {
+            completion(.failure(FlutterError(SdkError(.otpAuthenticationNotInProgress))))
+            return
+        }
+
+        callback(false)
+        mobileAuthCallback = nil
+        completion(.success)
+    }
+
     // todo delete
     func enrollForMobileAuth(_ completion: @escaping (Bool?, SdkError?) -> Void) {
         ONGClient.sharedInstance().userClient.enroll { enrolled, error in
@@ -83,13 +109,13 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
               }
         }
     }
-    
+
     // todo delete
     func isUserEnrolledForMobileAuth() -> Bool {
         let userClient = ONGUserClient.sharedInstance()
         return isUserEnrolledForMobileAuth(userClient: userClient)
     }
-    
+
     // delete
     func isUserEnrolledForMobileAuth(userClient: ONGUserClient) -> Bool {
         if let userProfile = userClient.authenticatedUserProfile() {
@@ -97,7 +123,7 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
         }
         return false
     }
-    
+
     // delete; replaced for mobileAuthCompletion variable
     func handleMobileAuthConfirmation(cancelled: Bool) {
         switch authenticatorType {
@@ -114,7 +140,7 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
             break
         }
     }
-    
+
     func handleOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Any?, SdkError?) -> Void) {
         mobileAuthCompletion = completion
         
@@ -125,7 +151,7 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
         
         challenge.sender.respond(withData: otp, challenge: challenge)
     }
-    
+
     func handleQrOTPMobileAuth(_ otp: String , customRegistrationChallenge: ONGCustomRegistrationChallenge?, _ completion: @escaping (Any?, SdkError?) -> Void) {
         mobileAuthCompletion = completion
         guard ONGUserClient.sharedInstance().canHandleOTPMobileAuthRequest(otp) else {
@@ -139,13 +165,14 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
 //MARK: - ONGMobileAuthRequestDelegate
 extension MobileAuthHandler: ONGMobileAuthRequestDelegate {
     func userClient(_: ONGUserClient, didReceiveConfirmationChallenge confirmation: @escaping (Bool) -> Void, for request: ONGMobileAuthRequest) {
-        authenticatorType = .confirmation
-        self.confirmation = confirmation
+//        authenticatorType = .confirmation
+//        self.confirmation = confirmation
         
         // is this step needed??? dont think so? we resolve only after completion
-//        mobileAuthCompletion?(request.message, nil)
-        //FIXME: This message can clearly be nullable, we should support this.
-        SwiftOneginiPlugin.flutterApi?.n2fOpenAuthOtp(message: request.message ?? "") {}
+        // mobileAuthCompletion?(request.message, nil)
+
+        mobileAuthCallback = confirmation
+        SwiftOneginiPlugin.flutterApi?.n2fOpenAuthOtp(message: request.message) {}
     }
 
     func userClient(_: ONGUserClient, didReceive challenge: ONGPinChallenge, for request: ONGMobileAuthRequest) {
@@ -163,19 +190,28 @@ extension MobileAuthHandler: ONGMobileAuthRequestDelegate {
     func userClient(_ userClient: ONGUserClient, didFailToHandle request: ONGMobileAuthRequest, authenticator: ONGAuthenticator?, error: Error) {
         SwiftOneginiPlugin.flutterApi?.n2fCloseAuthOtp {}
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            mobileAuthCompletion?(false, SdkError(.authenticationCancelled))
+            handleMobileAuthCompletion?(.failure(FlutterError(SdkError(.authenticationCancelled))))
+            // todo remove
+//            mobileAuthCompletion?(false, SdkError(.authenticationCancelled))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            mobileAuthCompletion?(false, mappedError)
+            handleMobileAuthCompletion?(.failure(FlutterError(mappedError)))
+//            mobileAuthCompletion?(false, mappedError)
         }
+
+        handleMobileAuthCompletion = nil
     }
 
     func userClient(_ userClient: ONGUserClient, didHandle request: ONGMobileAuthRequest, authenticator: ONGAuthenticator?, info customAuthenticatorInfo: ONGCustomInfo?) {
-        
+
         // send event
         SwiftOneginiPlugin.flutterApi?.n2fCloseAuthOtp {}
-        
-        // complete after finishing otp
-        mobileAuthCompletion?(request.message, nil)
+
+        // complete handleOtpRequest
+        handleMobileAuthCompletion?(.success)
+        handleMobileAuthCompletion = nil
+
+        // todo delete complete after finishing otp
+//        mobileAuthCompletion?(request.message, nil)
     }
 }
