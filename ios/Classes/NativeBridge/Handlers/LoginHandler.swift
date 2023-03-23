@@ -23,17 +23,25 @@ class LoginHandler: NSObject {
         completion(.success)
     }
     
+    private func mapErrorFromPinChallenge(_ challenge: ONGPinChallenge) -> Error? {
+        if let error = challenge.error, error.code != ONGAuthenticationError.touchIDAuthenticatorFailure.rawValue {
+            return error
+        } else {
+            return nil
+        }
+    }
+    
     func handleDidReceiveChallenge(_ challenge: ONGPinChallenge) {
         pinChallenge = challenge
-        guard challenge.error?.code != ONGAuthenticationError.touchIDAuthenticatorFailure.rawValue else {
-            SwiftOneginiPlugin.flutterApi?.n2fOpenPinScreenAuth {}
+        guard mapErrorFromPinChallenge(challenge) == nil else {
+            let authAttempt = OWAuthenticationAttempt(
+                failedAttempts: Int64(challenge.previousFailureCount),
+                maxAttempts: Int64(challenge.maxFailureCount),
+                remainingAttempts: Int64(challenge.remainingFailureCount))
+            SwiftOneginiPlugin.flutterApi?.n2fNextAuthenticationAttempt(authenticationAttempt: authAttempt) {}
             return
         }
-        let authAttempt = OWAuthenticationAttempt(
-            failedAttempts: Int64(challenge.previousFailureCount),
-            maxAttempts: Int64(challenge.maxFailureCount),
-            remainingAttempts: Int64(challenge.remainingFailureCount))
-        SwiftOneginiPlugin.flutterApi?.n2fNextAuthenticationAttempt(authenticationAttempt: authAttempt) {}
+        SwiftOneginiPlugin.flutterApi?.n2fOpenPinScreenAuth {}
     }
     
     func handleDidAuthenticateUser() {
