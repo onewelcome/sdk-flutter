@@ -70,7 +70,7 @@ abstract class OneginiEventListener implements NativeCallFlutterApi {
   /// Called when custom event was received.
   void eventOther(BuildContext? buildContext, Event event);
 
-  void eventPinNotAllowed(OWOneginiError error);
+  void pinNotAllowed(OWOneginiError error);
 
   @override
   void n2fCloseAuthOtp() {
@@ -158,6 +158,6 @@ abstract class OneginiEventListener implements NativeCallFlutterApi {
 
   @override
   void n2fEventPinNotAllowed(OWOneginiError error) {
-    eventPinNotAllowed(error);
+    pinNotAllowed(error);
   }
 }

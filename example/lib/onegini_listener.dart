@@ -178,7 +178,7 @@ class OneginiListener extends OneginiEventListener {
   }
 
   @override
-  void eventPinNotAllowed(OWOneginiError error) {
+  void pinNotAllowed(OWOneginiError error) {
     showFlutterToast("${error.message} Code: ${error.code}");
   }
 }
