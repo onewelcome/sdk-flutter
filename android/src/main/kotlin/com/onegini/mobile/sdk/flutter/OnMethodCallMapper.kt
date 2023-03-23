@@ -2,7 +2,6 @@ package com.onegini.mobile.sdk.flutter
 
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.flutter.constants.Constants
-import com.onegini.mobile.sdk.flutter.helpers.MobileAuthenticationObject
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -27,10 +26,6 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
         when (call.method) {
             // TODO: Move remaining methods to pigeon; https://onewelcome.atlassian.net/browse/FP-71
             Constants.METHOD_IS_AUTHENTICATOR_REGISTERED -> oneginiMethodsWrapper.isAuthenticatorRegistered(call, result)
-
-            // OTP
-            Constants.METHOD_HANDLE_MOBILE_AUTH_WITH_OTP -> MobileAuthenticationObject.mobileAuthWithOtp(call.argument<String>("data"), result, client)
-
             else -> SdkError(METHOD_TO_CALL_NOT_FOUND).flutterError(result)
         }
     }

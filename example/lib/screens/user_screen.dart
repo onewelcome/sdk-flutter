@@ -293,6 +293,16 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 }
 
 class Home extends StatelessWidget {
+  enrollMobileAuthentication() async {
+    await Onegini.instance.userClient
+        .enrollMobileAuthentication()
+        .catchError((error) {
+          if (error is PlatformException) {
+            showFlutterToast(error.message);
+          }
+      }).then((value) => showFlutterToast("Mobile Authentication enrollment success"));
+  }
+
   authWithOpt(BuildContext context) async {
     Onegini.instance.setEventContext(context);
     var data = await Navigator.push(
@@ -381,9 +391,15 @@ class Home extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
+                enrollMobileAuthentication();
+              },
+              child: Text('Enroll for Mobile Authentication'),
+            ),
+            ElevatedButton(
+              onPressed: () {
                 authWithOpt(context);
               },
-              child: Text('auth with opt'),
+              child: Text('Auth with opt'),
             ),
             SizedBox(
               height: 20,

@@ -314,9 +314,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
             // base
         case Constants.Routes.startApp: startApp(call, result)
             
-            // otp
-        case Constants.Routes.handleMobileAuthWithOtp: handleMobileAuthWithOtp(call, result)
-            
         default: do {
             Logger.log("Method wasn't handled: " + call.method)
             result(FlutterMethodNotImplemented)

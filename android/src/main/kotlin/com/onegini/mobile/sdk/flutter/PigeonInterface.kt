@@ -5,10 +5,7 @@ import android.util.Patterns
 import com.onegini.mobile.sdk.android.handlers.OneginiAppToWebSingleSignOnHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAppToWebSingleSignOnError
 import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
-import com.onegini.mobile.sdk.flutter.handlers.BrowserRegistrationRequestHandler
-import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
-import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAppToWebSingleSignOn
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticator
