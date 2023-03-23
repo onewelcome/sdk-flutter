@@ -80,6 +80,18 @@ func toOWCustomInfo(_ info: ONGCustomInfo?) -> OWCustomInfo? {
 }
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, ResourceMethodApi {
+    func enrollMobileAuthentication(completion: @escaping (Result<Void, Error>) -> Void) {
+        // Will be implemented during the OTP rework in
+        // https://onewelcome.atlassian.net/browse/FP-69
+        completion(.success)
+    }
+
+    func handleMobileAuthWithOtp(data: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        // Will be implemented during the OTP rework in
+        // https://onewelcome.atlassian.net/browse/FP-69
+        completion(.success)
+    }
+
     func requestResource(type: ResourceRequestType, details: OWRequestDetails, completion: @escaping (Result<OWRequestResponse, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.requestResource(type, details) { result in
             completion(result.mapError { $0 })
@@ -118,13 +130,13 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
 
     func otpDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.denyMobileAuthConfirmation()
-        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-??
+        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in https://onewelcome.atlassian.net/browse/FP-69
         completion(.success)
     }
 
     func otpAcceptAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.acceptMobileAuthConfirmation()
-        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-??
+        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in https://onewelcome.atlassian.net/browse/FP-69
         completion(.success)
     }
 

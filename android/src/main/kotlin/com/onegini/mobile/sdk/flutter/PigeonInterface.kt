@@ -5,6 +5,8 @@ import android.util.Patterns
 import com.onegini.mobile.sdk.android.handlers.OneginiAppToWebSingleSignOnHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAppToWebSingleSignOnError
 import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
+import com.onegini.mobile.sdk.flutter.handlers.BrowserRegistrationRequestHandler
+import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
@@ -27,6 +29,7 @@ import com.onegini.mobile.sdk.flutter.useCases.CancelCustomRegistrationActionUse
 import com.onegini.mobile.sdk.flutter.useCases.ChangePinUseCase
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterUserUseCase
+import com.onegini.mobile.sdk.flutter.useCases.EnrollMobileAuthenticationUseCase
 import com.onegini.mobile.sdk.flutter.useCases.FingerprintAuthenticationRequestAcceptUseCase
 import com.onegini.mobile.sdk.flutter.useCases.FingerprintAuthenticationRequestDenyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.FingerprintFallbackToPinUseCase
@@ -38,9 +41,12 @@ import com.onegini.mobile.sdk.flutter.useCases.GetNotRegisteredAuthenticatorsUse
 import com.onegini.mobile.sdk.flutter.useCases.GetRedirectUrlUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetRegisteredAuthenticatorsUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfilesUseCase
+import com.onegini.mobile.sdk.flutter.useCases.HandleMobileAuthWithOtpUseCase
 import com.onegini.mobile.sdk.flutter.useCases.HandleRegisteredUrlUseCase
 import com.onegini.mobile.sdk.flutter.useCases.IsAuthenticatorRegisteredUseCase
 import com.onegini.mobile.sdk.flutter.useCases.LogoutUseCase
+import com.onegini.mobile.sdk.flutter.useCases.OtpAcceptAuthenticationRequestUseCase
+import com.onegini.mobile.sdk.flutter.useCases.OtpDenyAuthenticationRequestUseCase
 import com.onegini.mobile.sdk.flutter.useCases.PinAuthenticationRequestAcceptUseCase
 import com.onegini.mobile.sdk.flutter.useCases.PinAuthenticationRequestDenyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.PinRegistrationRequestAcceptUseCase
@@ -122,6 +128,14 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   @Inject
   lateinit var resourceRequestUseCase: ResourceRequestUseCase
   @Inject
+  lateinit var enrollMobileAuthenticationUseCase: EnrollMobileAuthenticationUseCase
+  @Inject
+  lateinit var handleMobileAuthWithOtpUseCase: HandleMobileAuthWithOtpUseCase
+  @Inject
+  lateinit var otpDenyAuthenticationRequestUseCase: OtpDenyAuthenticationRequestUseCase
+  @Inject
+  lateinit var otpAcceptAuthenticationRequestUseCase: OtpAcceptAuthenticationRequestUseCase
+  @Inject
   lateinit var oneginiSDK: OneginiSDK
 
   override fun registerUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit) {
@@ -180,11 +194,14 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
     logoutUseCase(callback)
   }
 
-  override fun mobileAuthWithOtp(data: String, callback: (Result<String?>) -> Unit) {
-    // TODO; dependent on:
-    // https://onewelcome.atlassian.net/browse/FP-20
-    // https://onewelcome.atlassian.net/browse/FP-70
+  override fun enrollMobileAuthentication(callback: (Result<Unit>) -> Unit) {
+    enrollMobileAuthenticationUseCase(callback)
   }
+
+  override fun handleMobileAuthWithOtp(data: String, callback: (Result<Unit>) -> Unit) {
+    handleMobileAuthWithOtpUseCase(data, callback)
+  }
+
 
   override fun getAppToWebSingleSignOn(url: String, callback: (Result<OWAppToWebSingleSignOn>) -> Unit) {
     // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-62
@@ -257,15 +274,11 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   }
 
   override fun otpDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-70
-    MobileAuthOtpRequestHandler.CALLBACK?.denyAuthenticationRequest()
-    callback(Result.success(Unit))
+    callback(otpDenyAuthenticationRequestUseCase())
   }
 
   override fun otpAcceptAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-70
-    MobileAuthOtpRequestHandler.CALLBACK?.acceptAuthenticationRequest()
-    callback(Result.success(Unit))
+    callback(otpAcceptAuthenticationRequestUseCase())
   }
 
   override fun pinDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
