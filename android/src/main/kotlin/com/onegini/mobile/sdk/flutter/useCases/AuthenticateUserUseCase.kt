@@ -8,6 +8,7 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.mapToOwCustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWUserProfile
@@ -55,8 +56,7 @@ class AuthenticateUserUseCase @Inject constructor(
         when (customInfo) {
           null -> callback(Result.success(OWRegistrationResponse(owProfile)))
           else -> {
-            val owCustomInfo = OWCustomInfo(customInfo.status.toLong(), customInfo.data)
-            callback(Result.success(OWRegistrationResponse(owProfile, owCustomInfo)))
+            callback(Result.success(OWRegistrationResponse(owProfile, customInfo?.mapToOwCustomInfo())))
           }
         }
       }

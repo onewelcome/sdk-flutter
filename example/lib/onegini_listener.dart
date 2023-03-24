@@ -8,6 +8,7 @@ import 'package:onegini/model/onegini_error.dart';
 import 'package:onegini/model/onegini_event.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini/onegini_event_listener.dart';
+import 'package:onegini/pigeon.dart';
 import 'package:onegini/user_client.dart';
 import 'package:onegini_example/screens/auth_otp_screen.dart';
 import 'package:onegini_example/screens/fingerprint_screen.dart';
@@ -44,12 +45,6 @@ class OneginiListener extends OneginiEventListener {
   @override
   void eventError(BuildContext buildContext, PlatformException error) {
     showFlutterToast("${error.message} Code: ${error.code} ");
-  }
-
-  @override
-  void showError(BuildContext buildContext, OneginiError error) {
-    showFlutterToast(
-        "${error.message} Code: ${error.code} " ?? "Something went wrong");
   }
 
   @override
@@ -141,11 +136,9 @@ class OneginiListener extends OneginiEventListener {
   }
 
   @override
-  void eventInitCustomRegistration(BuildContext buildContext, String data) {
+  void eventInitCustomRegistration(
+      BuildContext buildContext, OWCustomInfo customInfo, String providerId) {
     try {
-      var response = jsonDecode(data);
-      var providerId = response["providerId"];
-
       if (providerId == "2-way-otp-api") {
         // a 2-way-otp does not require data for the initialization request
         OneginiCustomRegistrationCallback()
@@ -162,17 +155,15 @@ class OneginiListener extends OneginiEventListener {
   }
 
   @override
-  void eventFinishCustomRegistration(BuildContext buildContext, String data) {
+  void eventFinishCustomRegistration(
+      BuildContext buildContext, OWCustomInfo customInfo, String providerId) {
     try {
-      var response = jsonDecode(data);
-      var providerId = response["providerId"];
-
       if (providerId == "2-way-otp-api")
         Navigator.push(
           buildContext,
           MaterialPageRoute(
               builder: (context) => OtpScreen(
-                  password: response["data"], providerId: providerId)),
+                  password: customInfo?.data, providerId: providerId)),
         );
     } on FormatException catch (error) {
       showFlutterToast(error.message);
@@ -184,5 +175,10 @@ class OneginiListener extends OneginiEventListener {
   void handleRegisteredUrl(BuildContext buildContext, String url) async {
     await Onegini.instance.userClient.handleRegisteredUserUrl(buildContext, url,
         signInType: WebSignInType.insideApp);
+  }
+
+  @override
+  void pinNotAllowed(OWOneginiError error) {
+    showFlutterToast("${error.message} Code: ${error.code}");
   }
 }

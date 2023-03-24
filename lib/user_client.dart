@@ -126,10 +126,20 @@ class UserClient {
     await api.logout();
   }
 
+  // TODO Implement these functions within example app after.
+  // https://onewelcome.atlassian.net/browse/FP-69
+  Future<void> enrollMobileAuthentication() async {
+    await api.enrollMobileAuthentication();
+  }
+
+  Future<void> handleMobileAuthWithOtp(String data) async {
+    await api.handleMobileAuthWithOtp(data);
+  }
+
   /// Starts mobile authentication on web by OTP.
   Future<String?> mobileAuthWithOtp(String data) async {
-    // todo use api once the branch is merged that puts this in an usecase on android
-    // return await api.mobileAuthWithOtp(data);
+    // TODO once iOS rework is finished remove this functions
+    // https://onewelcome.atlassian.net/browse/FP-69
     try {
       var isSuccess = await Onegini.instance.channel
           .invokeMethod(Constants.handleMobileAuthWithOtp, <String, dynamic>{

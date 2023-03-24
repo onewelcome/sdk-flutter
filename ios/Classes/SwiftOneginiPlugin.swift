@@ -26,11 +26,11 @@ extension OWUserProfile {
 
 extension OWCustomInfo {
     init(_ info: CustomInfo) {
-        status = Int32(info.status)
+        status = Int64(info.status)
         data = info.data
     }
     init(_ info: ONGCustomInfo) {
-        status = Int32(info.status)
+        status = Int64(info.status)
         data = info.data
     }
 }
@@ -41,7 +41,7 @@ extension OWAuthenticator {
         name = authenticator.name
         isPreferred = authenticator.isPreferred
         isRegistered = authenticator.isRegistered
-        authenticatorType = Int32(authenticator.type.rawValue)
+        authenticatorType = Int64(authenticator.type.rawValue)
     }
 }
 
@@ -56,7 +56,7 @@ extension OWRequestResponse {
     init(_ response: ONGResourceResponse) {
         headers = toOWRequestHeaders(response.allHeaderFields)
         body = String(data: response.data ?? Data(), encoding: .utf8) ?? ""
-        status = Int32(response.statusCode)
+        status = Int64(response.statusCode)
         ok = response.statusCode <= 299 && response.statusCode >= 200
     }
 }
@@ -71,15 +71,27 @@ func toOWRequestHeaders(_ headers: [AnyHashable : Any]) -> [String: String] {
 
 func toOWCustomInfo(_ info: CustomInfo?) -> OWCustomInfo? {
     guard let info = info else { return nil }
-    return OWCustomInfo(status: Int32(info.status), data: info.data)
+    return OWCustomInfo(status: Int64(info.status), data: info.data)
 }
 
 func toOWCustomInfo(_ info: ONGCustomInfo?) -> OWCustomInfo? {
     guard let info = info else { return nil }
-    return OWCustomInfo(status: Int32(info.status), data: info.data)
+    return OWCustomInfo(status: Int64(info.status), data: info.data)
 }
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, ResourceMethodApi {
+    func enrollMobileAuthentication(completion: @escaping (Result<Void, Error>) -> Void) {
+        // Will be implemented during the OTP rework in
+        // https://onewelcome.atlassian.net/browse/FP-69
+        completion(.success)
+    }
+
+    func handleMobileAuthWithOtp(data: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        // Will be implemented during the OTP rework in
+        // https://onewelcome.atlassian.net/browse/FP-69
+        completion(.success)
+    }
+
     func requestResource(type: ResourceRequestType, details: OWRequestDetails, completion: @escaping (Result<OWRequestResponse, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.requestResource(type, details) { result in
             completion(result.mapError { $0 })
@@ -118,13 +130,13 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
 
     func otpDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.denyMobileAuthConfirmation()
-        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-??
+        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in https://onewelcome.atlassian.net/browse/FP-69
         completion(.success)
     }
 
     func otpAcceptAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.acceptMobileAuthConfirmation()
-        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-??
+        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in https://onewelcome.atlassian.net/browse/FP-69
         completion(.success)
     }
 
@@ -164,7 +176,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
         }
     }
 
-    func handleRegisteredUserUrl(url: String, signInType: Int32, completion: @escaping (Result<Void, Error>) -> Void) {
+    func handleRegisteredUserUrl(url: String, signInType: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
         completion(OneginiModuleSwift.sharedInstance.handleRegisteredProcessUrl(url, webSignInType: Int(signInType)).mapError({$0}))
     }
 
@@ -273,25 +285,17 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
     static var flutterApi: NativeCallFlutterApi?
     
     public static func register(with registrar: FlutterPluginRegistrar) {
+        // FIXME: We can remove this once we have moved all functions to Pigeon
+        // Init old communication
         let channel = FlutterMethodChannel(name: "onegini", binaryMessenger: registrar.messenger())
-        let eventChannel = FlutterEventChannel(name: "onegini_events",
-                                               binaryMessenger: registrar.messenger())
         let instance = SwiftOneginiPlugin()
         registrar.addMethodCallDelegate(instance, channel: channel)
-        eventChannel.setStreamHandler(OneginiModuleSwift.sharedInstance)
-        
         // Init Pigeon communication
         let messenger: FlutterBinaryMessenger = registrar.messenger()
-        let userClientApi: UserClientApi & NSObjectProtocol = SwiftOneginiPlugin.init()
-        UserClientApiSetup.setUp(binaryMessenger: messenger, api: userClientApi)
-
-        let resourceMethodApi: ResourceMethodApi & NSObjectProtocol = SwiftOneginiPlugin.init()
-        ResourceMethodApiSetup.setUp(binaryMessenger: messenger, api: resourceMethodApi)
-        
+        let api = SwiftOneginiPlugin()
+        UserClientApiSetup.setUp(binaryMessenger: messenger, api: api)
+        ResourceMethodApiSetup.setUp(binaryMessenger: messenger, api: api)
         flutterApi = NativeCallFlutterApi(binaryMessenger: registrar.messenger())
-        
-        // Example on call flutter function from native during start
-        flutterApi?.testEventFunction(argument: "we initilized the function", completion: {_ in })
     }
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {

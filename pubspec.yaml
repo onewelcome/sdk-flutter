@@ -12,13 +12,9 @@ dependencies:
     sdk: flutter
 
 dev_dependencies:
-  pigeon:
-    git:
-      url: git@github.com:flutter/packages.git
-      path: packages/pigeon
-      ref: 43bfaaf55c0bd6b550bf2cb9af940a00b046bd07
   flutter_test:
     sdk: flutter
+  pigeon: 9.1.1
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

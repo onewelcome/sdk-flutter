@@ -23,23 +23,35 @@ class LoginHandler: NSObject {
         completion(.success)
     }
     
+    private func mapErrorFromPinChallenge(_ challenge: ONGPinChallenge) -> Error? {
+        if let error = challenge.error, error.code != ONGAuthenticationError.touchIDAuthenticatorFailure.rawValue {
+            return error
+        } else {
+            return nil
+        }
+    }
+    
     func handleDidReceiveChallenge(_ challenge: ONGPinChallenge) {
         pinChallenge = challenge
-        if let pinError = ErrorMapper().mapErrorFromPinChallenge(challenge) {
-            BridgeConnector.shared?.toPinConnector.sendNotification(event: PinNotification.nextAuthenticationAttempt, error: pinError)
-        } else {
-            BridgeConnector.shared?.toPinConnector.sendNotification(event: PinNotification.openAuth, error: nil)
+        guard mapErrorFromPinChallenge(challenge) == nil else {
+            let authAttempt = OWAuthenticationAttempt(
+                failedAttempts: Int64(challenge.previousFailureCount),
+                maxAttempts: Int64(challenge.maxFailureCount),
+                remainingAttempts: Int64(challenge.remainingFailureCount))
+            SwiftOneginiPlugin.flutterApi?.n2fNextAuthenticationAttempt(authenticationAttempt: authAttempt) {}
+            return
         }
+        SwiftOneginiPlugin.flutterApi?.n2fOpenPinScreenAuth {}
     }
     
     func handleDidAuthenticateUser() {
         pinChallenge = nil
-        BridgeConnector.shared?.toPinConnector.sendNotification(event: PinNotification.closeAuth, error: nil)
+        SwiftOneginiPlugin.flutterApi?.n2fClosePinAuth {}
     }
     
     func handleDidFailToAuthenticateUser() {
         guard pinChallenge != nil else { return }
-        BridgeConnector.shared?.toPinConnector.sendNotification(event: PinNotification.closeAuth, error: nil)
+        SwiftOneginiPlugin.flutterApi?.n2fClosePinAuth {}
         pinChallenge = nil
     }
 }
