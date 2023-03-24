@@ -298,6 +298,28 @@ struct OWOneginiError {
   }
 }
 
+/// Generated class from Pigeon that represents data sent in messages.
+struct OWCustomIdentityProvider {
+  var providerId: String
+  var isTwoStep: Bool
+
+  static func fromList(_ list: [Any]) -> OWCustomIdentityProvider? {
+    let providerId = list[0] as! String
+    let isTwoStep = list[1] as! Bool
+
+    return OWCustomIdentityProvider(
+      providerId: providerId,
+      isTwoStep: isTwoStep
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      providerId,
+      isTwoStep,
+    ]
+  }
+}
+
 private class UserClientApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
@@ -306,12 +328,14 @@ private class UserClientApiCodecReader: FlutterStandardReader {
       case 129:
         return OWAuthenticator.fromList(self.readValue() as! [Any])
       case 130:
-        return OWCustomInfo.fromList(self.readValue() as! [Any])
+        return OWCustomIdentityProvider.fromList(self.readValue() as! [Any])
       case 131:
-        return OWIdentityProvider.fromList(self.readValue() as! [Any])
+        return OWCustomInfo.fromList(self.readValue() as! [Any])
       case 132:
-        return OWRegistrationResponse.fromList(self.readValue() as! [Any])
+        return OWIdentityProvider.fromList(self.readValue() as! [Any])
       case 133:
+        return OWRegistrationResponse.fromList(self.readValue() as! [Any])
+      case 134:
         return OWUserProfile.fromList(self.readValue() as! [Any])
       default:
         return super.readValue(ofType: type)
@@ -327,17 +351,20 @@ private class UserClientApiCodecWriter: FlutterStandardWriter {
     } else if let value = value as? OWAuthenticator {
       super.writeByte(129)
       super.writeValue(value.toList())
-    } else if let value = value as? OWCustomInfo {
+    } else if let value = value as? OWCustomIdentityProvider {
       super.writeByte(130)
       super.writeValue(value.toList())
-    } else if let value = value as? OWIdentityProvider {
+    } else if let value = value as? OWCustomInfo {
       super.writeByte(131)
       super.writeValue(value.toList())
-    } else if let value = value as? OWRegistrationResponse {
+    } else if let value = value as? OWIdentityProvider {
       super.writeByte(132)
       super.writeValue(value.toList())
-    } else if let value = value as? OWUserProfile {
+    } else if let value = value as? OWRegistrationResponse {
       super.writeByte(133)
+      super.writeValue(value.toList())
+    } else if let value = value as? OWUserProfile {
+      super.writeByte(134)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -363,6 +390,7 @@ class UserClientApiCodec: FlutterStandardMessageCodec {
 ///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol UserClientApi {
+  func startApplication(securityControllerClassName: String?, configModelClassName: String?, customIdentityProviderConfigs: [OWCustomIdentityProvider]?, connectionTimeout: Int64?, readTimeout: Int64?, completion: @escaping (Result<Void, Error>) -> Void)
   func registerUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void)
   func handleRegisteredUserUrl(url: String, signInType: Int64, completion: @escaping (Result<Void, Error>) -> Void)
   func getIdentityProviders(completion: @escaping (Result<[OWIdentityProvider], Error>) -> Void)
@@ -412,6 +440,27 @@ class UserClientApiSetup {
   static var codec: FlutterStandardMessageCodec { UserClientApiCodec.shared }
   /// Sets up an instance of `UserClientApi` to handle messages through the `binaryMessenger`.
   static func setUp(binaryMessenger: FlutterBinaryMessenger, api: UserClientApi?) {
+    let startApplicationChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.startApplication", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      startApplicationChannel.setMessageHandler { message, reply in
+        let args = message as! [Any]
+        let securityControllerClassNameArg = args[0] as! String?
+        let configModelClassNameArg = args[1] as! String?
+        let customIdentityProviderConfigsArg = args[2] as! [OWCustomIdentityProvider]?
+        let connectionTimeoutArg = (args[3] is Int) ? Int64(args[3] as! Int) : args[3] as! Int64?
+        let readTimeoutArg = (args[4] is Int) ? Int64(args[4] as! Int) : args[4] as! Int64?
+        api.startApplication(securityControllerClassName: securityControllerClassNameArg, configModelClassName: configModelClassNameArg, customIdentityProviderConfigs: customIdentityProviderConfigsArg, connectionTimeout: connectionTimeoutArg, readTimeout: readTimeoutArg) { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      startApplicationChannel.setMessageHandler(nil)
+    }
     let registerUserChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.registerUser", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       registerUserChannel.setMessageHandler { message, reply in

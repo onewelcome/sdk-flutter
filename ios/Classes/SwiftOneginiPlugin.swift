@@ -80,6 +80,13 @@ func toOWCustomInfo(_ info: ONGCustomInfo?) -> OWCustomInfo? {
 }
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, ResourceMethodApi {
+    func startApplication(securityControllerClassName: String?, configModelClassName: String?, customIdentityProviderConfigs: [OWCustomIdentityProvider]?, connectionTimeout: Int64?, readTimeout: Int64?, completion: @escaping (Result<Void, Error>) -> Void) {
+        OneginiModuleSwift.sharedInstance.startOneginiModule(httpConnectionTimeout: connectionTimeout) { result in
+            completion(result.mapError { $0 })
+        }
+    }
+
+
     func enrollMobileAuthentication(completion: @escaping (Result<Void, Error>) -> Void) {
         // Will be implemented during the OTP rework in
         // https://onewelcome.atlassian.net/browse/FP-69
@@ -310,9 +317,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
         }
         
         switch call.method {
-            
-            // base
-        case Constants.Routes.startApp: startApp(call, result)
             
             // otp
         case Constants.Routes.handleMobileAuthWithOtp: handleMobileAuthWithOtp(call, result)
