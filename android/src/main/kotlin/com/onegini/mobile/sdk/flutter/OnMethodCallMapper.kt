@@ -25,9 +25,6 @@ class OnMethodCallMapper @Inject constructor(private val oneginiMethodsWrapper: 
 
     private fun onSDKMethodCall(call: MethodCall, client: OneginiClient, result: MethodChannel.Result) {
         when (call.method) {
-            // TODO: Move remaining methods to pigeon; https://onewelcome.atlassian.net/browse/FP-71
-            Constants.METHOD_IS_AUTHENTICATOR_REGISTERED -> oneginiMethodsWrapper.isAuthenticatorRegistered(call, result)
-
             // OTP
             Constants.METHOD_HANDLE_MOBILE_AUTH_WITH_OTP -> MobileAuthenticationObject.mobileAuthWithOtp(call.argument<String>("data"), result, client)
 

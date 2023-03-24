@@ -2,9 +2,7 @@ package com.onegini.mobile.sdk.flutter.constants
 
 interface Constants {
     companion object {
-        /**
-         *  events
-         */
+        /** events */
         const val EVENT_ERROR = "eventError"
 
         const val EVENT_OPEN_PIN = "eventOpenPin"
@@ -26,9 +24,7 @@ interface Constants {
 
         const val EVENT_HANDLE_REGISTERED_URL = "eventHandleRegisteredUrl"
 
-        /**
-         * MethodsName
-         */
+        /** MethodsName */
         const val METHOD_START_APP = "startApp"
 
         const val METHOD_SUBMIT_CUSTOM_REGISTRATION_ACTION = "submitCustomRegistrationAction"
@@ -47,7 +43,7 @@ interface Constants {
         const val METHOD_GET_IMPLICIT_RESOURCE = "getImplicitResource"
         const val METHOD_GET_UNAUTHENTICATED_RESOURCE = "getUnauthenticatedResource"
 
-        //Registration
+        // Registration
         const val METHOD_REGISTER_USER = "registerUser"
         const val METHOD_HANDLE_REGISTERED_URL = "handleRegisteredUserUrl"
         const val METHOD_CANCEL_BROWSER_REGISTRATION = "cancelBrowserRegistration"
@@ -56,7 +52,7 @@ interface Constants {
         const val METHOD_GET_IDENTITY_PROVIDERS = "getIdentityProviders"
         const val METHOD_DEREGISTER_USER = "deregisterUser"
 
-        // Authentication 
+        // Authentication
         const val METHOD_ACCEPT_PIN_AUTHENTICATION_REQUEST = "acceptPinAuthenticationRequest"
         const val METHOD_DENY_PIN_AUTHENTICATION_REQUEST = "denyPinAuthenticationRequest"
         const val METHOD_GET_REGISTERED_AUTHENTICATORS = "getRegisteredAuthenticators"
@@ -66,12 +62,13 @@ interface Constants {
         const val METHOD_REGISTER_AUTHENTICATOR = "registerAuthenticator"
         const val METHOD_DEREGISTER_AUTHENTICATOR = "deregisterAuthenticator"
         const val METHOD_AUTHENTICATE_USER = "authenticateUser"
-        const val METHOD_IS_AUTHENTICATOR_REGISTERED = "isAuthenticatorRegistered"
         const val METHOD_LOGOUT = "logout"
 
         // Fingerprint
-        const val METHOD_ACCEPT_FINGERPRINT_AUTHENTICATION_REQUEST = "acceptFingerprintAuthenticationRequest"
-        const val METHOD_DENY_FINGERPRINT_AUTHENTICATION_REQUEST = "denyFingerprintAuthenticationRequest"
+        const val METHOD_ACCEPT_FINGERPRINT_AUTHENTICATION_REQUEST =
+                "acceptFingerprintAuthenticationRequest"
+        const val METHOD_DENY_FINGERPRINT_AUTHENTICATION_REQUEST =
+                "denyFingerprintAuthenticationRequest"
         const val METHOD_FINGERPRINT_FALL_BACK_TO_PIN = "fingerprintFallbackToPin"
 
         // Otp
@@ -83,9 +80,7 @@ interface Constants {
         const val METHOD_GET_ACCESS_TOKEN = "getAccessToken"
         const val METHOD_GET_AUTHENTICATED_USER_PROFILE = "getAuthenticatedUserProfile"
 
-        /**
-         * HTTP Response properties
-         */
+        /** HTTP Response properties */
         const val RESPONSE_STATUS_CODE = "statusCode"
         const val RESPONSE_HEADERS = "headers"
         const val RESPONSE_BODY = "body"

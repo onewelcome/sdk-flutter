@@ -43,7 +43,6 @@ import com.onegini.mobile.sdk.flutter.useCases.GetRegisteredAuthenticatorsUseCas
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfilesUseCase
 import com.onegini.mobile.sdk.flutter.useCases.HandleMobileAuthWithOtpUseCase
 import com.onegini.mobile.sdk.flutter.useCases.HandleRegisteredUrlUseCase
-import com.onegini.mobile.sdk.flutter.useCases.IsAuthenticatorRegisteredUseCase
 import com.onegini.mobile.sdk.flutter.useCases.LogoutUseCase
 import com.onegini.mobile.sdk.flutter.useCases.OtpAcceptAuthenticationRequestUseCase
 import com.onegini.mobile.sdk.flutter.useCases.OtpDenyAuthenticationRequestUseCase
@@ -93,8 +92,6 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   lateinit var getUserProfilesUseCase: GetUserProfilesUseCase
   @Inject
   lateinit var handleRegisteredUrlUseCase: HandleRegisteredUrlUseCase
-  @Inject
-  lateinit var isAuthenticatorRegisteredUseCase: IsAuthenticatorRegisteredUseCase
   @Inject
   lateinit var logoutUseCase: LogoutUseCase
   @Inject

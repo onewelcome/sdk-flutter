@@ -7,7 +7,6 @@ protocol BridgeToAuthenticatorsHandlerProtocol: AnyObject {
     func deregisterAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
     func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
     func getAuthenticatorsListForUserProfile(_ userProfile: ONGUserProfile) -> Array<ONGAuthenticator>
-    func isAuthenticatorRegistered(_ authenticatorType: ONGAuthenticatorType, _ userProfile: ONGUserProfile) -> Bool
 }
 
 class AuthenticatorsHandler: NSObject {
@@ -100,10 +99,6 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     func getAuthenticatorsListForUserProfile(_ userProfile: ONGUserProfile) -> Array<ONGAuthenticator> {
         let authenticatros = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile)
         return sortAuthenticatorsList(Array(authenticatros))
-    }
-    
-    func isAuthenticatorRegistered(_ authenticatorType: ONGAuthenticatorType, _ userProfile: ONGUserProfile) -> Bool {
-        return ONGUserClient.sharedInstance().registeredAuthenticators(forUser: userProfile).first(where: {$0.type.rawValue == authenticatorType.rawValue }) != nil;
     }
 }
 
