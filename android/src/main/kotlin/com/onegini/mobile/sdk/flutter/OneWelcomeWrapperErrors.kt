@@ -20,7 +20,6 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
     IDENTITY_PROVIDER_NOT_FOUND(8005, "The requested identity provider is not found"),
     QR_CODE_HAS_NO_DATA(8006, "QR-code does not have data"),
     METHOD_TO_CALL_NOT_FOUND(8007, "Method to call not found"),
-    URL_CANT_BE_NULL(8008, "Url can not be null"),
     MALFORMED_URL(8009, "Incorrect url format"),
     PREFERRED_AUTHENTICATOR_ERROR(8010, "Something went wrong when setting the preferred authenticator"),
     ONEWELCOME_SDK_NOT_INITIALIZED(8012, "OneWelcomeSDK is not initialized"),
