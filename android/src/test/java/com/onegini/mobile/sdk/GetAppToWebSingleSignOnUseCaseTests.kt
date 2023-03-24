@@ -110,5 +110,4 @@ class GetAppToWebSingleSignOnUseCaseTests {
     private fun mockParseUri(uri: String) {
         whenever(uriFacade.parse(uri)).thenReturn(parsedUri)
     }
-
 }
