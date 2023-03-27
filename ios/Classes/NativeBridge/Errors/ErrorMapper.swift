@@ -31,6 +31,7 @@ enum OneWelcomeWrapperError: Int {
     case unsupportedPinAction = 8029
     case unsupportedCustomRegistrationAction = 8030
     case authenticatorRegistrationCancelled = 8031
+    case mobileAuthInProgress = 8041
 
     func message() -> String {
         switch self {
@@ -79,15 +80,17 @@ enum OneWelcomeWrapperError: Int {
         case .authenticatorRegistrationCancelled:
             return "The authenticator-registration was cancelled."
         case .unauthenticatedImplicitly:
-            return "The requested action requires you to be authenticated implicitly"
+            return "The requested action requires you to be authenticated implicitly."
         case .methodArgumentNotFound:
-            return "The passed argument from Flutter could not be found"
+            return "The passed argument from Flutter could not be found."
         case .registrationNotInProgress:
-            return "Registration is currently not in progress"
+            return "Registration is currently not in progress."
         case .authenticationNotInProgress:
-            return "Authentication is currently not in progress"
+            return "Authentication is currently not in progress."
         case .otpAuthenticationNotInProgress:
-            return "OTP Authentication is currently not in progress"
+            return "OTP Authentication is currently not in progress."
+        case .mobileAuthInProgress:
+            return "Mobile Authentication is already in progress. Please cancel the previous authentication attempt."
         }
     }
 }

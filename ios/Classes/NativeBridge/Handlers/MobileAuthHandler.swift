@@ -17,6 +17,11 @@ class MobileAuthHandler: NSObject {
 extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
     func handleMobileAuthWithOtp2(otp: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
         Logger.log("handleMobileAuthWithOtp", sender: self)
+        if (handleMobileAuthCompletion != nil) {
+            completion(.failure(FlutterError(SdkError(.mobileAuthInProgress))))
+            return
+        }
+
         handleMobileAuthCompletion = completion
 
         guard ONGUserClient.sharedInstance().canHandleOTPMobileAuthRequest(otp) else {

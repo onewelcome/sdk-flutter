@@ -8,15 +8,10 @@ import javax.inject.Singleton
 
 @Singleton
 class OneginiMethodsWrapper @Inject constructor(
-    private val isAuthenticatorRegisteredUseCase: IsAuthenticatorRegisteredUseCase,
     private val startAppUseCase: StartAppUseCase,
 ) {
 
     fun startApp(call: MethodCall, result: MethodChannel.Result) {
         startAppUseCase(call, result)
-    }
-
-    fun isAuthenticatorRegistered(call: MethodCall, result: MethodChannel.Result) {
-        isAuthenticatorRegisteredUseCase(call, result)
     }
 }

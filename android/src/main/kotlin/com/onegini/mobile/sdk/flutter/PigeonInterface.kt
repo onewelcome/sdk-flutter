@@ -1,12 +1,6 @@
 package com.onegini.mobile.sdk.flutter
 
-import android.net.Uri
-import android.util.Patterns
-import com.onegini.mobile.sdk.android.handlers.OneginiAppToWebSingleSignOnHandler
-import com.onegini.mobile.sdk.android.handlers.error.OneginiAppToWebSingleSignOnError
-import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAppToWebSingleSignOn
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticator
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
@@ -41,7 +35,6 @@ import com.onegini.mobile.sdk.flutter.useCases.GetRegisteredAuthenticatorsUseCas
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfilesUseCase
 import com.onegini.mobile.sdk.flutter.useCases.HandleMobileAuthWithOtpUseCase
 import com.onegini.mobile.sdk.flutter.useCases.HandleRegisteredUrlUseCase
-import com.onegini.mobile.sdk.flutter.useCases.IsAuthenticatorRegisteredUseCase
 import com.onegini.mobile.sdk.flutter.useCases.LogoutUseCase
 import com.onegini.mobile.sdk.flutter.useCases.OtpAcceptAuthenticationRequestUseCase
 import com.onegini.mobile.sdk.flutter.useCases.OtpDenyAuthenticationRequestUseCase
@@ -93,8 +86,6 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   lateinit var getUserProfilesUseCase: GetUserProfilesUseCase
   @Inject
   lateinit var handleRegisteredUrlUseCase: HandleRegisteredUrlUseCase
-  @Inject
-  lateinit var isAuthenticatorRegisteredUseCase: IsAuthenticatorRegisteredUseCase
   @Inject
   lateinit var logoutUseCase: LogoutUseCase
   @Inject
