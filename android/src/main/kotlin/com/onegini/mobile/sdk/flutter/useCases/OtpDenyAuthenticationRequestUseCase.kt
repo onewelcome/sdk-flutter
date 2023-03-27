@@ -9,8 +9,6 @@ import javax.inject.Singleton
 @Singleton
 class OtpDenyAuthenticationRequestUseCase @Inject constructor() {
   operator fun invoke(): Result<Unit> {
-    MobileAuthOtpRequestHandler.CALLBACK?.denyAuthenticationRequest()
-
     return when (val otpCallback = MobileAuthOtpRequestHandler.CALLBACK) {
       null -> Result.failure(SdkError(OTP_AUTHENTICATION_NOT_IN_PROGRESS).pigeonError())
       else -> {
