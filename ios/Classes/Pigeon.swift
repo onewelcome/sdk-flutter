@@ -1223,16 +1223,8 @@ class NativeCallFlutterApi {
       completion()
     }
   }
-  /// Called when error event was received.
-  func n2fEventError(error errorArg: OWOneginiError, completion: @escaping () -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fEventError", binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([errorArg] as [Any?]) { _ in
-      completion()
-    }
-  }
-  /// Called whenever error occured.
-  func n2fShowError(error errorArg: OWOneginiError, completion: @escaping () -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fShowError", binaryMessenger: binaryMessenger, codec: codec)
+  func n2fEventPinNotAllowed(error errorArg: OWOneginiError, completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fEventPinNotAllowed", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([errorArg] as [Any?]) { _ in
       completion()
     }

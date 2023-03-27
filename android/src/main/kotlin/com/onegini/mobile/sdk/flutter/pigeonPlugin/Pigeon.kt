@@ -1320,16 +1320,8 @@ class NativeCallFlutterApi(private val binaryMessenger: BinaryMessenger) {
       callback()
     }
   }
-  /** Called when error event was received. */
-  fun n2fEventError(errorArg: OWOneginiError, callback: () -> Unit) {
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fEventError", codec)
-    channel.send(listOf(errorArg)) {
-      callback()
-    }
-  }
-  /** Called whenever error occured. */
-  fun n2fShowError(errorArg: OWOneginiError, callback: () -> Unit) {
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fShowError", codec)
+  fun n2fEventPinNotAllowed(errorArg: OWOneginiError, callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fEventPinNotAllowed", codec)
     channel.send(listOf(errorArg)) {
       callback()
     }

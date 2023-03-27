@@ -286,9 +286,5 @@ abstract class NativeCallFlutterApi {
   void n2fEventFinishCustomRegistration(
       OWCustomInfo? customInfo, String providerId);
 
-  /// Called when error event was received.
-  void n2fEventError(OWOneginiError error);
-
-  /// Called whenever error occured.
-  void n2fShowError(OWOneginiError error);
+  void n2fEventPinNotAllowed(OWOneginiError error);
 }

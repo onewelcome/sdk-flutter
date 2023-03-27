@@ -1359,11 +1359,7 @@ abstract class NativeCallFlutterApi {
   /// Called when the FinishCustomRegistration event occurs and a response should be given
   void n2fEventFinishCustomRegistration(OWCustomInfo? customInfo, String providerId);
 
-  /// Called when error event was received.
-  void n2fEventError(OWOneginiError error);
-
-  /// Called whenever error occured.
-  void n2fShowError(OWOneginiError error);
+  void n2fEventPinNotAllowed(OWOneginiError error);
 
   static void setup(NativeCallFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
     {
@@ -1603,38 +1599,19 @@ abstract class NativeCallFlutterApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.NativeCallFlutterApi.n2fEventError', codec,
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fEventPinNotAllowed', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fEventError was null.');
+          'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fEventPinNotAllowed was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final OWOneginiError? arg_error = (args[0] as OWOneginiError?);
           assert(arg_error != null,
-              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fEventError was null, expected non-null OWOneginiError.');
-          api.n2fEventError(arg_error!);
-          return;
-        });
-      }
-    }
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.NativeCallFlutterApi.n2fShowError', codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        channel.setMessageHandler(null);
-      } else {
-        channel.setMessageHandler((Object? message) async {
-          assert(message != null,
-          'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fShowError was null.');
-          final List<Object?> args = (message as List<Object?>?)!;
-          final OWOneginiError? arg_error = (args[0] as OWOneginiError?);
-          assert(arg_error != null,
-              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fShowError was null, expected non-null OWOneginiError.');
-          api.n2fShowError(arg_error!);
+              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fEventPinNotAllowed was null, expected non-null OWOneginiError.');
+          api.n2fEventPinNotAllowed(arg_error!);
           return;
         });
       }
