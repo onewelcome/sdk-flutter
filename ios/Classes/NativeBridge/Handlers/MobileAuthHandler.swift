@@ -2,7 +2,7 @@ import Foundation
 import OneginiSDKiOS
 
 protocol MobileAuthConnectorToHandlerProtocol: AnyObject {
-    func handleMobileAuthWithOtp2(otp: String, completion: @escaping (Result<Void, FlutterError>) -> Void)
+    func handleMobileAuthWithOtp(otp: String, completion: @escaping (Result<Void, FlutterError>) -> Void)
     func enrollMobileAuthentication(completion: @escaping (Result<Void, FlutterError>) -> Void)
     func acceptMobileAuthRequest(completion: @escaping (Result<Void, FlutterError>) -> Void)
     func denyMobileAuthRequest(completion: @escaping (Result<Void, FlutterError>) -> Void)
@@ -15,7 +15,7 @@ class MobileAuthHandler: NSObject {
 
 //MARK: - MobileAuthConnectorToHandlerProtocol
 extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
-    func handleMobileAuthWithOtp2(otp: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+    func handleMobileAuthWithOtp(otp: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
         Logger.log("handleMobileAuthWithOtp", sender: self)
         if (handleMobileAuthCompletion != nil) {
             completion(.failure(FlutterError(SdkError(.mobileAuthInProgress))))
