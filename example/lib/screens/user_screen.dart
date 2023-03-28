@@ -296,28 +296,33 @@ class Home extends StatelessWidget {
   enrollMobileAuthentication() async {
     await Onegini.instance.userClient
         .enrollMobileAuthentication()
+        .then((value) => showFlutterToast("Mobile Authentication enrollment success"))
         .catchError((error) {
           if (error is PlatformException) {
             showFlutterToast(error.message);
           }
-      }).then((value) => showFlutterToast("Mobile Authentication enrollment success"));
+      });
   }
 
   authWithOpt(BuildContext context) async {
     Onegini.instance.setEventContext(context);
-    var data = await Navigator.push(
-      context,
-      MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
-    );
+    // var data = await Navigator.push(
+    //   context,
+    //   MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
+    // );
+
+    var data = "eyJ0cmFuc2FjdGlvbl9pZCI6ImZhOTEwYTI2LTE1N2YtNGNkMy04YzczLWFjYzM0NzNlZmRlMyIsIm90cCI6ImZXbDdmcUxOSHdTaTBGQ0VRcHRvTUE9PSJ9";
 
     if (data != null) {
       await Onegini.instance.userClient
         .handleMobileAuthWithOtp(data)
+        .then((value) => showFlutterToast("OTP1 Authentication is successfull"))
         .catchError((error) {
           if (error is PlatformException) {
-            showFlutterToast(error.message);
+            print("otp1");
+            print(error.message);
           }
-      }).then((value) => showFlutterToast("OTP Authentication is successfull"));
+      });
     }
   }
 

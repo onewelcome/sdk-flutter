@@ -90,7 +90,7 @@ enum OneWelcomeWrapperError: Int {
         case .otpAuthenticationNotInProgress:
             return "OTP Authentication is currently not in progress."
         case .mobileAuthInProgress:
-            return "Mobile Authentication is already in progress. Please cancel the previous authentication attempt."
+            return "Mobile Authentication is already in progress and can not be performed concurrently."
         }
     }
 }
