@@ -5,8 +5,8 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class OtpAcceptAuthenticationRequestUseCase @Inject constructor() {
+class OtpAcceptAuthenticationRequestUseCase @Inject constructor(private val mobileAuthOtpRequestHandler: MobileAuthOtpRequestHandler) {
   operator fun invoke(): Result<Unit> {
-    return MobileAuthOtpRequestHandler.acceptAuthenticationRequest()
+    return mobileAuthOtpRequestHandler.acceptAuthenticationRequest()
   }
 }
