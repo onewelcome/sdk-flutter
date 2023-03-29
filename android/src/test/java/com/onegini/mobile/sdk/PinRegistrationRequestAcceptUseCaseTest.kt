@@ -13,6 +13,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
 class PinRegistrationRequestAcceptUseCaseTest {
@@ -54,6 +55,16 @@ class PinRegistrationRequestAcceptUseCaseTest {
 
     Assert.assertEquals(Unit, result)
   }
+
+  @Test
+  fun `When a pin registration callback is set, Then it should call accept on the sdk callback`() {
+    WhenPinCreationStarted()
+
+    pinRegistrationRequestAcceptUseCase("12345")
+
+    verify(oneginiPinCallback).acceptAuthenticationRequest("12345".toCharArray())
+  }
+
 
   private fun WhenPinCreationStarted() {
     // Since we Mock the SDK we need to call the startPinCreation ourselves on the CreatePinRequestHandler
