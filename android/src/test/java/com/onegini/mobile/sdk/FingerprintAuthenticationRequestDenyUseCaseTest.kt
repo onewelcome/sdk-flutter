@@ -13,6 +13,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
 class FingerprintAuthenticationRequestDenyUseCaseTest {
@@ -46,6 +47,15 @@ class FingerprintAuthenticationRequestDenyUseCaseTest {
     val result = fingerprintAuthenticationRequestDenyUseCase().getOrNull()
 
     Assert.assertEquals(Unit, result)
+  }
+
+  @Test
+  fun `When a pin authentication callback is set, Then it should call deny on the sdk callback`() {
+    WhenFingerPrintHasStarted()
+
+    fingerprintAuthenticationRequestDenyUseCase()
+
+    verify(oneginiFingerprintCallbackMock).denyAuthenticationRequest()
   }
 
   fun WhenFingerPrintHasStarted() {

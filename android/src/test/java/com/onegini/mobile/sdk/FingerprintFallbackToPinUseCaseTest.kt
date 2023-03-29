@@ -13,6 +13,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
 class FingerprintFallbackToPinUseCaseTest {
@@ -46,6 +47,15 @@ class FingerprintFallbackToPinUseCaseTest {
     val result = fingerprintFallbackToPinUseCase().getOrNull()
 
     Assert.assertEquals(Unit, result)
+  }
+
+  @Test
+  fun `When a pin authentication callback is set, Then it should call fallbackToPin on the sdk callback`() {
+    WhenFingerPrintHasStarted()
+
+    fingerprintFallbackToPinUseCase()
+
+    verify(oneginiFingerprintCallbackMock).fallbackToPin()
   }
 
   fun WhenFingerPrintHasStarted() {
