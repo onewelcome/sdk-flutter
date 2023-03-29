@@ -306,12 +306,10 @@ class Home extends StatelessWidget {
 
   authWithOpt(BuildContext context) async {
     Onegini.instance.setEventContext(context);
-    // var data = await Navigator.push(
-    //   context,
-    //   MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
-    // );
-
-    var data = "eyJ0cmFuc2FjdGlvbl9pZCI6ImZhOTEwYTI2LTE1N2YtNGNkMy04YzczLWFjYzM0NzNlZmRlMyIsIm90cCI6ImZXbDdmcUxOSHdTaTBGQ0VRcHRvTUE9PSJ9";
+    var data = await Navigator.push(
+      context,
+      MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
+    );
 
     if (data != null) {
       await Onegini.instance.userClient
