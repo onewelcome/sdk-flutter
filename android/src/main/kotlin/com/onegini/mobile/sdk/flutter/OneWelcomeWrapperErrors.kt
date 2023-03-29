@@ -13,6 +13,7 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
     FINGERPRINT_AUTHENTICATION_NOT_IN_PROGRESS(8038, "Fingerprint Authentication is currently not in progress"),
     OTP_AUTHENTICATION_NOT_IN_PROGRESS(8039, "OTP Authentication is currently not in progress"),
     BROWSER_REGISTRATION_NOT_IN_PROGRESS(8040, "Browser registration is currently not in progress"),
+    PIN_CREATION_NOT_IN_PROGRESS(8042, "Pin creation is currently not in progress"),
 
     // Errors that only occur on Android
     IDENTITY_PROVIDER_NOT_FOUND(8005, "The requested identity provider is not found"),

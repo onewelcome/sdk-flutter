@@ -10,7 +10,7 @@ import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import io.flutter.plugin.common.MethodChannel
 import okhttp3.Response
 
-class SdkError: Exception {
+open class SdkError: Exception {
     private val code: Int
     override val message: String
     private val details: MutableMap<String, Any> = mutableMapOf()
