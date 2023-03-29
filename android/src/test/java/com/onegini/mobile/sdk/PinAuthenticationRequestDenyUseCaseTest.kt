@@ -15,6 +15,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
 class PinAuthenticationRequestDenyUseCaseTest {
@@ -56,6 +57,15 @@ class PinAuthenticationRequestDenyUseCaseTest {
     val result = pinAuthenticationRequestDenyUseCase().getOrNull()
 
     Assert.assertEquals(Unit, result)
+  }
+
+  @Test
+  fun `When a pin registration callback is set, Then it should call deny on the sdk callback`() {
+    WhenPinAuthenticationStarted()
+
+    pinAuthenticationRequestDenyUseCase()
+
+    verify(oneginiPinCallbackMock).denyAuthenticationRequest()
   }
 
   private fun WhenPinAuthenticationStarted() {
