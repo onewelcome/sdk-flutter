@@ -138,24 +138,6 @@ class UserClient {
     await api.handleMobileAuthWithOtp(data);
   }
 
-  /// Starts mobile authentication on web by OTP.
-  Future<String?> mobileAuthWithOtp(String data) async {
-    // TODO once iOS rework is finished remove this functions
-    // https://onewelcome.atlassian.net/browse/FP-69
-    try {
-      var isSuccess = await Onegini.instance.channel
-          .invokeMethod(Constants.handleMobileAuthWithOtp, <String, dynamic>{
-        'data': data,
-      });
-      return isSuccess;
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
-  }
-
   /// Single sign on the user web page.
   Future<OWAppToWebSingleSignOn> getAppToWebSingleSignOn(String url) async {
     return await api.getAppToWebSingleSignOn(url);

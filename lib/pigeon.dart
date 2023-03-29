@@ -1371,7 +1371,7 @@ abstract class NativeCallFlutterApi {
   void n2fHandleRegisteredUrl(String url);
 
   /// Called to open OTP authentication.
-  void n2fOpenAuthOtp(String message);
+  void n2fOpenAuthOtp(String? message);
 
   /// Called to close OTP authentication.
   void n2fCloseAuthOtp();
@@ -1446,9 +1446,7 @@ abstract class NativeCallFlutterApi {
           'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenAuthOtp was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_message = (args[0] as String?);
-          assert(arg_message != null,
-              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenAuthOtp was null, expected non-null String.');
-          api.n2fOpenAuthOtp(arg_message!);
+          api.n2fOpenAuthOtp(arg_message);
           return;
         });
       }

@@ -13,11 +13,11 @@ import javax.inject.Singleton
 class PinRequestHandler @Inject constructor(private val nativeApi: NativeCallFlutterApi): OneginiCreatePinRequestHandler {
 
     companion object {
-        var CALLBACK: OneginiPinCallback? = null
+        var callback: OneginiPinCallback? = null
     }
 
     override fun startPinCreation(userProfile: UserProfile, oneginiPinCallback: OneginiPinCallback, p2: Int) {
-        CALLBACK = oneginiPinCallback
+        callback = oneginiPinCallback
         nativeApi.n2fOpenPinRequestScreen { }
     }
 

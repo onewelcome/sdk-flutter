@@ -12,7 +12,7 @@ import javax.inject.Singleton
 class BrowserRegistrationRequestHandler @Inject constructor(private val nativeApi: NativeCallFlutterApi): OneginiBrowserRegistrationRequestHandler {
 
     companion object {
-        var CALLBACK: OneginiBrowserRegistrationCallback? = null
+        var callback: OneginiBrowserRegistrationCallback? = null
 
         /**
          * Finish registration action with result from web browser
@@ -20,15 +20,15 @@ class BrowserRegistrationRequestHandler @Inject constructor(private val nativeAp
          * https://onewelcome.atlassian.net/browse/FP-35
          */
         fun handleRegistrationCallback(uri: Uri) {
-            if (CALLBACK != null) {
-                CALLBACK?.handleRegistrationCallback(uri)
-                CALLBACK = null
+            if (callback != null) {
+                callback?.handleRegistrationCallback(uri)
+                callback = null
             }
         }
     }
 
     override fun startRegistration(uri: Uri, oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback) {
-        CALLBACK = oneginiBrowserRegistrationCallback
+        callback = oneginiBrowserRegistrationCallback
         nativeApi.n2fHandleRegisteredUrl(uri.toString()) {}
     }
 }

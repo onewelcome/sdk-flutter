@@ -1,15 +1,6 @@
 package com.onegini.mobile.sdk.flutter
 
-import android.net.Uri
-import android.util.Patterns
-import com.onegini.mobile.sdk.android.handlers.OneginiAppToWebSingleSignOnHandler
-import com.onegini.mobile.sdk.android.handlers.error.OneginiAppToWebSingleSignOnError
-import com.onegini.mobile.sdk.android.model.OneginiAppToWebSingleSignOn
-import com.onegini.mobile.sdk.flutter.handlers.BrowserRegistrationRequestHandler
-import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
-import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAppToWebSingleSignOn
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticator
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomIdentityProvider
@@ -36,6 +27,7 @@ import com.onegini.mobile.sdk.flutter.useCases.FingerprintAuthenticationRequestD
 import com.onegini.mobile.sdk.flutter.useCases.FingerprintFallbackToPinUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAccessTokenUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAllAuthenticatorsUseCase
+import com.onegini.mobile.sdk.flutter.useCases.GetAppToWebSingleSignOnUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAuthenticatedUserProfileUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetIdentityProvidersUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetNotRegisteredAuthenticatorsUseCase
@@ -79,6 +71,8 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   lateinit var cancelBrowserRegistrationUseCase: CancelBrowserRegistrationUseCase
   @Inject
   lateinit var getAllAuthenticatorsUseCase: GetAllAuthenticatorsUseCase
+  @Inject
+  lateinit var getAppToWebSingleSignOnUseCase: GetAppToWebSingleSignOnUseCase
   @Inject
   lateinit var getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase
   @Inject
@@ -212,28 +206,7 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
 
 
   override fun getAppToWebSingleSignOn(url: String, callback: (Result<OWAppToWebSingleSignOn>) -> Unit) {
-    // TODO NEEDS OWN USE CASE; https://onewelcome.atlassian.net/browse/FP-62
-    if (!Patterns.WEB_URL.matcher(url).matches()) {
-      callback(Result.failure(SdkError(OneWelcomeWrapperErrors.MALFORMED_URL).pigeonError()))
-      return
-    }
-    val targetUri: Uri = Uri.parse(url)
-
-    oneginiSDK.oneginiClient.userClient.getAppToWebSingleSignOn(
-      targetUri,
-      object : OneginiAppToWebSingleSignOnHandler {
-        override fun onSuccess(oneginiAppToWebSingleSignOn: OneginiAppToWebSingleSignOn) {
-          callback(Result.success(OWAppToWebSingleSignOn(oneginiAppToWebSingleSignOn.token, oneginiAppToWebSingleSignOn.redirectUrl.toString())))
-        }
-
-        override fun onError(oneginiSingleSignOnError: OneginiAppToWebSingleSignOnError) {
-          callback(Result.failure(SdkError(
-            code = oneginiSingleSignOnError.errorType,
-            message = oneginiSingleSignOnError.message
-          ).pigeonError()))
-        }
-      }
-    )
+    getAppToWebSingleSignOnUseCase(url, callback)
   }
 
   override fun getAccessToken(callback: (Result<String>) -> Unit) {

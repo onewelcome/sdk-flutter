@@ -1175,7 +1175,7 @@ class NativeCallFlutterApi {
     }
   }
   /// Called to open OTP authentication.
-  func n2fOpenAuthOtp(message messageArg: String, completion: @escaping () -> Void) {
+  func n2fOpenAuthOtp(message messageArg: String?, completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenAuthOtp", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([messageArg] as [Any?]) { _ in
       completion()

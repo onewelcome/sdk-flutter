@@ -263,7 +263,7 @@ abstract class NativeCallFlutterApi {
   void n2fHandleRegisteredUrl(String url);
 
   /// Called to open OTP authentication.
-  void n2fOpenAuthOtp(String message);
+  void n2fOpenAuthOtp(String? message);
 
   /// Called to close OTP authentication.
   void n2fCloseAuthOtp();

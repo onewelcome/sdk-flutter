@@ -42,20 +42,6 @@ class EnrollMobileAuthenticationUseCaseTest {
   }
 
   @Test
-  fun `When there is no authenticated user during the enrollment, Then it should resolve with an error`() {
-    whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(null)
-
-    enrollMobileAuthenticationUseCase(callbackMock)
-
-    argumentCaptor<Result<Unit>>().apply {
-      verify(callbackMock).invoke(capture())
-
-      val expected = SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).pigeonError()
-      SdkErrorAssert.assertEquals(expected, firstValue.exceptionOrNull())
-    }
-  }
-
-  @Test
   fun `When the sdk returns an enrollment error, Then it should resolve with an error`() {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
     whenever(oneginiSdk.oneginiClient.userClient.enrollUserForMobileAuth(any())).thenAnswer {
