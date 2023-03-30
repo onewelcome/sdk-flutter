@@ -1,0 +1,8 @@
+line_length: 200
+excluded:
+  - OneginiTests
+  - OneginiUITests
+  - .symlinks/plugins/onegini/ios/Classes/Pigeon.swift
+
+included:
+  - .symlinks/plugins/onegini/ios
