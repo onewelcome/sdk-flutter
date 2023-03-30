@@ -13,6 +13,7 @@ enum OneWelcomeWrapperError: Int {
     case methodArgumentNotFound = 8036
     case authenticationNotInProgress = 8037
     case otpAuthenticationNotInProgress = 8039
+    case browserRegistrationNotInProgress = 8040
     
     // iOS only
     case providedUrlIncorrect = 8014
@@ -91,6 +92,8 @@ enum OneWelcomeWrapperError: Int {
             return "OTP Authentication is currently not in progress."
         case .mobileAuthInProgress:
             return "Mobile Authentication is already in progress and can not be performed concurrently."
+        case .browserRegistrationNotInProgress:
+            return "Browser registration is currently not in progress."
         }
     }
 }

@@ -171,8 +171,12 @@ extension RegistrationHandler {
         completion(.success)
     }
 
-    func cancelBrowserRegistration() {
-        handleRedirectURL(url: nil)
+    func cancelBrowserRegistration(_ completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        guard let browserRegistrationChallenge = self.browserRegistrationChallenge else {
+            completion(.failure(FlutterError(.browserRegistrationNotInProgress)))
+            return
+        }
+        browserRegistrationChallenge.sender.cancel(browserRegistrationChallenge)
     }
 }
 
