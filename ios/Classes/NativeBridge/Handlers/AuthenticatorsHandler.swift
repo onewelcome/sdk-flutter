@@ -1,7 +1,7 @@
 import Foundation
 import OneginiSDKiOS
 
-//MARK: -
+// MARK: -
 protocol BridgeToAuthenticatorsHandlerProtocol: AnyObject {
     func registerAuthenticator(_ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
     func deregisterAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
@@ -13,7 +13,7 @@ class AuthenticatorsHandler: NSObject {
     var customAuthChallenge: ONGCustomAuthFinishRegistrationChallenge?
     var registrationCompletion: ((Result<Void, FlutterError>) -> Void)?
     var deregistrationCompletion: ((Result<Void, FlutterError>) -> Void)?
-    
+
     func handlePin(pin: String?) {
         guard let customAuthChallenge = self.customAuthChallenge else {
             guard let pinChallenge = self.pinChallenge else { return }
@@ -37,7 +37,7 @@ class AuthenticatorsHandler: NSObject {
     }
 }
 
-//MARK: - BridgeToAuthenticatorsHandlerProtocol
+// MARK: - BridgeToAuthenticatorsHandlerProtocol
 extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     func registerAuthenticator(_ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
@@ -50,43 +50,43 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
             completion(.failure(FlutterError(.authenticatorNotFound)))
             return
         }
-        registrationCompletion = completion;
+        registrationCompletion = completion
         ONGUserClient.sharedInstance().register(authenticator, delegate: self)
     }
 
-    func deregisterAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String,_ completion: @escaping (Result<Void, FlutterError>) -> Void) {
+    func deregisterAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticatorId}) else {
             completion(.failure(FlutterError(.authenticatorNotFound)))
             return
         }
-        
-        if(authenticator.isRegistered != true) {
+
+        if authenticator.isRegistered != true {
             completion(.failure(FlutterError(.authenticatorNotRegistered)))
             return
         }
-        
-        deregistrationCompletion = completion;
+
+        deregistrationCompletion = completion
         ONGUserClient.sharedInstance().deregister(authenticator, delegate: self)
     }
 
-    func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String,_ completion: @escaping (Result<Void, FlutterError>) -> Void) {
+    func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticatorId}) else {
             completion(.failure(FlutterError(.authenticatorNotFound)))
             return
         }
-        
+
         // FIXME: Doesnt the sdk give us an error by itself?
-        if(!authenticator.isRegistered) {
+        if !authenticator.isRegistered {
             completion(.failure(FlutterError(.authenticatorNotRegistered)))
             return
         }
-        
+
         ONGUserClient.sharedInstance().preferredAuthenticator = authenticator
         completion(.success)
     }
 }
 
-//MARK: - ONGAuthenticatorRegistrationDelegate
+// MARK: - ONGAuthenticatorRegistrationDelegate
 extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
     func userClient(_: ONGUserClient, didReceive challenge: ONGPinChallenge) {
         Logger.log("[AUTH] userClient didReceive ONGPinChallenge", sender: self)
@@ -98,7 +98,7 @@ extension AuthenticatorsHandler: ONGAuthenticatorRegistrationDelegate {
     }
 
     func userClient(_: ONGUserClient, didFailToRegister authenticator: ONGAuthenticator, forUser _: ONGUserProfile, error: Error) {
-        Logger.log("[AUTH] userClient didFailToRegister ONGAuthenticator", sender:self)
+        Logger.log("[AUTH] userClient didFailToRegister ONGAuthenticator", sender: self)
         if error.code == ONGGenericError.actionCancelled.rawValue {
             registrationCompletion?(.failure(FlutterError(.authenticatorRegistrationCancelled)))
         } else {

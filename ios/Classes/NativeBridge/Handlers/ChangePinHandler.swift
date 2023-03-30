@@ -28,11 +28,11 @@ extension ChangePinHandler: ONGChangePinDelegate {
         loginHandler.handleDidAuthenticateUser()
         registrationHandler.handleDidReceivePinRegistrationChallenge(challenge)
     }
-    
+
     func userClient(_: ONGUserClient, didFailToChangePinForUser _: ONGUserProfile, error: Error) {
         loginHandler.handleDidFailToAuthenticateUser()
         registrationHandler.handleDidFailToRegister()
-        
+
         let mappedError = ErrorMapper().mapError(error)
         changePinCompletion?(.failure(FlutterError(mappedError)))
         changePinCompletion = nil
@@ -42,6 +42,6 @@ extension ChangePinHandler: ONGChangePinDelegate {
         registrationHandler.handleDidRegisterUser()
         changePinCompletion?(.success)
         changePinCompletion = nil
-        
+
     }
 }

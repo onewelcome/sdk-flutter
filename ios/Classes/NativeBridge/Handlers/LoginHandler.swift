@@ -4,7 +4,7 @@ import Flutter
 class LoginHandler: NSObject {
     var pinChallenge: ONGPinChallenge?
     var loginCompletion: ((Result<OWRegistrationResponse, FlutterError>) -> Void)?
-    
+
     func handlePin(pin: String, completion: (Result<Void, FlutterError>) -> Void) {
         guard let pinChallenge = pinChallenge else {
             completion(.failure(FlutterError(.authenticationNotInProgress)))
@@ -13,7 +13,7 @@ class LoginHandler: NSObject {
         pinChallenge.sender.respond(withPin: pin, challenge: pinChallenge)
         completion(.success)
     }
-    
+
     func cancelPinAuthentication(completion: (Result<Void, FlutterError>) -> Void) {
         guard let pinChallenge = pinChallenge else {
             completion(.failure(FlutterError(.authenticationNotInProgress)))
@@ -22,7 +22,7 @@ class LoginHandler: NSObject {
         pinChallenge.sender.cancel(pinChallenge)
         completion(.success)
     }
-    
+
     private func mapErrorFromPinChallenge(_ challenge: ONGPinChallenge) -> Error? {
         if let error = challenge.error, error.code != ONGAuthenticationError.touchIDAuthenticatorFailure.rawValue {
             return error
@@ -30,7 +30,7 @@ class LoginHandler: NSObject {
             return nil
         }
     }
-    
+
     func handleDidReceiveChallenge(_ challenge: ONGPinChallenge) {
         pinChallenge = challenge
         guard mapErrorFromPinChallenge(challenge) == nil else {
@@ -44,12 +44,12 @@ class LoginHandler: NSObject {
 
         SwiftOneginiPlugin.flutterApi?.n2fOpenPinScreenAuth {}
     }
-    
+
     func handleDidAuthenticateUser() {
         pinChallenge = nil
         SwiftOneginiPlugin.flutterApi?.n2fClosePinAuth {}
     }
-    
+
     func handleDidFailToAuthenticateUser() {
         guard pinChallenge != nil else { return }
         SwiftOneginiPlugin.flutterApi?.n2fClosePinAuth {}
@@ -72,7 +72,7 @@ extension LoginHandler: ONGAuthenticationDelegate {
     func userClient(_: ONGUserClient, didReceive challenge: ONGCustomAuthFinishAuthenticationChallenge) {
         // We don't support custom authenticators in FlutterPlugin right now.
     }
-    
+
     func userClient(_ userClient: ONGUserClient, didAuthenticateUser userProfile: ONGUserProfile, authenticator: ONGAuthenticator, info customAuthInfo: ONGCustomInfo?) {
         handleDidAuthenticateUser()
         loginCompletion?(.success(OWRegistrationResponse(userProfile: OWUserProfile(userProfile),

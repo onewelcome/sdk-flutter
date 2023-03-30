@@ -5,7 +5,7 @@ import OneginiSDKiOS
 class SdkError: Error {
     var code: Int
     var errorDescription: String
-    var details: Dictionary<String, Any?> = [:]
+    var details: [String: Any?] = [:]
 
     // Only error codes
     init(code: Int, errorDescription: String) {
@@ -75,7 +75,7 @@ private extension SdkError {
     }
 
     func setInfoDetails(_ info: [String: Any?]?) {
-        if (info == nil) {
+        if info == nil {
             details["userInfo"] = [:]
         } else {
             details["userInfo"] = info
@@ -83,8 +83,8 @@ private extension SdkError {
     }
 
     func setResponseDetails(_ response: ONGResourceResponse?, _ iosCode: Int?, _ iosMessage: String?) {
-        if (response == nil) {
-            details["response"] = Dictionary<String, Any?>()
+        if response == nil {
+            details["response"] = [String: Any?]()
         } else {
             details["response"] = response?.toJSON()
         }
@@ -101,7 +101,7 @@ private extension SdkError {
 }
 
 private extension ONGResourceResponse {
-    func toJSON() -> Dictionary<String, Any?> {
+    func toJSON() -> [String: Any?] {
         return ["statusCode": statusCode,
                 "headers": allHeaderFields,
                 "url": rawResponse.url?.absoluteString,

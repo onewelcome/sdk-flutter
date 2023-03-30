@@ -14,8 +14,8 @@ class MobileAuthHandler: NSObject {
     private var isFlowInProgress: Bool = false
 }
 
-//MARK: - MobileAuthConnectorToHandlerProtocol
-extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
+// MARK: - MobileAuthConnectorToHandlerProtocol
+extension MobileAuthHandler: MobileAuthConnectorToHandlerProtocol {
     func handleMobileAuthWithOtp(otp: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
         Logger.log("handleMobileAuthWithOtp", sender: self)
 
@@ -45,7 +45,7 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
                 return
             }
 
-            let mappedError = ErrorMapper().mapError(error);
+            let mappedError = ErrorMapper().mapError(error)
             completion(.failure(FlutterError(mappedError)))
         }
     }
@@ -83,7 +83,7 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
     }
 }
 
-//MARK: - MobileAuthRequestDelegate
+// MARK: - MobileAuthRequestDelegate
 class MobileAuthDelegate: MobileAuthRequestDelegate {
     private var handleMobileAuthCompletion: (Result<Void, FlutterError>) -> Void
 

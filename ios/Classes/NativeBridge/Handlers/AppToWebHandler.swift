@@ -1,12 +1,12 @@
 import Foundation
 import OneginiSDKiOS
 
-//MARK: -
+// MARK: -
 protocol AppToWebHandlerProtocol: AnyObject {
     func signInAppToWeb(targetURL: URL, completion: @escaping (Result<OWAppToWebSingleSignOn, FlutterError>) -> Void)
 }
 
-//MARK: - 
+// MARK: - 
 class AppToWebHandler: AppToWebHandlerProtocol {
     func signInAppToWeb(targetURL: URL, completion: @escaping (Result<OWAppToWebSingleSignOn, FlutterError>) -> Void) {
         ONGUserClient.sharedInstance().appToWebSingleSignOn(withTargetUrl: targetURL) { (url, token, error) in
