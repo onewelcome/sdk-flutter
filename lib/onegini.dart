@@ -52,7 +52,11 @@ class Onegini {
   }) async {
     _eventListener = eventListener;
     NativeCallFlutterApi.setup(_eventListener);
-    api.startApplication(securityControllerClassName, configModelClassName,
-        customIdentityProviderConfigs, connectionTimeout, readTimeout);
+    await api.startApplication(
+        securityControllerClassName,
+        configModelClassName,
+        customIdentityProviderConfigs,
+        connectionTimeout,
+        readTimeout);
   }
 }
