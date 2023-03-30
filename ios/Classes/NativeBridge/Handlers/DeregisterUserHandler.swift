@@ -7,12 +7,11 @@ protocol DeregisterUserHandlerProtocol: AnyObject {
 
 class DeregisterUserHandler: DeregisterUserHandlerProtocol {
     func deregister(profileId: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
+        guard let profile = SharedUserClient.instance.userProfiles.first(where: { $0.profileId == profileId }) else {
             completion(.failure(FlutterError(.userProfileDoesNotExist)))
             return
         }
-
-        ONGUserClient.sharedInstance().deregisterUser(profile) { _, error in
+        SharedUserClient.instance.deregister(user: profile) { error in
             if let error = error {
                 let mappedError = ErrorMapper().mapError(error)
                 completion(.failure(FlutterError(mappedError)))
