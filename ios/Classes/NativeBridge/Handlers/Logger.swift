@@ -1,3 +1,4 @@
+// swiftlint:disable identifier_name
 //
 //  Logger.swift
 //  onegini

@@ -30,18 +30,18 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
     func identityProviders() -> [ONGIdentityProvider] {
         var list = Array(ONGUserClient.sharedInstance().identityProviders())
 
-        let listOutput: [String]? =  OneginiModuleSwift.sharedInstance.customRegIdentifiers.filter { (_id) -> Bool in
+        let listOutput: [String]? =  OneginiModuleSwift.sharedInstance.customRegIdentifiers.filter { (providerId) -> Bool in
             let element = list.first { (provider) -> Bool in
-                return provider.identifier == _id
+                return provider.identifier == providerId
             }
 
             return element == nil
         }
 
-        listOutput?.forEach { (_providerId) in
+        listOutput?.forEach { (providerId) in
             let identityProvider = ONGIdentityProvider()
-            identityProvider.name = _providerId
-            identityProvider.identifier = _providerId
+            identityProvider.name = providerId
+            identityProvider.identifier = providerId
 
             list.append(identityProvider)
         }
@@ -126,10 +126,10 @@ extension RegistrationHandler {
         signUpCompletion = completion
 
         var identityProvider = identityProviders().first(where: { $0.identifier == providerId})
-        if let _providerId = providerId, identityProvider == nil {
+        if let providerId = providerId, identityProvider == nil {
             identityProvider = ONGIdentityProvider()
-            identityProvider?.name = _providerId
-            identityProvider?.identifier = _providerId
+            identityProvider?.name = providerId
+            identityProvider?.identifier = providerId
         }
 
         ONGUserClient.sharedInstance().registerUser(with: identityProvider, scopes: scopes, delegate: self)

@@ -57,14 +57,14 @@ class SdkError: Error {
     }
 
     func flutterError() -> FlutterError {
-        let _error = FlutterError(code: "\(self.code)", message: self.errorDescription, details: details)
+        let error = FlutterError(code: "\(self.code)", message: self.errorDescription, details: details)
 
-        return _error
+        return error
     }
 
     static func convertToFlutter(_ error: SdkError?) -> FlutterError {
-        let _error = error ?? SdkError(.genericError)
-        return _error.flutterError()
+        let error = error ?? SdkError(.genericError)
+        return error.flutterError()
     }
 }
 

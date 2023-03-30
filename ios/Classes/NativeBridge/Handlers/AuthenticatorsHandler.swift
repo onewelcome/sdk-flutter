@@ -18,8 +18,8 @@ class AuthenticatorsHandler: NSObject {
         guard let customAuthChallenge = self.customAuthChallenge else {
             guard let pinChallenge = self.pinChallenge else { return }
 
-            if let _pin = pin {
-                pinChallenge.sender.respond(withPin: _pin, challenge: pinChallenge)
+            if let pin = pin {
+                pinChallenge.sender.respond(withPin: pin, challenge: pinChallenge)
 
             } else {
                 pinChallenge.sender.cancel(pinChallenge)
@@ -28,8 +28,8 @@ class AuthenticatorsHandler: NSObject {
             return
         }
 
-        if let _pin = pin {
-            customAuthChallenge.sender.respond(withData: _pin, challenge: customAuthChallenge)
+        if let pin = pin {
+            customAuthChallenge.sender.respond(withData: pin, challenge: customAuthChallenge)
 
         } else {
             customAuthChallenge.sender.cancel(customAuthChallenge, underlyingError: nil)

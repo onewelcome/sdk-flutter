@@ -1,3 +1,4 @@
+// swiftlint:disable cyclomatic_complexity
 import OneginiSDKiOS
 
 enum OneWelcomeWrapperError: Int {
