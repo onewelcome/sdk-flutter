@@ -20,10 +20,10 @@ OneginiError oneginiErrorFromJson(dynamic data) {
   if (value != null) {
     return OneginiError.fromJson(value);
   } else {
-    var _error = OneginiError();
-    _error.code = 8001;
-    _error.message = data;
-    return _error;
+    var error = OneginiError();
+    error.code = 8001;
+    error.message = data;
+    return error;
   }
 }
 

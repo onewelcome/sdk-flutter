@@ -12,7 +12,6 @@ import 'package:onegini_example/models/client_resource.dart';
 import 'package:onegini_example/screens/qr_scan_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:onegini/pigeon.dart';
-import 'package:onegini/model/request_details.dart';
 
 import '../main.dart';
 import 'login_screen.dart';
@@ -306,12 +305,10 @@ class Home extends StatelessWidget {
 
   authWithOpt(BuildContext context) async {
     Onegini.instance.setEventContext(context);
-    // var data = await Navigator.push(
-    //   context,
-    //   MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
-    // );
-
-    var data = "eyJ0cmFuc2FjdGlvbl9pZCI6ImZhOTEwYTI2LTE1N2YtNGNkMy04YzczLWFjYzM0NzNlZmRlMyIsIm90cCI6ImZXbDdmcUxOSHdTaTBGQ0VRcHRvTUE9PSJ9";
+    var data = await Navigator.push(
+      context,
+      MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
+    );
 
     if (data != null) {
       await Onegini.instance.userClient

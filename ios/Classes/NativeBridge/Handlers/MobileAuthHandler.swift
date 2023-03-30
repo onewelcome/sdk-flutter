@@ -6,12 +6,12 @@ protocol MobileAuthConnectorToHandlerProtocol: AnyObject {
     func enrollMobileAuthentication(completion: @escaping (Result<Void, FlutterError>) -> Void)
     func acceptMobileAuthRequest(completion: @escaping (Result<Void, FlutterError>) -> Void)
     func denyMobileAuthRequest(completion: @escaping (Result<Void, FlutterError>) -> Void)
-    func setMobileAuthCallback(didReceiveConfirmationChallenge confirmation: @escaping (Bool) -> Void)
+    func setMobileAuthCallback(_ confirmation: @escaping (Bool) -> Void)
 }
 
 class MobileAuthHandler: NSObject {
-    var mobileAuthCallback: ((Bool) -> Void)?
-    var flowStarted: Bool = false
+    private var mobileAuthCallback: ((Bool) -> Void)?
+    private var isFlowInProgress: Bool = false
 }
 
 //MARK: - MobileAuthConnectorToHandlerProtocol
@@ -20,18 +20,18 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
         Logger.log("handleMobileAuthWithOtp", sender: self)
 
         // Check to prevent breaking iOS SDK; https://onewelcome.atlassian.net/browse/SDKIOS-987
-        guard let _ = SharedUserClient.instance.authenticatedUserProfile else {
+        guard SharedUserClient.instance.authenticatedUserProfile != nil else {
             completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
             return
         }
 
         // Prevent concurrent OTP mobile authentication flows at same time; https://onewelcome.atlassian.net/browse/SDKIOS-989
-        if (flowStarted) {
+        guard !isFlowInProgress else {
             completion(.failure(FlutterError(.mobileAuthInProgress)))
             return
         }
 
-        flowStarted = true
+        isFlowInProgress = true
 
         let delegate = MobileAuthDelegate(handleMobileAuthCompletion: completion)
         SharedUserClient.instance.handleOTPMobileAuthRequest(otp: otp, delegate: delegate)
@@ -74,12 +74,12 @@ extension MobileAuthHandler : MobileAuthConnectorToHandlerProtocol {
         completion(.success)
     }
 
-    func setMobileAuthCallback(didReceiveConfirmationChallenge confirmation: @escaping (Bool) -> Void) {
+    func setMobileAuthCallback(_ confirmation: @escaping (Bool) -> Void) {
         mobileAuthCallback = confirmation
     }
 
     func finishMobileAuthenticationFlow() {
-        flowStarted = false
+        isFlowInProgress = false
     }
 }
 
@@ -92,20 +92,20 @@ class MobileAuthDelegate: MobileAuthRequestDelegate {
     }
 
     func userClient(_ userClient: UserClient, didReceiveConfirmation confirmation: @escaping (Bool) -> Void, for request: MobileAuthRequest) {
-        BridgeConnector.shared?.toMobileAuthHandler.setMobileAuthCallback(didReceiveConfirmationChallenge: confirmation)
+        BridgeConnector.shared?.toMobileAuthHandler.setMobileAuthCallback(confirmation)
         SwiftOneginiPlugin.flutterApi?.n2fOpenAuthOtp(message: request.message) {}
     }
 
     func userClient(_ userClient: UserClient, didReceivePinChallenge challenge: PinChallenge, for request: MobileAuthRequest) {
-        //@todo will need this for PUSH
+        // todo: will need this for PUSH
     }
 
     func userClient(_ userClient: UserClient, didReceiveBiometricChallenge challenge: BiometricChallenge, for request: MobileAuthRequest) {
-        //@todo will need this for PUSH
+        // todo: will need this for PUSH
     }
 
     func userClient(_ userClient: UserClient, didReceiveCustomAuthFinishAuthenticationChallenge challenge: CustomAuthFinishAuthenticationChallenge, for request: MobileAuthRequest) {
-        //@todo will need this for PUSH Custom
+        // todo: will need this for PUSH Custom
     }
 
     func userClient(_ userClient: UserClient, didFailToHandleRequest request: MobileAuthRequest, authenticator: Authenticator?, error: Error) {
@@ -113,10 +113,10 @@ class MobileAuthDelegate: MobileAuthRequestDelegate {
         SwiftOneginiPlugin.flutterApi?.n2fCloseAuthOtp {}
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            self.handleMobileAuthCompletion(.failure(FlutterError(SdkError(.authenticationCancelled))))
+            handleMobileAuthCompletion(.failure(FlutterError(SdkError(.authenticationCancelled))))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            self.handleMobileAuthCompletion(.failure(FlutterError(mappedError)))
+            handleMobileAuthCompletion(.failure(FlutterError(mappedError)))
         }
     }
 
@@ -124,6 +124,6 @@ class MobileAuthDelegate: MobileAuthRequestDelegate {
         BridgeConnector.shared?.toMobileAuthHandler.finishMobileAuthenticationFlow()
         SwiftOneginiPlugin.flutterApi?.n2fCloseAuthOtp {}
 
-        self.handleMobileAuthCompletion(.success)
+        handleMobileAuthCompletion(.success)
     }
 }
