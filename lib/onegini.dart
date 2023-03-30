@@ -49,7 +49,7 @@ class Onegini {
   }) async {
     _eventListener = eventListener;
     try {
-      var customIdentityProviderConfigsJson;
+      List<String>? customIdentityProviderConfigsJson;
       if (customIdentityProviderConfigs != null) {
         customIdentityProviderConfigsJson = [
           for (var customIdentityProviderConfig

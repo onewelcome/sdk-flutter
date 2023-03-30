@@ -13,7 +13,6 @@ class OneginiPinRegistrationCallback {
   }
 
   /// Accepts pin registration and sent [pin] to the OneginiSdk.
-  @Deprecated("message")
   Future<void> acceptAuthenticationRequest(
       BuildContext? context, String pin) async {
     Onegini.instance.setEventContext(context);

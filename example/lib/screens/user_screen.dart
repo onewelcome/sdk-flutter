@@ -12,7 +12,6 @@ import 'package:onegini_example/models/client_resource.dart';
 import 'package:onegini_example/screens/qr_scan_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:onegini/pigeon.dart';
-import 'package:onegini/model/request_details.dart';
 
 import '../main.dart';
 import 'login_screen.dart';

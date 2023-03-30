@@ -1,10 +1,8 @@
 // @dart = 2.10
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/model/authentication_attempt.dart';
-import 'package:onegini/model/onegini_error.dart';
 import 'package:onegini/model/onegini_event.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini/onegini_event_listener.dart';

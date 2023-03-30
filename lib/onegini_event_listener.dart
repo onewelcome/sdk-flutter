@@ -1,9 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:onegini/model/onegini_error.dart' as deprecatedError;
 import 'package:onegini/pigeon.dart';
 import 'model/authentication_attempt.dart';
-import 'model/onegini_error.dart';
 import 'model/onegini_event.dart';
 
 /// Extend from this class to describe the events that will take place inside OneginiSDK
