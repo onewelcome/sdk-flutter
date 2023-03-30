@@ -41,6 +41,7 @@ class LoginHandler: NSObject {
             SwiftOneginiPlugin.flutterApi?.n2fNextAuthenticationAttempt(authenticationAttempt: authAttempt) {}
             return
         }
+
         SwiftOneginiPlugin.flutterApi?.n2fOpenPinScreenAuth {}
     }
     

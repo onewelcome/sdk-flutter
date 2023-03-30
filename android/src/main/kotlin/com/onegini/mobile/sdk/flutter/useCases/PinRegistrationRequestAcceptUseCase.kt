@@ -9,7 +9,7 @@ import javax.inject.Singleton
 @Singleton
 class PinRegistrationRequestAcceptUseCase @Inject constructor() {
   operator fun invoke(pin: String): Result<Unit> {
-    return when (val pinCallback = PinRequestHandler.CALLBACK) {
+    return when (val pinCallback = PinRequestHandler.callback) {
       null -> Result.failure(SdkError(REGISTRATION_NOT_IN_PROGRESS).pigeonError())
       else -> {
         pinCallback.acceptAuthenticationRequest(pin.toCharArray())

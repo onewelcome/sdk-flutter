@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/model/onegini_error.dart' as deprecatedError;
 import 'package:onegini/pigeon.dart';
-import 'constants/constants.dart';
 import 'model/authentication_attempt.dart';
 import 'model/onegini_error.dart';
 import 'model/onegini_event.dart';
@@ -122,8 +121,8 @@ abstract class OneginiEventListener implements NativeCallFlutterApi {
   }
 
   @override
-  void n2fOpenAuthOtp(String message) {
-    openAuthOtp(_context, message);
+  void n2fOpenAuthOtp(String? message) {
+    openAuthOtp(_context, message != null ? message : "");
   }
 
   @override

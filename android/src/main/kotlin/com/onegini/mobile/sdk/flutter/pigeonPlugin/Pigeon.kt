@@ -1223,7 +1223,7 @@ class NativeCallFlutterApi(private val binaryMessenger: BinaryMessenger) {
     }
   }
   /** Called to open OTP authentication. */
-  fun n2fOpenAuthOtp(messageArg: String, callback: () -> Unit) {
+  fun n2fOpenAuthOtp(messageArg: String?, callback: () -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenAuthOtp", codec)
     channel.send(listOf(messageArg)) {
       callback()

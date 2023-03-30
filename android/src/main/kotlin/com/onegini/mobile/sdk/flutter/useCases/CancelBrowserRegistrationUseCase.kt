@@ -7,11 +7,11 @@ import javax.inject.Inject
 
 class CancelBrowserRegistrationUseCase @Inject constructor() {
   operator fun invoke(): Result<Unit> {
-    return when (val browserCallback = BrowserRegistrationRequestHandler.CALLBACK) {
+    return when (val browserCallback = BrowserRegistrationRequestHandler.callback) {
       null -> Result.failure(SdkError(BROWSER_AUTHENTICATION_NOT_IN_PROGRESS).pigeonError())
       else -> {
         browserCallback.denyRegistration()
-        BrowserRegistrationRequestHandler.CALLBACK = null
+        BrowserRegistrationRequestHandler.callback = null
         Result.success(Unit)
       }
     }

@@ -13,9 +13,6 @@ class EnrollMobileAuthenticationUseCase @Inject constructor(
   private val oneginiSDK: OneginiSDK,
 ) {
   operator fun invoke(callback: (Result<Unit>) -> Unit) {
-    oneginiSDK.oneginiClient.userClient.authenticatedUserProfile
-      ?: return callback(Result.failure(SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).pigeonError()))
-
     oneginiSDK.oneginiClient.userClient.enrollUserForMobileAuth(object : OneginiMobileAuthEnrollmentHandler {
       override fun onSuccess() {
         callback(Result.success(Unit))

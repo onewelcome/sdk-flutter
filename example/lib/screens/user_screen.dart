@@ -293,22 +293,34 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 }
 
 class Home extends StatelessWidget {
+  enrollMobileAuthentication() async {
+    await Onegini.instance.userClient
+        .enrollMobileAuthentication()
+        .then((value) => showFlutterToast("Mobile Authentication enrollment success"))
+        .catchError((error) {
+          if (error is PlatformException) {
+            showFlutterToast(error.message);
+          }
+      });
+  }
+
   authWithOpt(BuildContext context) async {
     Onegini.instance.setEventContext(context);
     var data = await Navigator.push(
       context,
       MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
     );
+
     if (data != null) {
-      var isSuccess = await Onegini.instance.userClient
-          .mobileAuthWithOtp(data)
-          .catchError((error) {
-        if (error is PlatformException) {
-          showFlutterToast(error.message);
-        }
+      await Onegini.instance.userClient
+        .handleMobileAuthWithOtp(data)
+        .then((value) => showFlutterToast("OTP1 Authentication is successfull"))
+        .catchError((error) {
+          if (error is PlatformException) {
+            print("otp1");
+            print(error.message);
+          }
       });
-      if (isSuccess != null && isSuccess.isNotEmpty)
-        showFlutterToast(isSuccess);
     }
   }
 
@@ -383,9 +395,15 @@ class Home extends StatelessWidget {
             ),
             ElevatedButton(
               onPressed: () {
+                enrollMobileAuthentication();
+              },
+              child: Text('Enroll for Mobile Authentication'),
+            ),
+            ElevatedButton(
+              onPressed: () {
                 authWithOpt(context);
               },
-              child: Text('auth with opt'),
+              child: Text('Auth with opt'),
             ),
             SizedBox(
               height: 20,

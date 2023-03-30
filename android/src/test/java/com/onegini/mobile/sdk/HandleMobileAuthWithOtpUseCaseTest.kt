@@ -4,10 +4,8 @@ import com.onegini.mobile.sdk.android.handlers.OneginiMobileAuthWithOtpHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthEnrollmentError
 import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthWithOtpError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NO_USER_PROFILE_IS_AUTHENTICATED
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.SdkErrorAssert
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import com.onegini.mobile.sdk.flutter.useCases.HandleMobileAuthWithOtpUseCase
 import org.junit.Assert
@@ -40,20 +38,6 @@ class HandleMobileAuthWithOtpUseCaseTest {
     handleMobileAuthWithOtpUseCase = HandleMobileAuthWithOtpUseCase(oneginiSdk)
     whenever(otpErrorMock.errorType).thenReturn(OneginiMobileAuthWithOtpError.GENERAL_ERROR)
     whenever(otpErrorMock.message).thenReturn("General error")
-  }
-
-  @Test
-  fun `When there is no authenticated user during the otp authentication, Then it should resolve with an error`() {
-    whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(null)
-
-    handleMobileAuthWithOtpUseCase("otp_password", callbackMock)
-
-    argumentCaptor<Result<Unit>>().apply {
-      verify(callbackMock).invoke(capture())
-
-      val expected = SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).pigeonError()
-      SdkErrorAssert.assertEquals(expected, firstValue.exceptionOrNull())
-    }
   }
 
   @Test

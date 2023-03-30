@@ -26,7 +26,7 @@ class CancelBrowserRegistrationUseCaseTest {
 
   @Test
   fun `When no browser registration callback is set, Then it should resolve with an error`() {
-    BrowserRegistrationRequestHandler.CALLBACK = null
+    BrowserRegistrationRequestHandler.callback = null
 
     val result = cancelBrowserRegistrationUseCase().exceptionOrNull()
     SdkErrorAssert.assertEquals(BROWSER_AUTHENTICATION_NOT_IN_PROGRESS, result)
@@ -34,7 +34,7 @@ class CancelBrowserRegistrationUseCaseTest {
 
   @Test
   fun `When a pin browser registration callback is set, Then it should resolve successfully`() {
-    BrowserRegistrationRequestHandler.CALLBACK = oneginiBrowserCallbackMock
+    BrowserRegistrationRequestHandler.callback = oneginiBrowserCallbackMock
 
     val result = cancelBrowserRegistrationUseCase().getOrNull()
     Assert.assertEquals(Unit, result)

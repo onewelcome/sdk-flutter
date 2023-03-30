@@ -15,7 +15,7 @@ import org.mockito.junit.MockitoJUnitRunner
 @RunWith(MockitoJUnitRunner::class)
 class OtpAcceptAuthenticationRequestUseCaseTest {
   @Mock
-  lateinit var oneginiOtpCallbackMock: OneginiAcceptDenyCallback
+  lateinit var oneginiAcceptDenyCallback: OneginiAcceptDenyCallback
 
   lateinit var otpAcceptAuthenticationRequestUseCase: OtpAcceptAuthenticationRequestUseCase
 
@@ -26,7 +26,7 @@ class OtpAcceptAuthenticationRequestUseCaseTest {
 
   @Test
   fun `When no otp authentication callback is set, Then it should resolve with an error`() {
-    MobileAuthOtpRequestHandler.CALLBACK = null
+    MobileAuthOtpRequestHandler.callback = null
 
     val result = otpAcceptAuthenticationRequestUseCase().exceptionOrNull()
     SdkErrorAssert.assertEquals(OTP_AUTHENTICATION_NOT_IN_PROGRESS, result)
@@ -34,7 +34,7 @@ class OtpAcceptAuthenticationRequestUseCaseTest {
 
   @Test
   fun `When a otp authentication callback is set, Then it should resolve successfully`() {
-    MobileAuthOtpRequestHandler.CALLBACK = oneginiOtpCallbackMock
+    MobileAuthOtpRequestHandler.callback = oneginiAcceptDenyCallback
 
     val result = otpAcceptAuthenticationRequestUseCase().getOrNull()
     Assert.assertEquals(Unit, result)

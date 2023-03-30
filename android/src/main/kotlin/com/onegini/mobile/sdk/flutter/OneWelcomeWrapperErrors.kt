@@ -9,8 +9,6 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
     ERROR_CODE_HTTP_REQUEST(8013, "OneWelcome: HTTP Request returned an error code. Check Response for more info"),
 
     REGISTRATION_NOT_IN_PROGRESS(8034, "Registration is currently not in progress"),
-    USER_NOT_AUTHENTICATED_IMPLICITLY(8035, "The requested action requires you to be authenticated implicitly"),
-    METHOD_ARGUMENT_NOT_FOUND(8036, "The passed argument from Flutter could not be found"),
     AUTHENTICATION_NOT_IN_PROGRESS(8037, "Authentication is currently not in progress"),
     FINGERPRINT_AUTHENTICATION_NOT_IN_PROGRESS(8038, "Fingerprint Authentication is currently not in progress"),
     OTP_AUTHENTICATION_NOT_IN_PROGRESS(8039, "OTP Authentication is currently not in progress"),
@@ -18,10 +16,7 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
 
     // Errors that only occur on Android
     IDENTITY_PROVIDER_NOT_FOUND(8005, "The requested identity provider is not found"),
-    QR_CODE_HAS_NO_DATA(8006, "QR-code does not have data"),
     METHOD_TO_CALL_NOT_FOUND(8007, "Method to call not found"),
-    MALFORMED_URL(8009, "Incorrect url format"),
-    PREFERRED_AUTHENTICATOR_ERROR(8010, "Something went wrong when setting the preferred authenticator"),
     ONEWELCOME_SDK_NOT_INITIALIZED(8012, "OneWelcomeSDK is not initialized"),
     CONFIG_ERROR(8032, "Something went wrong while setting the configuration"),
     SECURITY_CONTROLLER_NOT_FOUND(8033, "Security controller class not found"),

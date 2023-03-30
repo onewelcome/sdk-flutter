@@ -30,7 +30,7 @@ class PinRegistrationRequestAcceptUseCaseTest {
 
   @Test
   fun `When no pin registration callback is set, Then it should resolve with an error`() {
-    PinRequestHandler.CALLBACK = null
+    PinRequestHandler.callback = null
 
     val result = pinRegistrationRequestAcceptUseCase("12345").exceptionOrNull()
     SdkErrorAssert.assertEquals(REGISTRATION_NOT_IN_PROGRESS, result)
@@ -38,7 +38,7 @@ class PinRegistrationRequestAcceptUseCaseTest {
 
   @Test
   fun `When a pin registration callback is set, Then it should resolve successfully`() {
-    PinRequestHandler.CALLBACK = oneginiPinCallbackMock
+    PinRequestHandler.callback = oneginiPinCallbackMock
 
     val result = pinRegistrationRequestAcceptUseCase("12345").getOrNull()
     Assert.assertEquals(Unit, result)
