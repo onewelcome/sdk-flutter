@@ -24,7 +24,7 @@ class PinRequestScreen extends StatefulWidget {
 }
 
 class _PinRequestScreenState extends State<PinRequestScreen> {
-  var pinCode = List.filled(5, "");
+  var pinCode = List<String>.filled(5, null);
 
   enterNum(String num) {
     for (var i = 0; i < pinCode.length; i++) {
