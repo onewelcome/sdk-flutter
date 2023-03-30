@@ -35,16 +35,16 @@ extension OneginiModuleSwift {
         return true
     }
     
-    func submitCustomRegistrationSuccess(_ data: String?) {
-        bridgeConnector.toRegistrationHandler.submitCustomRegistrationSuccess(data)
+    func submitCustomRegistrationSuccess(_ data: String?, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        bridgeConnector.toRegistrationHandler.submitCustomRegistrationSuccess(data, completion)
     }
     
-    func submitCustomRegistrationError(_ error: String) {
-        bridgeConnector.toRegistrationHandler.cancelCustomRegistration(error)
+    func submitCustomRegistrationError(_ error: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        bridgeConnector.toRegistrationHandler.cancelCustomRegistration(error, completion)
     }
     
-    public func cancelBrowserRegistration() -> Void {
-        bridgeConnector.toRegistrationHandler.cancelBrowserRegistration()
+    public func cancelBrowserRegistration(_ completion: @escaping (Result<Void, FlutterError>) -> Void) -> Void {
+        bridgeConnector.toRegistrationHandler.cancelBrowserRegistration(completion)
     }
     
     func registerAuthenticator(_ authenticatorId: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {

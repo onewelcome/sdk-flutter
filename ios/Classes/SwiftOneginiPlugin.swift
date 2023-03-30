@@ -110,15 +110,15 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
     }
 
     func submitCustomRegistrationAction(identityProviderId: String, data: String?, completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.submitCustomRegistrationSuccess(data)
-        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-??
-        completion(.success)
+        OneginiModuleSwift.sharedInstance.submitCustomRegistrationSuccess(data) { result in
+            completion(result.mapError { $0 })
+        }
     }
 
     func cancelCustomRegistrationAction(identityProviderId: String, error: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.submitCustomRegistrationError(error)
-        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-??
-        completion(.success)
+        OneginiModuleSwift.sharedInstance.submitCustomRegistrationError(error) { result in
+            completion(result.mapError { $0 })
+        }
     }
 
     func fingerprintFallbackToPin(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -176,9 +176,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
     }
 
     func cancelBrowserRegistration(completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.cancelBrowserRegistration()
-        // FIXME: in the above function the completion is actually not yet used as that would create way to big of a refactor, so let's do it later in FP-??
-        completion(.success)
+        OneginiModuleSwift.sharedInstance.cancelBrowserRegistration() { result in
+            completion(result.mapError { $0 })
+        }
     }
 
     func registerUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
