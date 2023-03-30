@@ -18,11 +18,7 @@ public class OneginiModuleSwift: NSObject {
     }
     
     func startOneginiModule(httpConnectionTimeout: Int64?, callback: @escaping (Result<Void, FlutterError>) -> Void) {
-        if let httpConnectionTimeout = httpConnectionTimeout {
-            ONGClientBuilder().setHttpRequestTimeout(TimeInterval(Double(httpConnectionTimeout)))
-        } else {
-            ONGClientBuilder().setHttpRequestTimeout(TimeInterval(5))
-        }
+        ONGClientBuilder().setHttpRequestTimeout(TimeInterval(Double(httpConnectionTimeout ?? 5)))
         ONGClientBuilder().build()
         ONGClient.sharedInstance().start {
           result, error in

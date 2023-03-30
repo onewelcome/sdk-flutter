@@ -80,12 +80,16 @@ func toOWCustomInfo(_ info: ONGCustomInfo?) -> OWCustomInfo? {
 }
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, ResourceMethodApi {
-    func startApplication(securityControllerClassName: String?, configModelClassName: String?, customIdentityProviderConfigs: [OWCustomIdentityProvider]?, connectionTimeout: Int64?, readTimeout: Int64?, completion: @escaping (Result<Void, Error>) -> Void) {
+    func startApplication(securityControllerClassName: String?,
+                          configModelClassName: String?,
+                          customIdentityProviderConfigs: [OWCustomIdentityProvider]?,
+                          connectionTimeout: Int64?,
+                          readTimeout: Int64?,
+                          completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.startOneginiModule(httpConnectionTimeout: connectionTimeout) { result in
             completion(result.mapError { $0 })
         }
     }
-
 
     func enrollMobileAuthentication(completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.enrollMobileAuthentication() { result in
