@@ -1,7 +1,7 @@
 package com.onegini.mobile.sdk
 
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiBrowserRegistrationCallback
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.BROWSER_AUTHENTICATION_NOT_IN_PROGRESS
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.BROWSER_REGISTRATION_NOT_IN_PROGRESS
 import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.handlers.BrowserRegistrationRequestHandler
 import com.onegini.mobile.sdk.flutter.useCases.CancelBrowserRegistrationUseCase
@@ -29,7 +29,7 @@ class CancelBrowserRegistrationUseCaseTest {
     BrowserRegistrationRequestHandler.callback = null
 
     val result = cancelBrowserRegistrationUseCase().exceptionOrNull()
-    SdkErrorAssert.assertEquals(BROWSER_AUTHENTICATION_NOT_IN_PROGRESS, result)
+    SdkErrorAssert.assertEquals(BROWSER_REGISTRATION_NOT_IN_PROGRESS, result)
   }
 
   @Test
