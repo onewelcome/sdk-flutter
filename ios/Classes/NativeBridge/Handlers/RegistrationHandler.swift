@@ -1,14 +1,5 @@
 import OneginiSDKiOS
 
-protocol RegistrationConnectorToHandlerProtocol {
-    func registerUser(_ providerId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void)
-    func processRedirectURL(url: String, webSignInType: Int) -> Result<Void, FlutterError>
-    func cancelBrowserRegistration()
-    func submitCustomRegistrationSuccess(_ data: String?)
-    func cancelCustomRegistration(_ error: String)
-    func currentChallenge() -> ONGCustomRegistrationChallenge?
-}
-
 enum WebSignInType: Int {
     case insideApp
     case safari
@@ -131,7 +122,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
     }
 }
 
-extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
+extension RegistrationHandler {
     func registerUser(_ providerId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
         signUpCompletion = completion
 
@@ -162,14 +153,22 @@ extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
         return .success
     }
     
-    func submitCustomRegistrationSuccess(_ data: String?) {
-        guard let customRegistrationChallenge = self.customRegistrationChallenge else { return }
+    func submitCustomRegistrationSuccess(_ data: String?, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        guard let customRegistrationChallenge = self.customRegistrationChallenge else {
+            completion(.failure(SdkError(OneWelcomeWrapperError.registrationNotInProgress).flutterError()))
+            return
+        }
         customRegistrationChallenge.sender.respond(withData: data, challenge: customRegistrationChallenge)
+        completion(.success)
     }
     
-    func cancelCustomRegistration(_ error: String) {
-        guard let customRegistrationChallenge = self.customRegistrationChallenge else { return }
+    func cancelCustomRegistration(_ error: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        guard let customRegistrationChallenge = self.customRegistrationChallenge else {
+            completion(.failure(SdkError(OneWelcomeWrapperError.registrationNotInProgress).flutterError()))
+            return
+        }
         customRegistrationChallenge.sender.cancel(customRegistrationChallenge)
+        completion(.success)
     }
 
     func cancelBrowserRegistration() {
