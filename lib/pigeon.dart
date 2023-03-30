@@ -320,6 +320,32 @@ class OWOneginiError {
   }
 }
 
+class OWCustomIdentityProvider {
+  OWCustomIdentityProvider({
+    required this.providerId,
+    required this.isTwoStep,
+  });
+
+  String providerId;
+
+  bool isTwoStep;
+
+  Object encode() {
+    return <Object?>[
+      providerId,
+      isTwoStep,
+    ];
+  }
+
+  static OWCustomIdentityProvider decode(Object result) {
+    result as List<Object?>;
+    return OWCustomIdentityProvider(
+      providerId: result[0]! as String,
+      isTwoStep: result[1]! as bool,
+    );
+  }
+}
+
 class _UserClientApiCodec extends StandardMessageCodec {
   const _UserClientApiCodec();
   @override
@@ -330,17 +356,20 @@ class _UserClientApiCodec extends StandardMessageCodec {
     } else if (value is OWAuthenticator) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is OWCustomInfo) {
+    } else if (value is OWCustomIdentityProvider) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is OWIdentityProvider) {
+    } else if (value is OWCustomInfo) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is OWRegistrationResponse) {
+    } else if (value is OWIdentityProvider) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is OWUserProfile) {
+    } else if (value is OWRegistrationResponse) {
       buffer.putUint8(133);
+      writeValue(buffer, value.encode());
+    } else if (value is OWUserProfile) {
+      buffer.putUint8(134);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -355,12 +384,14 @@ class _UserClientApiCodec extends StandardMessageCodec {
       case 129: 
         return OWAuthenticator.decode(readValue(buffer)!);
       case 130: 
-        return OWCustomInfo.decode(readValue(buffer)!);
+        return OWCustomIdentityProvider.decode(readValue(buffer)!);
       case 131: 
-        return OWIdentityProvider.decode(readValue(buffer)!);
+        return OWCustomInfo.decode(readValue(buffer)!);
       case 132: 
-        return OWRegistrationResponse.decode(readValue(buffer)!);
+        return OWIdentityProvider.decode(readValue(buffer)!);
       case 133: 
+        return OWRegistrationResponse.decode(readValue(buffer)!);
+      case 134: 
         return OWUserProfile.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -378,6 +409,28 @@ class UserClientApi {
   final BinaryMessenger? _binaryMessenger;
 
   static const MessageCodec<Object?> codec = _UserClientApiCodec();
+
+  Future<void> startApplication(String? arg_securityControllerClassName, String? arg_configModelClassName, List<OWCustomIdentityProvider?>? arg_customIdentityProviderConfigs, int? arg_connectionTimeout, int? arg_readTimeout) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.UserClientApi.startApplication', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_securityControllerClassName, arg_configModelClassName, arg_customIdentityProviderConfigs, arg_connectionTimeout, arg_readTimeout]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
 
   Future<OWRegistrationResponse> registerUser(String? arg_identityProviderId, List<String?>? arg_scopes) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(

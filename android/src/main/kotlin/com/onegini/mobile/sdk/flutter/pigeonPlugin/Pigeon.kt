@@ -316,6 +316,28 @@ data class OWOneginiError (
   }
 }
 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class OWCustomIdentityProvider (
+  val providerId: String,
+  val isTwoStep: Boolean
+
+) {
+  companion object {
+    @Suppress("UNCHECKED_CAST")
+    fun fromList(list: List<Any?>): OWCustomIdentityProvider {
+      val providerId = list[0] as String
+      val isTwoStep = list[1] as Boolean
+      return OWCustomIdentityProvider(providerId, isTwoStep)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf<Any?>(
+      providerId,
+      isTwoStep,
+    )
+  }
+}
+
 @Suppress("UNCHECKED_CAST")
 private object UserClientApiCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
@@ -332,20 +354,25 @@ private object UserClientApiCodec : StandardMessageCodec() {
       }
       130.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          OWCustomInfo.fromList(it)
+          OWCustomIdentityProvider.fromList(it)
         }
       }
       131.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          OWIdentityProvider.fromList(it)
+          OWCustomInfo.fromList(it)
         }
       }
       132.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          OWRegistrationResponse.fromList(it)
+          OWIdentityProvider.fromList(it)
         }
       }
       133.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          OWRegistrationResponse.fromList(it)
+        }
+      }
+      134.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           OWUserProfile.fromList(it)
         }
@@ -363,20 +390,24 @@ private object UserClientApiCodec : StandardMessageCodec() {
         stream.write(129)
         writeValue(stream, value.toList())
       }
-      is OWCustomInfo -> {
+      is OWCustomIdentityProvider -> {
         stream.write(130)
         writeValue(stream, value.toList())
       }
-      is OWIdentityProvider -> {
+      is OWCustomInfo -> {
         stream.write(131)
         writeValue(stream, value.toList())
       }
-      is OWRegistrationResponse -> {
+      is OWIdentityProvider -> {
         stream.write(132)
         writeValue(stream, value.toList())
       }
-      is OWUserProfile -> {
+      is OWRegistrationResponse -> {
         stream.write(133)
+        writeValue(stream, value.toList())
+      }
+      is OWUserProfile -> {
+        stream.write(134)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -390,6 +421,7 @@ private object UserClientApiCodec : StandardMessageCodec() {
  * Generated interface from Pigeon that represents a handler of messages from Flutter.
  */
 interface UserClientApi {
+  fun startApplication(securityControllerClassName: String?, configModelClassName: String?, customIdentityProviderConfigs: List<OWCustomIdentityProvider>?, connectionTimeout: Long?, readTimeout: Long?, callback: (Result<Unit>) -> Unit)
   fun registerUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit)
   fun handleRegisteredUserUrl(url: String, signInType: Long, callback: (Result<Unit>) -> Unit)
   fun getIdentityProviders(callback: (Result<List<OWIdentityProvider>>) -> Unit)
@@ -440,6 +472,29 @@ interface UserClientApi {
     /** Sets up an instance of `UserClientApi` to handle messages through the `binaryMessenger`. */
     @Suppress("UNCHECKED_CAST")
     fun setUp(binaryMessenger: BinaryMessenger, api: UserClientApi?) {
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.startApplication", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val securityControllerClassNameArg = args[0] as String?
+            val configModelClassNameArg = args[1] as String?
+            val customIdentityProviderConfigsArg = args[2] as List<OWCustomIdentityProvider>?
+            val connectionTimeoutArg = args[3].let { if (it is Int) it.toLong() else it as Long? }
+            val readTimeoutArg = args[4].let { if (it is Int) it.toLong() else it as Long? }
+            api.startApplication(securityControllerClassNameArg, configModelClassNameArg, customIdentityProviderConfigsArg, connectionTimeoutArg, readTimeoutArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
       run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.registerUser", codec)
         if (api != null) {

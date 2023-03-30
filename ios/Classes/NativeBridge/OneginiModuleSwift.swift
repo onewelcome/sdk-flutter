@@ -17,28 +17,22 @@ public class OneginiModuleSwift: NSObject {
         self.customRegIdentifiers = list
     }
     
-    func startOneginiModule(httpConnectionTimeout: TimeInterval = TimeInterval(5), callback: @escaping FlutterResult) {
-        ONGClientBuilder().setHttpRequestTimeout(httpConnectionTimeout)
+    func startOneginiModule(httpConnectionTimeout: Int64?, callback: @escaping (Result<Void, FlutterError>) -> Void) {
+        ONGClientBuilder().setHttpRequestTimeout(TimeInterval(Double(httpConnectionTimeout ?? 5)))
         ONGClientBuilder().build()
         ONGClient.sharedInstance().start {
           result, error in
             if let error = error {
                 let mappedError = ErrorMapper().mapError(error)
-                callback(mappedError.flutterError())
+                callback(.failure(mappedError.flutterError()))
                 return
             }
             
             if !result {
-                callback(SdkError(.genericError).flutterError())
+                callback(.failure(SdkError(.genericError).flutterError()))
                 return
             }
-            
-            let profiles = ONGUserClient.sharedInstance().userProfiles()
-            let value: [[String: String?]] = profiles.compactMap({ ["profileId": $0.profileId] })
-
-            let data = String.stringify(json: value)
-            
-            callback(data)
+            callback(.success)
         }
     }
     

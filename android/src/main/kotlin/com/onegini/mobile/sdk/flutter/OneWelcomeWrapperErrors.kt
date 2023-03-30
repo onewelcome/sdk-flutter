@@ -17,7 +17,6 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
 
     // Errors that only occur on Android
     IDENTITY_PROVIDER_NOT_FOUND(8005, "The requested identity provider is not found"),
-    METHOD_TO_CALL_NOT_FOUND(8007, "Method to call not found"),
     ONEWELCOME_SDK_NOT_INITIALIZED(8012, "OneWelcomeSDK is not initialized"),
     CONFIG_ERROR(8032, "Something went wrong while setting the configuration"),
     SECURITY_CONTROLLER_NOT_FOUND(8033, "Security controller class not found"),

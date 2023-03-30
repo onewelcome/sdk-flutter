@@ -21,6 +21,12 @@ class OWUserProfile {
   OWUserProfile({required this.profileId});
 }
 
+class OWRemovedUserProfile {
+  String profileId;
+
+  OWRemovedUserProfile(this.profileId);
+}
+
 class OWCustomInfo {
   int status;
   String? data;
@@ -111,9 +117,24 @@ class OWOneginiError {
   OWOneginiError({required this.code, required this.message});
 }
 
+class OWCustomIdentityProvider {
+  String providerId;
+  bool isTwoStep;
+  OWCustomIdentityProvider(this.providerId, this.isTwoStep);
+}
+
 /// Flutter calls native
 @HostApi()
 abstract class UserClientApi {
+  @async
+  void startApplication(
+    String? securityControllerClassName,
+    String? configModelClassName,
+    List<OWCustomIdentityProvider>? customIdentityProviderConfigs,
+    int? connectionTimeout,
+    int? readTimeout,
+  );
+
   @async
   OWRegistrationResponse registerUser(
       String? identityProviderId, List<String>? scopes);

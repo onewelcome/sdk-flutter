@@ -13,13 +13,16 @@ import 'model/onegini_removed_user_profile.dart';
 
 /// The main class used to call methods.
 class Onegini {
-  Onegini._privateConstructor();
+  final UserClientApi api = UserClientApi();
+  late final UserClient userClient;
 
-  /// Reference to the Onegini instance.
-  static final Onegini _instance = Onegini._privateConstructor();
+  Onegini._internal() {
+    userClient = UserClient(api);
+  }
 
-  /// Public access to the Onegini instance.
-  static Onegini get instance => _instance;
+  static final Onegini instance = Onegini._internal();
+
+  factory Onegini() => instance;
 
   /// Communication channel between flutter and native side.
   final MethodChannel channel = const MethodChannel('onegini');
@@ -30,8 +33,8 @@ class Onegini {
   /// Resource methods.
   ResourcesMethods resourcesMethods = ResourcesMethods();
 
+  // UserClientApi is the flutter to native api created by the Pigeon package, see /pigeons/README.md
   /// User client methods.
-  UserClient userClient = UserClient();
 
   /// Use this method when you want change [BuildContext] in your [OneginiEventListener]
   setEventContext(BuildContext? context) {
@@ -39,40 +42,21 @@ class Onegini {
   }
 
   /// Initialize SDK and establish communication on [eventListener].
-  Future<List<RemovedUserProfile>> startApplication(
+  Future<void> startApplication(
     OneginiEventListener eventListener, {
     String? securityControllerClassName,
     String? configModelClassName,
-    List<Map<String, Object>>? customIdentityProviderConfigs,
+    List<OWCustomIdentityProvider>? customIdentityProviderConfigs,
     int? connectionTimeout,
     int? readTimeout,
   }) async {
     _eventListener = eventListener;
-    try {
-      List<String>? customIdentityProviderConfigsJson;
-      if (customIdentityProviderConfigs != null) {
-        customIdentityProviderConfigsJson = [
-          for (var customIdentityProviderConfig
-              in customIdentityProviderConfigs)
-            json.encode(customIdentityProviderConfig)
-        ];
-      }
-      NativeCallFlutterApi.setup(_eventListener);
-
-      String removedUserProfiles = await channel
-          .invokeMethod(Constants.startAppMethod, <String, dynamic>{
-        'securityControllerClassName': securityControllerClassName,
-        'configModelClassName': configModelClassName,
-        'customIdentityProviderConfigs': customIdentityProviderConfigsJson,
-        'connectionTimeout': connectionTimeout,
-        'readTimeout': readTimeout
-      });
-      return removedUserProfileListFromJson(removedUserProfiles);
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+    NativeCallFlutterApi.setup(_eventListener);
+    await api.startApplication(
+        securityControllerClassName,
+        configModelClassName,
+        customIdentityProviderConfigs,
+        connectionTimeout,
+        readTimeout);
   }
 }

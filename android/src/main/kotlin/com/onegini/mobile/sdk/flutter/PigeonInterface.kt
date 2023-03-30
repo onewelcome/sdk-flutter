@@ -3,6 +3,7 @@ package com.onegini.mobile.sdk.flutter
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAppToWebSingleSignOn
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticator
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomIdentityProvider
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWIdentityProvider
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
@@ -128,6 +129,16 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   lateinit var otpAcceptAuthenticationRequestUseCase: OtpAcceptAuthenticationRequestUseCase
   @Inject
   lateinit var oneginiSDK: OneginiSDK
+  override fun startApplication(
+    securityControllerClassName: String?,
+    configModelClassName: String?,
+    customIdentityProviderConfigs: List<OWCustomIdentityProvider>?,
+    connectionTimeout: Long?,
+    readTimeout: Long?,
+    callback: (Result<Unit>) -> Unit
+  ) {
+    startAppUseCase(securityControllerClassName, configModelClassName, customIdentityProviderConfigs, connectionTimeout, readTimeout, callback )
+  }
 
   override fun registerUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit) {
     registrationUseCase(identityProviderId, scopes, callback)

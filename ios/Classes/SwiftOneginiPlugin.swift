@@ -80,6 +80,17 @@ func toOWCustomInfo(_ info: ONGCustomInfo?) -> OWCustomInfo? {
 }
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, ResourceMethodApi {
+    func startApplication(securityControllerClassName: String?,
+                          configModelClassName: String?,
+                          customIdentityProviderConfigs: [OWCustomIdentityProvider]?,
+                          connectionTimeout: Int64?,
+                          readTimeout: Int64?,
+                          completion: @escaping (Result<Void, Error>) -> Void) {
+        OneginiModuleSwift.sharedInstance.startOneginiModule(httpConnectionTimeout: connectionTimeout) { result in
+            completion(result.mapError { $0 })
+        }
+    }
+
     func enrollMobileAuthentication(completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.enrollMobileAuthentication() { result in
             completion(result.mapError { $0 })
@@ -285,39 +296,11 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
     static var flutterApi: NativeCallFlutterApi?
     
     public static func register(with registrar: FlutterPluginRegistrar) {
-        // FIXME: We can remove this once we have moved all functions to Pigeon
-        // Init old communication
-        let channel = FlutterMethodChannel(name: "onegini", binaryMessenger: registrar.messenger())
-        let instance = SwiftOneginiPlugin()
-        registrar.addMethodCallDelegate(instance, channel: channel)
         // Init Pigeon communication
         let messenger: FlutterBinaryMessenger = registrar.messenger()
         let api = SwiftOneginiPlugin()
         UserClientApiSetup.setUp(binaryMessenger: messenger, api: api)
         ResourceMethodApiSetup.setUp(binaryMessenger: messenger, api: api)
         flutterApi = NativeCallFlutterApi(binaryMessenger: registrar.messenger())
-    }
-    
-    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        Logger.log("call.method: \(call.method)", sender: self, logType: .log)
-        let _arg = call.arguments as! [String: Any]?
-        if ((_arg) != nil) {
-            for key in _arg!.keys {
-                Logger.log("key: " + key)
-                let val = _arg?[key]
-                Logger.log("value: " + String(describing: val))
-            }
-        }
-        
-        switch call.method {
-            
-            // base
-        case Constants.Routes.startApp: startApp(call, result)
-            
-        default: do {
-            Logger.log("Method wasn't handled: " + call.method)
-            result(FlutterMethodNotImplemented)
-        }
-        }
     }
 }

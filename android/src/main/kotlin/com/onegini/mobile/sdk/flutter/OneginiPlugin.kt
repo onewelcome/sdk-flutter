@@ -13,18 +13,12 @@ import javax.inject.Inject
 
 /** OneginiPlugin */
 class OneginiPlugin : FlutterPlugin, PigeonInterface() {
-    /// The MethodChannel that will the communication between Flutter and native Android
-    ///
-    /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-    /// when the Flutter Engine is detached from the Activity
-    private lateinit var channel: MethodChannel
-    private lateinit var eventChannel: EventChannel
+    /// The api that will handle calls from Native -> Flutter
     lateinit var nativeApi : NativeCallFlutterApi
 
-    @Inject
-    lateinit var onMethodCallMapper: OnMethodCallMapper
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         // Pigeon setup
+        // We extend PigeonInterface which has all the implementations for when Flutters calls a native method.
         UserClientApi.setUp(flutterPluginBinding.binaryMessenger, this)
         ResourceMethodApi.setUp(flutterPluginBinding.binaryMessenger, this)
         nativeApi = NativeCallFlutterApi(flutterPluginBinding.binaryMessenger)
@@ -33,12 +27,9 @@ class OneginiPlugin : FlutterPlugin, PigeonInterface() {
             .flutterOneWelcomeSdkModule(FlutterOneWelcomeSdkModule(flutterPluginBinding.applicationContext, nativeApi))
             .build()
         component.inject(this)
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "onegini")
-        channel.setMethodCallHandler(onMethodCallMapper)
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         UserClientApi.setUp(binding.binaryMessenger, null)
-        channel.setMethodCallHandler(null)
     }
 }
