@@ -1,32 +1,27 @@
 import OneginiSDKiOS
 import Flutter
 
-class ChangePinHandler: NSObject {
-    var changePinCompletion: ((Result<Void, FlutterError>) -> Void)?
-    private let loginHandler: LoginHandler
-    private let registrationHandler: RegistrationHandler
-
-    init(loginHandler: LoginHandler, registrationHandler: RegistrationHandler) {
-        self.loginHandler = loginHandler
-        self.registrationHandler = registrationHandler
-    }
-}
-
-extension ChangePinHandler {
+class ChangePinHandler {
     func changePin(completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        changePinCompletion = completion
-        SharedUserClient.instance.changePin(delegate: self)
+        let delegate = ChangePinDelegateImpl(completion: completion)
+        SharedUserClient.instance.changePin(delegate: delegate)
     }
  }
 
-extension ChangePinHandler: ChangePinDelegate {
+class ChangePinDelegateImpl: ChangePinDelegate {
+    private var changePinCompletion: ((Result<Void, FlutterError>) -> Void)
+
+    init(completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        changePinCompletion = completion
+    }
+
     func userClient(_ userClient: UserClient, didReceivePinChallenge challenge: PinChallenge) {
-        loginHandler.handleDidReceiveChallenge(challenge)
+        BridgeConnector.shared?.toLoginHandler.handleDidReceiveChallenge(challenge)
     }
 
     func userClient(_ userClient: UserClient, didReceiveCreatePinChallenge challenge: CreatePinChallenge) {
-        loginHandler.handleDidAuthenticateUser()
-        registrationHandler.handleDidReceivePinRegistrationChallenge(challenge)
+        BridgeConnector.shared?.toLoginHandler.handleDidAuthenticateUser()
+        BridgeConnector.shared?.toRegistrationHandler.handleDidReceivePinRegistrationChallenge(challenge)
     }
 
     func userClient(_ userClient: UserClient, didStartPinChangeForUser profile: UserProfile) {
@@ -34,17 +29,15 @@ extension ChangePinHandler: ChangePinDelegate {
     }
 
     func userClient(_ userClient: UserClient, didChangePinForUser profile: UserProfile) {
-        registrationHandler.handleDidRegisterUser()
-        changePinCompletion?(.success)
-        changePinCompletion = nil
+        BridgeConnector.shared?.toRegistrationHandler.handleDidRegisterUser()
+        changePinCompletion(.success)
     }
 
     func userClient(_ userClient: UserClient, didFailToChangePinForUser profile: UserProfile, error: Error) {
-        loginHandler.handleDidFailToAuthenticateUser()
-        registrationHandler.handleDidFailToRegister()
+        BridgeConnector.shared?.toLoginHandler.handleDidFailToAuthenticateUser()
+        BridgeConnector.shared?.toRegistrationHandler.handleDidFailToRegister()
 
         let mappedError = ErrorMapper().mapError(error)
-        changePinCompletion?(.failure(FlutterError(mappedError)))
-        changePinCompletion = nil
+        changePinCompletion(.failure(FlutterError(mappedError)))
     }
 }
