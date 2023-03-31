@@ -5,8 +5,9 @@ protocol BrowserHandlerProtocol {
     func handleUrl(url: URL, webSignInType: WebSignInType)
 }
 
-protocol BrowserHandlerToRegisterHandlerProtocol: AnyObject {
-    func handleRedirectURL(url: URL?)
+protocol BrowserHandlerToRegisterHandlerProtocol {
+    func handleRedirectURL(url: URL)
+    func handleCancelFromBrowser()
 }
 
 // MARK: - BrowserHandlerProtocol
@@ -68,7 +69,7 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
 
     private func cancelButtonPressed() {
         Logger.log("cancelButtonPressed", sender: self)
-        registerHandler.handleRedirectURL(url: nil)
+        registerHandler.handleCancelFromBrowser()
     }
 
 }
