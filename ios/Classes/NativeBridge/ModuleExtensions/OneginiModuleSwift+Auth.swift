@@ -46,7 +46,7 @@ extension OneginiModuleSwift {
     }
 
     func setPreferredAuthenticator(_ identifierId: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        guard let profile = ONGClient.sharedInstance().userClient.authenticatedUserProfile() else {
+        guard let profile = SharedUserClient.instance.authenticatedUserProfile else {
             completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
             return
         }
@@ -54,7 +54,7 @@ extension OneginiModuleSwift {
     }
 
     func deregisterAuthenticator(_ identifierId: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        guard let profile = ONGClient.sharedInstance().userClient.authenticatedUserProfile() else {
+        guard let profile = SharedUserClient.instance.authenticatedUserProfile else {
             completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
             return
         }

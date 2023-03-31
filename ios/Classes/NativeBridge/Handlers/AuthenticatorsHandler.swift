@@ -3,8 +3,8 @@ import OneginiSDKiOS
 
 protocol BridgeToAuthenticatorsHandlerProtocol: AnyObject {
     func registerAuthenticator(_ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
-    func deregisterAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
-    func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
+    func deregisterAuthenticator(_ userProfile: UserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
+    func setPreferredAuthenticator(_ userProfile: UserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
 }
 
 class AuthenticatorsHandler: NSObject {
@@ -53,8 +53,8 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
         SharedUserClient.instance.register(authenticator: authenticator, delegate: self)
     }
 
-    func deregisterAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticatorId}) else {
+    func deregisterAuthenticator(_ userProfile: UserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        guard let authenticator = SharedUserClient.instance.authenticators(.all, for: userProfile).first(where: {$0.identifier == authenticatorId}) else {
             completion(.failure(FlutterError(.authenticatorNotFound)))
             return
         }
@@ -65,11 +65,11 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
         }
 
         deregistrationCompletion = completion
-        ONGUserClient.sharedInstance().deregister(authenticator, delegate: self)
+        SharedUserClient.instance.deregister(authenticator: authenticator, delegate: self)
     }
 
-    func setPreferredAuthenticator(_ userProfile: ONGUserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        guard let authenticator = ONGUserClient.sharedInstance().allAuthenticators(forUser: userProfile).first(where: {$0.identifier == authenticatorId}) else {
+    func setPreferredAuthenticator(_ userProfile: UserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        guard let authenticator = SharedUserClient.instance.authenticators(.all, for: userProfile).first(where: {$0.identifier == authenticatorId}) else {
             completion(.failure(FlutterError(.authenticatorNotFound)))
             return
         }
@@ -79,8 +79,7 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
             completion(.failure(FlutterError(.authenticatorNotRegistered)))
             return
         }
-
-        ONGUserClient.sharedInstance().preferredAuthenticator = authenticator
+        SharedUserClient.instance.setPreferred(authenticator: authenticator)
         completion(.success)
     }
 }
@@ -116,17 +115,18 @@ extension AuthenticatorsHandler: AuthenticatorRegistrationDelegate {
     }
 }
 
-extension AuthenticatorsHandler: ONGAuthenticatorDeregistrationDelegate {
-    func userClient(_: ONGUserClient, didDeregister _: ONGAuthenticator, forUser _: ONGUserProfile) {
+extension AuthenticatorsHandler: AuthenticatorDeregistrationDelegate {
+
+    func userClient(_ userClient: UserClient, didStartDeregistering authenticator: Authenticator, forUser userProfile: UserProfile) {
+        // Unused
+    }
+
+    func userClient(_ userClient: UserClient, didDeregister authenticator: Authenticator, forUser userProfile: UserProfile) {
         Logger.log("[AUTH] userClient didDeregister ONGAuthenticator", sender: self)
         deregistrationCompletion?(.success)
     }
 
-    func userClient(_: ONGUserClient, didReceive challenge: ONGCustomAuthDeregistrationChallenge) {
-        // We currently don't support custom authenticators
-    }
-
-    func userClient(_: ONGUserClient, didFailToDeregister authenticator: ONGAuthenticator, forUser _: ONGUserProfile, error: Error) {
+    func userClient(_ userClient: UserClient, didFailToDeregister authenticator: Authenticator, forUser userProfile: UserProfile, error: Error) {
         Logger.log("[AUTH] userClient didFailToDeregister ONGAuthenticator", sender: self)
         if error.code == ONGGenericError.actionCancelled.rawValue {
             deregistrationCompletion?(.failure(FlutterError(.authenticatorDeregistrationCancelled)))
@@ -134,5 +134,9 @@ extension AuthenticatorsHandler: ONGAuthenticatorDeregistrationDelegate {
             let mappedError = ErrorMapper().mapError(error)
             deregistrationCompletion?(.failure(FlutterError(mappedError)))
         }
+    }
+
+    func userClient(_ userClient: UserClient, didReceiveCustomAuthDeregistrationChallenge challenge: CustomAuthDeregistrationChallenge) {
+        // We currently don't support custom authenticators
     }
 }
