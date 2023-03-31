@@ -1,42 +1,13 @@
 import Foundation
 import OneginiSDKiOS
 
-protocol BridgeToAuthenticatorsHandlerProtocol: AnyObject {
+protocol BridgeToAuthenticatorsHandlerProtocol {
     func registerAuthenticator(_ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
     func deregisterAuthenticator(_ userProfile: UserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
     func setPreferredAuthenticator(_ userProfile: UserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
 }
 
-class AuthenticatorsHandler: NSObject {
-    var pinChallenge: PinChallenge?
-    var customAuthChallenge: ONGCustomAuthFinishRegistrationChallenge?
-    var registrationCompletion: ((Result<Void, FlutterError>) -> Void)?
-    var deregistrationCompletion: ((Result<Void, FlutterError>) -> Void)?
-
-    func handlePin(pin: String?) {
-        guard let customAuthChallenge = self.customAuthChallenge else {
-            guard let pinChallenge = self.pinChallenge else { return }
-
-            if let pin = pin {
-                pinChallenge.sender.respond(with: pin, to: pinChallenge)
-
-            } else {
-                pinChallenge.sender.cancel(pinChallenge)
-            }
-
-            return
-        }
-
-        if let pin = pin {
-            customAuthChallenge.sender.respond(withData: pin, challenge: customAuthChallenge)
-
-        } else {
-            customAuthChallenge.sender.cancel(customAuthChallenge, underlyingError: nil)
-        }
-    }
-}
-
-extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
+class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     func registerAuthenticator(_ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let profile = SharedUserClient.instance.authenticatedUserProfile else {
             completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
@@ -49,8 +20,8 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
             completion(.failure(FlutterError(.authenticatorNotFound)))
             return
         }
-        registrationCompletion = completion
-        SharedUserClient.instance.register(authenticator: authenticator, delegate: self)
+        let delegate = AuthenticatorRegistrationDelegateImpl(completion)
+        SharedUserClient.instance.register(authenticator: authenticator, delegate: delegate)
     }
 
     func deregisterAuthenticator(_ userProfile: UserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
@@ -63,9 +34,8 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
             completion(.failure(FlutterError(.authenticatorNotRegistered)))
             return
         }
-
-        deregistrationCompletion = completion
-        SharedUserClient.instance.deregister(authenticator: authenticator, delegate: self)
+        let delegate = AuthenticatorDeregistrationDelegateImpl(completion)
+        SharedUserClient.instance.deregister(authenticator: authenticator, delegate: delegate)
     }
 
     func setPreferredAuthenticator(_ userProfile: UserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
@@ -84,7 +54,13 @@ extension AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     }
 }
 
-extension AuthenticatorsHandler: AuthenticatorRegistrationDelegate {
+class AuthenticatorRegistrationDelegateImpl: AuthenticatorRegistrationDelegate {
+    private var registrationCompletion: ((Result<Void, FlutterError>) -> Void)?
+
+    init(_ completion: ((Result<Void, FlutterError>) -> Void)?) {
+        registrationCompletion = completion
+    }
+
     func userClient(_ userClient: UserClient, didReceivePinChallenge challenge: PinChallenge) {
         Logger.log("[AUTH] userClient didReceive PinChallenge", sender: self)
         BridgeConnector.shared?.toLoginHandler.handleDidReceiveChallenge(challenge)
@@ -115,7 +91,12 @@ extension AuthenticatorsHandler: AuthenticatorRegistrationDelegate {
     }
 }
 
-extension AuthenticatorsHandler: AuthenticatorDeregistrationDelegate {
+class AuthenticatorDeregistrationDelegateImpl: AuthenticatorDeregistrationDelegate {
+    private var deregistrationCompletion: ((Result<Void, FlutterError>) -> Void)
+
+    init(_ completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        deregistrationCompletion = completion
+    }
 
     func userClient(_ userClient: UserClient, didStartDeregistering authenticator: Authenticator, forUser userProfile: UserProfile) {
         // Unused
@@ -123,16 +104,16 @@ extension AuthenticatorsHandler: AuthenticatorDeregistrationDelegate {
 
     func userClient(_ userClient: UserClient, didDeregister authenticator: Authenticator, forUser userProfile: UserProfile) {
         Logger.log("[AUTH] userClient didDeregister ONGAuthenticator", sender: self)
-        deregistrationCompletion?(.success)
+        deregistrationCompletion(.success)
     }
 
     func userClient(_ userClient: UserClient, didFailToDeregister authenticator: Authenticator, forUser userProfile: UserProfile, error: Error) {
         Logger.log("[AUTH] userClient didFailToDeregister ONGAuthenticator", sender: self)
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            deregistrationCompletion?(.failure(FlutterError(.authenticatorDeregistrationCancelled)))
+            deregistrationCompletion(.failure(FlutterError(.authenticatorDeregistrationCancelled)))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            deregistrationCompletion?(.failure(FlutterError(mappedError)))
+            deregistrationCompletion(.failure(FlutterError(mappedError)))
         }
     }
 
