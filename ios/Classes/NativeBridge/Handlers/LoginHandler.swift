@@ -1,9 +1,8 @@
 import OneginiSDKiOS
 import Flutter
 
-class LoginHandler: NSObject {
+class LoginHandler {
     var pinChallenge: PinChallenge?
-    var loginCompletion: ((Result<OWRegistrationResponse, FlutterError>) -> Void)?
 
     func handlePin(pin: String, completion: (Result<Void, FlutterError>) -> Void) {
         guard let pinChallenge = pinChallenge else {
@@ -55,18 +54,22 @@ class LoginHandler: NSObject {
         SwiftOneginiPlugin.flutterApi?.n2fClosePinAuth {}
         pinChallenge = nil
     }
-}
 
-extension LoginHandler {
     func authenticateUser(_ profile: UserProfile, authenticator: Authenticator?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
-        loginCompletion = completion
-        SharedUserClient.instance.authenticateUserWith(profile: profile, authenticator: authenticator, delegate: self)
+        let delegate = AuthenticationDelegateImpl(completion)
+        SharedUserClient.instance.authenticateUserWith(profile: profile, authenticator: authenticator, delegate: delegate)
     }
 }
 
-extension LoginHandler: AuthenticationDelegate {
+class AuthenticationDelegateImpl: AuthenticationDelegate {
+    private var loginCompletion: (Result<OWRegistrationResponse, FlutterError>) -> Void
+
+    init(_ completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
+        loginCompletion = completion
+    }
+
     func userClient(_ userClient: UserClient, didReceivePinChallenge challenge: PinChallenge) {
-        handleDidReceiveChallenge(challenge)
+        BridgeConnector.shared?.toLoginHandler.handleDidReceiveChallenge(challenge)
     }
 
     func userClient(_ userClient: UserClient, didStartAuthenticationForUser profile: UserProfile, authenticator: Authenticator) {
@@ -78,19 +81,19 @@ extension LoginHandler: AuthenticationDelegate {
     }
 
     func userClient(_ userClient: UserClient, didAuthenticateUser profile: UserProfile, authenticator: Authenticator, info customAuthInfo: CustomInfo?) {
-        handleDidAuthenticateUser()
-        loginCompletion?(.success(OWRegistrationResponse(userProfile: OWUserProfile(profile),
+        BridgeConnector.shared?.toLoginHandler.handleDidAuthenticateUser()
+        loginCompletion(.success(OWRegistrationResponse(userProfile: OWUserProfile(profile),
                                                          customInfo: toOWCustomInfo(customAuthInfo))))
     }
 
     func userClient(_ userClient: UserClient, didFailToAuthenticateUser profile: UserProfile, authenticator: Authenticator, error: Error) {
-        handleDidFailToAuthenticateUser()
+        BridgeConnector.shared?.toLoginHandler.handleDidFailToAuthenticateUser()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            loginCompletion?(.failure(FlutterError(.loginCanceled)))
+            loginCompletion(.failure(FlutterError(.loginCanceled)))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            loginCompletion?(.failure(FlutterError(mappedError)))
+            loginCompletion(.failure(FlutterError(mappedError)))
         }
     }
 }
