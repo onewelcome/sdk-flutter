@@ -8,7 +8,7 @@ class BridgeConnector {
     let toRegistrationHandler = RegistrationHandler()
     let toChangePinHandler: ChangePinHandler
     let toMobileAuthHandler = MobileAuthHandler()
-    public static var shared:BridgeConnector?
+    public static var shared: BridgeConnector?
 
     init() {
         self.toChangePinHandler = ChangePinHandler(loginHandler: toLoginHandler, registrationHandler: toRegistrationHandler)

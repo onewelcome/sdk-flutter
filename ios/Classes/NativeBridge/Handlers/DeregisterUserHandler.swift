@@ -11,7 +11,7 @@ class DeregisterUserHandler: DeregisterUserHandlerProtocol {
             completion(.failure(FlutterError(.userProfileDoesNotExist)))
             return
         }
-        
+
         ONGUserClient.sharedInstance().deregisterUser(profile) { _, error in
             if let error = error {
                 let mappedError = ErrorMapper().mapError(error)

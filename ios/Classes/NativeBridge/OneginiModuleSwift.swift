@@ -3,31 +3,30 @@ import OneginiSDKiOS
 import Flutter
 
 public class OneginiModuleSwift: NSObject {
- 
+
     var bridgeConnector: BridgeConnector
-    public var customRegIdentifiers = [String]()    
+    public var customRegIdentifiers = [String]()
     static public let sharedInstance = OneginiModuleSwift()
-    
+
     override init() {
         self.bridgeConnector = BridgeConnector()
         super.init()
     }
-    
+
     func configureCustomRegIdentifiers(_ list: [String]) {
         self.customRegIdentifiers = list
     }
-    
+
     func startOneginiModule(httpConnectionTimeout: Int64?, callback: @escaping (Result<Void, FlutterError>) -> Void) {
         ONGClientBuilder().setHttpRequestTimeout(TimeInterval(Double(httpConnectionTimeout ?? 5)))
         ONGClientBuilder().build()
-        ONGClient.sharedInstance().start {
-          result, error in
+        ONGClient.sharedInstance().start { result, error in
             if let error = error {
                 let mappedError = ErrorMapper().mapError(error)
                 callback(.failure(mappedError.flutterError()))
                 return
             }
-            
+
             if !result {
                 callback(.failure(SdkError(.genericError).flutterError()))
                 return
@@ -35,10 +34,9 @@ public class OneginiModuleSwift: NSObject {
             callback(.success)
         }
     }
-    
+
     func getUserProfiles() -> Result<[OWUserProfile], FlutterError> {
         let profiles = ONGUserClient.sharedInstance().userProfiles()
-        return .success(profiles.compactMap { OWUserProfile($0) } )
+        return .success(profiles.compactMap { OWUserProfile($0) })
     }
 }
-

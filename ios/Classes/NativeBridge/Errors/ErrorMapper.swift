@@ -1,3 +1,4 @@
+// swiftlint:disable cyclomatic_complexity
 import OneginiSDKiOS
 
 enum OneWelcomeWrapperError: Int {
@@ -14,7 +15,7 @@ enum OneWelcomeWrapperError: Int {
     case authenticationNotInProgress = 8037
     case otpAuthenticationNotInProgress = 8039
     case browserRegistrationNotInProgress = 8040
-    
+
     // iOS only
     case providedUrlIncorrect = 8014
     case loginCanceled = 8015
@@ -101,8 +102,7 @@ enum OneWelcomeWrapperError: Int {
 class ErrorMapper {
     func mapError(_ error: Error) -> SdkError {
         Logger.log("Error domain: \(error.domain)")
-        
+
         return SdkError(code: error.code, errorDescription: error.localizedDescription)
     }
 }
-

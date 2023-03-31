@@ -65,7 +65,7 @@ extension Result where Success == Void {
     public static var success: Result { .success(()) }
 }
 
-func toOWRequestHeaders(_ headers: [AnyHashable : Any]) -> [String: String] {
+func toOWRequestHeaders(_ headers: [AnyHashable: Any]) -> [String: String] {
     return headers.filter { $0.key is String && $0.value is String } as? [String: String] ?? [:]
 }
 
@@ -92,7 +92,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
     }
 
     func enrollMobileAuthentication(completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.enrollMobileAuthentication() { result in
+        OneginiModuleSwift.sharedInstance.enrollMobileAuthentication { result in
             completion(result.mapError { $0 })
         }
     }
@@ -140,19 +140,19 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
     }
 
     func otpDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.denyMobileAuthRequest() { result in
+        OneginiModuleSwift.sharedInstance.denyMobileAuthRequest { result in
             completion(result.mapError { $0 })
         }
     }
 
     func otpAcceptAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.acceptMobileAuthRequest() { result in
+        OneginiModuleSwift.sharedInstance.acceptMobileAuthRequest { result in
             completion(result.mapError { $0 })
         }
     }
 
     func pinDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.pinDenyAuthenticationRequest() { result in
+        OneginiModuleSwift.sharedInstance.pinDenyAuthenticationRequest { result in
             completion(result.mapError { $0 })
         }
     }
@@ -164,7 +164,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
     }
 
     func pinDenyRegistrationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.pinDenyRegistrationRequest() { result in
+        OneginiModuleSwift.sharedInstance.pinDenyRegistrationRequest { result in
             completion(result.mapError { $0 })
         }
     }
@@ -176,7 +176,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
     }
 
     func cancelBrowserRegistration(completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.cancelBrowserRegistration() { result in
+        OneginiModuleSwift.sharedInstance.cancelBrowserRegistration { result in
             completion(result.mapError { $0 })
         }
     }
@@ -224,7 +224,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
     }
 
     func changePin(completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.changePin() { result in
+        OneginiModuleSwift.sharedInstance.changePin { result in
             completion(result.mapError { $0 })
         }
     }
@@ -248,13 +248,13 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
     }
 
     func logout(completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.logOut(){ result in
+        OneginiModuleSwift.sharedInstance.logOut { result in
             completion(result.mapError { $0 })
         }
     }
 
     func mobileAuthWithOtp(data: String, completion: @escaping (Result<String?, Error>) -> Void) {
-        
+
     }
 
     func getAppToWebSingleSignOn(url: String, completion: @escaping (Result<OWAppToWebSingleSignOn, Error>) -> Void) {
@@ -294,7 +294,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
     }
 
     static var flutterApi: NativeCallFlutterApi?
-    
+
     public static func register(with registrar: FlutterPluginRegistrar) {
         // Init Pigeon communication
         let messenger: FlutterBinaryMessenger = registrar.messenger()

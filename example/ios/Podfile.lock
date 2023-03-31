@@ -28,6 +28,7 @@ PODS:
   - qr_code_scanner (0.2.0):
     - Flutter
     - MTBBarcodeScanner
+  - SwiftLint (0.50.3)
   - Toast (4.0.0)
   - Typhoon (4.0.9):
     - Typhoon/DeallocNotifier (= 4.0.9)
@@ -45,12 +46,14 @@ DEPENDENCIES:
   - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - onegini (from `.symlinks/plugins/onegini/ios`)
   - qr_code_scanner (from `.symlinks/plugins/qr_code_scanner/ios`)
+  - SwiftLint
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
     - AFNetworking
     - MTBBarcodeScanner
+    - SwiftLint
     - Toast
     - Typhoon
   https://repo.onewelcome.com/artifactory/api/pods/cocoapods-public:
@@ -76,10 +79,11 @@ SPEC CHECKSUMS:
   onegini: bcef895403897119a1f340413bc75b8c1328624c
   OneginiSDKiOS: 81e27e24e901cfe41e09f46b8c673fd5b5b855e9
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
+  SwiftLint: 77f7cb2b9bb81ab4a12fcc86448ba3f11afa50c6
   Toast: 91b396c56ee72a5790816f40d3a94dd357abc196
   Typhoon: 1973c93ecfb3edb963d78b10e715bc2911475bd2
   url_launcher_ios: 08a3dfac5fb39e8759aeb0abbd5d9480f30fc8b4
 
-PODFILE CHECKSUM: 1cb5957d05b3b5aee795396ab15eb158c5d9d312
+PODFILE CHECKSUM: e49c186fd5db1b7547d2a80e7096f4e0713e90f9
 
 COCOAPODS: 1.11.3

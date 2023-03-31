@@ -9,7 +9,7 @@ protocol FetchResourcesHandlerProtocol: AnyObject {
     func requestResource(_ type: ResourceRequestType, _ details: OWRequestDetails, completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void)
 }
 
-//MARK: -
+// MARK: -
 class ResourcesHandler: FetchResourcesHandlerProtocol {
 
     func authenticateDevice(_ scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void) {
