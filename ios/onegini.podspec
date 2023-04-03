@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'onegini'
-  s.version          = '1.2.0'
+  s.version          = '1.2.1'
   s.summary          = 'Onegini Mobile Flutter plugin'
   s.description      = <<-DESC
   The Onegini Flutter Plugin is a plugin that allows you to utilize the Onegini Mobile SDKs in your Flutter applications.
@@ -18,7 +18,7 @@ Pod::Spec.new do |s|
   s.platform = :ios, '13.0'
 
   # ***************************
-  s.dependency 'OneginiSDKiOS', '~> 12.1.0'
+  s.dependency 'OneginiSDKiOS', '~> 12.1.1'
   # ***************************
 
   # Flutter.framework does not contain a i386 slice.

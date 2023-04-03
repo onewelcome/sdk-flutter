@@ -135,9 +135,10 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
     customIdentityProviderConfigs: List<OWCustomIdentityProvider>?,
     connectionTimeout: Long?,
     readTimeout: Long?,
+    additionalResourceUrls: List<String>?, // iOS only
     callback: (Result<Unit>) -> Unit
   ) {
-    startAppUseCase(securityControllerClassName, configModelClassName, customIdentityProviderConfigs, connectionTimeout, readTimeout, callback )
+    startAppUseCase(securityControllerClassName, configModelClassName, customIdentityProviderConfigs, connectionTimeout, readTimeout, callback)
   }
 
   override fun registerUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit) {

@@ -19,6 +19,8 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.IOException
+import java.net.MalformedURLException
+import java.net.URL
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -49,12 +51,14 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
   }
 
   private fun getCompleteResourceUrl(path: String): String {
-    // TODO Add support for multiple base resource urls; https://onewelcome.atlassian.net/browse/FP-38
     val resourceBaseUrl = oneginiSDK.oneginiClient.configModel.resourceBaseUrl
 
-    return when (path.startsWith(resourceBaseUrl)) {
-      true -> path
-      else -> resourceBaseUrl + path
+    // Check for absolute or relative url
+    return try {
+      URL(path)
+      path
+    } catch (e: MalformedURLException) {
+      resourceBaseUrl + path
     }
   }
 

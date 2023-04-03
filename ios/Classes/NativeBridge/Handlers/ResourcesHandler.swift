@@ -65,6 +65,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 private extension ResourcesHandler {
     func generateONGResourceRequest(_ details: OWRequestDetails) -> ONGResourceRequest {
         Logger.log("generateONGResourceRequest", sender: self)
+
         return ONGResourceRequest(path: details.path,
                                   method: details.method.stringValue,
                                   body: details.body?.data(using: .utf8),

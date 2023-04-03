@@ -85,8 +85,9 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
                           customIdentityProviderConfigs: [OWCustomIdentityProvider]?,
                           connectionTimeout: Int64?,
                           readTimeout: Int64?,
+                          additionalResourceUrls: [String]?,
                           completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.startOneginiModule(httpConnectionTimeout: connectionTimeout) { result in
+        OneginiModuleSwift.sharedInstance.startOneginiModule(httpConnectionTimeout: connectionTimeout, additionalResourceUrls: additionalResourceUrls) { result in
             completion(result.mapError { $0 })
         }
     }

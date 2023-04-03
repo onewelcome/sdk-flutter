@@ -133,6 +133,7 @@ abstract class UserClientApi {
     List<OWCustomIdentityProvider>? customIdentityProviderConfigs,
     int? connectionTimeout,
     int? readTimeout,
+    List<String>? additionalResourceUrls
   );
 
   @async

@@ -410,12 +410,12 @@ class UserClientApi {
 
   static const MessageCodec<Object?> codec = _UserClientApiCodec();
 
-  Future<void> startApplication(String? arg_securityControllerClassName, String? arg_configModelClassName, List<OWCustomIdentityProvider?>? arg_customIdentityProviderConfigs, int? arg_connectionTimeout, int? arg_readTimeout) async {
+  Future<void> startApplication(String? arg_securityControllerClassName, String? arg_configModelClassName, List<OWCustomIdentityProvider?>? arg_customIdentityProviderConfigs, int? arg_connectionTimeout, int? arg_readTimeout, List<String?>? arg_additionalResourceUrls) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.startApplication', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_securityControllerClassName, arg_configModelClassName, arg_customIdentityProviderConfigs, arg_connectionTimeout, arg_readTimeout]) as List<Object?>?;
+        await channel.send(<Object?>[arg_securityControllerClassName, arg_configModelClassName, arg_customIdentityProviderConfigs, arg_connectionTimeout, arg_readTimeout, arg_additionalResourceUrls]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
