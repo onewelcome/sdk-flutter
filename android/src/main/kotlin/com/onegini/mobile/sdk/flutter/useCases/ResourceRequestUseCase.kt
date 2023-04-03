@@ -63,7 +63,7 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
 
     // Pigeon 9.0.5 limits enforcing non null values in maps
     headers?.entries
-      ?.filter { it.key is String && it.value is String}
+      ?.filter { it.key is String && it.value is String }
       ?.forEach { headerBuilder.add(it.key as String, it.value as String) }
 
     return headerBuilder.build()

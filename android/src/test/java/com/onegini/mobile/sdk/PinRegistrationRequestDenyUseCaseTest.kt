@@ -17,10 +17,6 @@ import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
 class PinRegistrationRequestDenyUseCaseTest {
-
-  @Mock
-  lateinit var oneginiPinCallbackMock: OneginiPinCallback
-
   @Mock
   lateinit var callbackMock: (Result<Unit>) -> Unit
 
@@ -30,9 +26,9 @@ class PinRegistrationRequestDenyUseCaseTest {
   @Mock
   lateinit var oneginiPinCallback: OneginiPinCallback
 
-  lateinit var pinRegistrationRequestDenyUseCase: PinRegistrationRequestDenyUseCase
+  private lateinit var pinRegistrationRequestDenyUseCase: PinRegistrationRequestDenyUseCase
 
-  lateinit var pinRequestHandler: PinRequestHandler
+  private lateinit var pinRequestHandler: PinRequestHandler
 
   @Before
   fun attach() {

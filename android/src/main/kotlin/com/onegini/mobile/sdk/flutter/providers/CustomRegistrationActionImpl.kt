@@ -7,9 +7,9 @@ import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.REGISTRATION_NOT_I
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.mapToOwCustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
 
-class CustomRegistrationActionImpl(private val providerId: String, private val nativeApi: NativeCallFlutterApi) : OneginiCustomRegistrationAction, CustomRegistrationAction {
+class CustomRegistrationActionImpl(private val providerId: String, private val nativeApi: NativeCallFlutterApi) :
+  OneginiCustomRegistrationAction, CustomRegistrationAction {
   var callback: OneginiCustomRegistrationCallback? = null
 
   override fun finishRegistration(callback: OneginiCustomRegistrationCallback, info: CustomInfo?) {

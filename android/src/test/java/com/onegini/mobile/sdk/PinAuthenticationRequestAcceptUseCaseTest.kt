@@ -18,7 +18,6 @@ import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
 class PinAuthenticationRequestAcceptUseCaseTest {
-
   @Mock
   lateinit var oneginiPinCallbackMock: OneginiPinCallback
 
@@ -31,9 +30,9 @@ class PinAuthenticationRequestAcceptUseCaseTest {
   @Mock
   lateinit var authenticationAttemptCounter: AuthenticationAttemptCounter
 
-  lateinit var pinAuthenticationRequestAcceptUseCase: PinAuthenticationRequestAcceptUseCase
+  private lateinit var pinAuthenticationRequestAcceptUseCase: PinAuthenticationRequestAcceptUseCase
 
-  lateinit var pinAuthenticationRequestHandler: PinAuthenticationRequestHandler
+  private lateinit var pinAuthenticationRequestHandler: PinAuthenticationRequestHandler
   @Before
   fun before() {
     pinAuthenticationRequestHandler = PinAuthenticationRequestHandler(nativeApi)

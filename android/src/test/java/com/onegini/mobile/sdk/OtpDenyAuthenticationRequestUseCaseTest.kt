@@ -26,9 +26,9 @@ class OtpDenyAuthenticationRequestUseCaseTest {
   @Mock
   lateinit var nativeApi: NativeCallFlutterApi
 
-  lateinit var otpDenyAuthenticationRequestUseCase: OtpDenyAuthenticationRequestUseCase
+  private lateinit var otpDenyAuthenticationRequestUseCase: OtpDenyAuthenticationRequestUseCase
 
-  lateinit var mobileAuthOtpRequestHandler: MobileAuthOtpRequestHandler
+  private lateinit var mobileAuthOtpRequestHandler: MobileAuthOtpRequestHandler
 
   @Before
   fun attach() {

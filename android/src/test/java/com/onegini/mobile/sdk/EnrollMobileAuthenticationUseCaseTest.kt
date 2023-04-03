@@ -3,10 +3,8 @@ package com.onegini.mobile.sdk
 import com.onegini.mobile.sdk.android.handlers.OneginiMobileAuthEnrollmentHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthEnrollmentError
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NO_USER_PROFILE_IS_AUTHENTICATED
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.SdkErrorAssert
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import com.onegini.mobile.sdk.flutter.useCases.EnrollMobileAuthenticationUseCase
 import org.junit.Assert

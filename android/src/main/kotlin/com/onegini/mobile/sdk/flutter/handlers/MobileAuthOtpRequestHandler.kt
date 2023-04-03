@@ -10,34 +10,35 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MobileAuthOtpRequestHandler @Inject constructor(private val nativeApi: NativeCallFlutterApi): OneginiMobileAuthWithOtpRequestHandler {
+class MobileAuthOtpRequestHandler @Inject constructor(private val nativeApi: NativeCallFlutterApi) :
+  OneginiMobileAuthWithOtpRequestHandler {
 
-    private var callback: OneginiAcceptDenyCallback? = null
+  private var callback: OneginiAcceptDenyCallback? = null
 
-    override fun startAuthentication(
-            oneginiMobileAuthenticationRequest: OneginiMobileAuthenticationRequest,
-            oneginiAcceptDenyCallback: OneginiAcceptDenyCallback
-    ) {
-        callback = oneginiAcceptDenyCallback
-        nativeApi.n2fOpenAuthOtp(oneginiMobileAuthenticationRequest.message) {}
-    }
+  override fun startAuthentication(
+    oneginiMobileAuthenticationRequest: OneginiMobileAuthenticationRequest,
+    oneginiAcceptDenyCallback: OneginiAcceptDenyCallback
+  ) {
+    callback = oneginiAcceptDenyCallback
+    nativeApi.n2fOpenAuthOtp(oneginiMobileAuthenticationRequest.message) {}
+  }
 
-    override fun finishAuthentication() {
-        nativeApi.n2fCloseAuthOtp {}
-        callback = null
-    }
+  override fun finishAuthentication() {
+    nativeApi.n2fCloseAuthOtp {}
+    callback = null
+  }
 
-    fun acceptAuthenticationRequest(): Result<Unit> {
-        return callback?.let {
-            it.acceptAuthenticationRequest()
-            Result.success(Unit)
-        } ?: Result.failure(SdkError(OTP_AUTHENTICATION_NOT_IN_PROGRESS).pigeonError())
-    }
+  fun acceptAuthenticationRequest(): Result<Unit> {
+    return callback?.let {
+      it.acceptAuthenticationRequest()
+      Result.success(Unit)
+    } ?: Result.failure(SdkError(OTP_AUTHENTICATION_NOT_IN_PROGRESS).pigeonError())
+  }
 
-    fun denyAuthenticationRequest(): Result<Unit> {
-        return callback?.let {
-            it.denyAuthenticationRequest()
-            Result.success(Unit)
-        } ?: Result.failure(SdkError(OTP_AUTHENTICATION_NOT_IN_PROGRESS).pigeonError())
-    }
+  fun denyAuthenticationRequest(): Result<Unit> {
+    return callback?.let {
+      it.denyAuthenticationRequest()
+      Result.success(Unit)
+    } ?: Result.failure(SdkError(OTP_AUTHENTICATION_NOT_IN_PROGRESS).pigeonError())
+  }
 }

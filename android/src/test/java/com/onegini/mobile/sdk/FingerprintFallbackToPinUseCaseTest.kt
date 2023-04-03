@@ -17,16 +17,16 @@ import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
 class FingerprintFallbackToPinUseCaseTest {
-
   @Mock
   lateinit var oneginiFingerprintCallbackMock: OneginiFingerprintCallback
 
   @Mock
   lateinit var nativeApi: NativeCallFlutterApi
 
-  lateinit var fingerprintFallbackToPinUseCase: FingerprintFallbackToPinUseCase
+  private lateinit var fingerprintFallbackToPinUseCase: FingerprintFallbackToPinUseCase
 
-  lateinit var fingerprintAuthenticationRequestHandler: FingerprintAuthenticationRequestHandler
+  private lateinit var fingerprintAuthenticationRequestHandler: FingerprintAuthenticationRequestHandler
+
   @Before
   fun attach() {
     fingerprintAuthenticationRequestHandler = FingerprintAuthenticationRequestHandler(nativeApi)
@@ -58,7 +58,7 @@ class FingerprintFallbackToPinUseCaseTest {
     verify(oneginiFingerprintCallbackMock).fallbackToPin()
   }
 
-  fun WhenFingerPrintHasStarted() {
+  private fun WhenFingerPrintHasStarted() {
     fingerprintAuthenticationRequestHandler.startAuthentication(UserProfile("123456"), oneginiFingerprintCallbackMock)
   }
 
