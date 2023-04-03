@@ -93,7 +93,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
 
     func registerUser(_ providerId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
         let identityProvider = SharedUserClient.instance.identityProviders.first(where: { $0.identifier == providerId})
-        let delegate = RegistrationDelegateImpl(completion)
+        let delegate = RegistrationDelegateImpl(completion, self)
         SharedUserClient.instance.registerUserWith(identityProvider: identityProvider, scopes: scopes, delegate: delegate)
     }
 
@@ -140,19 +140,21 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
 
 class RegistrationDelegateImpl: RegistrationDelegate {
     private let signUpCompletion: ((Result<OWRegistrationResponse, FlutterError>) -> Void)
+    private let registrationHandler: RegistrationHandler
 
-    init(_ completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
+    init(_ completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void, _ registrationHandler: RegistrationHandler) {
         signUpCompletion = completion
+        self.registrationHandler = registrationHandler
     }
 
     func userClient(_ userClient: UserClient, didReceiveCreatePinChallenge challenge: CreatePinChallenge) {
         Logger.log("didReceivePinRegistrationChallenge ONGCreatePinChallenge", sender: self)
-        BridgeConnector.shared?.toRegistrationHandler.handleDidReceivePinRegistrationChallenge(challenge)
+        registrationHandler.handleDidReceivePinRegistrationChallenge(challenge)
     }
 
     func userClient(_ userClient: UserClient, didReceiveBrowserRegistrationChallenge challenge: BrowserRegistrationChallenge) {
         Logger.log("didReceive ONGBrowserRegistrationChallenge", sender: self)
-        BridgeConnector.shared?.toRegistrationHandler.browserRegistrationChallenge = challenge
+        registrationHandler.browserRegistrationChallenge = challenge
         debugPrint(challenge.url)
 
         SwiftOneginiPlugin.flutterApi?.n2fHandleRegisteredUrl(url: challenge.url.absoluteString) {}
@@ -160,13 +162,13 @@ class RegistrationDelegateImpl: RegistrationDelegate {
 
     func userClient(_ userClient: UserClient, didReceiveCustomRegistrationInitChallenge challenge: CustomRegistrationChallenge) {
         Logger.log("didReceiveCustomRegistrationInitChallenge ONGCustomRegistrationChallenge", sender: self)
-        BridgeConnector.shared?.toRegistrationHandler.customRegistrationChallenge = challenge
+        registrationHandler.customRegistrationChallenge = challenge
         SwiftOneginiPlugin.flutterApi?.n2fEventInitCustomRegistration(customInfo: toOWCustomInfo(challenge.info), providerId: challenge.identityProvider.identifier) {}
     }
 
     func userClient(_ userClient: UserClient, didReceiveCustomRegistrationFinishChallenge challenge: CustomRegistrationChallenge) {
         Logger.log("didReceiveCustomRegistrationFinish ONGCustomRegistrationChallenge", sender: self)
-        BridgeConnector.shared?.toRegistrationHandler.customRegistrationChallenge = challenge
+        registrationHandler.customRegistrationChallenge = challenge
         SwiftOneginiPlugin.flutterApi?.n2fEventFinishCustomRegistration(customInfo: toOWCustomInfo(challenge.info), providerId: challenge.identityProvider.identifier) {}
     }
 
@@ -175,14 +177,14 @@ class RegistrationDelegateImpl: RegistrationDelegate {
     }
 
     func userClient(_ userClient: UserClient, didRegisterUser profile: UserProfile, with identityProvider: IdentityProvider, info: CustomInfo?) {
-        BridgeConnector.shared?.toRegistrationHandler.handleDidRegisterUser()
+        registrationHandler.handleDidRegisterUser()
         signUpCompletion(.success(
             OWRegistrationResponse(userProfile: OWUserProfile(profile),
                                    customInfo: toOWCustomInfo(info))))
     }
 
     func userClient(_ userClient: UserClient, didFailToRegisterUserWith identityProvider: IdentityProvider, error: Error) {
-        BridgeConnector.shared?.toRegistrationHandler.handleDidFailToRegister()
+        registrationHandler.handleDidFailToRegister()
         if error.code == ONGGenericError.actionCancelled.rawValue {
             signUpCompletion(.failure(FlutterError(.registrationCancelled)))
         } else {
