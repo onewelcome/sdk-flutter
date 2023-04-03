@@ -56,20 +56,22 @@ class LoginHandler {
     }
 
     func authenticateUser(_ profile: UserProfile, authenticator: Authenticator?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
-        let delegate = AuthenticationDelegateImpl(completion)
+        let delegate = AuthenticationDelegateImpl(completion, self)
         SharedUserClient.instance.authenticateUserWith(profile: profile, authenticator: authenticator, delegate: delegate)
     }
 }
 
 class AuthenticationDelegateImpl: AuthenticationDelegate {
     private var loginCompletion: (Result<OWRegistrationResponse, FlutterError>) -> Void
+    private let loginHandler: LoginHandler
 
-    init(_ completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
+    init(_ completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void, _ loginHandler: LoginHandler) {
         loginCompletion = completion
+        self.loginHandler = loginHandler
     }
 
     func userClient(_ userClient: UserClient, didReceivePinChallenge challenge: PinChallenge) {
-        BridgeConnector.shared?.toLoginHandler.handleDidReceiveChallenge(challenge)
+        loginHandler.handleDidReceiveChallenge(challenge)
     }
 
     func userClient(_ userClient: UserClient, didStartAuthenticationForUser profile: UserProfile, authenticator: Authenticator) {
@@ -81,13 +83,13 @@ class AuthenticationDelegateImpl: AuthenticationDelegate {
     }
 
     func userClient(_ userClient: UserClient, didAuthenticateUser profile: UserProfile, authenticator: Authenticator, info customAuthInfo: CustomInfo?) {
-        BridgeConnector.shared?.toLoginHandler.handleDidAuthenticateUser()
+        loginHandler.handleDidAuthenticateUser()
         loginCompletion(.success(OWRegistrationResponse(userProfile: OWUserProfile(profile),
                                                          customInfo: toOWCustomInfo(customAuthInfo))))
     }
 
     func userClient(_ userClient: UserClient, didFailToAuthenticateUser profile: UserProfile, authenticator: Authenticator, error: Error) {
-        BridgeConnector.shared?.toLoginHandler.handleDidFailToAuthenticateUser()
+        loginHandler.handleDidFailToAuthenticateUser()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
             loginCompletion(.failure(FlutterError(.loginCanceled)))
