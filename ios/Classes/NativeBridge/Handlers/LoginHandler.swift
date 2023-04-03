@@ -62,11 +62,11 @@ class LoginHandler {
 }
 
 class AuthenticationDelegateImpl: AuthenticationDelegate {
-    private var loginCompletion: (Result<OWRegistrationResponse, FlutterError>) -> Void
+    private let completion: (Result<OWRegistrationResponse, FlutterError>) -> Void
     private let loginHandler: LoginHandler
 
     init(_ completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void, _ loginHandler: LoginHandler) {
-        loginCompletion = completion
+        self.completion = completion
         self.loginHandler = loginHandler
     }
 
@@ -84,7 +84,7 @@ class AuthenticationDelegateImpl: AuthenticationDelegate {
 
     func userClient(_ userClient: UserClient, didAuthenticateUser profile: UserProfile, authenticator: Authenticator, info customAuthInfo: CustomInfo?) {
         loginHandler.handleDidAuthenticateUser()
-        loginCompletion(.success(OWRegistrationResponse(userProfile: OWUserProfile(profile),
+        completion(.success(OWRegistrationResponse(userProfile: OWUserProfile(profile),
                                                          customInfo: toOWCustomInfo(customAuthInfo))))
     }
 
@@ -92,10 +92,10 @@ class AuthenticationDelegateImpl: AuthenticationDelegate {
         loginHandler.handleDidFailToAuthenticateUser()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            loginCompletion(.failure(FlutterError(.loginCanceled)))
+            completion(.failure(FlutterError(.loginCanceled)))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            loginCompletion(.failure(FlutterError(mappedError)))
+            completion(.failure(FlutterError(mappedError)))
         }
     }
 }

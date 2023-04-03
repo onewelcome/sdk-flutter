@@ -139,11 +139,11 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
 }
 
 class RegistrationDelegateImpl: RegistrationDelegate {
-    private let signUpCompletion: ((Result<OWRegistrationResponse, FlutterError>) -> Void)
+    private let completion: ((Result<OWRegistrationResponse, FlutterError>) -> Void)
     private let registrationHandler: RegistrationHandler
 
     init(_ completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void, _ registrationHandler: RegistrationHandler) {
-        signUpCompletion = completion
+        self.completion = completion
         self.registrationHandler = registrationHandler
     }
 
@@ -178,7 +178,7 @@ class RegistrationDelegateImpl: RegistrationDelegate {
 
     func userClient(_ userClient: UserClient, didRegisterUser profile: UserProfile, with identityProvider: IdentityProvider, info: CustomInfo?) {
         registrationHandler.handleDidRegisterUser()
-        signUpCompletion(.success(
+        completion(.success(
             OWRegistrationResponse(userProfile: OWUserProfile(profile),
                                    customInfo: toOWCustomInfo(info))))
     }
@@ -186,10 +186,10 @@ class RegistrationDelegateImpl: RegistrationDelegate {
     func userClient(_ userClient: UserClient, didFailToRegisterUserWith identityProvider: IdentityProvider, error: Error) {
         registrationHandler.handleDidFailToRegister()
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            signUpCompletion(.failure(FlutterError(.registrationCancelled)))
+            completion(.failure(FlutterError(.registrationCancelled)))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            signUpCompletion(.failure(FlutterError(mappedError)))
+            completion(.failure(FlutterError(mappedError)))
         }
     }
 }

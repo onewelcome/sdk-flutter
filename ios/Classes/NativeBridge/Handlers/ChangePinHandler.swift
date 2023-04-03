@@ -12,15 +12,15 @@ class ChangePinHandler {
         let delegate = ChangePinDelegateImpl(completion: completion, loginHandler, registrationHandler)
         SharedUserClient.instance.changePin(delegate: delegate)
     }
- }
+}
 
 class ChangePinDelegateImpl: ChangePinDelegate {
-    private var changePinCompletion: ((Result<Void, FlutterError>) -> Void)
+    private let completion: ((Result<Void, FlutterError>) -> Void)
     private let loginHandler: LoginHandler
     private let registrationHandler: RegistrationHandler
 
     init(completion: @escaping (Result<Void, FlutterError>) -> Void, _ loginHandler: LoginHandler, _ registrationHandler: RegistrationHandler) {
-        changePinCompletion = completion
+        self.completion = completion
         self.loginHandler = loginHandler
         self.registrationHandler = registrationHandler
     }
@@ -40,7 +40,7 @@ class ChangePinDelegateImpl: ChangePinDelegate {
 
     func userClient(_ userClient: UserClient, didChangePinForUser profile: UserProfile) {
         registrationHandler.handleDidRegisterUser()
-        changePinCompletion(.success)
+        completion(.success)
     }
 
     func userClient(_ userClient: UserClient, didFailToChangePinForUser profile: UserProfile, error: Error) {
@@ -48,6 +48,6 @@ class ChangePinDelegateImpl: ChangePinDelegate {
         registrationHandler.handleDidFailToRegister()
 
         let mappedError = ErrorMapper().mapError(error)
-        changePinCompletion(.failure(FlutterError(mappedError)))
+        completion(.failure(FlutterError(mappedError)))
     }
 }
