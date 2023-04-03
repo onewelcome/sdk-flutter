@@ -2,7 +2,7 @@ import OneginiSDKiOS
 import Flutter
 
 class LoginHandler: NSObject {
-    var pinChallenge: ONGPinChallenge?
+    var pinChallenge: PinChallenge?
     var loginCompletion: ((Result<OWRegistrationResponse, FlutterError>) -> Void)?
 
     func handlePin(pin: String, completion: (Result<Void, FlutterError>) -> Void) {
@@ -10,7 +10,7 @@ class LoginHandler: NSObject {
             completion(.failure(FlutterError(.authenticationNotInProgress)))
             return
         }
-        pinChallenge.sender.respond(withPin: pin, challenge: pinChallenge)
+        pinChallenge.sender.respond(with: pin, to: pinChallenge)
         completion(.success)
     }
 
@@ -23,7 +23,7 @@ class LoginHandler: NSObject {
         completion(.success)
     }
 
-    private func mapErrorFromPinChallenge(_ challenge: ONGPinChallenge) -> Error? {
+    private func mapErrorFromPinChallenge(_ challenge: PinChallenge) -> Error? {
         if let error = challenge.error, error.code != ONGAuthenticationError.touchIDAuthenticatorFailure.rawValue {
             return error
         } else {
@@ -31,7 +31,7 @@ class LoginHandler: NSObject {
         }
     }
 
-    func handleDidReceiveChallenge(_ challenge: ONGPinChallenge) {
+    func handleDidReceiveChallenge(_ challenge: PinChallenge) {
         pinChallenge = challenge
         guard mapErrorFromPinChallenge(challenge) == nil else {
             let authAttempt = OWAuthenticationAttempt(
@@ -58,28 +58,32 @@ class LoginHandler: NSObject {
 }
 
 extension LoginHandler {
-    func authenticateUser(_ profile: ONGUserProfile, authenticator: ONGAuthenticator?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
+    func authenticateUser(_ profile: UserProfile, authenticator: Authenticator?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
         loginCompletion = completion
-        ONGUserClient.sharedInstance().authenticateUser(profile, authenticator: authenticator, delegate: self)
+        SharedUserClient.instance.authenticateUserWith(profile: profile, authenticator: authenticator, delegate: self)
     }
 }
 
-extension LoginHandler: ONGAuthenticationDelegate {
-    func userClient(_: ONGUserClient, didReceive challenge: ONGPinChallenge) {
+extension LoginHandler: AuthenticationDelegate {
+    func userClient(_ userClient: UserClient, didReceivePinChallenge challenge: PinChallenge) {
         handleDidReceiveChallenge(challenge)
     }
 
-    func userClient(_: ONGUserClient, didReceive challenge: ONGCustomAuthFinishAuthenticationChallenge) {
+    func userClient(_ userClient: UserClient, didStartAuthenticationForUser profile: UserProfile, authenticator: Authenticator) {
+        // unused
+    }
+
+    func userClient(_ userClient: UserClient, didReceiveCustomAuthFinishAuthenticationChallenge challenge: CustomAuthFinishAuthenticationChallenge) {
         // We don't support custom authenticators in FlutterPlugin right now.
     }
 
-    func userClient(_ userClient: ONGUserClient, didAuthenticateUser userProfile: ONGUserProfile, authenticator: ONGAuthenticator, info customAuthInfo: ONGCustomInfo?) {
+    func userClient(_ userClient: UserClient, didAuthenticateUser profile: UserProfile, authenticator: Authenticator, info customAuthInfo: CustomInfo?) {
         handleDidAuthenticateUser()
-        loginCompletion?(.success(OWRegistrationResponse(userProfile: OWUserProfile(userProfile),
+        loginCompletion?(.success(OWRegistrationResponse(userProfile: OWUserProfile(profile),
                                                          customInfo: toOWCustomInfo(customAuthInfo))))
     }
 
-    func userClient(_ userClient: ONGUserClient, didFailToAuthenticateUser userProfile: ONGUserProfile, authenticator: ONGAuthenticator, error: Error) {
+    func userClient(_ userClient: UserClient, didFailToAuthenticateUser profile: UserProfile, authenticator: Authenticator, error: Error) {
         handleDidFailToAuthenticateUser()
 
         if error.code == ONGGenericError.actionCancelled.rawValue {

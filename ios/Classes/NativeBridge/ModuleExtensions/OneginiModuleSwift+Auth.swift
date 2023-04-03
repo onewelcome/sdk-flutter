@@ -34,12 +34,11 @@ extension OneginiModuleSwift {
 
     func authenticateUser(profileId: String, authenticatorId: String?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
 
-        guard let profile = ONGClient.sharedInstance().userClient.userProfiles().first(where: { $0.profileId == profileId }) else {
+        guard let profile = SharedUserClient.instance.userProfiles.first(where: { $0.profileId == profileId }) else {
             completion(.failure(SdkError(.userProfileDoesNotExist).flutterError()))
             return
         }
-
-        let authenticator = ONGUserClient.sharedInstance().registeredAuthenticators(forUser: profile).first(where: { $0.identifier == authenticatorId })
+        let authenticator = SharedUserClient.instance.authenticators(.all, for: profile).first(where: { $0.identifier == authenticatorId })
 
         bridgeConnector.toLoginHandler.authenticateUser(profile, authenticator: authenticator) { result in
             completion(result)
@@ -47,7 +46,7 @@ extension OneginiModuleSwift {
     }
 
     func setPreferredAuthenticator(_ identifierId: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        guard let profile = ONGClient.sharedInstance().userClient.authenticatedUserProfile() else {
+        guard let profile = SharedUserClient.instance.authenticatedUserProfile else {
             completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
             return
         }
@@ -55,7 +54,7 @@ extension OneginiModuleSwift {
     }
 
     func deregisterAuthenticator(_ identifierId: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        guard let profile = ONGClient.sharedInstance().userClient.authenticatedUserProfile() else {
+        guard let profile = SharedUserClient.instance.authenticatedUserProfile else {
             completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
             return
         }
