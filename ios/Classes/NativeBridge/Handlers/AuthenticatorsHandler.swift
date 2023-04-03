@@ -8,6 +8,11 @@ protocol BridgeToAuthenticatorsHandlerProtocol {
 }
 
 class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
+    private let loginHandler: LoginHandler
+
+    init(_ loginHandler: LoginHandler) {
+        self.loginHandler = loginHandler
+    }
     func registerAuthenticator(_ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let profile = SharedUserClient.instance.authenticatedUserProfile else {
             completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
@@ -20,7 +25,7 @@ class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
             completion(.failure(FlutterError(.authenticatorNotFound)))
             return
         }
-        let delegate = AuthenticatorRegistrationDelegateImpl(completion)
+        let delegate = AuthenticatorRegistrationDelegateImpl(completion, loginHandler)
         SharedUserClient.instance.register(authenticator: authenticator, delegate: delegate)
     }
 
@@ -55,15 +60,17 @@ class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
 }
 
 class AuthenticatorRegistrationDelegateImpl: AuthenticatorRegistrationDelegate {
-    private var registrationCompletion: ((Result<Void, FlutterError>) -> Void)?
+    private let completion: ((Result<Void, FlutterError>) -> Void)
+    private let loginHandler: LoginHandler
 
-    init(_ completion: ((Result<Void, FlutterError>) -> Void)?) {
-        registrationCompletion = completion
+    init(_ completion: (@escaping (Result<Void, FlutterError>) -> Void), _ loginHandler: LoginHandler) {
+        self.completion = completion
+        self.loginHandler = loginHandler
     }
 
     func userClient(_ userClient: UserClient, didReceivePinChallenge challenge: PinChallenge) {
         Logger.log("[AUTH] userClient didReceive PinChallenge", sender: self)
-        BridgeConnector.shared?.toLoginHandler.handleDidReceiveChallenge(challenge)
+        loginHandler.handleDidReceiveChallenge(challenge)
     }
 
     func userClient(_ userClient: UserClient, didReceiveCustomAuthFinishRegistrationChallenge challenge: CustomAuthFinishRegistrationChallenge) {
@@ -77,25 +84,25 @@ class AuthenticatorRegistrationDelegateImpl: AuthenticatorRegistrationDelegate {
     func userClient(_ userClient: UserClient, didFailToRegister authenticator: Authenticator, for userProfile: UserProfile, error: Error) {
         Logger.log("[AUTH] userClient didFailToRegister ONGAuthenticator", sender: self)
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            registrationCompletion?(.failure(FlutterError(.authenticatorRegistrationCancelled)))
+            completion(.failure(FlutterError(.authenticatorRegistrationCancelled)))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            registrationCompletion?(.failure(FlutterError(mappedError)))
+            completion(.failure(FlutterError(mappedError)))
         }
     }
 
     func userClient(_ userClient: UserClient, didRegister authenticator: Authenticator, for userProfile: UserProfile, info customAuthInfo: CustomInfo?) {
         Logger.log("[AUTH] userClient didRegister ONGAuthenticator", sender: self)
-        BridgeConnector.shared?.toLoginHandler.handleDidAuthenticateUser()
-        registrationCompletion?(.success)
+        loginHandler.handleDidAuthenticateUser()
+        completion(.success)
     }
 }
 
 class AuthenticatorDeregistrationDelegateImpl: AuthenticatorDeregistrationDelegate {
-    private var deregistrationCompletion: ((Result<Void, FlutterError>) -> Void)
+    private let completion: ((Result<Void, FlutterError>) -> Void)
 
     init(_ completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        deregistrationCompletion = completion
+        self.completion = completion
     }
 
     func userClient(_ userClient: UserClient, didStartDeregistering authenticator: Authenticator, forUser userProfile: UserProfile) {
@@ -104,16 +111,16 @@ class AuthenticatorDeregistrationDelegateImpl: AuthenticatorDeregistrationDelega
 
     func userClient(_ userClient: UserClient, didDeregister authenticator: Authenticator, forUser userProfile: UserProfile) {
         Logger.log("[AUTH] userClient didDeregister ONGAuthenticator", sender: self)
-        deregistrationCompletion(.success)
+        completion(.success)
     }
 
     func userClient(_ userClient: UserClient, didFailToDeregister authenticator: Authenticator, forUser userProfile: UserProfile, error: Error) {
         Logger.log("[AUTH] userClient didFailToDeregister ONGAuthenticator", sender: self)
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            deregistrationCompletion(.failure(FlutterError(.authenticatorDeregistrationCancelled)))
+            completion(.failure(FlutterError(.authenticatorDeregistrationCancelled)))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            deregistrationCompletion(.failure(FlutterError(mappedError)))
+            completion(.failure(FlutterError(mappedError)))
         }
     }
 
