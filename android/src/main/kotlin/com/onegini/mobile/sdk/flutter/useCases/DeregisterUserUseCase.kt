@@ -13,7 +13,6 @@ class DeregisterUserUseCase @Inject constructor(
   private val getUserProfileUseCase: GetUserProfileUseCase
 ) {
   operator fun invoke(profileId: String, callback: (Result<Unit>) -> Unit) {
-
     val userProfile = try {
       getUserProfileUseCase(profileId)
     } catch (error: SdkError) {

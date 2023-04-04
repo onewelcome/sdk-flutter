@@ -22,7 +22,6 @@ import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
 class ValidatePinWithPolicyUseCaseTests {
-
   @Mock
   lateinit var oneginiPinValidationErrorMock: OneginiPinValidationError
 

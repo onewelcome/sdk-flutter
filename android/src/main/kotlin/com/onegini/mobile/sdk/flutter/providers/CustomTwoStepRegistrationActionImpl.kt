@@ -8,8 +8,6 @@ import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.mapToOwCustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
-import javax.inject.Inject
 
 class CustomTwoStepRegistrationActionImpl(private val providerId: String, private val nativeApi: NativeCallFlutterApi) : OneginiCustomTwoStepRegistrationAction, CustomRegistrationAction {
     var callback: OneginiCustomRegistrationCallback? = null

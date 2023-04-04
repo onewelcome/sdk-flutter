@@ -17,7 +17,6 @@ import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
 class FingerprintAuthenticationRequestDenyUseCaseTest {
-
   @Mock
   lateinit var oneginiFingerprintCallbackMock: OneginiFingerprintCallback
 
@@ -27,6 +26,7 @@ class FingerprintAuthenticationRequestDenyUseCaseTest {
   lateinit var fingerprintAuthenticationRequestDenyUseCase: FingerprintAuthenticationRequestDenyUseCase
 
   lateinit var fingerprintAuthenticationRequestHandler: FingerprintAuthenticationRequestHandler
+
   @Before
   fun attach() {
     fingerprintAuthenticationRequestHandler = FingerprintAuthenticationRequestHandler(nativeApi)

@@ -17,7 +17,6 @@ import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
 class FingerprintAuthenticationRequestAcceptUseCaseTest {
-
   @Mock
   lateinit var oneginiFingerprintCallbackMock: OneginiFingerprintCallback
 

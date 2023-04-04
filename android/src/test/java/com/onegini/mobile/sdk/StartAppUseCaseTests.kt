@@ -20,109 +20,111 @@ import org.mockito.kotlin.*
 
 @RunWith(MockitoJUnitRunner::class)
 class StartAppUseCaseTests {
+  @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+  lateinit var oneginiSdk: OneginiSDK
 
-    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    lateinit var oneginiSdk: OneginiSDK
+  @Mock
+  lateinit var clientMock: OneginiClient
 
-    @Mock
-    lateinit var clientMock: OneginiClient
+  @Mock
+  lateinit var callbackMock: (Result<Unit>) -> Unit
 
-    @Mock
-    lateinit var callbackMock: (Result<Unit>) -> Unit
+  @Mock
+  lateinit var oneginiInitializationError: OneginiInitializationError
 
-    @Mock
-    lateinit var oneginiInitializationError: OneginiInitializationError
+  lateinit var startAppUseCase: StartAppUseCase
 
-    lateinit var startAppUseCase: StartAppUseCase
+  @Before
+  fun attach() {
+    startAppUseCase = StartAppUseCase(oneginiSdk)
+  }
 
-    @Before
-    fun attach() {
-        startAppUseCase = StartAppUseCase(oneginiSdk)
+  val errorCode = OneginiInitializationError.GENERAL_ERROR
+  val errorMessage = "General error"
+
+  @Test
+  fun `When onError gets called by oneginiClient, Then should call callback with Result_failure with that error`() {
+
+    whenCallsOnError()
+
+
+    startAppUseCase(
+      null,
+      null,
+      null,
+      null,
+      null,
+      callbackMock
+    )
+
+    argumentCaptor<Result<Unit>>().apply {
+      verify(callbackMock).invoke(capture())
+      val expected = FlutterError(oneginiInitializationError.errorType.toString(), oneginiInitializationError.message)
+      SdkErrorAssert.assertEquals(expected, firstValue.exceptionOrNull())
     }
+  }
 
-    val errorCode = OneginiInitializationError.GENERAL_ERROR
-    val errorMessage = "General error"
+  @Test
+  fun `When onSuccess gets called by oneginiClient, Then should call callback with Result_success`() {
 
-    @Test
-    fun `When onError gets called by oneginiClient, Then should call callback with Result_failure with that error`() {
-
-        whenCallsOnError()
+    whenCallsOnSuccess()
 
 
-        startAppUseCase(
-            null,
-            null,
-            null,
-            null,
-            null,
-            callbackMock)
+    startAppUseCase(
+      null,
+      null,
+      null,
+      null,
+      null,
+      callbackMock
+    )
 
-        argumentCaptor<Result<Unit>>().apply {
-            verify(callbackMock).invoke(capture())
-            val expected = FlutterError(oneginiInitializationError.errorType.toString(), oneginiInitializationError.message)
-            SdkErrorAssert.assertEquals(expected, firstValue.exceptionOrNull())
-        }
+    argumentCaptor<Result<Unit>>().apply {
+      verify(callbackMock).invoke(capture())
+      assertEquals(firstValue.isSuccess, true)
     }
+  }
 
-    @Test
-    fun `When onSuccess gets called by oneginiClient, Then should call callback with Result_success`() {
+  @Test
+  fun `When OneginiSDK_buildSDK throws an exception Then we should reject with that error`() {
+    whenBuildSdkThrowsSdkError()
 
-        whenCallsOnSuccess()
+    startAppUseCase(
+      null,
+      null,
+      null,
+      null,
+      null,
+      callbackMock
+    )
 
-
-        startAppUseCase(
-            null,
-            null,
-            null,
-            null,
-            null,
-            callbackMock)
-
-        argumentCaptor<Result<Unit>>().apply {
-            verify(callbackMock).invoke(capture())
-            assertEquals(firstValue.isSuccess, true)
-        }
+    argumentCaptor<Result<Unit>>().apply {
+      verify(callbackMock).invoke(capture())
+      val expected = FlutterError(errorCode.toString(), errorMessage)
+      SdkErrorAssert.assertEquals(expected, firstValue.exceptionOrNull())
     }
+  }
 
-    @Test
-    fun `When OneginiSDK_buildSDK throws an exception Then we should reject with that error`() {
-        whenBuildSdkThrowsSdkError()
-
-        startAppUseCase(
-            null,
-            null,
-            null,
-            null,
-            null,
-            callbackMock)
-
-        argumentCaptor<Result<Unit>>().apply {
-            verify(callbackMock).invoke(capture())
-            val expected = FlutterError(errorCode.toString(), errorMessage)
-            SdkErrorAssert.assertEquals(expected, firstValue.exceptionOrNull())
-        }
+  private fun whenCallsOnError() {
+    whenever(oneginiSdk.oneginiClient.start(any())).thenAnswer {
+      it.getArgument<OneginiInitializationHandler>(0).onError(oneginiInitializationError)
     }
+    whenever(oneginiInitializationError.errorType).thenReturn(errorCode)
+    whenever(oneginiInitializationError.message).thenReturn(errorMessage)
+  }
 
-    private fun whenCallsOnError() {
-        whenever(oneginiSdk.oneginiClient.start(any())).thenAnswer {
-            it.getArgument<OneginiInitializationHandler>(0).onError(oneginiInitializationError)
-        }
-        whenever(oneginiInitializationError.errorType).thenReturn(errorCode)
-        whenever(oneginiInitializationError.message).thenReturn(errorMessage)
+  private fun whenBuildSdkThrowsSdkError() {
+    whenever(oneginiSdk.buildSDK(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())).thenAnswer {
+      throw SdkError(
+        code = errorCode,
+        message = errorMessage
+      )
     }
+  }
 
-    private fun whenBuildSdkThrowsSdkError() {
-        whenever(oneginiSdk.buildSDK(anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull(), anyOrNull())).thenAnswer {
-            throw SdkError(
-                code = errorCode,
-                message = errorMessage
-            )
-        }
+  private fun whenCallsOnSuccess() {
+    whenever(oneginiSdk.oneginiClient.start(any())).thenAnswer {
+      it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
     }
-
-    private fun whenCallsOnSuccess() {
-        whenever(oneginiSdk.oneginiClient.start(any())).thenAnswer {
-            it.getArgument<OneginiInitializationHandler>(0).onSuccess(emptySet())
-        }
-    }
+  }
 }

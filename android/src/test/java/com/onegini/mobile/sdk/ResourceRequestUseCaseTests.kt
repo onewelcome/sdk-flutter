@@ -31,7 +31,6 @@ import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
 class ResourceRequestUseCaseTests {
-
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   lateinit var oneginiSdk: OneginiSDK
 
@@ -70,7 +69,8 @@ class ResourceRequestUseCaseTests {
     whenever(resourceOkHttpClientMock.newCall(any())).thenReturn(okhttp3CallMock)
     argumentCaptor<Callback> {
       whenever(
-        okhttp3CallMock.enqueue(capture())).thenAnswer {
+        okhttp3CallMock.enqueue(capture())
+      ).thenAnswer {
         firstValue.onResponse(okhttp3CallMock, responseMock)
       }
     }
@@ -91,7 +91,8 @@ class ResourceRequestUseCaseTests {
     whenever(resourceOkHttpClientMock.newCall(any())).thenReturn(okhttp3CallMock)
     argumentCaptor<Callback> {
       whenever(
-        okhttp3CallMock.enqueue(capture())).thenAnswer {
+        okhttp3CallMock.enqueue(capture())
+      ).thenAnswer {
         firstValue.onResponse(okhttp3CallMock, responseMock)
       }
     }
@@ -101,7 +102,7 @@ class ResourceRequestUseCaseTests {
     argumentCaptor<Result<OWRequestResponse>>().apply {
       verify(callbackMock, times(1)).invoke(capture())
 
-      when(val error = firstValue.exceptionOrNull()) {
+      when (val error = firstValue.exceptionOrNull()) {
         is FlutterError -> {
           Assert.assertEquals(error.code.toInt(), ERROR_CODE_HTTP_REQUEST.code)
           Assert.assertEquals(error.message, ERROR_CODE_HTTP_REQUEST.message)

@@ -15,7 +15,6 @@ import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
 class GetRedirectUrlUseCaseTests {
-
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   lateinit var oneginiSdk: OneginiSDK
 

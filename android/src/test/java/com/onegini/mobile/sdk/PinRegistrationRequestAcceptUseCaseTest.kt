@@ -17,7 +17,6 @@ import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
 class PinRegistrationRequestAcceptUseCaseTest {
-
   @Mock
   lateinit var oneginiPinCallbackMock: OneginiPinCallback
 

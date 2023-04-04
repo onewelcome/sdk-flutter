@@ -64,5 +64,4 @@ class OtpDenyAuthenticationRequestUseCaseTest {
   private fun WhenOTPAuthenticationHasStarted() {
     mobileAuthOtpRequestHandler.startAuthentication(oneginiMobileAuthenticationRequest, oneginiAcceptDenyCallback)
   }
-
 }

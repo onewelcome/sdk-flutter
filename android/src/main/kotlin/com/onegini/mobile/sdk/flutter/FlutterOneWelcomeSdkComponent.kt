@@ -8,6 +8,5 @@ import javax.inject.Singleton
 @Component(modules = [FlutterOneWelcomeSdkModule::class, FacadeModule::class])
 @Singleton
 interface FlutterOneWelcomeSdkComponent {
-
   fun inject(oneginiPlugin: OneginiPlugin)
 }

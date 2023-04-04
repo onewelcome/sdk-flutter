@@ -9,7 +9,6 @@ import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.mapToOwCustomInfo
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWUserProfile
 import javax.inject.Inject

@@ -1,7 +1,6 @@
 package com.onegini.mobile.sdk.flutter.providers
 
 import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomRegistrationAction
-import io.flutter.plugin.common.MethodChannel
 
 interface CustomRegistrationAction {
     fun getCustomRegistrationAction(): OneginiCustomRegistrationAction

@@ -17,7 +17,6 @@ import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
 class FingerprintFallbackToPinUseCaseTest {
-
   @Mock
   lateinit var oneginiFingerprintCallbackMock: OneginiFingerprintCallback
 
@@ -61,5 +60,4 @@ class FingerprintFallbackToPinUseCaseTest {
   fun WhenFingerPrintHasStarted() {
     fingerprintAuthenticationRequestHandler.startAuthentication(UserProfile("123456"), oneginiFingerprintCallbackMock)
   }
-
 }
