@@ -2,7 +2,6 @@ package com.onegini.mobile.sdk.flutter.useCases
 
 import com.onegini.mobile.sdk.android.handlers.OneginiMobileAuthEnrollmentHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiMobileAuthEnrollmentError
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NO_USER_PROFILE_IS_AUTHENTICATED
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import javax.inject.Inject
@@ -19,10 +18,14 @@ class EnrollMobileAuthenticationUseCase @Inject constructor(
       }
 
       override fun onError(enrollError: OneginiMobileAuthEnrollmentError) {
-        callback(Result.failure(SdkError(
-          code = enrollError.errorType,
-          message = enrollError.message
-        ).pigeonError()))
+        callback(
+          Result.failure(
+            SdkError(
+              code = enrollError.errorType,
+              message = enrollError.message
+            ).pigeonError()
+          )
+        )
       }
     })
   }

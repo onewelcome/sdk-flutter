@@ -7,7 +7,6 @@ import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.AUTHENTICATION_NOT
 import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
-import com.onegini.mobile.sdk.flutter.useCases.PinAuthenticationRequestAcceptUseCase
 import com.onegini.mobile.sdk.flutter.useCases.PinAuthenticationRequestDenyUseCase
 import org.junit.Assert
 import org.junit.Before
@@ -19,7 +18,6 @@ import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
 class PinAuthenticationRequestDenyUseCaseTest {
-
   @Mock
   lateinit var oneginiPinCallbackMock: OneginiPinCallback
 
@@ -32,10 +30,9 @@ class PinAuthenticationRequestDenyUseCaseTest {
   @Mock
   lateinit var authenticationAttemptCounter: AuthenticationAttemptCounter
 
-  lateinit var pinAuthenticationRequestDenyUseCase: PinAuthenticationRequestDenyUseCase
+  private lateinit var pinAuthenticationRequestDenyUseCase: PinAuthenticationRequestDenyUseCase
 
-  lateinit var pinAuthenticationRequestHandler: PinAuthenticationRequestHandler
-
+  private lateinit var pinAuthenticationRequestHandler: PinAuthenticationRequestHandler
 
   @Before
   fun before() {
@@ -52,7 +49,7 @@ class PinAuthenticationRequestDenyUseCaseTest {
 
   @Test
   fun `When a pin registration callback is set, Then it should resolve successfully`() {
-    WhenPinAuthenticationStarted()
+    whenPinAuthenticationStarted()
 
     val result = pinAuthenticationRequestDenyUseCase().getOrNull()
 
@@ -61,14 +58,14 @@ class PinAuthenticationRequestDenyUseCaseTest {
 
   @Test
   fun `When a pin registration callback is set, Then it should call deny on the sdk callback`() {
-    WhenPinAuthenticationStarted()
+    whenPinAuthenticationStarted()
 
     pinAuthenticationRequestDenyUseCase()
 
     verify(oneginiPinCallbackMock).denyAuthenticationRequest()
   }
 
-  private fun WhenPinAuthenticationStarted() {
+  private fun whenPinAuthenticationStarted() {
     // Since we Mock the SDK we need to call the startAuthentication ourselves on the pinAuthenticationRequestHandler
     pinAuthenticationRequestHandler.startAuthentication(UserProfile("123456"), oneginiPinCallbackMock, authenticationAttemptCounter)
   }

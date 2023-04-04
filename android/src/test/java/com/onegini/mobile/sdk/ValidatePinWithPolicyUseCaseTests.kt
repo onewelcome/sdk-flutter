@@ -22,7 +22,6 @@ import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
 class ValidatePinWithPolicyUseCaseTests {
-
   @Mock
   lateinit var oneginiPinValidationErrorMock: OneginiPinValidationError
 
@@ -35,13 +34,12 @@ class ValidatePinWithPolicyUseCaseTests {
   @Mock
   lateinit var callbackMock: (Result<Unit>) -> Unit
 
-  lateinit var validatePinWithPolicyUseCase: ValidatePinWithPolicyUseCase
+  private lateinit var validatePinWithPolicyUseCase: ValidatePinWithPolicyUseCase
 
   @Before
   fun attach() {
     validatePinWithPolicyUseCase = ValidatePinWithPolicyUseCase(oneginiSdk)
   }
-
 
   @Test
   fun `When pin is not null, Then it should call validatePinWithPolicy on the onegini sdk`() {

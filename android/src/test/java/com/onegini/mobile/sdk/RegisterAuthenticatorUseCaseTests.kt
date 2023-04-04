@@ -26,7 +26,6 @@ import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
 class RegisterAuthenticatorUseCaseTests {
-
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   lateinit var oneginiSdk: OneginiSDK
 
@@ -42,7 +41,7 @@ class RegisterAuthenticatorUseCaseTests {
   @Mock
   lateinit var callbackMock: (Result<Unit>) -> Unit
 
-  lateinit var registerAuthenticatorUseCase: RegisterAuthenticatorUseCase
+  private lateinit var registerAuthenticatorUseCase: RegisterAuthenticatorUseCase
 
   @Before
   fun attach() {

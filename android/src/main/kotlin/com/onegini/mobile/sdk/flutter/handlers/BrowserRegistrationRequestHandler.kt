@@ -9,26 +9,27 @@ import javax.inject.Singleton
 
 // TODO Put functions into use cases; https://onewelcome.atlassian.net/browse/FP-35
 @Singleton
-class BrowserRegistrationRequestHandler @Inject constructor(private val nativeApi: NativeCallFlutterApi): OneginiBrowserRegistrationRequestHandler {
+class BrowserRegistrationRequestHandler @Inject constructor(private val nativeApi: NativeCallFlutterApi) :
+  OneginiBrowserRegistrationRequestHandler {
 
-    companion object {
-        var callback: OneginiBrowserRegistrationCallback? = null
+  companion object {
+    var callback: OneginiBrowserRegistrationCallback? = null
 
-        /**
-         * Finish registration action with result from web browser
-         * TODO: Move this to use-case after browser logic rework
-         * https://onewelcome.atlassian.net/browse/FP-35
-         */
-        fun handleRegistrationCallback(uri: Uri) {
-            if (callback != null) {
-                callback?.handleRegistrationCallback(uri)
-                callback = null
-            }
-        }
+    /**
+     * Finish registration action with result from web browser
+     * TODO: Move this to use-case after browser logic rework
+     * https://onewelcome.atlassian.net/browse/FP-35
+     */
+    fun handleRegistrationCallback(uri: Uri) {
+      if (callback != null) {
+        callback?.handleRegistrationCallback(uri)
+        callback = null
+      }
     }
+  }
 
-    override fun startRegistration(uri: Uri, oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback) {
-        callback = oneginiBrowserRegistrationCallback
-        nativeApi.n2fHandleRegisteredUrl(uri.toString()) {}
-    }
+  override fun startRegistration(uri: Uri, oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback) {
+    callback = oneginiBrowserRegistrationCallback
+    nativeApi.n2fHandleRegisteredUrl(uri.toString()) {}
+  }
 }

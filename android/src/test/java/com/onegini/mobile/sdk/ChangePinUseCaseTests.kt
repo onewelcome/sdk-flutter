@@ -21,7 +21,6 @@ import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
 class ChangePinUseCaseTests {
-
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     lateinit var oneginiSdk: OneginiSDK
 
@@ -34,7 +33,7 @@ class ChangePinUseCaseTests {
     @Mock
     lateinit var oneginiChangePinError: OneginiChangePinError
 
-    lateinit var changePinUseCase: ChangePinUseCase
+    private lateinit var changePinUseCase: ChangePinUseCase
 
     @Before
     fun setup() {

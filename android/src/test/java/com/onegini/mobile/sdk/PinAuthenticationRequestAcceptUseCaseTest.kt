@@ -18,7 +18,6 @@ import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
 class PinAuthenticationRequestAcceptUseCaseTest {
-
   @Mock
   lateinit var oneginiPinCallbackMock: OneginiPinCallback
 
@@ -31,9 +30,10 @@ class PinAuthenticationRequestAcceptUseCaseTest {
   @Mock
   lateinit var authenticationAttemptCounter: AuthenticationAttemptCounter
 
-  lateinit var pinAuthenticationRequestAcceptUseCase: PinAuthenticationRequestAcceptUseCase
+  private lateinit var pinAuthenticationRequestAcceptUseCase: PinAuthenticationRequestAcceptUseCase
 
-  lateinit var pinAuthenticationRequestHandler: PinAuthenticationRequestHandler
+  private lateinit var pinAuthenticationRequestHandler: PinAuthenticationRequestHandler
+
   @Before
   fun before() {
     pinAuthenticationRequestHandler = PinAuthenticationRequestHandler(nativeApi)
@@ -49,7 +49,7 @@ class PinAuthenticationRequestAcceptUseCaseTest {
 
   @Test
   fun `When a pin registration callback is set, Then it should resolve successfully`() {
-    WhenPinAuthenticationStarted()
+    whenPinAuthenticationStarted()
 
     val result = pinAuthenticationRequestAcceptUseCase("12345").getOrNull()
 
@@ -58,14 +58,14 @@ class PinAuthenticationRequestAcceptUseCaseTest {
 
   @Test
   fun `When a pin registration callback is set, Then it should call accept on the sdk callback`() {
-    WhenPinAuthenticationStarted()
+    whenPinAuthenticationStarted()
 
     pinAuthenticationRequestAcceptUseCase("12345")
 
     verify(oneginiPinCallbackMock).acceptAuthenticationRequest("12345".toCharArray())
   }
 
-  private fun WhenPinAuthenticationStarted() {
+  private fun whenPinAuthenticationStarted() {
     // Since we Mock the SDK we need to call the startAuthentication ourselves on the pinAuthenticationRequestHandler
     pinAuthenticationRequestHandler.startAuthentication(UserProfile("123456"), oneginiPinCallbackMock, authenticationAttemptCounter)
   }

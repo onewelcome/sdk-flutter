@@ -9,7 +9,6 @@ import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.mapToOwCustomInfo
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWUserProfile
 
@@ -18,39 +17,45 @@ import javax.inject.Singleton
 
 @Singleton
 class RegistrationUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
-    operator fun invoke(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit) {
-        val identityProvider = oneginiSDK.oneginiClient.userClient.identityProviders.find { it.id == identityProviderId }
+  operator fun invoke(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit) {
+    val identityProvider = oneginiSDK.oneginiClient.userClient.identityProviders.find { it.id == identityProviderId }
 
-        if (identityProviderId != null && identityProvider == null) {
-            callback(Result.failure(SdkError(IDENTITY_PROVIDER_NOT_FOUND).pigeonError()))
+    if (identityProviderId != null && identityProvider == null) {
+      callback(Result.failure(SdkError(IDENTITY_PROVIDER_NOT_FOUND).pigeonError()))
+    }
+
+    val registerScopes = scopes?.toTypedArray()
+
+    register(identityProvider, registerScopes, callback)
+  }
+
+  private fun register(
+    identityProvider: OneginiIdentityProvider?,
+    scopes: Array<String>?,
+    callback: (Result<OWRegistrationResponse>) -> Unit
+  ) {
+    oneginiSDK.oneginiClient.userClient.registerUser(identityProvider, scopes, object : OneginiRegistrationHandler {
+      override fun onSuccess(userProfile: UserProfile, customInfo: CustomInfo?) {
+        val user = OWUserProfile(userProfile.profileId)
+
+        when (customInfo) {
+          null -> callback(Result.success(OWRegistrationResponse(user)))
+          else -> {
+            callback(Result.success(OWRegistrationResponse(user, customInfo.mapToOwCustomInfo())))
+          }
         }
+      }
 
-        val registerScopes = scopes?.toTypedArray()
-
-        register(identityProvider, registerScopes, callback)
-    }
-
-    private fun register(identityProvider: OneginiIdentityProvider?, scopes: Array<String>?, callback: (Result<OWRegistrationResponse>) -> Unit) {
-        oneginiSDK.oneginiClient.userClient.registerUser(identityProvider, scopes, object : OneginiRegistrationHandler {
-            override fun onSuccess(userProfile: UserProfile, customInfo: CustomInfo?) {
-                val user = OWUserProfile(userProfile.profileId)
-
-                when (customInfo) {
-                    null -> callback(Result.success(OWRegistrationResponse(user)))
-                    else -> {
-                        callback(Result.success(OWRegistrationResponse(user, customInfo.mapToOwCustomInfo())))
-                    }
-                }
-            }
-
-            override fun onError(oneginiRegistrationError: OneginiRegistrationError) {
-                callback(Result.failure(
-                    SdkError(
-                        code = oneginiRegistrationError.errorType,
-                        message = oneginiRegistrationError.message
-                    ).pigeonError())
-                )
-            }
-        })
-    }
+      override fun onError(oneginiRegistrationError: OneginiRegistrationError) {
+        callback(
+          Result.failure(
+            SdkError(
+              code = oneginiRegistrationError.errorType,
+              message = oneginiRegistrationError.message
+            ).pigeonError()
+          )
+        )
+      }
+    })
+  }
 }

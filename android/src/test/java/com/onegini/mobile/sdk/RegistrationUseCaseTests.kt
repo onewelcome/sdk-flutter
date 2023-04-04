@@ -25,7 +25,6 @@ import org.mockito.kotlin.*
 
 @RunWith(MockitoJUnitRunner::class)
 class RegistrationUseCaseTests {
-
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   lateinit var oneginiSdk: OneginiSDK
 
@@ -38,7 +37,7 @@ class RegistrationUseCaseTests {
   @Mock
   lateinit var oneginiIdentityProviderMock: OneginiIdentityProvider
 
-  lateinit var registrationUseCase: RegistrationUseCase
+  private lateinit var registrationUseCase: RegistrationUseCase
 
   @Before
   fun attach() {

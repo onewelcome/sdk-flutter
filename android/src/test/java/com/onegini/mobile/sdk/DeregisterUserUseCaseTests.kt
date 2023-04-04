@@ -24,7 +24,6 @@ import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
 class DeregisterUserUseCaseTests {
-
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   lateinit var oneginiSdk: OneginiSDK
 
@@ -34,7 +33,7 @@ class DeregisterUserUseCaseTests {
   @Mock
   lateinit var callbackMock: (Result<Unit>) -> Unit
 
-  lateinit var deregisterUserUseCase: DeregisterUserUseCase
+  private lateinit var deregisterUserUseCase: DeregisterUserUseCase
 
   @Before
   fun attach() {
