@@ -37,7 +37,7 @@ class RegistrationUseCaseTests {
   @Mock
   lateinit var oneginiIdentityProviderMock: OneginiIdentityProvider
 
-  lateinit var registrationUseCase: RegistrationUseCase
+  private lateinit var registrationUseCase: RegistrationUseCase
 
   @Before
   fun attach() {

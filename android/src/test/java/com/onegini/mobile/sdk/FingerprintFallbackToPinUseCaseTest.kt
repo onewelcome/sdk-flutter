@@ -23,9 +23,10 @@ class FingerprintFallbackToPinUseCaseTest {
   @Mock
   lateinit var nativeApi: NativeCallFlutterApi
 
-  lateinit var fingerprintFallbackToPinUseCase: FingerprintFallbackToPinUseCase
+  private lateinit var fingerprintFallbackToPinUseCase: FingerprintFallbackToPinUseCase
 
-  lateinit var fingerprintAuthenticationRequestHandler: FingerprintAuthenticationRequestHandler
+  private lateinit var fingerprintAuthenticationRequestHandler: FingerprintAuthenticationRequestHandler
+
   @Before
   fun attach() {
     fingerprintAuthenticationRequestHandler = FingerprintAuthenticationRequestHandler(nativeApi)
@@ -41,7 +42,7 @@ class FingerprintFallbackToPinUseCaseTest {
 
   @Test
   fun `When a pin authentication callback is set, Then it should resolve successfully`() {
-    WhenFingerPrintHasStarted()
+    whenFingerPrintHasStarted()
 
     val result = fingerprintFallbackToPinUseCase().getOrNull()
 
@@ -50,14 +51,14 @@ class FingerprintFallbackToPinUseCaseTest {
 
   @Test
   fun `When a pin authentication callback is set, Then it should call fallbackToPin on the sdk callback`() {
-    WhenFingerPrintHasStarted()
+    whenFingerPrintHasStarted()
 
     fingerprintFallbackToPinUseCase()
 
     verify(oneginiFingerprintCallbackMock).fallbackToPin()
   }
 
-  fun WhenFingerPrintHasStarted() {
+  private fun whenFingerPrintHasStarted() {
     fingerprintAuthenticationRequestHandler.startAuthentication(UserProfile("123456"), oneginiFingerprintCallbackMock)
   }
 }

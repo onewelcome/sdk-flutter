@@ -27,7 +27,7 @@ class GetAllAuthenticatorsUseCaseTests {
   lateinit var oneginiAuthenticatorMock: OneginiAuthenticator
 
 
-  lateinit var getAllAuthenticatorsUseCase: GetAllAuthenticatorsUseCase
+  private lateinit var getAllAuthenticatorsUseCase: GetAllAuthenticatorsUseCase
 
   @Before
   fun attach() {

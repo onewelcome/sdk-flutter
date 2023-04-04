@@ -30,7 +30,7 @@ class EnrollMobileAuthenticationUseCaseTest {
   @Mock
   lateinit var callbackMock: (Result<Unit>) -> Unit
 
-  lateinit var enrollMobileAuthenticationUseCase: EnrollMobileAuthenticationUseCase
+  private lateinit var enrollMobileAuthenticationUseCase: EnrollMobileAuthenticationUseCase
 
   @Before
   fun attach() {

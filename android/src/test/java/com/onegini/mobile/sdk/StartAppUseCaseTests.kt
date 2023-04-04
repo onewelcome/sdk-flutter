@@ -3,7 +3,6 @@ package com.onegini.mobile.sdk
 import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiInitializationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
@@ -32,21 +31,19 @@ class StartAppUseCaseTests {
   @Mock
   lateinit var oneginiInitializationError: OneginiInitializationError
 
-  lateinit var startAppUseCase: StartAppUseCase
+  private lateinit var startAppUseCase: StartAppUseCase
 
   @Before
   fun attach() {
     startAppUseCase = StartAppUseCase(oneginiSdk)
   }
 
-  val errorCode = OneginiInitializationError.GENERAL_ERROR
-  val errorMessage = "General error"
+  private val errorCode = OneginiInitializationError.GENERAL_ERROR
+  private val errorMessage = "General error"
 
   @Test
   fun `When onError gets called by oneginiClient, Then should call callback with Result_failure with that error`() {
-
     whenCallsOnError()
-
 
     startAppUseCase(
       null,
@@ -66,9 +63,7 @@ class StartAppUseCaseTests {
 
   @Test
   fun `When onSuccess gets called by oneginiClient, Then should call callback with Result_success`() {
-
     whenCallsOnSuccess()
-
 
     startAppUseCase(
       null,

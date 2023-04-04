@@ -41,7 +41,7 @@ class RegisterAuthenticatorUseCaseTests {
   @Mock
   lateinit var callbackMock: (Result<Unit>) -> Unit
 
-  lateinit var registerAuthenticatorUseCase: RegisterAuthenticatorUseCase
+  private lateinit var registerAuthenticatorUseCase: RegisterAuthenticatorUseCase
 
   @Before
   fun attach() {

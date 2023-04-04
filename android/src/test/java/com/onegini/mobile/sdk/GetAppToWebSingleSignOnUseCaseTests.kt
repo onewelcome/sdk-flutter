@@ -47,7 +47,7 @@ class GetAppToWebSingleSignOnUseCaseTests {
   private val mockedTokenString = "mockedToken"
   private val mockedRedirectUrlString = "mockedRedirectUrl"
 
-  lateinit var getAppToWebSingleSignOnUseCase: GetAppToWebSingleSignOnUseCase
+  private lateinit var getAppToWebSingleSignOnUseCase: GetAppToWebSingleSignOnUseCase
 
   @Before
   fun setup() {

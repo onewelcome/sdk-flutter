@@ -26,7 +26,7 @@ class GetIdentityProvidersUseCaseTests {
   @Mock
   lateinit var oneginiIdentityProviderSecondMock: OneginiIdentityProvider
 
-  lateinit var getIdentityProvidersUseCase: GetIdentityProvidersUseCase
+  private lateinit var getIdentityProvidersUseCase: GetIdentityProvidersUseCase
 
   @Before
   fun attach() {

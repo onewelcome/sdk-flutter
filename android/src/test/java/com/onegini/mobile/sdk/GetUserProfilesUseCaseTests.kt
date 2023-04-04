@@ -23,7 +23,7 @@ class GetUserProfilesUseCaseTests {
   @Mock
   lateinit var clientMock: OneginiClient
 
-  lateinit var getUserProfilesUseCase: GetUserProfilesUseCase
+  private lateinit var getUserProfilesUseCase: GetUserProfilesUseCase
 
   @Before
   fun attach() {

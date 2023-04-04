@@ -33,7 +33,7 @@ class ChangePinUseCaseTests {
     @Mock
     lateinit var oneginiChangePinError: OneginiChangePinError
 
-    lateinit var changePinUseCase: ChangePinUseCase
+    private lateinit var changePinUseCase: ChangePinUseCase
 
     @Before
     fun setup() {

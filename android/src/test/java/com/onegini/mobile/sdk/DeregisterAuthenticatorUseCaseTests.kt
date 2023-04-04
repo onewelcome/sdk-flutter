@@ -36,7 +36,7 @@ class DeregisterAuthenticatorUseCaseTests {
   @Mock
   lateinit var oneginiAuthenticatorDeregistrationErrorMock: OneginiAuthenticatorDeregistrationError
 
-  lateinit var deregisterAuthenticatorUseCase: DeregisterAuthenticatorUseCase
+  private lateinit var deregisterAuthenticatorUseCase: DeregisterAuthenticatorUseCase
 
   @Before
   fun attach() {

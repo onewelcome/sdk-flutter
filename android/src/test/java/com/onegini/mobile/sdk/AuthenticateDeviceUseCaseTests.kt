@@ -34,7 +34,7 @@ class AuthenticateDeviceUseCaseTests {
   @Mock
   lateinit var callbackMock: (Result<Unit>) -> Unit
 
-  lateinit var authenticateDeviceUseCase: AuthenticateDeviceUseCase
+  private lateinit var authenticateDeviceUseCase: AuthenticateDeviceUseCase
 
   @Before
   fun attach() {

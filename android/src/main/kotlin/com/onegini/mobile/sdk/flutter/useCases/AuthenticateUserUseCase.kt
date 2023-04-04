@@ -55,7 +55,7 @@ class AuthenticateUserUseCase @Inject constructor(
         when (customInfo) {
           null -> callback(Result.success(OWRegistrationResponse(owProfile)))
           else -> {
-            callback(Result.success(OWRegistrationResponse(owProfile, customInfo?.mapToOwCustomInfo())))
+            callback(Result.success(OWRegistrationResponse(owProfile, customInfo.mapToOwCustomInfo())))
           }
         }
       }

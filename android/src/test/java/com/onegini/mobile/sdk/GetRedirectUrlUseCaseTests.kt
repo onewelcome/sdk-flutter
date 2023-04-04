@@ -24,7 +24,7 @@ class GetRedirectUrlUseCaseTests {
   @Mock
   lateinit var oneginiClientConfigModelMock: OneginiClientConfigModel
 
-  lateinit var getRedirectUrlUseCase: GetRedirectUrlUseCase
+  private lateinit var getRedirectUrlUseCase: GetRedirectUrlUseCase
 
   @Before
   fun attach() {

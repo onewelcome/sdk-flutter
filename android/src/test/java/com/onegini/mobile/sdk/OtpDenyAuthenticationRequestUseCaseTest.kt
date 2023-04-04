@@ -26,9 +26,9 @@ class OtpDenyAuthenticationRequestUseCaseTest {
   @Mock
   lateinit var nativeApi: NativeCallFlutterApi
 
-  lateinit var otpDenyAuthenticationRequestUseCase: OtpDenyAuthenticationRequestUseCase
+  private lateinit var otpDenyAuthenticationRequestUseCase: OtpDenyAuthenticationRequestUseCase
 
-  lateinit var mobileAuthOtpRequestHandler: MobileAuthOtpRequestHandler
+  private lateinit var mobileAuthOtpRequestHandler: MobileAuthOtpRequestHandler
 
   @Before
   fun attach() {
@@ -45,7 +45,7 @@ class OtpDenyAuthenticationRequestUseCaseTest {
 
   @Test
   fun `When a otp authentication callback is set, Then it should resolve successfully`() {
-    WhenOTPAuthenticationHasStarted()
+    whenOTPAuthenticationHasStarted()
 
     val result = otpDenyAuthenticationRequestUseCase().getOrNull()
 
@@ -54,14 +54,14 @@ class OtpDenyAuthenticationRequestUseCaseTest {
 
   @Test
   fun `When a otp authentication callback is set, Then it should call the deny on the sdk callback`() {
-    WhenOTPAuthenticationHasStarted()
+    whenOTPAuthenticationHasStarted()
 
     otpDenyAuthenticationRequestUseCase().getOrNull()
 
     verify(oneginiAcceptDenyCallback).denyAuthenticationRequest()
   }
 
-  private fun WhenOTPAuthenticationHasStarted() {
+  private fun whenOTPAuthenticationHasStarted() {
     mobileAuthOtpRequestHandler.startAuthentication(oneginiMobileAuthenticationRequest, oneginiAcceptDenyCallback)
   }
 }

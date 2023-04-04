@@ -49,7 +49,7 @@ class ResourceRequestUseCaseTests {
   @Mock
   lateinit var callbackMock: (Result<OWRequestResponse>) -> Unit
 
-  lateinit var resourceRequestUseCase: ResourceRequestUseCase
+  private lateinit var resourceRequestUseCase: ResourceRequestUseCase
 
   @Before
   fun attach() {

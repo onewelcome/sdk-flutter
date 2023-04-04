@@ -5,7 +5,6 @@ import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallba
 import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
-import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticationAttempt
@@ -31,7 +30,7 @@ class PinAuthenticationRequestHandler @Inject constructor(private val nativeApi:
       attemptCounter.failedAttempts.toLong(),
       attemptCounter.maxAttempts.toLong(),
       attemptCounter.remainingAttempts.toLong()
-    );
+    )
     nativeApi.n2fNextAuthenticationAttempt(authenticationAttempt) {}
   }
 

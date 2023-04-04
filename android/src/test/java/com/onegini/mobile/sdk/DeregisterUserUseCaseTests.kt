@@ -33,7 +33,7 @@ class DeregisterUserUseCaseTests {
   @Mock
   lateinit var callbackMock: (Result<Unit>) -> Unit
 
-  lateinit var deregisterUserUseCase: DeregisterUserUseCase
+  private lateinit var deregisterUserUseCase: DeregisterUserUseCase
 
   @Before
   fun attach() {

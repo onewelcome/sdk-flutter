@@ -18,7 +18,7 @@ class GetAccessTokenUseCaseTests {
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   lateinit var oneginiSdk: OneginiSDK
 
-  lateinit var getAccessTokenUseCase: GetAccessTokenUseCase
+  private lateinit var getAccessTokenUseCase: GetAccessTokenUseCase
 
   @Before
   fun attach() {

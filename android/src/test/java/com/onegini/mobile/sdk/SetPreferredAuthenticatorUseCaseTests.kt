@@ -28,7 +28,7 @@ class SetPreferredAuthenticatorUseCaseTests {
   @Mock
   lateinit var oneginiAuthenticatorMock: OneginiAuthenticator
 
-  lateinit var setPreferredAuthenticatorUseCase: SetPreferredAuthenticatorUseCase
+  private lateinit var setPreferredAuthenticatorUseCase: SetPreferredAuthenticatorUseCase
 
   @Before
   fun attach() {
