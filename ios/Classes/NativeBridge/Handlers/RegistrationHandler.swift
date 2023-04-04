@@ -22,11 +22,11 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
     func presentBrowserUserRegistrationView(registrationUserURL: URL, webSignInType: WebSignInType) {
         guard let browserController = browserConntroller else {
             browserConntroller = BrowserViewController(registerHandlerProtocol: self)
-            browserConntroller?.handleUrl(url: registrationUserURL, webSignInType: webSignInType)
+            browserConntroller?.handleUrl(registrationUserURL, webSignInType: webSignInType)
             return
         }
 
-        browserController.handleUrl(url: registrationUserURL, webSignInType: webSignInType)
+        browserController.handleUrl(registrationUserURL, webSignInType: webSignInType)
     }
 
     func handleRedirectURL(url: URL) {

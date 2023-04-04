@@ -10,7 +10,7 @@ protocol BridgeToAuthenticatorsHandlerProtocol {
 class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     private let loginHandler: LoginHandler
 
-    init(_ loginHandler: LoginHandler) {
+    init(loginHandler: LoginHandler) {
         self.loginHandler = loginHandler
     }
     func registerAuthenticator(_ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {

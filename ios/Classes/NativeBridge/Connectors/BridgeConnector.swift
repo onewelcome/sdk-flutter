@@ -11,8 +11,8 @@ class BridgeConnector {
     public static var shared: BridgeConnector?
 
     init() {
-        toChangePinHandler = ChangePinHandler(toLoginHandler, toRegistrationHandler)
-        toAuthenticatorsHandler = AuthenticatorsHandler(toLoginHandler)
+        toChangePinHandler = ChangePinHandler(loginHandler: toLoginHandler, registrationHandler: toRegistrationHandler)
+        toAuthenticatorsHandler = AuthenticatorsHandler(loginHandler: toLoginHandler)
         BridgeConnector.shared = self
     }
 }

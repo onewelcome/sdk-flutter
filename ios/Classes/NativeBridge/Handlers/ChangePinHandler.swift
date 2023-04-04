@@ -4,7 +4,7 @@ import Flutter
 class ChangePinHandler {
     private let loginHandler: LoginHandler
     private let registrationHandler: RegistrationHandler
-    init(_ loginHandler: LoginHandler, _ registrationHandler: RegistrationHandler) {
+    init(loginHandler: LoginHandler, registrationHandler: RegistrationHandler) {
         self.loginHandler = loginHandler
         self.registrationHandler = registrationHandler
     }

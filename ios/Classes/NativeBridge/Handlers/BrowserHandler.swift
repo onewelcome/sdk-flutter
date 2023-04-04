@@ -2,7 +2,7 @@ import AuthenticationServices
 import OneginiSDKiOS
 
 protocol BrowserHandlerProtocol {
-    func handleUrl(url: URL, webSignInType: WebSignInType)
+    func handleUrl(_ url: URL, webSignInType: WebSignInType)
 }
 
 protocol BrowserHandlerToRegisterHandlerProtocol {
@@ -21,7 +21,7 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
         self.registerHandler = registerHandlerProtocol
     }
 
-    func handleUrl(url: URL, webSignInType: WebSignInType) {
+    func handleUrl(_ url: URL, webSignInType: WebSignInType) {
         Logger.log("handleUrl url: \(url.absoluteString)", sender: self)
         switch webSignInType {
         case .safari:
