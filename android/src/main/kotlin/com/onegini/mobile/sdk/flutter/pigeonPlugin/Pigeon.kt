@@ -1305,13 +1305,6 @@ class NativeCallFlutterApi(private val binaryMessenger: BinaryMessenger) {
       callback()
     }
   }
-  /** Called to open pin authentication screen. */
-  fun n2fOpenPinAuthenticator(callback: () -> Unit) {
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinAuthenticator", codec)
-    channel.send(null) {
-      callback()
-    }
-  }
   /** Called to attempt next authentication. */
   fun n2fNextAuthenticationAttempt(authenticationAttemptArg: OWAuthenticationAttempt, callback: () -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fNextAuthenticationAttempt", codec)

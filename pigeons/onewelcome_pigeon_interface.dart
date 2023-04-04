@@ -274,9 +274,6 @@ abstract class NativeCallFlutterApi {
   /// Called to open pin authentication screen.
   void n2fOpenPinScreenAuth();
 
-  /// Called to open pin authentication screen.
-  void n2fOpenPinAuthenticator();
-
   /// Called to attempt next authentication.
   void n2fNextAuthenticationAttempt(
       OWAuthenticationAttempt authenticationAttempt);

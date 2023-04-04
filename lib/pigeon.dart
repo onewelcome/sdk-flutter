@@ -1382,9 +1382,6 @@ abstract class NativeCallFlutterApi {
   /// Called to open pin authentication screen.
   void n2fOpenPinScreenAuth();
 
-  /// Called to open pin authentication screen.
-  void n2fOpenPinAuthenticator();
-
   /// Called to attempt next authentication.
   void n2fNextAuthenticationAttempt(OWAuthenticationAttempt authenticationAttempt);
 
@@ -1489,20 +1486,6 @@ abstract class NativeCallFlutterApi {
         channel.setMessageHandler((Object? message) async {
           // ignore message
           api.n2fOpenPinScreenAuth();
-          return;
-        });
-      }
-    }
-    {
-      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinAuthenticator', codec,
-          binaryMessenger: binaryMessenger);
-      if (api == null) {
-        channel.setMessageHandler(null);
-      } else {
-        channel.setMessageHandler((Object? message) async {
-          // ignore message
-          api.n2fOpenPinAuthenticator();
           return;
         });
       }

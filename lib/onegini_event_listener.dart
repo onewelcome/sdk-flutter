@@ -28,9 +28,6 @@ abstract class OneginiEventListener implements NativeCallFlutterApi {
   /// Called to open pin authentication screen.
   void openPinScreenAuth(BuildContext? buildContext);
 
-  /// Called to open pin authentication screen.
-  void openPinAuthenticator(BuildContext? buildContext);
-
   /// Called to attempt next authentication.
   void nextAuthenticationAttempt(
       BuildContext? buildContext, AuthenticationAttempt authenticationAttempt);
@@ -126,11 +123,6 @@ abstract class OneginiEventListener implements NativeCallFlutterApi {
   @override
   void n2fOpenFingerprintScreen() {
     openFingerprintScreen(_context);
-  }
-
-  @override
-  void n2fOpenPinAuthenticator() {
-    openPinAuthenticator(_context);
   }
 
   @override

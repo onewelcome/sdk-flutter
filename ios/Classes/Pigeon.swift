@@ -1202,13 +1202,6 @@ class NativeCallFlutterApi {
       completion()
     }
   }
-  /// Called to open pin authentication screen.
-  func n2fOpenPinAuthenticator(completion: @escaping () -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinAuthenticator", binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage(nil) { _ in
-      completion()
-    }
-  }
   /// Called to attempt next authentication.
   func n2fNextAuthenticationAttempt(authenticationAttempt authenticationAttemptArg: OWAuthenticationAttempt, completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fNextAuthenticationAttempt", binaryMessenger: binaryMessenger, codec: codec)
