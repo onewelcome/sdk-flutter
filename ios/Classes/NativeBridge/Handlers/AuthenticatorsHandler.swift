@@ -25,7 +25,7 @@ class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
             completion(.failure(FlutterError(.authenticatorNotFound)))
             return
         }
-        let delegate = AuthenticatorRegistrationDelegateImpl(completion, loginHandler)
+        let delegate = AuthenticatorRegistrationDelegateImpl(loginHandler: loginHandler, completion: completion)
         SharedUserClient.instance.register(authenticator: authenticator, delegate: delegate)
     }
 
@@ -39,7 +39,7 @@ class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
             completion(.failure(FlutterError(.authenticatorNotRegistered)))
             return
         }
-        let delegate = AuthenticatorDeregistrationDelegateImpl(completion)
+        let delegate = AuthenticatorDeregistrationDelegateImpl(completion: completion)
         SharedUserClient.instance.deregister(authenticator: authenticator, delegate: delegate)
     }
 
@@ -63,7 +63,7 @@ class AuthenticatorRegistrationDelegateImpl: AuthenticatorRegistrationDelegate {
     private let completion: ((Result<Void, FlutterError>) -> Void)
     private let loginHandler: LoginHandler
 
-    init(_ completion: (@escaping (Result<Void, FlutterError>) -> Void), _ loginHandler: LoginHandler) {
+    init(loginHandler: LoginHandler, completion: (@escaping (Result<Void, FlutterError>) -> Void)) {
         self.completion = completion
         self.loginHandler = loginHandler
     }
@@ -101,7 +101,7 @@ class AuthenticatorRegistrationDelegateImpl: AuthenticatorRegistrationDelegate {
 class AuthenticatorDeregistrationDelegateImpl: AuthenticatorDeregistrationDelegate {
     private let completion: ((Result<Void, FlutterError>) -> Void)
 
-    init(_ completion: @escaping (Result<Void, FlutterError>) -> Void) {
+    init(completion: @escaping (Result<Void, FlutterError>) -> Void) {
         self.completion = completion
     }
 

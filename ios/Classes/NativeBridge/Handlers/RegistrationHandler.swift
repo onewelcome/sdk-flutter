@@ -93,7 +93,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
 
     func registerUser(_ providerId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
         let identityProvider = SharedUserClient.instance.identityProviders.first(where: { $0.identifier == providerId})
-        let delegate = RegistrationDelegateImpl(completion, self)
+        let delegate = RegistrationDelegateImpl(registrationHandler: self, completion: completion)
         SharedUserClient.instance.registerUserWith(identityProvider: identityProvider, scopes: scopes, delegate: delegate)
     }
 
@@ -142,7 +142,7 @@ class RegistrationDelegateImpl: RegistrationDelegate {
     private let completion: ((Result<OWRegistrationResponse, FlutterError>) -> Void)
     private let registrationHandler: RegistrationHandler
 
-    init(_ completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void, _ registrationHandler: RegistrationHandler) {
+    init(registrationHandler: RegistrationHandler, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
         self.completion = completion
         self.registrationHandler = registrationHandler
     }

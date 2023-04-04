@@ -9,7 +9,7 @@ class ChangePinHandler {
         self.registrationHandler = registrationHandler
     }
     func changePin(completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        let delegate = ChangePinDelegateImpl(completion: completion, loginHandler, registrationHandler)
+        let delegate = ChangePinDelegateImpl(loginHandler: loginHandler, registrationHandler: registrationHandler, completion: completion)
         SharedUserClient.instance.changePin(delegate: delegate)
     }
 }
@@ -19,7 +19,7 @@ class ChangePinDelegateImpl: ChangePinDelegate {
     private let loginHandler: LoginHandler
     private let registrationHandler: RegistrationHandler
 
-    init(completion: @escaping (Result<Void, FlutterError>) -> Void, _ loginHandler: LoginHandler, _ registrationHandler: RegistrationHandler) {
+    init(loginHandler: LoginHandler, registrationHandler: RegistrationHandler, completion: @escaping (Result<Void, FlutterError>) -> Void) {
         self.completion = completion
         self.loginHandler = loginHandler
         self.registrationHandler = registrationHandler

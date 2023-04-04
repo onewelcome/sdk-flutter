@@ -56,7 +56,7 @@ class LoginHandler {
     }
 
     func authenticateUser(_ profile: UserProfile, authenticator: Authenticator?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
-        let delegate = AuthenticationDelegateImpl(completion, self)
+        let delegate = AuthenticationDelegateImpl(loginHandler: self, completion: completion)
         SharedUserClient.instance.authenticateUserWith(profile: profile, authenticator: authenticator, delegate: delegate)
     }
 }
@@ -65,7 +65,7 @@ class AuthenticationDelegateImpl: AuthenticationDelegate {
     private let completion: (Result<OWRegistrationResponse, FlutterError>) -> Void
     private let loginHandler: LoginHandler
 
-    init(_ completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void, _ loginHandler: LoginHandler) {
+    init(loginHandler: LoginHandler, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
         self.completion = completion
         self.loginHandler = loginHandler
     }
