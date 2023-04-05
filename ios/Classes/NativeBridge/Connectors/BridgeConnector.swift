@@ -4,14 +4,15 @@ class BridgeConnector {
     let toResourceFetchHandler: FetchResourcesHandlerProtocol = ResourcesHandler()
     var toLogoutUserHandler = LogoutHandler()
     var toDeregisterUserHandler = DeregisterUserHandler()
-    let toAuthenticatorsHandler: AuthenticatorsHandler = AuthenticatorsHandler()
+    let toAuthenticatorsHandler: AuthenticatorsHandler
     let toRegistrationHandler = RegistrationHandler()
     let toChangePinHandler: ChangePinHandler
     let toMobileAuthHandler = MobileAuthHandler()
     public static var shared: BridgeConnector?
 
     init() {
-        self.toChangePinHandler = ChangePinHandler(loginHandler: toLoginHandler, registrationHandler: toRegistrationHandler)
+        toChangePinHandler = ChangePinHandler(loginHandler: toLoginHandler, registrationHandler: toRegistrationHandler)
+        toAuthenticatorsHandler = AuthenticatorsHandler(loginHandler: toLoginHandler)
         BridgeConnector.shared = self
     }
 }

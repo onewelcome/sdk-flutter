@@ -26,9 +26,10 @@ class OtpAcceptAuthenticationRequestUseCaseTest {
   @Mock
   lateinit var nativeApi: NativeCallFlutterApi
 
-  lateinit var otpAcceptAuthenticationRequestUseCase: OtpAcceptAuthenticationRequestUseCase
+  private lateinit var otpAcceptAuthenticationRequestUseCase: OtpAcceptAuthenticationRequestUseCase
 
-  lateinit var mobileAuthOtpRequestHandler: MobileAuthOtpRequestHandler
+  private lateinit var mobileAuthOtpRequestHandler: MobileAuthOtpRequestHandler
+
   @Before
   fun attach() {
     mobileAuthOtpRequestHandler = MobileAuthOtpRequestHandler(nativeApi)
@@ -44,7 +45,7 @@ class OtpAcceptAuthenticationRequestUseCaseTest {
 
   @Test
   fun `When a otp authentication callback is set, Then it should resolve successfully`() {
-    WhenOTPAuthenticationHasStarted()
+    whenOTPAuthenticationHasStarted()
 
     val result = otpAcceptAuthenticationRequestUseCase().getOrNull()
 
@@ -53,14 +54,14 @@ class OtpAcceptAuthenticationRequestUseCaseTest {
 
   @Test
   fun `When a otp authentication callback is set, Then it should call the accept on the sdk callback`() {
-    WhenOTPAuthenticationHasStarted()
+    whenOTPAuthenticationHasStarted()
 
     otpAcceptAuthenticationRequestUseCase().getOrNull()
 
     verify(oneginiAcceptDenyCallback).acceptAuthenticationRequest()
   }
 
-  private fun WhenOTPAuthenticationHasStarted() {
+  private fun whenOTPAuthenticationHasStarted() {
     mobileAuthOtpRequestHandler.startAuthentication(oneginiMobileAuthenticationRequest, oneginiAcceptDenyCallback)
   }
 }

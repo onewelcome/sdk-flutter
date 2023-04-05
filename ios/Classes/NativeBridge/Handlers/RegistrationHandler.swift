@@ -18,32 +18,32 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
     var browserRegistrationChallenge: BrowserRegistrationChallenge?
     var customRegistrationChallenge: CustomRegistrationChallenge?
     var browserConntroller: BrowserHandlerProtocol?
-    var signUpCompletion: ((Result<OWRegistrationResponse, FlutterError>) -> Void)?
 
     func presentBrowserUserRegistrationView(registrationUserURL: URL, webSignInType: WebSignInType) {
         guard let browserController = browserConntroller else {
             browserConntroller = BrowserViewController(registerHandlerProtocol: self)
-            browserConntroller?.handleUrl(url: registrationUserURL, webSignInType: webSignInType)
+            browserConntroller?.handleUrl(registrationUserURL, webSignInType: webSignInType)
             return
         }
 
-        browserController.handleUrl(url: registrationUserURL, webSignInType: webSignInType)
+        browserController.handleUrl(registrationUserURL, webSignInType: webSignInType)
     }
 
-    func handleRedirectURL(url: URL?) {
-        Logger.log("handleRedirectURL url: \(url?.absoluteString ?? "nil")", sender: self)
-        guard let browserRegistrationChallenge = self.browserRegistrationChallenge else {
-            // FIXME: Registration not in progress error here
-            signUpCompletion?(.failure(FlutterError(.genericError)))
+    func handleRedirectURL(url: URL) {
+        Logger.log("handleRedirectURL url: \(url.absoluteString)", sender: self)
+        // FIXME: browserRegistrationChallenge is only set to nil when we finish or fail registration, so this will work but will need a refactor if the internal browser ever gets removed.
+        guard let browserRegistrationChallenge = browserRegistrationChallenge else {
             return
         }
-
-        guard let url = url else {
-            browserRegistrationChallenge.sender.cancel(browserRegistrationChallenge)
-            return
-        }
-
         browserRegistrationChallenge.sender.respond(with: url, to: browserRegistrationChallenge)
+    }
+
+    func handleCancelFromBrowser() {
+        // FIXME: browserRegistrationChallenge is only set to nil when we finish or fail registration, so this will work but will need a refactor if the internal browser ever gets removed.
+        guard let browserRegistrationChallenge = browserRegistrationChallenge else {
+            return
+        }
+        browserRegistrationChallenge.sender.cancel(browserRegistrationChallenge)
     }
 
     func handlePin(pin: String, completion: (Result<Void, FlutterError>) -> Void) {
@@ -90,25 +90,20 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
         browserRegistrationChallenge = nil
         SwiftOneginiPlugin.flutterApi?.n2fClosePin {}
     }
-}
 
-extension RegistrationHandler {
     func registerUser(_ providerId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
-        signUpCompletion = completion
         let identityProvider = SharedUserClient.instance.identityProviders.first(where: { $0.identifier == providerId})
-        SharedUserClient.instance.registerUserWith(identityProvider: identityProvider, scopes: scopes, delegate: self)
+        let delegate = RegistrationDelegateImpl(registrationHandler: self, completion: completion)
+        SharedUserClient.instance.registerUserWith(identityProvider: identityProvider, scopes: scopes, delegate: delegate)
     }
 
     func processRedirectURL(url: String, webSignInType: Int) -> Result<Void, FlutterError> {
         let webSignInType = WebSignInType(rawValue: webSignInType)
         guard let url = URL.init(string: url) else {
-            // FIXME: This doesn't seem right, we're canceling the whole registration here???
-            signUpCompletion?(.failure(FlutterError(.providedUrlIncorrect)))
             return .failure(FlutterError(.providedUrlIncorrect))
         }
 
         if webSignInType != .insideApp && !UIApplication.shared.canOpenURL(url) {
-            signUpCompletion?(.failure(FlutterError(.providedUrlIncorrect)))
             return .failure(FlutterError(.providedUrlIncorrect))
         }
 
@@ -143,15 +138,23 @@ extension RegistrationHandler {
     }
 }
 
-extension RegistrationHandler: RegistrationDelegate {
+class RegistrationDelegateImpl: RegistrationDelegate {
+    private let completion: ((Result<OWRegistrationResponse, FlutterError>) -> Void)
+    private let registrationHandler: RegistrationHandler
+
+    init(registrationHandler: RegistrationHandler, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
+        self.completion = completion
+        self.registrationHandler = registrationHandler
+    }
+
     func userClient(_ userClient: UserClient, didReceiveCreatePinChallenge challenge: CreatePinChallenge) {
         Logger.log("didReceivePinRegistrationChallenge ONGCreatePinChallenge", sender: self)
-        handleDidReceivePinRegistrationChallenge(challenge)
+        registrationHandler.handleDidReceivePinRegistrationChallenge(challenge)
     }
 
     func userClient(_ userClient: UserClient, didReceiveBrowserRegistrationChallenge challenge: BrowserRegistrationChallenge) {
         Logger.log("didReceive ONGBrowserRegistrationChallenge", sender: self)
-        browserRegistrationChallenge = challenge
+        registrationHandler.browserRegistrationChallenge = challenge
         debugPrint(challenge.url)
 
         SwiftOneginiPlugin.flutterApi?.n2fHandleRegisteredUrl(url: challenge.url.absoluteString) {}
@@ -159,13 +162,13 @@ extension RegistrationHandler: RegistrationDelegate {
 
     func userClient(_ userClient: UserClient, didReceiveCustomRegistrationInitChallenge challenge: CustomRegistrationChallenge) {
         Logger.log("didReceiveCustomRegistrationInitChallenge ONGCustomRegistrationChallenge", sender: self)
-        customRegistrationChallenge = challenge
+        registrationHandler.customRegistrationChallenge = challenge
         SwiftOneginiPlugin.flutterApi?.n2fEventInitCustomRegistration(customInfo: toOWCustomInfo(challenge.info), providerId: challenge.identityProvider.identifier) {}
     }
 
     func userClient(_ userClient: UserClient, didReceiveCustomRegistrationFinishChallenge challenge: CustomRegistrationChallenge) {
         Logger.log("didReceiveCustomRegistrationFinish ONGCustomRegistrationChallenge", sender: self)
-        customRegistrationChallenge = challenge
+        registrationHandler.customRegistrationChallenge = challenge
         SwiftOneginiPlugin.flutterApi?.n2fEventFinishCustomRegistration(customInfo: toOWCustomInfo(challenge.info), providerId: challenge.identityProvider.identifier) {}
     }
 
@@ -174,19 +177,19 @@ extension RegistrationHandler: RegistrationDelegate {
     }
 
     func userClient(_ userClient: UserClient, didRegisterUser profile: UserProfile, with identityProvider: IdentityProvider, info: CustomInfo?) {
-        handleDidRegisterUser()
-        signUpCompletion?(.success(
+        registrationHandler.handleDidRegisterUser()
+        completion(.success(
             OWRegistrationResponse(userProfile: OWUserProfile(profile),
                                    customInfo: toOWCustomInfo(info))))
     }
 
     func userClient(_ userClient: UserClient, didFailToRegisterUserWith identityProvider: IdentityProvider, error: Error) {
-        handleDidFailToRegister()
+        registrationHandler.handleDidFailToRegister()
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            signUpCompletion?(.failure(FlutterError(.registrationCancelled)))
+            completion(.failure(FlutterError(.registrationCancelled)))
         } else {
             let mappedError = ErrorMapper().mapError(error)
-            signUpCompletion?(.failure(FlutterError(mappedError)))
+            completion(.failure(FlutterError(mappedError)))
         }
     }
 }

@@ -17,7 +17,7 @@ class CancelBrowserRegistrationUseCaseTest {
   @Mock
   lateinit var oneginiBrowserCallbackMock: OneginiBrowserRegistrationCallback
 
-  lateinit var cancelBrowserRegistrationUseCase: CancelBrowserRegistrationUseCase
+  private lateinit var cancelBrowserRegistrationUseCase: CancelBrowserRegistrationUseCase
 
   @Before
   fun attach() {
