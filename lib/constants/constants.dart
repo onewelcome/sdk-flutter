@@ -193,9 +193,6 @@ class Constants {
   /// Event triggered by the finishRegistration needs to be responded
   static const String eventFinishCustomRegistration = "eventFinishCustomRegistration";
 
-  /// Error event name
-  static const String eventError = "eventError";
-
   // Error codes
 
   //When the native type does not correspond with the expected dart type

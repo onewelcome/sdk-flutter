@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/onegini_event_listener.dart';
 import 'package:onegini/pigeon.dart';
 
@@ -10,6 +13,9 @@ import 'onegini.dart';
 class UserClient {
   final UserClientApi api;
   UserClient(this.api);
+
+  // ignore: close_sinks
+  final owEventStreamController = StreamController<OWEvent>.broadcast();
 
   ///Start registration flow.
   ///
