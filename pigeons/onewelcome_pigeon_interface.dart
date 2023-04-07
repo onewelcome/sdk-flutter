@@ -46,7 +46,7 @@ class OWAuthenticator {
   String name;
   bool isRegistered;
   bool isPreferred;
-  int authenticatorType;
+  OWAuthenticatorType authenticatorType;
 
   OWAuthenticator(
       {required this.id,
@@ -75,6 +75,11 @@ enum HttpRequestMethod {
   post,
   put,
   delete,
+}
+
+enum OWAuthenticatorType {
+  pin,
+  biometric,
 }
 
 enum ResourceRequestType { authenticated, implicit, anonymous, unauthenticated }
@@ -149,32 +154,29 @@ abstract class UserClientApi {
   void deregisterUser(String profileId);
 
   @async
-  List<OWAuthenticator> getRegisteredAuthenticators(String profileId);
-
-  @async
-  List<OWAuthenticator> getAllAuthenticators(String profileId);
-
-  @async
   OWUserProfile getAuthenticatedUserProfile();
 
   @async
   OWRegistrationResponse authenticateUser(
-      String profileId, String? registeredAuthenticatorId);
+      String profileId, OWAuthenticatorType authenticatorType);
 
   @async
-  List<OWAuthenticator> getNotRegisteredAuthenticators(String profileId);
+  bool isBiometricAuthenticatorRegistered();
+
+  @async
+  OWAuthenticator getPreferredAuthenticator();
+
+  @async
+  void setPreferredAuthenticator(OWAuthenticatorType authenticatorType);
+
+  @async
+  void deregisterBiometricAuthenticator();
+
+  @async
+  void registerBiometricAuthenticator();
 
   @async
   void changePin();
-
-  @async
-  void setPreferredAuthenticator(String authenticatorId);
-
-  @async
-  void deregisterAuthenticator(String authenticatorId);
-
-  @async
-  void registerAuthenticator(String authenticatorId);
 
   @async
   void logout();
