@@ -6,23 +6,6 @@ class RegistrationHandler {
     var browserRegistrationChallenge: BrowserRegistrationChallenge?
     var customRegistrationChallenge: CustomRegistrationChallenge?
 
-    func handleRedirectURL(url: URL) {
-        Logger.log("handleRedirectURL url: \(url.absoluteString)", sender: self)
-        // FIXME: browserRegistrationChallenge is only set to nil when we finish or fail registration, so this will work but will need a refactor if the internal browser ever gets removed.
-        guard let browserRegistrationChallenge = browserRegistrationChallenge else {
-            return
-        }
-        browserRegistrationChallenge.sender.respond(with: url, to: browserRegistrationChallenge)
-    }
-
-    func handleCancelFromBrowser() {
-        // FIXME: browserRegistrationChallenge is only set to nil when we finish or fail registration, so this will work but will need a refactor if the internal browser ever gets removed.
-        guard let browserRegistrationChallenge = browserRegistrationChallenge else {
-            return
-        }
-        browserRegistrationChallenge.sender.cancel(browserRegistrationChallenge)
-    }
-
     func handlePin(pin: String, completion: (Result<Void, FlutterError>) -> Void) {
         guard let createPinChallenge = createPinChallenge else {
             completion(.failure(FlutterError(.registrationNotInProgress)))
