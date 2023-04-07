@@ -35,7 +35,7 @@ import com.onegini.mobile.sdk.flutter.useCases.GetRedirectUrlUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetRegisteredAuthenticatorsUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfilesUseCase
 import com.onegini.mobile.sdk.flutter.useCases.HandleMobileAuthWithOtpUseCase
-import com.onegini.mobile.sdk.flutter.useCases.HandleRegisteredUrlUseCase
+import com.onegini.mobile.sdk.flutter.useCases.HandleRegistrationCallbackUseCase
 import com.onegini.mobile.sdk.flutter.useCases.LogoutUseCase
 import com.onegini.mobile.sdk.flutter.useCases.OtpAcceptAuthenticationRequestUseCase
 import com.onegini.mobile.sdk.flutter.useCases.OtpDenyAuthenticationRequestUseCase
@@ -102,7 +102,7 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   lateinit var getUserProfilesUseCase: GetUserProfilesUseCase
 
   @Inject
-  lateinit var handleRegisteredUrlUseCase: HandleRegisteredUrlUseCase
+  lateinit var handleRegistrationCallbackUseCase: HandleRegistrationCallbackUseCase
 
   @Inject
   lateinit var logoutUseCase: LogoutUseCase
@@ -188,8 +188,8 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
     registrationUseCase(identityProviderId, scopes, callback)
   }
 
-  override fun handleRegisteredUserUrl(url: String, signInType: Long, callback: (Result<Unit>) -> Unit) {
-    callback(handleRegisteredUrlUseCase(url, signInType))
+  override fun handleRegistrationCallback(url: String, callback: (Result<Unit>) -> Unit) {
+    callback(handleRegistrationCallbackUseCase(url))
   }
 
   override fun getIdentityProviders(callback: (Result<List<OWIdentityProvider>>) -> Unit) {

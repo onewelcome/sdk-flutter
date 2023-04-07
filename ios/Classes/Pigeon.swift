@@ -392,7 +392,7 @@ class UserClientApiCodec: FlutterStandardMessageCodec {
 protocol UserClientApi {
   func startApplication(securityControllerClassName: String?, configModelClassName: String?, customIdentityProviderConfigs: [OWCustomIdentityProvider]?, connectionTimeout: Int64?, readTimeout: Int64?, completion: @escaping (Result<Void, Error>) -> Void)
   func registerUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void)
-  func handleRegisteredUserUrl(url: String, signInType: Int64, completion: @escaping (Result<Void, Error>) -> Void)
+  func handleRegistrationCallback(url: String, completion: @escaping (Result<Void, Error>) -> Void)
   func getIdentityProviders(completion: @escaping (Result<[OWIdentityProvider], Error>) -> Void)
   func deregisterUser(profileId: String, completion: @escaping (Result<Void, Error>) -> Void)
   func getRegisteredAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void)
@@ -479,13 +479,12 @@ class UserClientApiSetup {
     } else {
       registerUserChannel.setMessageHandler(nil)
     }
-    let handleRegisteredUserUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.handleRegisteredUserUrl", binaryMessenger: binaryMessenger, codec: codec)
+    let handleRegistrationCallbackChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.handleRegistrationCallback", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      handleRegisteredUserUrlChannel.setMessageHandler { message, reply in
+      handleRegistrationCallbackChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
         let urlArg = args[0] as! String
-        let signInTypeArg = (args[1] is Int) ? Int64(args[1] as! Int) : args[1] as! Int64
-        api.handleRegisteredUserUrl(url: urlArg, signInType: signInTypeArg) { result in
+        api.handleRegistrationCallback(url: urlArg) { result in
           switch result {
             case .success:
               reply(wrapResult(nil))
@@ -495,7 +494,7 @@ class UserClientApiSetup {
         }
       }
     } else {
-      handleRegisteredUserUrlChannel.setMessageHandler(nil)
+      handleRegistrationCallbackChannel.setMessageHandler(nil)
     }
     let getIdentityProvidersChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.getIdentityProviders", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {

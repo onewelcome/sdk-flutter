@@ -3,29 +3,29 @@ package com.onegini.mobile.sdk.flutter.handlers
 import android.net.Uri
 import com.onegini.mobile.sdk.android.handlers.request.OneginiBrowserRegistrationRequestHandler
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiBrowserRegistrationCallback
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 import javax.inject.Inject
 import javax.inject.Singleton
 
-// TODO Put functions into use cases; https://onewelcome.atlassian.net/browse/FP-35
 @Singleton
 class BrowserRegistrationRequestHandler @Inject constructor(private val nativeApi: NativeCallFlutterApi) :
   OneginiBrowserRegistrationRequestHandler {
+  private var callback: OneginiBrowserRegistrationCallback? = null
 
-  companion object {
-    var callback: OneginiBrowserRegistrationCallback? = null
+  fun handleRegistrationCallback(uri: Uri): Result<Unit> {
+    return callback?.let {
+      it.handleRegistrationCallback(uri)
+      Result.success(Unit)
+    } ?: Result.failure(SdkError(BROWSER_REGISTRATION_NOT_IN_PROGRESS).pigeonError())
+  }
 
-    /**
-     * Finish registration action with result from web browser
-     * TODO: Move this to use-case after browser logic rework
-     * https://onewelcome.atlassian.net/browse/FP-35
-     */
-    fun handleRegistrationCallback(uri: Uri) {
-      if (callback != null) {
-        callback?.handleRegistrationCallback(uri)
-        callback = null
-      }
-    }
+  fun cancelRegistration(): Result<Unit> {
+    return callback?.let {
+      it.denyRegistration()
+      Result.success(Unit)
+    } ?: Result.failure(SdkError(BROWSER_REGISTRATION_NOT_IN_PROGRESS).pigeonError())
   }
 
   override fun startRegistration(uri: Uri, oneginiBrowserRegistrationCallback: OneginiBrowserRegistrationCallback) {

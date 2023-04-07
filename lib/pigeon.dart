@@ -459,12 +459,12 @@ class UserClientApi {
     }
   }
 
-  Future<void> handleRegisteredUserUrl(String arg_url, int arg_signInType) async {
+  Future<void> handleRegistrationCallback(String arg_url) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.handleRegisteredUserUrl', codec,
+        'dev.flutter.pigeon.UserClientApi.handleRegistrationCallback', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_url, arg_signInType]) as List<Object?>?;
+        await channel.send(<Object?>[arg_url]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

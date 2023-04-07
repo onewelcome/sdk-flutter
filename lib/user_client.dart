@@ -25,10 +25,10 @@ class UserClient {
   }
 
   /// Start browser Registration logic
-  Future<void> handleRegisteredUserUrl(BuildContext? context, String url,
-      {WebSignInType signInType = WebSignInType.insideApp}) async {
+  Future<void> handleRegistrationCallback(
+      BuildContext? context, String url) async {
     Onegini.instance.setEventContext(context);
-    await api.handleRegisteredUserUrl(url, signInType.value);
+    await api.handleRegistrationCallback(url);
   }
 
   /// Returns a list of available identity providers.

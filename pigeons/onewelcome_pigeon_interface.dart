@@ -140,7 +140,7 @@ abstract class UserClientApi {
       String? identityProviderId, List<String>? scopes);
 
   @async
-  void handleRegisteredUserUrl(String url, int signInType);
+  void handleRegistrationCallback(String url);
 
   @async
   List<OWIdentityProvider> getIdentityProviders();
