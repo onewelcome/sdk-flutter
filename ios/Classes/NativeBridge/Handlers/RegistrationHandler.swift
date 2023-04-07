@@ -1,33 +1,10 @@
 import OneginiSDKiOS
 
-enum WebSignInType: Int {
-    case insideApp
-    case safari
-
-    init(rawValue: Int) {
-        switch rawValue {
-        case 1: self = .safari
-        default: self = .insideApp
-        }
-    }
-}
-
-class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
+class RegistrationHandler {
 
     var createPinChallenge: CreatePinChallenge?
     var browserRegistrationChallenge: BrowserRegistrationChallenge?
     var customRegistrationChallenge: CustomRegistrationChallenge?
-    var browserConntroller: BrowserHandlerProtocol?
-
-    func presentBrowserUserRegistrationView(registrationUserURL: URL, webSignInType: WebSignInType) {
-        guard let browserController = browserConntroller else {
-            browserConntroller = BrowserViewController(registerHandlerProtocol: self)
-            browserConntroller?.handleUrl(registrationUserURL, webSignInType: webSignInType)
-            return
-        }
-
-        browserController.handleUrl(registrationUserURL, webSignInType: webSignInType)
-    }
 
     func handleRedirectURL(url: URL) {
         Logger.log("handleRedirectURL url: \(url.absoluteString)", sender: self)
@@ -97,17 +74,14 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
         SharedUserClient.instance.registerUserWith(identityProvider: identityProvider, scopes: scopes, delegate: delegate)
     }
 
-    func processRedirectURL(url: String, webSignInType: Int) -> Result<Void, FlutterError> {
-        let webSignInType = WebSignInType(rawValue: webSignInType)
+    func handleRegistrationCallback(url: String) -> Result<Void, FlutterError> {
+        guard let browserRegistrationChallenge = browserRegistrationChallenge else {
+            return .failure(FlutterError(.browserRegistrationNotInProgress))
+        }
         guard let url = URL.init(string: url) else {
             return .failure(FlutterError(.providedUrlIncorrect))
         }
-
-        if webSignInType != .insideApp && !UIApplication.shared.canOpenURL(url) {
-            return .failure(FlutterError(.providedUrlIncorrect))
-        }
-
-        presentBrowserUserRegistrationView(registrationUserURL: url, webSignInType: webSignInType)
+        browserRegistrationChallenge.sender.respond(with: url, to: browserRegistrationChallenge)
         return .success
     }
 

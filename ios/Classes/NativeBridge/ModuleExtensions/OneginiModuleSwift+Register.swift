@@ -12,25 +12,8 @@ extension OneginiModuleSwift {
         bridgeConnector.toRegistrationHandler.registerUser(identityProviderId, scopes: scopes, completion: completion)
     }
 
-    func handleRegisteredProcessUrl(_ url: String, webSignInType: Int) -> Result<Void, FlutterError> {
-        return bridgeConnector.toRegistrationHandler.processRedirectURL(url: url, webSignInType: webSignInType)
-    }
-
-    public func handleDeepLinkCallbackUrl(_ url: URL) -> Bool {
-        guard let schemeLibrary = URL.init(string: ONGClient.sharedInstance().configModel.redirectURL)?.scheme else {
-            // FIXME: We should propagate an error here to the caller, not through events.
-            return false
-        }
-
-        guard let scheme = url.scheme,
-              scheme.compare(schemeLibrary, options: .caseInsensitive) == .orderedSame else {
-            let value = ["url_scheme": url.scheme, "library_scheme": schemeLibrary, "url": url.absoluteString]
-            // FIXME: We should propagate an error here to the caller, not through events.
-            return false
-        }
-
-        bridgeConnector.toRegistrationHandler.handleRedirectURL(url: url)
-        return true
+    func handleRegistrationCallback(_ url: String) -> Result<Void, FlutterError> {
+        return bridgeConnector.toRegistrationHandler.handleRegistrationCallback(url: url)
     }
 
     func submitCustomRegistrationSuccess(_ data: String?, completion: @escaping (Result<Void, FlutterError>) -> Void) {

@@ -91,6 +91,10 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
         }
     }
 
+    func handleRegistrationCallback(url: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        completion(OneginiModuleSwift.sharedInstance.handleRegistrationCallback(url).mapError({$0}))
+    }
+
     func enrollMobileAuthentication(completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.enrollMobileAuthentication { result in
             completion(result.mapError { $0 })
@@ -185,10 +189,6 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
         OneginiModuleSwift.sharedInstance.registerUser(identityProviderId, scopes: scopes) { result in
             completion(result.mapError { $0 })
         }
-    }
-
-    func handleRegisteredUserUrl(url: String, signInType: Int64, completion: @escaping (Result<Void, Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.handleRegisteredProcessUrl(url, webSignInType: Int(signInType)).mapError({$0}))
     }
 
     func getIdentityProviders(completion: @escaping (Result<[OWIdentityProvider], Error>) -> Void) {

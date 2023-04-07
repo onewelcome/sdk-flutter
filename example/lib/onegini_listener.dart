@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_web_auth_2/flutter_web_auth_2.dart';
+import 'package:onegini/callbacks/onegini_registration_callback.dart';
 import 'package:onegini/model/authentication_attempt.dart';
 import 'package:onegini/model/onegini_event.dart';
 import 'package:onegini/onegini.dart';
@@ -174,13 +175,14 @@ class OneginiListener extends OneginiEventListener {
   void handleRegisteredUrl(BuildContext buildContext, String url) async {
     try {
       final result = await FlutterWebAuth2.authenticate(
-          url: url, callbackUrlScheme: "oneginiexample", preferEphemeral: true);
+          url: url, callbackUrlScheme: "oneginiexample");
       print(result);
       Onegini.instance.userClient
           .handleRegistrationCallback(buildContext, result);
     } catch (err) {
       print(err);
       showFlutterToast(err.toString());
+      OneginiRegistrationCallback().cancelBrowserRegistration();
     }
   }
 
