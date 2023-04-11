@@ -44,8 +44,6 @@ class BodyWidget extends StatefulWidget {
 }
 
 class _BodyWidgetState extends State<BodyWidget> {
-  OWBroadcastHelper derp;
-
   @override
   void initState() {
     _startApplication();
