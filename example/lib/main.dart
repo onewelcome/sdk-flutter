@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini/pigeon.dart';
 import 'package:onegini_example/components/display_toast.dart';
+import 'package:onegini_example/ow_broadcast_helper.dart';
 import 'package:onegini_example/screens/login_screen.dart';
-
-import 'onegini_listener.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
@@ -45,6 +44,8 @@ class BodyWidget extends StatefulWidget {
 }
 
 class _BodyWidgetState extends State<BodyWidget> {
+  OWBroadcastHelper derp;
+
   @override
   void initState() {
     _startApplication();
@@ -54,7 +55,7 @@ class _BodyWidgetState extends State<BodyWidget> {
   void _startApplication() async {
     /// init Onegini sdk on native side
     try {
-      await Onegini.instance.startApplication(OneginiListener(),
+      await Onegini.instance.startApplication(
           securityControllerClassName:
               "com.onegini.mobile.onegini_example.SecurityController",
           configModelClassName:

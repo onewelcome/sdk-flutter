@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:onegini/pigeon.dart';
-
-import '../onegini.dart';
 
 /// A callback for mobile authentication with OTP
 class OneginiOtpAcceptDenyCallback {
@@ -13,9 +10,7 @@ class OneginiOtpAcceptDenyCallback {
   }
 
   /// Accepts OTP authentication.
-  Future<void> acceptAuthenticationRequest(BuildContext? context) async {
-    Onegini.instance.setEventContext(context);
-
+  Future<void> acceptAuthenticationRequest() async {
     await api.otpAcceptAuthenticationRequest();
   }
 }

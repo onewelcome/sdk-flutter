@@ -29,28 +29,18 @@ class Onegini {
   /// Communication channel between flutter and native side.
   final MethodChannel channel = const MethodChannel('onegini');
 
-  /// Reference to the event listener.
-  OneginiEventListener? _eventListener;
-
   /// Resource methods.
   ResourcesMethods resourcesMethods = ResourcesMethods();
 
-  /// Use this method when you want change [BuildContext] in your [OneginiEventListener]
-  setEventContext(BuildContext? context) {
-    _eventListener?.context = context;
-  }
-
   /// Initialize SDK and establish communication on [eventListener].
-  Future<void> startApplication(
-    OneginiEventListener eventListener, {
+  Future<void> startApplication({
     String? securityControllerClassName,
     String? configModelClassName,
     List<OWCustomIdentityProvider>? customIdentityProviderConfigs,
     int? connectionTimeout,
     int? readTimeout,
   }) async {
-    _eventListener = eventListener;
-    NativeCallFlutterApi.setup(_eventListener);
+    NativeCallFlutterApi.setup(OneginiEventListener());
     await api.startApplication(
         securityControllerClassName,
         configModelClassName,

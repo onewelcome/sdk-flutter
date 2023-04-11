@@ -101,15 +101,15 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   Future<void> getAuthenticators() async {
     notRegisteredAuthenticators = await Onegini.instance.userClient
-        .getNotRegisteredAuthenticators(context, this.profileId);
+        .getNotRegisteredAuthenticators(this.profileId);
 
     registeredAuthenticators = await Onegini.instance.userClient
-        .getRegisteredAuthenticators(context, this.profileId);
+        .getRegisteredAuthenticators(this.profileId);
   }
 
   Future<List<OWAuthenticator>> getAllSortAuthenticators() async {
     var allAuthenticators = await Onegini.instance.userClient
-        .getAllAuthenticators(context, this.profileId);
+        .getAllAuthenticators(this.profileId);
     allAuthenticators.sort((a, b) {
       return compareAsciiUpperCase(a.name, b.name);
     });
@@ -118,13 +118,13 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   Future<List<OWAuthenticator>> getNotRegisteredAuthenticators() async {
     var authenticators = await Onegini.instance.userClient
-        .getNotRegisteredAuthenticators(context, this.profileId);
+        .getNotRegisteredAuthenticators(this.profileId);
     return authenticators;
   }
 
   registerAuthenticator(String authenticatorId) async {
     await Onegini.instance.userClient
-        .registerAuthenticator(context, authenticatorId)
+        .registerAuthenticator(authenticatorId)
         .catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);
@@ -143,7 +143,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   deregisterAuthenticator(String authenticatorId) async {
     await Onegini.instance.userClient
-        .deregisterAuthenticator(context, authenticatorId)
+        .deregisterAuthenticator(authenticatorId)
         .catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);
@@ -155,7 +155,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   setPreferredAuthenticator(String authenticatorId) async {
     await Onegini.instance.userClient
-        .setPreferredAuthenticator(context, authenticatorId)
+        .setPreferredAuthenticator(authenticatorId)
         .catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);
@@ -188,7 +188,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
   changePin(BuildContext context) {
     Navigator.pop(context);
 
-    Onegini.instance.userClient.changePin(context).catchError((error) {
+    Onegini.instance.userClient.changePin().catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);
         // FIXME: this should be extracted into a seperate method and should also use constants (dont exist yet)
@@ -259,7 +259,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
             ),
             FutureBuilder<List<OWAuthenticator>>(
               future: Onegini.instance.userClient
-                  .getRegisteredAuthenticators(context, this.profileId),
+                  .getRegisteredAuthenticators(this.profileId),
               builder: (BuildContext context, snapshot) {
                 return PopupMenuButton<String>(
                     child: ListTile(

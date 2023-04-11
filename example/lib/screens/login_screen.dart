@@ -5,7 +5,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/callbacks/onegini_registration_callback.dart';
-import 'package:onegini/events/custom_registration_event.dart';
 import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/model/request_details.dart';
 import 'package:onegini/onegini.dart';
@@ -50,7 +49,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       var registrationResponse = await Onegini.instance.userClient.registerUser(
-        context,
         null,
         ["read"],
       );
@@ -75,7 +73,6 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => {isLoading = true});
     try {
       var registrationResponse = await Onegini.instance.userClient.registerUser(
-        context,
         identityProviderId,
         ["read"],
       );
@@ -99,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
   authenticateWithPreferredAuthenticator(String profileId) async {
     setState(() => {isLoading = true});
     var registrationResponse = await Onegini.instance.userClient
-        .authenticateUser(context, profileId, null)
+        .authenticateUser(profileId, null)
         .catchError((error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
@@ -123,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
     // print(result);
 
     var registrationResponse = await Onegini.instance.userClient
-        .authenticateUser(context, profileId, registeredAuthenticatorId)
+        .authenticateUser(profileId, registeredAuthenticatorId)
         .catchError((error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
@@ -283,7 +280,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                                         future: Onegini
                                                             .instance.userClient
                                                             .getRegisteredAuthenticators(
-                                                                context,
                                                                 userProfiles
                                                                     .data
                                                                     .first
@@ -364,7 +360,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   FutureBuilder<List<OWIdentityProvider>>(
                     future: Onegini.instance.userClient
-                        .getIdentityProviders(context),
+                        .getIdentityProviders(),
                     builder: (BuildContext context, identityProviders) {
                       return identityProviders.hasData
                           ? PopupMenuButton<String>(

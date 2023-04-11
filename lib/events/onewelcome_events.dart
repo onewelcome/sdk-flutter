@@ -13,31 +13,24 @@ enum OWAction {
   closeAuthOtp, // Called to close OTP authentication screen
 
   // Pin
-  openPinRegistration, // previously openPinRequestScreen; Called to open pin registration screen.
-  closePinRegistration, // previously closePin; Called to open pin registration screen.
-  openPinAuthentication, // previously openPinScreenAuth; Called to open pin authentication screen
-  closePinAuthentication, // previously closePinAuth; Called to close pin authentication screen
+  openPinRegistration, // Called to open pin registration screen.
+  closePinRegistration, // Called to open pin registration screen.
+  openPinAuthentication, // Called to open pin authentication screen
+  closePinAuthentication, // Called to close pin authentication screen
   pinNotAllowed, // Called when the supplied pin for registration is not allowed
 
   // Fingerprint
-  openFingerprint, // previously openFingerprintScreen; Called to open fingerprint screen.
-  closeFingerprint, // previously closeFingerprintScreen; Called to close fingerprint screen.
+  openFingerprint, // Called to open fingerprint screen.
+  closeFingerprint, // Called to close fingerprint screen.
   showScanningFingerprint, // Called to scan fingerprint.
   receivedFingerprint, // Called when fingerprint was received.
 
   // CustomRegistration
-  initCustomRegistration, // previously eventInitCustomRegistration; Called when customRegistration is initialized and a response should be given (only for two-step)
-  finishCustomRegistration, // previously eventFinishCustomRegistration; Called when customRegistration finishes and a final response should be given
+  initCustomRegistration, // Called when customRegistration is initialized and a response should be given (only for two-step)
+  finishCustomRegistration, // Called when customRegistration finishes and a final response should be given
 
   // Authentication
   nextAuthenticationAttempt, // Called to attempt next authentication.
-
-  /*
-    Deleted events:
-      - eventOther
-      - openPinAuthenticator
-      - eventError
-  */
 }
 
 extension OWActionExtension on OWAction {

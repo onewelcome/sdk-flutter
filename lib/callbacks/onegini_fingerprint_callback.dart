@@ -1,9 +1,5 @@
 import 'dart:async';
-
-import 'package:flutter/cupertino.dart';
 import 'package:onegini/pigeon.dart';
-
-import '../onegini.dart';
 
 /// A callback of fingerprint authentication.
 ///
@@ -25,8 +21,7 @@ class OneginiFingerprintCallback {
   /// Accept fingerprint request.
   ///
   /// Use this method when you want start scanning fingerprint.
-  Future<void> acceptAuthenticationRequest(BuildContext? context) async {
-    Onegini.instance.setEventContext(context);
+  Future<void> acceptAuthenticationRequest() async {
     await api.fingerprintAcceptAuthenticationRequest();
   }
 }

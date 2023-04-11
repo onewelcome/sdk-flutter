@@ -13,6 +13,7 @@ import 'package:onegini/events/pin_event.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini/user_client.dart';
 import 'package:onegini_example/components/display_toast.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:onegini_example/screens/auth_otp_screen.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:onegini_example/screens/fingerprint_screen.dart';
@@ -30,7 +31,7 @@ class OWBroadcastHelper {
     // Url Registration Related Events
     StreamSubscription<OWEvent> handleRegisteredUrlSub = broadCastController.stream.where((event) => event is HandleRegisteredUrlEvent).listen((event) {
       if (event is HandleRegisteredUrlEvent) {
-        Onegini.instance.userClient.handleRegisteredUserUrl(context, event.url,
+        Onegini.instance.userClient.handleRegisteredUserUrl(event.url,
           signInType: WebSignInType.insideApp);
       }
     });
