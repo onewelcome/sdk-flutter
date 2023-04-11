@@ -3,6 +3,7 @@ package com.onegini.mobile.sdk.flutter
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAppToWebSingleSignOn
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticator
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticatorType
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomIdentityProvider
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWIdentityProvider
@@ -200,41 +201,43 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
     deregisterUserUseCase(profileId, callback)
   }
 
-  override fun getRegisteredAuthenticators(profileId: String, callback: (Result<List<OWAuthenticator>>) -> Unit) {
-    callback(getRegisteredAuthenticatorsUseCase(profileId))
-  }
-
-  override fun getAllAuthenticators(profileId: String, callback: (Result<List<OWAuthenticator>>) -> Unit) {
-    callback(getAllAuthenticatorsUseCase(profileId))
-  }
-
   override fun getAuthenticatedUserProfile(callback: (Result<OWUserProfile>) -> Unit) {
     callback(getAuthenticatedUserProfileUseCase())
   }
 
-  override fun authenticateUser(profileId: String, registeredAuthenticatorId: String?, callback: (Result<OWRegistrationResponse>) -> Unit) {
-    authenticateUserUseCase(profileId, registeredAuthenticatorId, callback)
+  override fun authenticateUser(
+    profileId: String,
+    authenticatorType: OWAuthenticatorType,
+    callback: (Result<OWRegistrationResponse>) -> Unit
+  ) {
+    authenticateUserUseCase(profileId, authenticatorType, callback)
   }
 
-  override fun getNotRegisteredAuthenticators(profileId: String, callback: (Result<List<OWAuthenticator>>) -> Unit) {
-    callback(getNotRegisteredAuthenticatorsUseCase(profileId))
+
+  override fun isBiometricAuthenticatorRegistered(callback: (Result<Boolean>) -> Unit) {
+    TODO("Not yet implemented")
+  }
+
+  override fun getPreferredAuthenticator(callback: (Result<OWAuthenticator>) -> Unit) {
+    TODO("Not yet implemented")
+  }
+
+  override fun setPreferredAuthenticator(authenticatorType: OWAuthenticatorType, callback: (Result<Unit>) -> Unit) {
+    TODO("Not yet implemented")
+  }
+
+  override fun deregisterBiometricAuthenticator(callback: (Result<Unit>) -> Unit) {
+    TODO("Not yet implemented")
+  }
+
+  override fun registerBiometricAuthenticator(callback: (Result<Unit>) -> Unit) {
+    TODO("Not yet implemented")
   }
 
   override fun changePin(callback: (Result<Unit>) -> Unit) {
     changePinUseCase(callback)
   }
 
-  override fun setPreferredAuthenticator(authenticatorId: String, callback: (Result<Unit>) -> Unit) {
-    callback(setPreferredAuthenticatorUseCase(authenticatorId))
-  }
-
-  override fun deregisterAuthenticator(authenticatorId: String, callback: (Result<Unit>) -> Unit) {
-    deregisterAuthenticatorUseCase(authenticatorId, callback)
-  }
-
-  override fun registerAuthenticator(authenticatorId: String, callback: (Result<Unit>) -> Unit) {
-    registerAuthenticatorUseCase(authenticatorId, callback)
-  }
 
   override fun logout(callback: (Result<Unit>) -> Unit) {
     logoutUseCase(callback)
