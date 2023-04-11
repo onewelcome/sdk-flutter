@@ -1,12 +1,16 @@
 // @dart = 2.10
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/callbacks/onegini_registration_callback.dart';
+import 'package:onegini/events/custom_registration_event.dart';
+import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/model/request_details.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini/pigeon.dart';
+import 'package:onegini_example/ow_broadcast_helper.dart';
 import 'package:onegini_example/screens/user_screen.dart';
 
 import '../components/display_toast.dart';
@@ -18,15 +22,32 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
+  OWBroadcastHelper broadcastHelper;
+  List<StreamSubscription<OWEvent>> registrationSubscriptions;
+  List<StreamSubscription<OWEvent>> authenticationSubscriptions;
 
   @override
   initState() {
+    // this.broadcastHelper = OWBroadcastHelper(context: context, temp: "1");
+    this.registrationSubscriptions = OWBroadcastHelper.initRegistrationListeners(context);
+    this.authenticationSubscriptions = OWBroadcastHelper.initAuthenticationListeners(context);
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    print("disposing listeners");
+    OWBroadcastHelper.stopListening(registrationSubscriptions);
+    OWBroadcastHelper.stopListening(authenticationSubscriptions);
+
+    super.dispose();
   }
 
   openWeb() async {
     /// Start registration
     setState(() => {isLoading = true});
+
     try {
       var registrationResponse = await Onegini.instance.userClient.registerUser(
         context,
@@ -58,6 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
         identityProviderId,
         ["read"],
       );
+
       if (registrationResponse.userProfile.profileId != null)
         Navigator.pushAndRemoveUntil(
             context,

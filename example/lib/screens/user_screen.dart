@@ -1,14 +1,17 @@
 // @dart = 2.10
+import 'dart:async';
 import 'dart:convert';
 
 import "package:collection/collection.dart";
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/model/request_details.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini_example/components/display_toast.dart';
 import 'package:onegini_example/models/application_details.dart';
 import 'package:onegini_example/models/client_resource.dart';
+import 'package:onegini_example/ow_broadcast_helper.dart';
 import 'package:onegini_example/screens/qr_scan_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:onegini/pigeon.dart';
@@ -32,6 +35,11 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
   List<OWAuthenticator> registeredAuthenticators = [];
   List<OWAuthenticator> notRegisteredAuthenticators = [];
   String profileId = "";
+  OWBroadcastHelper broadcastHelper;
+  List<StreamSubscription<OWEvent>> registrationSubscriptions;
+  List<StreamSubscription<OWEvent>> authenticationSubscriptions;
+  List<StreamSubscription<OWEvent>> otpSubscriptions;
+
 
   void onTabTapped(int index) {
     setState(() {
@@ -49,6 +57,11 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     ];
     super.initState();
     this.profileId = widget.userProfileId;
+
+    // Init listeners for changePin, setPreferredAuthenticators
+    this.registrationSubscriptions = OWBroadcastHelper.initRegistrationListeners(context);
+    this.authenticationSubscriptions = OWBroadcastHelper.initAuthenticationListeners(context);
+
     getAuthenticators();
   }
 
@@ -61,6 +74,10 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
   @override
   void dispose() {
     routeObserver.unsubscribe(this);
+
+    OWBroadcastHelper.stopListening(authenticationSubscriptions);
+    OWBroadcastHelper.stopListening(registrationSubscriptions);
+
     super.dispose();
   }
 
@@ -170,6 +187,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   changePin(BuildContext context) {
     Navigator.pop(context);
+
     Onegini.instance.userClient.changePin(context).catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);
@@ -304,7 +322,8 @@ class Home extends StatelessWidget {
   }
 
   authWithOpt(BuildContext context) async {
-    Onegini.instance.setEventContext(context);
+    List<StreamSubscription> otpSubscriptions = OWBroadcastHelper.initOTPListeners(context);
+
     var data = await Navigator.push(
       context,
       MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
@@ -313,14 +332,15 @@ class Home extends StatelessWidget {
     if (data != null) {
       await Onegini.instance.userClient
         .handleMobileAuthWithOtp(data)
-        .then((value) => showFlutterToast("OTP1 Authentication is successfull"))
+        .then((value) => showFlutterToast("OTP Authentication is successfull"))
         .catchError((error) {
           if (error is PlatformException) {
-            print("otp1");
             print(error.message);
           }
       });
     }
+
+    OWBroadcastHelper.stopListening(otpSubscriptions);
   }
 
   getAppToWebSingleSignOn(BuildContext context) async {

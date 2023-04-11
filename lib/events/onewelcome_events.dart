@@ -17,7 +17,7 @@ enum OWAction {
   closePinRegistration, // previously closePin; Called to open pin registration screen.
   openPinAuthentication, // previously openPinScreenAuth; Called to open pin authentication screen
   closePinAuthentication, // previously closePinAuth; Called to close pin authentication screen
-  pinNotAllowed, // Called when the supplied pin is not allowed
+  pinNotAllowed, // Called when the supplied pin for registration is not allowed
 
   // Fingerprint
   openFingerprint, // previously openFingerprintScreen; Called to open fingerprint screen.

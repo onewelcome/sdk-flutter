@@ -20,163 +20,157 @@ import 'screens/otp_screen.dart';
 class OneginiListener extends OneginiEventListener {
   final PinScreenController pinScreenController = PinScreenController();
 
+  // done
   @override
   void closePin(BuildContext buildContext) {
-    if (Navigator.of(buildContext).canPop()) {
-      Navigator.of(buildContext).pop();
-    }
+    // if (Navigator.of(buildContext).canPop()) {
+    //   Navigator.of(buildContext).pop();
+    // }
   }
 
+  // done
   @override
   void openPinRequestScreen(BuildContext buildContext) {
-    Navigator.push(
-      buildContext,
-      MaterialPageRoute(builder: (context) => PinRequestScreen()),
-    );
+    // Navigator.push(
+    //   buildContext,
+    //   MaterialPageRoute(builder: (context) => PinRequestScreen()),
+    // );
   }
 
-  @override
-  void eventOther(BuildContext buildContext, Event event) {
-    print(event.eventValue);
-  }
-
-  @override
-  void eventError(BuildContext buildContext, PlatformException error) {
-    showFlutterToast("${error.message} Code: ${error.code} ");
-  }
-
+  // done
   @override
   void openPinScreenAuth(BuildContext buildContext) {
-    Navigator.push(
-      buildContext,
-      MaterialPageRoute(
-          builder: (context) => PinScreen(controller: pinScreenController)),
-    );
+    // Navigator.push(
+    //   buildContext,
+    //   MaterialPageRoute(
+    //       builder: (context) => PinScreen(controller: pinScreenController)),
+    // );
   }
-
-  @override
-  void openPinAuthenticator(BuildContext buildContext) {
-    Navigator.push(
-      buildContext,
-      MaterialPageRoute(
-          builder: (context) => PinRequestScreen(
-                customAuthenticator: true,
-              )),
-    );
-  }
-
+  
+  // done
   @override
   void nextAuthenticationAttempt(
       BuildContext buildContext, AuthenticationAttempt authenticationAttempt) {
-    pinScreenController.clearState();
-    showFlutterToast(
-        "failed attempts ${authenticationAttempt.failedAttempts} from ${authenticationAttempt.maxAttempts}");
+    // pinScreenController.clearState();
+    // showFlutterToast(
+    //     "failed attempts ${authenticationAttempt.failedAttempts} from ${authenticationAttempt.maxAttempts}");
   }
 
+  // done
   @override
   void closeFingerprintScreen(BuildContext buildContext) {
-    print("close fingerprint");
-    overlayEntry?.remove();
-    if (Navigator.of(buildContext).canPop()) {
-      Navigator.of(buildContext).pop();
-    }
+    // print("close fingerprint");
+    // overlayEntry?.remove();
+    // if (Navigator.of(buildContext).canPop()) {
+    //   Navigator.of(buildContext).pop();
+    // }
   }
 
+  // done
   @override
   void openFingerprintScreen(BuildContext buildContext) {
-    print("open fingerprint");
-    Navigator.push(
-      buildContext,
-      MaterialPageRoute(builder: (context) => FingerprintScreen()),
-    );
+    // print("open fingerprint");
+    // Navigator.push(
+    //   buildContext,
+    //   MaterialPageRoute(builder: (context) => FingerprintScreen()),
+    // );
   }
 
+  // done
   @override
   void receivedFingerprint(BuildContext buildContext) {
-    overlayEntry?.remove();
+    // overlayEntry?.remove();
   }
 
+  // done
   @override
   void showScanningFingerprint(BuildContext buildContext) {
-    overlayEntry = OverlayEntry(builder: (context) {
-      return Container(
-          color: Colors.black12.withOpacity(0.5),
-          child: Center(
-            child: CircularProgressIndicator(),
-          ));
-    });
-    Overlay.of(buildContext)?.insert(overlayEntry);
+    // overlayEntry = OverlayEntry(builder: (context) {
+    //   return Container(
+    //       color: Colors.black12.withOpacity(0.5),
+    //       child: Center(
+    //         child: CircularProgressIndicator(),
+    //       ));
+    // });
+    // Overlay.of(buildContext)?.insert(overlayEntry);
   }
 
   OverlayEntry overlayEntry;
 
+  // done
   @override
   void openAuthOtp(BuildContext buildContext, String message) {
-    Navigator.push(
-      buildContext,
-      MaterialPageRoute(
-          builder: (context) => AuthOtpScreen(
-                message: message,
-              )),
-    );
+    // Navigator.push(
+    //   buildContext,
+    //   MaterialPageRoute(
+    //       builder: (context) => AuthOtpScreen(
+    //             message: message,
+    //           )),
+    // );
   }
 
+  // done
   @override
   void closeAuthOtp(BuildContext buildContext) {
-    Navigator.of(buildContext).pop();
+    // Navigator.of(buildContext).pop();
   }
 
+  // done
   @override
   void closePinAuth(BuildContext buildContext) {
-    if (Navigator.of(buildContext).canPop()) {
-      Navigator.of(buildContext).pop();
-    }
+    // if (Navigator.of(buildContext).canPop()) {
+    //   Navigator.of(buildContext).pop();
+    // }
   }
 
+  // done
   @override
   void eventInitCustomRegistration(
       BuildContext buildContext, OWCustomInfo customInfo, String providerId) {
-    try {
-      if (providerId == "2-way-otp-api") {
-        // a 2-way-otp does not require data for the initialization request
-        OneginiCustomRegistrationCallback()
-            .submitSuccessAction(providerId, null)
-            .catchError((error) => {
-                  if (error is PlatformException)
-                    {showFlutterToast(error.message)}
-                });
-      }
-    } on FormatException catch (error) {
-      showFlutterToast(error.message);
-      return;
-    }
+    // try {
+    //   if (providerId == "2-way-otp-api") {
+    //     // a 2-way-otp does not require data for the initialization request
+    //     OneginiCustomRegistrationCallback()
+    //         .submitSuccessAction(providerId, null)
+    //         .catchError((error) => {
+    //               if (error is PlatformException)
+    //                 {showFlutterToast(error.message)}
+    //             });
+    //   }
+    // } on FormatException catch (error) {
+    //   showFlutterToast(error.message);
+    //   return;
+    // }
   }
 
+  // done
   @override
   void eventFinishCustomRegistration(
       BuildContext buildContext, OWCustomInfo customInfo, String providerId) {
-    try {
-      if (providerId == "2-way-otp-api")
-        Navigator.push(
-          buildContext,
-          MaterialPageRoute(
-              builder: (context) => OtpScreen(
-                  password: customInfo?.data, providerId: providerId)),
-        );
-    } on FormatException catch (error) {
-      showFlutterToast(error.message);
-      return;
-    }
+    // try {
+    //   if (providerId == "2-way-otp-api")
+    //     Navigator.push(
+    //       buildContext,
+    //       MaterialPageRoute(
+    //           builder: (context) => OtpScreen(
+    //               password: customInfo?.data, providerId: providerId)),
+    //     );
+    // } on FormatException catch (error) {
+    //   showFlutterToast(error.message);
+    //   return;
+    // }
   }
+
 
   @override
   void handleRegisteredUrl(BuildContext buildContext, String url) async {
-    await Onegini.instance.userClient.handleRegisteredUserUrl(buildContext, url,
-        signInType: WebSignInType.insideApp);
+    // await Onegini.instance.userClient.handleRegisteredUserUrl(buildContext, url,
+    //     signInType: WebSignInType.insideApp);
   }
 
+  // done
   @override
   void pinNotAllowed(OWOneginiError error) {
-    showFlutterToast("${error.message} Code: ${error.code}");
+    // showFlutterToast("${error.message} Code: ${error.code}");
   }
 }

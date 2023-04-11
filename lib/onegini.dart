@@ -13,6 +13,8 @@ import 'model/onegini_removed_user_profile.dart';
 
 /// The main class used to call methods.
 class Onegini {
+  // UserClientApi is the flutter to native api created by the Pigeon package, see /pigeons/README.md
+  /// User client methods.
   final UserClientApi api = UserClientApi();
   late final UserClient userClient;
 
@@ -32,9 +34,6 @@ class Onegini {
 
   /// Resource methods.
   ResourcesMethods resourcesMethods = ResourcesMethods();
-
-  // UserClientApi is the flutter to native api created by the Pigeon package, see /pigeons/README.md
-  /// User client methods.
 
   /// Use this method when you want change [BuildContext] in your [OneginiEventListener]
   setEventContext(BuildContext? context) {

@@ -1,6 +1,5 @@
 // @dart = 2.10
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini/pigeon.dart';
 import 'package:onegini_example/components/display_toast.dart';
@@ -46,9 +45,6 @@ class BodyWidget extends StatefulWidget {
 }
 
 class _BodyWidgetState extends State<BodyWidget> {
-  var _appStarted = false;
-  var appError;
-
   @override
   void initState() {
     _startApplication();
