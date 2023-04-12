@@ -18,7 +18,7 @@ class ClosePinAuthenticationEvent extends OWEvent {
   ClosePinAuthenticationEvent() : super(OWAction.closePinAuthentication);
 }
 
-class PinNotAllowedEventEvent extends OWEvent {
+class PinNotAllowedEvent extends OWEvent {
   OWOneginiError error;
-  PinNotAllowedEventEvent(this.error) : super(OWAction.pinNotAllowed);
+  PinNotAllowedEvent(this.error) : super(OWAction.pinNotAllowed);
 }

@@ -84,7 +84,7 @@ class OneginiEventListener implements NativeCallFlutterApi {
 
   @override
   void n2fEventPinNotAllowed(OWOneginiError error) {
-    broadcastEvent(PinNotAllowedEventEvent(error));
+    broadcastEvent(PinNotAllowedEvent(error));
   }
 
   void broadcastEvent(OWEvent event) {

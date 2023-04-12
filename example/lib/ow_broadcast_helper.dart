@@ -50,8 +50,8 @@ class OWBroadcastHelper {
       }
     });
 
-    StreamSubscription<OWEvent> pinNotAllowedSub = broadCastController.stream.where((event) => event is PinNotAllowedEventEvent).listen((event) {
-      if (event is PinNotAllowedEventEvent) {
+    StreamSubscription<OWEvent> pinNotAllowedSub = broadCastController.stream.where((event) => event is PinNotAllowedEvent).listen((event) {
+      if (event is PinNotAllowedEvent) {
         showFlutterToast("${event.error.message} Code: ${event.error.code}");
       }
     });
