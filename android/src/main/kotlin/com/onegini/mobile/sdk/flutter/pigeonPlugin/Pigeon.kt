@@ -58,7 +58,8 @@ enum class HttpRequestMethod(val raw: Int) {
 
 enum class OWAuthenticatorType(val raw: Int) {
   PIN(0),
-  BIOMETRIC(1);
+  BIOMETRIC(1),
+  PREFERRED(2);
 
   companion object {
     fun ofRaw(raw: Int): OWAuthenticatorType? {

@@ -80,6 +80,7 @@ enum HttpRequestMethod {
 enum OWAuthenticatorType {
   pin,
   biometric,
+  preferred,
 }
 
 enum ResourceRequestType { authenticated, implicit, anonymous, unauthenticated }

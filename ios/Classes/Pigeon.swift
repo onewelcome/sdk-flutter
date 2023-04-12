@@ -44,6 +44,7 @@ enum HttpRequestMethod: Int {
 enum OWAuthenticatorType: Int {
   case pin = 0
   case biometric = 1
+  case preferred = 2
 }
 
 enum ResourceRequestType: Int {
