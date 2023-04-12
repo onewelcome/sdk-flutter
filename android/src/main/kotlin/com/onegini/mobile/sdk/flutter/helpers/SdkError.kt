@@ -1,5 +1,6 @@
 package com.onegini.mobile.sdk.flutter.helpers
 
+import com.onegini.mobile.sdk.android.handlers.error.OneginiError
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
 import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_BODY

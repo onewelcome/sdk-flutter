@@ -21,22 +21,23 @@ import com.onegini.mobile.sdk.flutter.useCases.CancelBrowserRegistrationUseCase
 import com.onegini.mobile.sdk.flutter.useCases.CancelCustomRegistrationActionUseCase
 import com.onegini.mobile.sdk.flutter.useCases.ChangePinUseCase
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterAuthenticatorUseCase
+import com.onegini.mobile.sdk.flutter.useCases.DeregisterBiometricAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterUserUseCase
 import com.onegini.mobile.sdk.flutter.useCases.EnrollMobileAuthenticationUseCase
 import com.onegini.mobile.sdk.flutter.useCases.FingerprintAuthenticationRequestAcceptUseCase
 import com.onegini.mobile.sdk.flutter.useCases.FingerprintAuthenticationRequestDenyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.FingerprintFallbackToPinUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAccessTokenUseCase
-import com.onegini.mobile.sdk.flutter.useCases.GetAllAuthenticatorsUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAppToWebSingleSignOnUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAuthenticatedUserProfileUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetIdentityProvidersUseCase
-import com.onegini.mobile.sdk.flutter.useCases.GetNotRegisteredAuthenticatorsUseCase
+import com.onegini.mobile.sdk.flutter.useCases.GetPreferredAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetRedirectUrlUseCase
-import com.onegini.mobile.sdk.flutter.useCases.GetRegisteredAuthenticatorsUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfilesUseCase
 import com.onegini.mobile.sdk.flutter.useCases.HandleMobileAuthWithOtpUseCase
 import com.onegini.mobile.sdk.flutter.useCases.HandleRegisteredUrlUseCase
+import com.onegini.mobile.sdk.flutter.useCases.IsBiometricAuthenticatorAvailableUseCase
+import com.onegini.mobile.sdk.flutter.useCases.IsBiometricAuthenticatorRegisteredUseCase
 import com.onegini.mobile.sdk.flutter.useCases.LogoutUseCase
 import com.onegini.mobile.sdk.flutter.useCases.OtpAcceptAuthenticationRequestUseCase
 import com.onegini.mobile.sdk.flutter.useCases.OtpDenyAuthenticationRequestUseCase
@@ -45,6 +46,7 @@ import com.onegini.mobile.sdk.flutter.useCases.PinAuthenticationRequestDenyUseCa
 import com.onegini.mobile.sdk.flutter.useCases.PinRegistrationRequestAcceptUseCase
 import com.onegini.mobile.sdk.flutter.useCases.PinRegistrationRequestDenyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.RegisterAuthenticatorUseCase
+import com.onegini.mobile.sdk.flutter.useCases.RegisterBiometricAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.RegistrationUseCase
 import com.onegini.mobile.sdk.flutter.useCases.ResourceRequestUseCase
 import com.onegini.mobile.sdk.flutter.useCases.SetPreferredAuthenticatorUseCase
@@ -70,6 +72,9 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   lateinit var deregisterAuthenticatorUseCase: DeregisterAuthenticatorUseCase
 
   @Inject
+  lateinit var deregisterBiometricAuthenticatorUseCase: DeregisterBiometricAuthenticatorUseCase
+
+  @Inject
   lateinit var deregisterUserUseCase: DeregisterUserUseCase
 
   @Inject
@@ -77,9 +82,6 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
 
   @Inject
   lateinit var cancelBrowserRegistrationUseCase: CancelBrowserRegistrationUseCase
-
-  @Inject
-  lateinit var getAllAuthenticatorsUseCase: GetAllAuthenticatorsUseCase
 
   @Inject
   lateinit var getAppToWebSingleSignOnUseCase: GetAppToWebSingleSignOnUseCase
@@ -91,25 +93,32 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   lateinit var getIdentityProvidersUseCase: GetIdentityProvidersUseCase
 
   @Inject
-  lateinit var getNotRegisteredAuthenticatorsUseCase: GetNotRegisteredAuthenticatorsUseCase
+  lateinit var getPreferredAuthenticatorUseCase: GetPreferredAuthenticatorUseCase
 
   @Inject
   lateinit var getRedirectUrlUseCase: GetRedirectUrlUseCase
 
   @Inject
-  lateinit var getRegisteredAuthenticatorsUseCase: GetRegisteredAuthenticatorsUseCase
-
-  @Inject
   lateinit var getUserProfilesUseCase: GetUserProfilesUseCase
+
 
   @Inject
   lateinit var handleRegisteredUrlUseCase: HandleRegisteredUrlUseCase
+
+  @Inject
+  lateinit var isBiometricAuthenticatorRegisteredUseCase: IsBiometricAuthenticatorRegisteredUseCase
+
+  @Inject
+  lateinit var isBiometricAuthenticatorAvailableUseCase: IsBiometricAuthenticatorAvailableUseCase
 
   @Inject
   lateinit var logoutUseCase: LogoutUseCase
 
   @Inject
   lateinit var registerAuthenticatorUseCase: RegisterAuthenticatorUseCase
+
+  @Inject
+  lateinit var registerBiometricAuthenticatorUseCase: RegisterBiometricAuthenticatorUseCase
 
   @Inject
   lateinit var registrationUseCase: RegistrationUseCase
@@ -213,25 +222,28 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
     authenticateUserUseCase(profileId, authenticatorType, callback)
   }
 
-
-  override fun isBiometricAuthenticatorRegistered(callback: (Result<Boolean>) -> Unit) {
-    TODO("Not yet implemented")
+  override fun isBiometricAuthenticatorRegistered(profileId: String, callback: (Result<Boolean>) -> Unit) {
+    isBiometricAuthenticatorRegisteredUseCase(profileId, callback)
   }
 
-  override fun getPreferredAuthenticator(callback: (Result<OWAuthenticator>) -> Unit) {
-    TODO("Not yet implemented")
+  override fun isBiometricAuthenticatorAvailable(profileId: String, callback: (Result<Boolean>) -> Unit) {
+    isBiometricAuthenticatorAvailableUseCase(profileId, callback)
+  }
+
+  override fun getPreferredAuthenticator(profileId: String, callback: (Result<OWAuthenticator>) -> Unit) {
+    getPreferredAuthenticatorUseCase(callback)
   }
 
   override fun setPreferredAuthenticator(authenticatorType: OWAuthenticatorType, callback: (Result<Unit>) -> Unit) {
-    TODO("Not yet implemented")
+    callback(setPreferredAuthenticatorUseCase(authenticatorType))
   }
 
   override fun deregisterBiometricAuthenticator(callback: (Result<Unit>) -> Unit) {
-    TODO("Not yet implemented")
+    deregisterBiometricAuthenticatorUseCase(callback)
   }
 
   override fun registerBiometricAuthenticator(callback: (Result<Unit>) -> Unit) {
-    TODO("Not yet implemented")
+    registerBiometricAuthenticatorUseCase(callback)
   }
 
   override fun changePin(callback: (Result<Unit>) -> Unit) {
