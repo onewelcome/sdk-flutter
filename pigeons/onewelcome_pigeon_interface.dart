@@ -161,10 +161,13 @@ abstract class UserClientApi {
       String profileId, OWAuthenticatorType authenticatorType);
 
   @async
-  bool isBiometricAuthenticatorRegistered();
+  bool isBiometricAuthenticatorRegistered(String profileId);
 
   @async
-  OWAuthenticator getPreferredAuthenticator();
+  bool isBiometricAuthenticatorAvailable(String profileId);
+
+  @async
+  OWAuthenticator getPreferredAuthenticator(String profileId);
 
   @async
   void setPreferredAuthenticator(OWAuthenticatorType authenticatorType);

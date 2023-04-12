@@ -2,7 +2,6 @@ import Flutter
 import UIKit
 import OneginiSDKiOS
 
-extension FlutterError: Error {}
 
 extension FlutterError {
     convenience init(_ error: OneWelcomeWrapperError) {
@@ -80,6 +79,34 @@ func toOWCustomInfo(_ info: ONGCustomInfo?) -> OWCustomInfo? {
 }
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, ResourceMethodApi {
+    func authenticateUser(profileId: String, authenticatorType: OWAuthenticatorType, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
+        <#code#>
+    }
+    
+    func isBiometricAuthenticatorRegistered(completion: @escaping (Result<Bool, Error>) -> Void) {
+        <#code#>
+    }
+    
+    func isBiometricAuthenticatorAvailable(completion: @escaping (Result<Bool, Error>) -> Void) {
+        <#code#>
+    }
+    
+    func getPreferredAuthenticator(completion: @escaping (Result<OWAuthenticator, Error>) -> Void) {
+        <#code#>
+    }
+    
+    func setPreferredAuthenticator(authenticatorType: OWAuthenticatorType, completion: @escaping (Result<Void, Error>) -> Void) {
+        <#code#>
+    }
+    
+    func deregisterBiometricAuthenticator(completion: @escaping (Result<Void, Error>) -> Void) {
+        <#code#>
+    }
+    
+    func registerBiometricAuthenticator(completion: @escaping (Result<Void, Error>) -> Void) {
+        <#code#>
+    }
+    
     func startApplication(securityControllerClassName: String?,
                           configModelClassName: String?,
                           customIdentityProviderConfigs: [OWCustomIdentityProvider]?,

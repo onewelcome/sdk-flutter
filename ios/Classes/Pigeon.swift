@@ -405,8 +405,9 @@ protocol UserClientApi {
   func deregisterUser(profileId: String, completion: @escaping (Result<Void, Error>) -> Void)
   func getAuthenticatedUserProfile(completion: @escaping (Result<OWUserProfile, Error>) -> Void)
   func authenticateUser(profileId: String, authenticatorType: OWAuthenticatorType, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void)
-  func isBiometricAuthenticatorRegistered(completion: @escaping (Result<Bool, Error>) -> Void)
-  func getPreferredAuthenticator(completion: @escaping (Result<OWAuthenticator, Error>) -> Void)
+  func isBiometricAuthenticatorRegistered(profileId: String, completion: @escaping (Result<Bool, Error>) -> Void)
+  func isBiometricAuthenticatorAvailable(profileId: String, completion: @escaping (Result<Bool, Error>) -> Void)
+  func getPreferredAuthenticator(profileId: String, completion: @escaping (Result<OWAuthenticator, Error>) -> Void)
   func setPreferredAuthenticator(authenticatorType: OWAuthenticatorType, completion: @escaping (Result<Void, Error>) -> Void)
   func deregisterBiometricAuthenticator(completion: @escaping (Result<Void, Error>) -> Void)
   func registerBiometricAuthenticator(completion: @escaping (Result<Void, Error>) -> Void)
@@ -571,8 +572,10 @@ class UserClientApiSetup {
     }
     let isBiometricAuthenticatorRegisteredChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.isBiometricAuthenticatorRegistered", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      isBiometricAuthenticatorRegisteredChannel.setMessageHandler { _, reply in
-        api.isBiometricAuthenticatorRegistered() { result in
+      isBiometricAuthenticatorRegisteredChannel.setMessageHandler { message, reply in
+        let args = message as! [Any]
+        let profileIdArg = args[0] as! String
+        api.isBiometricAuthenticatorRegistered(profileId: profileIdArg) { result in
           switch result {
             case .success(let res):
               reply(wrapResult(res))
@@ -584,10 +587,29 @@ class UserClientApiSetup {
     } else {
       isBiometricAuthenticatorRegisteredChannel.setMessageHandler(nil)
     }
+    let isBiometricAuthenticatorAvailableChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.isBiometricAuthenticatorAvailable", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      isBiometricAuthenticatorAvailableChannel.setMessageHandler { message, reply in
+        let args = message as! [Any]
+        let profileIdArg = args[0] as! String
+        api.isBiometricAuthenticatorAvailable(profileId: profileIdArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      isBiometricAuthenticatorAvailableChannel.setMessageHandler(nil)
+    }
     let getPreferredAuthenticatorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.getPreferredAuthenticator", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      getPreferredAuthenticatorChannel.setMessageHandler { _, reply in
-        api.getPreferredAuthenticator() { result in
+      getPreferredAuthenticatorChannel.setMessageHandler { message, reply in
+        let args = message as! [Any]
+        let profileIdArg = args[0] as! String
+        api.getPreferredAuthenticator(profileId: profileIdArg) { result in
           switch result {
             case .success(let res):
               reply(wrapResult(res))
