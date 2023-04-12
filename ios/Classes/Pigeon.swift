@@ -1241,8 +1241,8 @@ class NativeCallFlutterApi {
     }
   }
   /// Called when fingerprint was received.
-  func n2fReceivedFingerprint(completion: @escaping () -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fReceivedFingerprint", binaryMessenger: binaryMessenger, codec: codec)
+  func n2fNextFingerprintAuthenticationAttempt(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fNextFingerprintAuthenticationAttempt", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage(nil) { _ in
       completion()
     }

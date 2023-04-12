@@ -291,7 +291,7 @@ abstract class NativeCallFlutterApi {
   void n2fShowScanningFingerprint();
 
   /// Called when fingerprint was received.
-  void n2fReceivedFingerprint();
+  void n2fNextFingerprintAuthenticationAttempt();
 
   /// Called to close fingerprint screen.
   void n2fCloseFingerprintScreen();

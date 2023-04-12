@@ -73,8 +73,8 @@ class OneginiEventListener implements NativeCallFlutterApi {
   }
 
   @override
-  void n2fReceivedFingerprint() {
-    broadcastEvent(ReceivedFingerprintEvent());
+  void n2fNextFingerprintAuthenticationAttempt() {
+    broadcastEvent(NextFingerprintAuthenticationAttempt());
   }
 
   @override

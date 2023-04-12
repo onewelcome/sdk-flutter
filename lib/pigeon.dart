@@ -1398,7 +1398,7 @@ abstract class NativeCallFlutterApi {
   void n2fShowScanningFingerprint();
 
   /// Called when fingerprint was received.
-  void n2fReceivedFingerprint();
+  void n2fNextFingerprintAuthenticationAttempt();
 
   /// Called to close fingerprint screen.
   void n2fCloseFingerprintScreen();
@@ -1567,14 +1567,14 @@ abstract class NativeCallFlutterApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.NativeCallFlutterApi.n2fReceivedFingerprint', codec,
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fNextFingerprintAuthenticationAttempt', codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           // ignore message
-          api.n2fReceivedFingerprint();
+          api.n2fNextFingerprintAuthenticationAttempt();
           return;
         });
       }

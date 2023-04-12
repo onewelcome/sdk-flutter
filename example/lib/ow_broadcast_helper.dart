@@ -133,7 +133,7 @@ class OWBroadcastHelper {
       Overlay.of(context).insert(fingerprintOverlay);
     });
 
-    StreamSubscription<OWEvent> receivedFingerprintSub = broadCastController.stream.where((event) => event is ReceivedFingerprintEvent).listen((event) {
+    StreamSubscription<OWEvent> receivedFingerprintSub = broadCastController.stream.where((event) => event is NextFingerprintAuthenticationAttempt).listen((event) {
       fingerprintOverlay.remove();
     });
 

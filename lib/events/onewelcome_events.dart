@@ -23,7 +23,7 @@ enum OWAction {
   openFingerprint, // Called to open fingerprint screen.
   closeFingerprint, // Called to close fingerprint screen.
   showScanningFingerprint, // Called to scan fingerprint.
-  receivedFingerprint, // Called when fingerprint was received.
+  nextFingerprintAuthenticationAttempt, // Called when fingerprint was received but was incorrect.
 
   // CustomRegistration
   initCustomRegistration, // Called when customRegistration is initialized and a response should be given (only for two-step)
@@ -58,7 +58,7 @@ extension OWActionExtension on OWAction {
         return "pinNotAllowed";
       case OWAction.showScanningFingerprint:
         return "showScanningFingerprint";
-      case OWAction.receivedFingerprint:
+      case OWAction.nextFingerprintAuthenticationAttempt:
         return "receivedFingerprint";
       case OWAction.initCustomRegistration:
         return "initCustomRegistration";

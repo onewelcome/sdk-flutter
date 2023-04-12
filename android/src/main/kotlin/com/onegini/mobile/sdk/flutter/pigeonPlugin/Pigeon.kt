@@ -1341,8 +1341,8 @@ class NativeCallFlutterApi(private val binaryMessenger: BinaryMessenger) {
     }
   }
   /** Called when fingerprint was received. */
-  fun n2fReceivedFingerprint(callback: () -> Unit) {
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fReceivedFingerprint", codec)
+  fun n2fNextFingerprintAuthenticationAttempt(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fNextFingerprintAuthenticationAttempt", codec)
     channel.send(null) {
       callback()
     }
