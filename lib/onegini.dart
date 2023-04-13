@@ -1,15 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:onegini/constants/constants.dart';
 import 'package:onegini/onegini_event_listener.dart';
 import 'package:onegini/resources_methods.dart';
 import 'package:onegini/user_client.dart';
 import 'package:onegini/pigeon.dart';
-
-import 'model/onegini_removed_user_profile.dart';
 
 /// The main class used to call methods.
 class Onegini {
