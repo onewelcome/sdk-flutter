@@ -5,21 +5,24 @@ abstract class OWEvent {
 }
 
 enum OWAction {
-  // Browser
+  // Browser Registration
   handleRegisteredUrl, // Called to handle registration URL
 
-  // Otp
+  // Otp Mobile Authentication
   openAuthOtp, // Called to open OTP authentication screen
   closeAuthOtp, // Called to close OTP authentication screen
 
-  // Pin
-  openPinRegistration, // Called to open pin registration screen.
-  closePinRegistration, // Called to open pin registration screen.
+  // Pin Creation
+  openPinCreation, // Called to open pin registration screen.
+  closePinCreation, // Called to open pin registration screen.
+  pinNotAllowed, // Called when the supplied pin for pin creation is not allowed
+
+  // Pin Authentication
   openPinAuthentication, // Called to open pin authentication screen
   closePinAuthentication, // Called to close pin authentication screen
-  pinNotAllowed, // Called when the supplied pin for registration is not allowed
+  nextPinAuthenticationAttempt, // Called to attempt next authentication.
 
-  // Fingerprint
+  // Fingerprint Authentication
   openFingerprint, // Called to open fingerprint screen.
   closeFingerprint, // Called to close fingerprint screen.
   showScanningFingerprint, // Called to scan fingerprint.
@@ -28,44 +31,47 @@ enum OWAction {
   // CustomRegistration
   initCustomRegistration, // Called when customRegistration is initialized and a response should be given (only for two-step)
   finishCustomRegistration, // Called when customRegistration finishes and a final response should be given
-
-  // Authentication
-  nextAuthenticationAttempt, // Called to attempt next authentication.
 }
 
 extension OWActionExtension on OWAction {
   String get value {
     switch (this) {
+      // Browser Registration
       case OWAction.handleRegisteredUrl:
         return "handleRegisteredUrl";
-      case OWAction.openAuthOtp:
-        return "openAuthOtp";
-      case OWAction.openPinRegistration:
-        return "openPinRegistration";
-      case OWAction.openPinAuthentication:
-        return "openPinAuthentication";
-      case OWAction.openFingerprint:
-        return "openFingerprint";
-      case OWAction.closeAuthOtp:
-        return "closeAuthOtp";
-      case OWAction.closePinRegistration:
-        return "closePinRegistration";
-      case OWAction.closePinAuthentication:
-        return "closePinAuthentication";
-      case OWAction.closeFingerprint:
-        return "closeFingerprint";
+      // Pin Creation
+      case OWAction.openPinCreation:
+        return "openPinCreation";
+      case OWAction.closePinCreation:
+        return "closePinCreation";
       case OWAction.pinNotAllowed:
         return "pinNotAllowed";
+      // Pin Authentication
+      case OWAction.openPinAuthentication:
+        return "openPinAuthentication";
+      case OWAction.closePinAuthentication:
+        return "closePinAuthentication";
+      case OWAction.nextPinAuthenticationAttempt:
+        return "nextPinAuthenticationAttempt";
+      // Fingerprint authentication
+      case OWAction.openFingerprint:
+        return "openFingerprint";
+      case OWAction.closeFingerprint:
+        return "closeFingerprint";
       case OWAction.showScanningFingerprint:
         return "showScanningFingerprint";
       case OWAction.nextFingerprintAuthenticationAttempt:
-        return "receivedFingerprint";
+        return "nextFingerprintAuthenticationAttempt";
+      // OTP Mobile authentication
+      case OWAction.openAuthOtp:
+        return "openAuthOtp";
+      case OWAction.closeAuthOtp:
+        return "closeAuthOtp";
+      // Custom Registration
       case OWAction.initCustomRegistration:
         return "initCustomRegistration";
       case OWAction.finishCustomRegistration:
         return "finishCustomRegistration";
-      case OWAction.nextAuthenticationAttempt:
-        return "nextAuthenticationAttempt";
     }
   }
 }

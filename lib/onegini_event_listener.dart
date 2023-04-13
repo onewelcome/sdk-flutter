@@ -16,51 +16,50 @@ class OneginiEventListener implements NativeCallFlutterApi {
 
   /// Pin Creation related events
   @override
-  void n2fOpenPinRequestScreen() {
+  void n2fOpenPinCreation() {
     // renamed OpenPinRegistrationEvent to OpenPinCreationEvent
-    broadcastEvent(OpenPinRegistrationEvent());
+    broadcastEvent(OpenPinCreationEvent());
   }
 
   @override
-  void n2fClosePin() {
+  void n2fClosePinCreation() {
     // renamed ClosePinRegistrationEvent -> ClosePinCreationEvent
-    broadcastEvent(ClosePinRegistrationEvent());
+    broadcastEvent(ClosePinCreationEvent());
   }
 
   @override
-  void n2fEventPinNotAllowed(OWOneginiError error) {
+  void n2fPinNotAllowed(OWOneginiError error) {
     broadcastEvent(PinNotAllowedEvent(error));
   }
 
   /// Custom Registration related events
-  @override
-  void n2fEventFinishCustomRegistration(
-      OWCustomInfo? customInfo, String providerId) {
-    broadcastEvent(FinishCustomRegistrationEvent(customInfo, providerId));
-  }
-
   @override
   void n2fEventInitCustomRegistration(
       OWCustomInfo? customInfo, String providerId) {
     broadcastEvent(InitCustomRegistrationEvent(customInfo, providerId));
   }
 
+  @override
+  void n2fEventFinishCustomRegistration(
+      OWCustomInfo? customInfo, String providerId) {
+    broadcastEvent(FinishCustomRegistrationEvent(customInfo, providerId));
+  }
+
   /// Pin Authentication related events
   @override
-  void n2fOpenPinScreenAuth() {
+  void n2fOpenPinAuthentication() {
     broadcastEvent(OpenPinAuthenticationEvent());
   }
 
   @override
-  void n2fClosePinAuth() {
+  void n2fClosePinAuthentication() {
     broadcastEvent(ClosePinAuthenticationEvent());
   }
 
   @override
-  void n2fNextAuthenticationAttempt(
+  void n2fNextPinAuthenticationAttempt(
       OWAuthenticationAttempt authenticationAttempt) {
-    // renamed from NextAuthenticationAttemptEvent to NextPinAuthenticationAttemptEvent
-    broadcastEvent(NextAuthenticationAttemptEvent(authenticationAttempt));
+    broadcastEvent(NextPinAuthenticationAttemptEvent(authenticationAttempt));
   }
 
   /// Fingerprint related events

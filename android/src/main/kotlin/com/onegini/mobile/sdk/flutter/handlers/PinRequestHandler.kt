@@ -18,11 +18,11 @@ class PinRequestHandler @Inject constructor(private val nativeApi: NativeCallFlu
 
   override fun startPinCreation(userProfile: UserProfile, oneginiPinCallback: OneginiPinCallback, p2: Int) {
     callback = oneginiPinCallback
-    nativeApi.n2fOpenPinRequestScreen { }
+    nativeApi.n2fOpenPinCreation { }
   }
 
   override fun onNextPinCreationAttempt(oneginiPinValidationError: OneginiPinValidationError) {
-    nativeApi.n2fEventPinNotAllowed(
+    nativeApi.n2fPinNotAllowed(
       OWOneginiError(
         oneginiPinValidationError.errorType.toLong(),
         oneginiPinValidationError.message ?: ""
@@ -32,7 +32,7 @@ class PinRequestHandler @Inject constructor(private val nativeApi: NativeCallFlu
 
   override fun finishPinCreation() {
     callback = null
-    nativeApi.n2fClosePin { }
+    nativeApi.n2fClosePinCreation { }
   }
 
   fun onPinProvided(pin: CharArray): Result<Unit> {

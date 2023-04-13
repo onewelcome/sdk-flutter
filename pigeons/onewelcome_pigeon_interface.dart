@@ -259,33 +259,44 @@ abstract class ResourceMethodApi {
 /// Native calls to Flutter
 @FlutterApi()
 abstract class NativeCallFlutterApi {
+  // Browser Registration
   ///Called to handle registration URL
   void n2fHandleRegisteredUrl(String url);
 
+  // Pin Creation
+  /// Called to open pin creation screen.
+  void n2fOpenPinCreation();
+
+  /// Called to close pin registration screen.
+  void n2fClosePinCreation();
+
+  /// Called to indicate that the given pin is not allowed for pin creation
+  void n2fPinNotAllowed(OWOneginiError error);
+
+  // Pin Authentication
+  /// Called to open pin authentication screen.
+  void n2fOpenPinAuthentication();
+
+  /// Called to close pin authentication screen.
+  void n2fClosePinAuthentication();
+
+  /// Called to attempt next pin authentication.
+  void n2fNextPinAuthenticationAttempt(
+      OWAuthenticationAttempt authenticationAttempt);
+
+  // OTP Mobile Authentication
   /// Called to open OTP authentication.
   void n2fOpenAuthOtp(String? message);
 
   /// Called to close OTP authentication.
   void n2fCloseAuthOtp();
 
-  /// Called to open pin registration screen.
-  void n2fOpenPinRequestScreen();
-
-  /// Called to open pin authentication screen.
-  void n2fOpenPinScreenAuth();
-
-  /// Called to attempt next authentication.
-  void n2fNextAuthenticationAttempt(
-      OWAuthenticationAttempt authenticationAttempt);
-
-  /// Called to close pin registration screen.
-  void n2fClosePin();
-
-  /// Called to close pin authentication screen.
-  void n2fClosePinAuth();
-
+  // Fingerprint Authentication
   /// Called to open fingerprint screen.
   void n2fOpenFingerprintScreen();
+
+  /// Called to close fingerprint screen.
+  void n2fCloseFingerprintScreen();
 
   /// Called to scan fingerprint.
   void n2fShowScanningFingerprint();
@@ -293,9 +304,7 @@ abstract class NativeCallFlutterApi {
   /// Called when fingerprint was received.
   void n2fNextFingerprintAuthenticationAttempt();
 
-  /// Called to close fingerprint screen.
-  void n2fCloseFingerprintScreen();
-
+  // Custom Registration
   /// Called when the InitCustomRegistration event occurs and a response should be given (only for two-step)
   void n2fEventInitCustomRegistration(
       OWCustomInfo? customInfo, String providerId);
@@ -303,6 +312,4 @@ abstract class NativeCallFlutterApi {
   /// Called when the FinishCustomRegistration event occurs and a response should be given
   void n2fEventFinishCustomRegistration(
       OWCustomInfo? customInfo, String providerId);
-
-  void n2fEventPinNotAllowed(OWOneginiError error);
 }

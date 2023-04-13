@@ -1277,6 +1277,66 @@ class NativeCallFlutterApi(private val binaryMessenger: BinaryMessenger) {
       callback()
     }
   }
+  /**
+   * Called to open pin creation screen.
+   * changed  n2fOpenPinRequestScreen into n2fOpenPinCreation
+   */
+  fun n2fOpenPinCreation(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinCreation", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /**
+   * Called to close pin registration screen.
+   * changed  n2fClosePin  into n2fClosePinCreation
+   */
+  fun n2fClosePinCreation(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePinCreation", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /**
+   * Called to indicate that the given pin is not allowed for pin creation
+   * changed n2fEventPinNotAllowed into n2fPinNotAllowed
+   */
+  fun n2fPinNotAllowed(errorArg: OWOneginiError, callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fPinNotAllowed", codec)
+    channel.send(listOf(errorArg)) {
+      callback()
+    }
+  }
+  /**
+   * Called to open pin authentication screen.
+   * changed  n2fOpenPinScreenAuth into n2fOpenPinAuthentication
+   */
+  fun n2fOpenPinAuthentication(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinAuthentication", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /**
+   * Called to close pin authentication screen.
+   * changed n2fClosePinAuth into n2fClosePinAuthentication    
+   */
+  fun n2fClosePinAuthentication(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePinAuthentication", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /**
+   * Called to attempt next pin authentication.
+   * changed n2fNextAuthenticationAttempt into n2fNextPinAuthenticationAttempt
+   */
+  fun n2fNextPinAuthenticationAttempt(authenticationAttemptArg: OWAuthenticationAttempt, callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fNextPinAuthenticationAttempt", codec)
+    channel.send(listOf(authenticationAttemptArg)) {
+      callback()
+    }
+  }
   /** Called to open OTP authentication. */
   fun n2fOpenAuthOtp(messageArg: String?, callback: () -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenAuthOtp", codec)
@@ -1291,44 +1351,16 @@ class NativeCallFlutterApi(private val binaryMessenger: BinaryMessenger) {
       callback()
     }
   }
-  /** Called to open pin registration screen. */
-  fun n2fOpenPinRequestScreen(callback: () -> Unit) {
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinRequestScreen", codec)
-    channel.send(null) {
-      callback()
-    }
-  }
-  /** Called to open pin authentication screen. */
-  fun n2fOpenPinScreenAuth(callback: () -> Unit) {
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinScreenAuth", codec)
-    channel.send(null) {
-      callback()
-    }
-  }
-  /** Called to attempt next authentication. */
-  fun n2fNextAuthenticationAttempt(authenticationAttemptArg: OWAuthenticationAttempt, callback: () -> Unit) {
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fNextAuthenticationAttempt", codec)
-    channel.send(listOf(authenticationAttemptArg)) {
-      callback()
-    }
-  }
-  /** Called to close pin registration screen. */
-  fun n2fClosePin(callback: () -> Unit) {
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePin", codec)
-    channel.send(null) {
-      callback()
-    }
-  }
-  /** Called to close pin authentication screen. */
-  fun n2fClosePinAuth(callback: () -> Unit) {
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePinAuth", codec)
-    channel.send(null) {
-      callback()
-    }
-  }
   /** Called to open fingerprint screen. */
   fun n2fOpenFingerprintScreen(callback: () -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenFingerprintScreen", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /** Called to close fingerprint screen. */
+  fun n2fCloseFingerprintScreen(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fCloseFingerprintScreen", codec)
     channel.send(null) {
       callback()
     }
@@ -1347,13 +1379,6 @@ class NativeCallFlutterApi(private val binaryMessenger: BinaryMessenger) {
       callback()
     }
   }
-  /** Called to close fingerprint screen. */
-  fun n2fCloseFingerprintScreen(callback: () -> Unit) {
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fCloseFingerprintScreen", codec)
-    channel.send(null) {
-      callback()
-    }
-  }
   /** Called when the InitCustomRegistration event occurs and a response should be given (only for two-step) */
   fun n2fEventInitCustomRegistration(customInfoArg: OWCustomInfo?, providerIdArg: String, callback: () -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fEventInitCustomRegistration", codec)
@@ -1365,12 +1390,6 @@ class NativeCallFlutterApi(private val binaryMessenger: BinaryMessenger) {
   fun n2fEventFinishCustomRegistration(customInfoArg: OWCustomInfo?, providerIdArg: String, callback: () -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fEventFinishCustomRegistration", codec)
     channel.send(listOf(customInfoArg, providerIdArg)) {
-      callback()
-    }
-  }
-  fun n2fEventPinNotAllowed(errorArg: OWOneginiError, callback: () -> Unit) {
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fEventPinNotAllowed", codec)
-    channel.send(listOf(errorArg)) {
       callback()
     }
   }

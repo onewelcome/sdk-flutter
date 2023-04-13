@@ -34,14 +34,14 @@ class OWBroadcastHelper {
     });
 
     // Pin Registration Related Events
-    StreamSubscription<OWEvent> openPinSub = broadCastController.stream.where((event) => event is OpenPinRegistrationEvent).listen((event) {
+    StreamSubscription<OWEvent> openPinSub = broadCastController.stream.where((event) => event is OpenPinCreationEvent).listen((event) {
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => PinRequestScreen()),
       );
     });
 
-    StreamSubscription<OWEvent> closePinSub =  broadCastController.stream.where((event) => event is ClosePinRegistrationEvent).listen((event) {
+    StreamSubscription<OWEvent> closePinSub =  broadCastController.stream.where((event) => event is ClosePinCreationEvent).listen((event) {
       if (Navigator.of(context).canPop()) {
         Navigator.of(context).pop();
       }
@@ -92,9 +92,6 @@ class OWBroadcastHelper {
 
     // Pin Authentication related events
     StreamSubscription<OWEvent> openPinSub = broadCastController.stream.where((event) => event is OpenPinAuthenticationEvent).listen((event) {
-      print("open pin auth:");
-      print(context);
-      print(pinScreenController);
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -103,8 +100,6 @@ class OWBroadcastHelper {
     });
 
     StreamSubscription<OWEvent> closePinSub = broadCastController.stream.where((event) => event is ClosePinAuthenticationEvent).listen((event) {
-      print("close pin auth");
-      print(context);
       if (Navigator.of(context).canPop()) {
         Navigator.of(context).pop();
       }
@@ -132,8 +127,7 @@ class OWBroadcastHelper {
       fingerprintOverlay.remove();
     });
 
-    // Generic Authentication related events
-    StreamSubscription<OWEvent> nextAuthenticationAttempt = broadCastController.stream.where((event) => event is NextAuthenticationAttemptEvent).cast<NextAuthenticationAttemptEvent>().listen((event) {
+    StreamSubscription<OWEvent> nextAuthenticationAttempt = broadCastController.stream.where((event) => event is NextPinAuthenticationAttemptEvent).cast<NextPinAuthenticationAttemptEvent>().listen((event) {
       pinScreenController.clearState();
       showFlutterToast("failed attempts ${event.authenticationAttempt.failedAttempts} from ${event.authenticationAttempt.maxAttempts}");
     });

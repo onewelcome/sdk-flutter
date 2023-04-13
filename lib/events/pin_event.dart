@@ -3,12 +3,12 @@ import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/pigeon.dart';
 
 // For Pin Creation
-class OpenPinRegistrationEvent extends OWEvent {
-  OpenPinRegistrationEvent() : super(OWAction.openPinRegistration);
+class OpenPinCreationEvent extends OWEvent {
+  OpenPinCreationEvent() : super(OWAction.openPinCreation);
 }
 
-class ClosePinRegistrationEvent extends OWEvent {
-  ClosePinRegistrationEvent() : super(OWAction.closePinRegistration);
+class ClosePinCreationEvent extends OWEvent {
+  ClosePinCreationEvent() : super(OWAction.closePinCreation);
 }
 
 class PinNotAllowedEvent extends OWEvent {
@@ -25,7 +25,7 @@ class ClosePinAuthenticationEvent extends OWEvent {
   ClosePinAuthenticationEvent() : super(OWAction.closePinAuthentication);
 }
 
-class NextAuthenticationAttemptEvent extends OWEvent {
+class NextPinAuthenticationAttemptEvent extends OWEvent {
   OWAuthenticationAttempt authenticationAttempt;
-  NextAuthenticationAttemptEvent(this.authenticationAttempt) : super(OWAction.nextAuthenticationAttempt);
+  NextPinAuthenticationAttemptEvent(this.authenticationAttempt) : super(OWAction.nextPinAuthenticationAttempt);
 }
