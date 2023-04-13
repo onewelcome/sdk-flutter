@@ -6,7 +6,6 @@ import 'package:onegini/callbacks/onegini_custom_registration_callback.dart';
 import 'package:onegini/events/browser_event.dart';
 import 'package:onegini/events/custom_registration_event.dart';
 import 'package:onegini/events/fingerprint_event.dart';
-import 'package:onegini/events/generic_event.dart';
 import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/events/otp_event.dart';
 import 'package:onegini/events/pin_event.dart';
@@ -29,11 +28,9 @@ class OWBroadcastHelper {
     var broadCastController = Onegini.instance.userClient.owEventStreamController;
 
     // Url Registration Related Events
-    StreamSubscription<OWEvent> handleRegisteredUrlSub = broadCastController.stream.where((event) => event is HandleRegisteredUrlEvent).listen((event) {
-      if (event is HandleRegisteredUrlEvent) {
-        Onegini.instance.userClient.handleRegisteredUserUrl(event.url,
-          signInType: WebSignInType.insideApp);
-      }
+    StreamSubscription<OWEvent> handleRegisteredUrlSub = broadCastController.stream.where((event) => event is HandleRegisteredUrlEvent).cast<HandleRegisteredUrlEvent>().listen((event) {
+      Onegini.instance.userClient.handleRegisteredUserUrl(event.url,
+        signInType: WebSignInType.insideApp);
     });
 
     // Pin Registration Related Events
@@ -50,15 +47,13 @@ class OWBroadcastHelper {
       }
     });
 
-    StreamSubscription<OWEvent> pinNotAllowedSub = broadCastController.stream.where((event) => event is PinNotAllowedEvent).listen((event) {
-      if (event is PinNotAllowedEvent) {
-        showFlutterToast("${event.error.message} Code: ${event.error.code}");
-      }
+    StreamSubscription<OWEvent> pinNotAllowedSub = broadCastController.stream.where((event) => event is PinNotAllowedEvent).cast<PinNotAllowedEvent>().listen((event) {
+      showFlutterToast("${event.error.message} Code: ${event.error.code}");
     });
 
     // Custom Registration related events
-    StreamSubscription<OWEvent> initCustomSub = broadCastController.stream.where((event) => event is InitCustomRegistrationEvent).listen((event) {
-      if (event is InitCustomRegistrationEvent && event.providerId == "2-way-otp-api") {
+    StreamSubscription<OWEvent> initCustomSub = broadCastController.stream.where((event) => event is InitCustomRegistrationEvent).cast<InitCustomRegistrationEvent>().listen((event) {
+      if (event.providerId == "2-way-otp-api") {
         // a 2-way-otp does not require data for the initialization request
         OneginiCustomRegistrationCallback()
             .submitSuccessAction(event.providerId, null)
@@ -69,8 +64,8 @@ class OWBroadcastHelper {
       }
     });
 
-    StreamSubscription<OWEvent> finishCustomSub = broadCastController.stream.where((event) => event is FinishCustomRegistrationEvent).listen((event) {
-      if (event is FinishCustomRegistrationEvent && event.providerId == "2-way-otp-api") {
+    StreamSubscription<OWEvent> finishCustomSub = broadCastController.stream.where((event) => event is FinishCustomRegistrationEvent).cast<FinishCustomRegistrationEvent>().listen((event) {
+      if (event.providerId == "2-way-otp-api") {
         // a 2-way-otp does not require data for the initialization request
         Navigator.push(
           context,
@@ -138,11 +133,9 @@ class OWBroadcastHelper {
     });
 
     // Generic Authentication related events
-    StreamSubscription<OWEvent> nextAuthenticationAttempt = broadCastController.stream.where((event) => event is NextAuthenticationAttemptEvent).listen((event) {
-      if (event is NextAuthenticationAttemptEvent) {
-        pinScreenController.clearState();
-        showFlutterToast("failed attempts ${event.authenticationAttempt.failedAttempts} from ${event.authenticationAttempt.maxAttempts}");
-      }
+    StreamSubscription<OWEvent> nextAuthenticationAttempt = broadCastController.stream.where((event) => event is NextAuthenticationAttemptEvent).cast<NextAuthenticationAttemptEvent>().listen((event) {
+      pinScreenController.clearState();
+      showFlutterToast("failed attempts ${event.authenticationAttempt.failedAttempts} from ${event.authenticationAttempt.maxAttempts}");
     });
 
     return [openPinSub, closePinSub, openFingerprintSub, closeFingerprintSub, showScanningFingerprintSub, receivedFingerprintSub, nextAuthenticationAttempt];
@@ -151,16 +144,14 @@ class OWBroadcastHelper {
   static List<StreamSubscription<OWEvent>> initOTPListeners(BuildContext context) {
     var broadCastController = Onegini.instance.userClient.owEventStreamController;
 
-    StreamSubscription<OWEvent> openAuthOtpSub = broadCastController.stream.where((event) => event is OpenAuthOtpEvent).listen((event) {
-      if (event is OpenAuthOtpEvent) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => AuthOtpScreen(
-                    message: event.message,
-                  )),
-        );
-      }
+    StreamSubscription<OWEvent> openAuthOtpSub = broadCastController.stream.where((event) => event is OpenAuthOtpEvent).cast<OpenAuthOtpEvent>().listen((event) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => AuthOtpScreen(
+                  message: event.message,
+                )),
+      );
     });
 
     StreamSubscription<OWEvent> closeAuthOtpSub = broadCastController.stream.where((event) => event is CloseAuthOtpEvent).listen((event) {
