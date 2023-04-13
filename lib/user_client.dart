@@ -45,24 +45,6 @@ class UserClient {
     await api.deregisterUser(profileId);
   }
 
-  /// Returns a list of authenticators registered and available to the user.
-  Future<List<OWAuthenticator>> getRegisteredAuthenticators(
-      BuildContext? context, String profileId) async {
-    Onegini.instance.setEventContext(context);
-
-    final registeredAuthenticators =
-        await api.getRegisteredAuthenticators(profileId);
-    return registeredAuthenticators.whereType<OWAuthenticator>().toList();
-  }
-
-  Future<List<OWAuthenticator>> getAllAuthenticators(
-      BuildContext? context, String profileId) async {
-    Onegini.instance.setEventContext(context);
-
-    final allAuthenticators = await api.getAllAuthenticators(profileId);
-    return allAuthenticators.whereType<OWAuthenticator>().toList();
-  }
-
   Future<OWUserProfile> getAuthenticatedUserProfile() async {
     return await api.getAuthenticatedUserProfile();
   }
@@ -74,19 +56,11 @@ class UserClient {
   Future<OWRegistrationResponse> authenticateUser(
     BuildContext? context,
     String profileId,
-    String? registeredAuthenticatorId,
+    OWAuthenticatorType authenticatorType,
   ) async {
     Onegini.instance.setEventContext(context);
 
-    return await api.authenticateUser(profileId, registeredAuthenticatorId);
-  }
-
-  /// Returns a list of authenticators available to the user, but not yet registered.
-  Future<List<OWAuthenticator>> getNotRegisteredAuthenticators(
-      BuildContext? context, String profileId) async {
-    final notRegisteredAuthenticators =
-        await api.getNotRegisteredAuthenticators(profileId);
-    return notRegisteredAuthenticators.whereType<OWAuthenticator>().toList();
+    return await api.authenticateUser(profileId, authenticatorType);
   }
 
   /// Starts change pin flow.
@@ -97,29 +71,27 @@ class UserClient {
     await api.changePin();
   }
 
-  /// Registers authenticator from [getNotRegisteredAuthenticators] list.
-  Future<void> registerAuthenticator(
-      BuildContext? context, String authenticatorId) async {
-    Onegini.instance.setEventContext(context);
-
-    await api.registerAuthenticator(authenticatorId);
-  }
-
   ///Set preferred authenticator
   /// todo removed boolean return update docu
   Future<void> setPreferredAuthenticator(
-      BuildContext? context, String authenticatorId) async {
+      BuildContext? context, OWAuthenticatorType authenticatorType) async {
     Onegini.instance.setEventContext(context);
-
-    await api.setPreferredAuthenticator(authenticatorId);
+    await api.setPreferredAuthenticator(authenticatorType);
   }
 
-  /// todo removed boolean return update docu
-  Future<void> deregisterAuthenticator(
-      BuildContext? context, String authenticatorId) async {
-    Onegini.instance.setEventContext(context);
+  // Gets the preferred authenticator for the given profile
+  Future<void> getPreferredAuthenticator(String profileId) async {
+    await api.getPreferredAuthenticator(profileId);
+  }
 
-    await api.deregisterAuthenticator(authenticatorId);
+  Future<void> deregisterBiometricAuthenticator(
+      OWAuthenticatorType authenticatorType) async {
+    await api.deregisterBiometricAuthenticator();
+  }
+
+  Future<void> registerBiometricAuthenticator(
+      OWAuthenticatorType authenticatorType) async {
+    await api.registerBiometricAuthenticator();
   }
 
   ///Method for log out
