@@ -2,6 +2,7 @@ import Flutter
 import UIKit
 import OneginiSDKiOS
 
+extension FlutterError: Error {}
 
 extension FlutterError {
     convenience init(_ error: OneWelcomeWrapperError) {
@@ -31,16 +32,6 @@ extension OWCustomInfo {
     init(_ info: ONGCustomInfo) {
         status = Int64(info.status)
         data = info.data
-    }
-}
-
-extension OWAuthenticator {
-    init(_ authenticator: ONGAuthenticator) {
-        id = authenticator.identifier
-        name = authenticator.name
-        isPreferred = authenticator.isPreferred
-        isRegistered = authenticator.isRegistered
-        authenticatorType = Int64(authenticator.type.rawValue)
     }
 }
 
@@ -80,31 +71,41 @@ func toOWCustomInfo(_ info: ONGCustomInfo?) -> OWCustomInfo? {
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, ResourceMethodApi {
     func authenticateUser(profileId: String, authenticatorType: OWAuthenticatorType, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
-        <#code#>
+        OneginiModuleSwift.sharedInstance.authenticateUser(profileId: profileId, authenticatorType: OWAuthenticatorType) { result in
+            completion(result.mapError { $0 })
+        }
     }
     
-    func isBiometricAuthenticatorRegistered(completion: @escaping (Result<Bool, Error>) -> Void) {
-        <#code#>
+    func authenticateUserPreferred(profileId: String, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
+        OneginiModuleSwift.sharedInstance.authenticateUser(profileId: profileId, authenticatorType: nil) { result in
+            completion(result.mapError { $0 })
+        }
     }
     
-    func isBiometricAuthenticatorAvailable(completion: @escaping (Result<Bool, Error>) -> Void) {
-        <#code#>
+    func getBiometricAuthenticator(profileId: String, completion: @escaping (Result<OWAuthenticator, Error>) -> Void) {
+        
     }
     
-    func getPreferredAuthenticator(completion: @escaping (Result<OWAuthenticator, Error>) -> Void) {
-        <#code#>
+    func getPreferredAuthenticator(profileId: String, completion: @escaping (Result<OWAuthenticator, Error>) -> Void) {
+        
     }
     
     func setPreferredAuthenticator(authenticatorType: OWAuthenticatorType, completion: @escaping (Result<Void, Error>) -> Void) {
-        <#code#>
+        OneginiModuleSwift.sharedInstance.setPreferredAuthenticator(OWAuthenticatorType) { result in
+            completion(result.mapError { $0 })
+        }
     }
     
     func deregisterBiometricAuthenticator(completion: @escaping (Result<Void, Error>) -> Void) {
-        <#code#>
+        OneginiModuleSwift.sharedInstance.deregisterBiometricAuthenticator() { result in
+            completion(result.mapError { $0 })
+        }
     }
     
     func registerBiometricAuthenticator(completion: @escaping (Result<Void, Error>) -> Void) {
-        <#code#>
+        OneginiModuleSwift.sharedInstance.registerBiometricAuthenticator() { result in
+            completion(result.mapError { $0 })
+        }
     }
     
     func startApplication(securityControllerClassName: String?,
@@ -228,26 +229,8 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
         }
     }
 
-    func getRegisteredAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getRegisteredAuthenticators(profileId).mapError { $0 })
-    }
-
-    func getAllAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getAllAuthenticators(profileId).mapError { $0 })
-    }
-
     func getAuthenticatedUserProfile(completion: @escaping (Result<OWUserProfile, Error>) -> Void) {
         completion(OneginiModuleSwift.sharedInstance.getAuthenticatedUserProfile().mapError { $0 })
-    }
-
-    func authenticateUser(profileId: String, registeredAuthenticatorId: String?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.authenticateUser(profileId: profileId, authenticatorId: registeredAuthenticatorId) { result in
-            completion(result.mapError { $0 })
-        }
-    }
-
-    func getNotRegisteredAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void) {
-        completion(OneginiModuleSwift.sharedInstance.getNotRegisteredAuthenticators(profileId).mapError { $0 })
     }
 
     func changePin(completion: @escaping (Result<Void, Error>) -> Void) {
@@ -256,32 +239,10 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
         }
     }
 
-    func setPreferredAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.setPreferredAuthenticator(authenticatorId) { result in
-            completion(result.mapError { $0 })
-        }
-    }
-
-    func deregisterAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.deregisterAuthenticator(authenticatorId) { result in
-            completion(result.mapError { $0 })
-        }
-    }
-
-    func registerAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.registerAuthenticator(authenticatorId) { result in
-            completion(result.mapError { $0 })
-        }
-    }
-
     func logout(completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.logOut { result in
             completion(result.mapError { $0 })
         }
-    }
-
-    func mobileAuthWithOtp(data: String, completion: @escaping (Result<String?, Error>) -> Void) {
-
     }
 
     func getAppToWebSingleSignOn(url: String, completion: @escaping (Result<OWAppToWebSingleSignOn, Error>) -> Void) {

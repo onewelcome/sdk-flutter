@@ -2,8 +2,8 @@ import Foundation
 import OneginiSDKiOS
 
 protocol BridgeToAuthenticatorsHandlerProtocol {
-    func registerAuthenticator(_ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
-    func deregisterAuthenticator(_ userProfile: UserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
+    func registerBiometricAuthenticator(_ profile: UserProfile, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
+    func deregisterBiometricAuthenticator(_ profile: UserProfile, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
     func setPreferredAuthenticator(_ userProfile: UserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void)
 }
 
@@ -13,30 +13,22 @@ class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     init(loginHandler: LoginHandler) {
         self.loginHandler = loginHandler
     }
-    func registerAuthenticator(_ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        guard let profile = SharedUserClient.instance.authenticatedUserProfile else {
-            completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
-            return
-        }
-
+    
+    
+    func registerBiometricAuthenticator(_ profile: UserProfile, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
         // We don't have to check if the authenticator is already registered as the sdk will do that for us.
         let authenticators = SharedUserClient.instance.authenticators(.all, for: profile)
-        guard let authenticator = authenticators.first(where: { $0.identifier == authenticatorId }) else {
-            completion(.failure(FlutterError(.authenticatorNotFound)))
+        guard let authenticator = authenticators.first(where: { $0.type == AuthenticatorType.biometric }) else {
+            completion(.failure(FlutterError(.biometricAuthenticationNotAvailable)))
             return
         }
         let delegate = AuthenticatorRegistrationDelegateImpl(loginHandler: loginHandler, completion: completion)
         SharedUserClient.instance.register(authenticator: authenticator, delegate: delegate)
     }
-
-    func deregisterAuthenticator(_ userProfile: UserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        guard let authenticator = SharedUserClient.instance.authenticators(.all, for: userProfile).first(where: {$0.identifier == authenticatorId}) else {
-            completion(.failure(FlutterError(.authenticatorNotFound)))
-            return
-        }
-
-        if authenticator.isRegistered != true {
-            completion(.failure(FlutterError(.authenticatorNotRegistered)))
+    
+    func deregisterBiometricAuthenticator(_ profile: UserProfile, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        guard let authenticator = SharedUserClient.instance.authenticators(.all, for: profile).first(where: {$0.type == AuthenticatorType.biometric}) else {
+            completion(.failure(FlutterError(.biometricAuthenticationNotAvailable)))
             return
         }
         let delegate = AuthenticatorDeregistrationDelegateImpl(completion: completion)

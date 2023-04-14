@@ -15,6 +15,7 @@ enum OneWelcomeWrapperError: Int {
     case authenticationNotInProgress = 8037
     case otpAuthenticationNotInProgress = 8039
     case browserRegistrationNotInProgress = 8040
+    case biometricAuthenticationNotAvailable = 8043
 
     // iOS only
     case providedUrlIncorrect = 8014
@@ -95,6 +96,8 @@ enum OneWelcomeWrapperError: Int {
             return "Mobile Authentication is already in progress and can not be performed concurrently."
         case .browserRegistrationNotInProgress:
             return "Browser registration is currently not in progress."
+        case .biometricAuthenticationNotAvailable:
+            return "Biometric authentication is not supported on this device."
         }
     }
 }
