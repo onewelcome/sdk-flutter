@@ -6,6 +6,8 @@ import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.SdkErrorAssert
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticator
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticatorType
 import com.onegini.mobile.sdk.flutter.useCases.SetPreferredAuthenticatorUseCase
 import org.junit.Assert
 import org.junit.Before
@@ -36,32 +38,50 @@ class SetPreferredAuthenticatorUseCaseTests {
   }
 
   @Test
-  fun `When no user is authenticated, Then return an error`() {
+  fun `When no user is authenticated, Then return an NO_USER_PROFILE_IS_AUTHENTICATED error`() {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(null)
-    val result = setPreferredAuthenticatorUseCase("test").exceptionOrNull()
+
+    val result = setPreferredAuthenticatorUseCase(OWAuthenticatorType.BIOMETRIC).exceptionOrNull()
+
     SdkErrorAssert.assertEquals(NO_USER_PROFILE_IS_AUTHENTICATED, result)
   }
 
   @Test
-  fun `When an authenticator id is given that is not related to the authenticated user, Then an error should be thrown`() {
+  fun `When an authenticatorType is given that is not related to the authenticated user, Then should reject with AUTHENTICATOR_NOT_FOUND`() {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
     whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(emptySet())
 
-    val result = setPreferredAuthenticatorUseCase("test").exceptionOrNull()
+    val result = setPreferredAuthenticatorUseCase(OWAuthenticatorType.BIOMETRIC).exceptionOrNull()
+
     SdkErrorAssert.assertEquals(AUTHENTICATOR_NOT_FOUND, result)
   }
 
   @Test
-  fun `When the given authenticator id is found and registered, Then it should resolve with success`() {
+  fun `When the given authenticatorType is biometric and is registered, Then it should resolve with success`() {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
     whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(
       setOf(
         oneginiAuthenticatorMock
       )
     )
-    whenever(oneginiAuthenticatorMock.id).thenReturn("test")
+    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.FINGERPRINT)
 
-    val result = setPreferredAuthenticatorUseCase("test")
+    val result = setPreferredAuthenticatorUseCase(OWAuthenticatorType.BIOMETRIC)
+
+    Assert.assertEquals(result.getOrNull(), Unit)
+  }
+
+  @Test
+  fun `When the given authenticatorType is pin and is registered, Then it should resolve with success`() {
+    whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
+    whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(
+      setOf(
+        oneginiAuthenticatorMock
+      )
+    )
+    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.PIN)
+
+    val result = setPreferredAuthenticatorUseCase(OWAuthenticatorType.PIN)
 
     Assert.assertEquals(result.getOrNull(), Unit)
   }
