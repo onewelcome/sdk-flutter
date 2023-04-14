@@ -20,7 +20,6 @@ import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserUseCase
 import com.onegini.mobile.sdk.flutter.useCases.CancelBrowserRegistrationUseCase
 import com.onegini.mobile.sdk.flutter.useCases.CancelCustomRegistrationActionUseCase
 import com.onegini.mobile.sdk.flutter.useCases.ChangePinUseCase
-import com.onegini.mobile.sdk.flutter.useCases.DeregisterAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterBiometricAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterUserUseCase
 import com.onegini.mobile.sdk.flutter.useCases.EnrollMobileAuthenticationUseCase
@@ -65,9 +64,6 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
 
   @Inject
   lateinit var cancelCustomRegistrationActionUseCase: CancelCustomRegistrationActionUseCase
-
-  @Inject
-  lateinit var deregisterAuthenticatorUseCase: DeregisterAuthenticatorUseCase
 
   @Inject
   lateinit var deregisterBiometricAuthenticatorUseCase: DeregisterBiometricAuthenticatorUseCase
