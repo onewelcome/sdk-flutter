@@ -11,9 +11,12 @@ import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticatorType
 import javax.inject.Inject
 
 class GetPreferredAuthenticatorUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
-    operator fun invoke(callback: (Result<OWAuthenticator>) -> Unit) {
-        val authenticator = oneginiSDK.oneginiClient.userClient.preferredAuthenticator
-            ?: return callback(Result.failure(SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).pigeonError()))
+    operator fun invoke(profileId: String, callback: (Result<OWAuthenticator>) -> Unit) {
+        val userProfile = oneginiSDK.oneginiClient.userClient.userProfiles.find { it.profileId == profileId }
+            ?: return callback(Result.failure(SdkError(USER_PROFILE_DOES_NOT_EXIST).pigeonError()))
+        val authenticators = oneginiSDK.oneginiClient.userClient.getAllAuthenticators(userProfile)
+        val authenticator = authenticators.find { it.isPreferred }
+            ?: return callback(Result.failure(SdkError(BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE).pigeonError()))
 
         if (authenticator.type == OWAuthenticatorType.PIN.toOneginiInt()) {
             return callback(Result.success(OWAuthenticator(authenticator.id, authenticator.name, authenticator.isRegistered, authenticator.isPreferred, OWAuthenticatorType.PIN)))

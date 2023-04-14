@@ -223,7 +223,7 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   }
 
   override fun getPreferredAuthenticator(profileId: String, callback: (Result<OWAuthenticator>) -> Unit) {
-    getPreferredAuthenticatorUseCase(callback)
+    getPreferredAuthenticatorUseCase(profileId, callback)
   }
 
   override fun setPreferredAuthenticator(authenticatorType: OWAuthenticatorType, callback: (Result<Unit>) -> Unit) {
