@@ -1,6 +1,5 @@
 package com.onegini.mobile.sdk
 
-import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticatorRegistrationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorRegistrationError
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
@@ -10,7 +9,7 @@ import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
-import com.onegini.mobile.sdk.flutter.useCases.RegisterAuthenticatorUseCase
+import com.onegini.mobile.sdk.flutter.useCases.RegisterBiometricAuthenticatorUseCase
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -25,12 +24,9 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
-class RegisterAuthenticatorUseCaseTests {
+class RegisterBiometricAuthenticatorUseCaseTests {
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   lateinit var oneginiSdk: OneginiSDK
-
-  @Mock
-  lateinit var clientMock: OneginiClient
 
   @Mock
   lateinit var oneginiAuthenticatorMock: OneginiAuthenticator
@@ -41,18 +37,18 @@ class RegisterAuthenticatorUseCaseTests {
   @Mock
   lateinit var callbackMock: (Result<Unit>) -> Unit
 
-  private lateinit var registerAuthenticatorUseCase: RegisterAuthenticatorUseCase
+  private lateinit var registerBiometricAuthenticatorUseCase: RegisterBiometricAuthenticatorUseCase
 
   @Before
   fun attach() {
-    registerAuthenticatorUseCase = RegisterAuthenticatorUseCase(oneginiSdk)
+    registerBiometricAuthenticatorUseCase = RegisterBiometricAuthenticatorUseCase(oneginiSdk)
   }
 
   @Test
   fun `When no user is authenticated, Then it should return error`() {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(null)
 
-    registerAuthenticatorUseCase("test", callbackMock)
+    registerBiometricAuthenticatorUseCase(callbackMock)
 
     argumentCaptor<Result<Unit>>().apply {
       verify(callbackMock).invoke(capture())
@@ -61,42 +57,30 @@ class RegisterAuthenticatorUseCaseTests {
   }
 
   @Test
-  fun `When authenticator id is not recognised, Then it should return error`() {
+  fun `When authenticatorType is biometric and this is not available, Then it should return error`() {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
     whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(setOf(oneginiAuthenticatorMock))
-    whenever(oneginiAuthenticatorMock.id).thenReturn("other_test")
+    // We have PIN, but not FINGERPRINT
+    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.PIN)
 
-    registerAuthenticatorUseCase("test", callbackMock)
+    registerBiometricAuthenticatorUseCase(callbackMock)
 
     argumentCaptor<Result<Unit>>().apply {
       verify(callbackMock).invoke(capture())
-      SdkErrorAssert.assertEquals(AUTHENTICATOR_NOT_FOUND, firstValue.exceptionOrNull())
+      SdkErrorAssert.assertEquals(BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE, firstValue.exceptionOrNull())
     }
   }
 
   @Test
-  fun `When the user has an empty set of authenticators, Then an error should be returned`() {
-    whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
-    whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(emptySet())
-
-    registerAuthenticatorUseCase("test", callbackMock)
-
-    argumentCaptor<Result<Unit>>().apply {
-      verify(callbackMock).invoke(capture())
-      SdkErrorAssert.assertEquals(AUTHENTICATOR_NOT_FOUND, firstValue.exceptionOrNull())
-    }
-  }
-
-  @Test
-  fun `should return CustomInfo class with status and data as a params when given authenticator id found in getNotRegisteredAuthenticators method`() {
+  fun `When the authenticator is successfully registered, Then should resolve`() {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
     whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(setOf(oneginiAuthenticatorMock))
-    whenever(oneginiAuthenticatorMock.id).thenReturn("test")
+    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.FINGERPRINT)
     whenever(oneginiSdk.oneginiClient.userClient.registerAuthenticator(eq(oneginiAuthenticatorMock), any())).thenAnswer {
       it.getArgument<OneginiAuthenticatorRegistrationHandler>(1).onSuccess(CustomInfo(0, "data"))
     }
 
-    registerAuthenticatorUseCase("test", callbackMock)
+    registerBiometricAuthenticatorUseCase(callbackMock)
 
     argumentCaptor<Result<Unit>>().apply {
       verify(callbackMock).invoke(capture())
@@ -105,17 +89,17 @@ class RegisterAuthenticatorUseCaseTests {
   }
 
   @Test
-  fun `should return error when registerAuthenticator method returns error`() {
+  fun `When registerAuthenticator calls onError, Then should reject with that error`() {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
     whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(setOf(oneginiAuthenticatorMock))
-    whenever(oneginiAuthenticatorMock.id).thenReturn("test")
+    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.FINGERPRINT)
     whenever(oneginiAuthenticatorRegistrationErrorMock.errorType).thenReturn(OneginiAuthenticatorRegistrationError.GENERAL_ERROR)
     whenever(oneginiAuthenticatorRegistrationErrorMock.message).thenReturn("General error")
     whenever(oneginiSdk.oneginiClient.userClient.registerAuthenticator(eq(oneginiAuthenticatorMock), any())).thenAnswer {
       it.getArgument<OneginiAuthenticatorRegistrationHandler>(1).onError(oneginiAuthenticatorRegistrationErrorMock)
     }
 
-    registerAuthenticatorUseCase("test", callbackMock)
+    registerBiometricAuthenticatorUseCase(callbackMock)
 
     argumentCaptor<Result<Unit>>().apply {
       verify(callbackMock).invoke(capture())

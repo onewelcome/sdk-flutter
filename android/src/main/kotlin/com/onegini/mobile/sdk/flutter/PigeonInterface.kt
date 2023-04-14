@@ -44,7 +44,6 @@ import com.onegini.mobile.sdk.flutter.useCases.PinAuthenticationRequestAcceptUse
 import com.onegini.mobile.sdk.flutter.useCases.PinAuthenticationRequestDenyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.PinRegistrationRequestAcceptUseCase
 import com.onegini.mobile.sdk.flutter.useCases.PinRegistrationRequestDenyUseCase
-import com.onegini.mobile.sdk.flutter.useCases.RegisterAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.RegisterBiometricAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.RegistrationUseCase
 import com.onegini.mobile.sdk.flutter.useCases.ResourceRequestUseCase
@@ -106,9 +105,6 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
 
   @Inject
   lateinit var logoutUseCase: LogoutUseCase
-
-  @Inject
-  lateinit var registerAuthenticatorUseCase: RegisterAuthenticatorUseCase
 
   @Inject
   lateinit var registerBiometricAuthenticatorUseCase: RegisterBiometricAuthenticatorUseCase
