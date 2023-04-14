@@ -94,11 +94,15 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
     }
 
     func getBiometricAuthenticator(profileId: String, completion: @escaping (Result<OWAuthenticator, Error>) -> Void) {
-
+        OneginiModuleSwift.sharedInstance.getBiometricAuthenticator(profileId: profileId) { result in
+            completion(result.mapError { $0 })
+        }
     }
 
     func getPreferredAuthenticator(profileId: String, completion: @escaping (Result<OWAuthenticator, Error>) -> Void) {
-
+        OneginiModuleSwift.sharedInstance.getPreferredAuthenticator(profileId: profileId) { result in
+            completion(result.mapError { $0 })
+        }
     }
 
     func setPreferredAuthenticator(authenticatorType: OWAuthenticatorType, completion: @escaping (Result<Void, Error>) -> Void) {

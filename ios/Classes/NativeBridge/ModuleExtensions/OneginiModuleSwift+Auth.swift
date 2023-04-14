@@ -69,6 +69,22 @@ extension OneginiModuleSwift {
         bridgeConnector.toAuthenticatorsHandler.registerBiometricAuthenticator(profile, completion)
     }
 
+    func getBiometricAuthenticator(profileId: String, completion: @escaping (Result<OWAuthenticator, Error>) -> Void) {
+        guard let profile = SharedUserClient.instance.authenticatedUserProfile else {
+            completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
+            return
+        }
+        bridgeConnector.toAuthenticatorsHandler.getBiometricAuthenticator(profile, completion: completion)
+    }
+
+    func getPreferredAuthenticator(profileId: String, completion: @escaping (Result<OWAuthenticator, Error>) -> Void) {
+        guard let profile = SharedUserClient.instance.authenticatedUserProfile else {
+            completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
+            return
+        }
+        bridgeConnector.toAuthenticatorsHandler.getPreferredAuthenticator(profile, completion: completion)
+    }
+
     func getAuthenticatedUserProfile() -> Result<OWUserProfile, FlutterError> {
         guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
             return .failure(FlutterError(.noUserProfileIsAuthenticated))

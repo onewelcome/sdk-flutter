@@ -48,6 +48,31 @@ class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
         SharedUserClient.instance.setPreferred(authenticator: authenticator)
         completion(.success)
     }
+
+    func getBiometricAuthenticator(_ userProfile: UserProfile, completion: @escaping (Result<OWAuthenticator, Error>) -> Void) {
+        guard let authenticator = SharedUserClient.instance.authenticators(.all, for: userProfile).first(where: {$0.type == AuthenticatorType.biometric}) else {
+            completion(.failure(FlutterError(.biometricAuthenticationNotAvailable)))
+            return
+        }
+        completion(.success(OWAuthenticator(id: authenticator.identifier, name: authenticator.name, isRegistered: authenticator.isRegistered, isPreferred: authenticator.isPreferred, authenticatorType: OWAuthenticatorType.biometric)))
+    }
+
+    func getPreferredAuthenticator(_ userProfile: UserProfile, completion: @escaping (Result<OWAuthenticator, Error>) -> Void) {
+        guard let authenticator = SharedUserClient.instance.authenticators(.all, for: userProfile).first(where: {$0.isPreferred}) else {
+            completion(.failure(FlutterError(.authenticatorNotFound)))
+            return
+        }
+        if authenticator.type == AuthenticatorType.biometric {
+            completion(.success(OWAuthenticator(id: authenticator.identifier, name: authenticator.name, isRegistered: authenticator.isRegistered, isPreferred: authenticator.isPreferred, authenticatorType: OWAuthenticatorType.biometric)))
+            return
+        }
+        if authenticator.type == AuthenticatorType.pin {
+            completion(.success(OWAuthenticator(id: authenticator.identifier, name: authenticator.name, isRegistered: authenticator.isRegistered, isPreferred: authenticator.isPreferred, authenticatorType: OWAuthenticatorType.pin)))
+            return
+        }
+        // Should never happen because we don't support custom/fido authenticators
+        completion(.failure(FlutterError(.genericError)))
+    }
 }
 
 class AuthenticatorRegistrationDelegateImpl: AuthenticatorRegistrationDelegate {
