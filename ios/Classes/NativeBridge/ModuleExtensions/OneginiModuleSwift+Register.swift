@@ -43,7 +43,7 @@ extension OneginiModuleSwift {
 
     public func cancelBrowserRegistration(_ completion: @escaping (Result<Void, FlutterError>) -> Void) {
         bridgeConnector.toRegistrationHandler.cancelBrowserRegistration(completion)
-    }  
+    }
 
     func getRedirectUrl() -> Result<String, FlutterError> {
         return .success(ONGClient.sharedInstance().configModel.redirectURL)

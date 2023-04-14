@@ -32,36 +32,36 @@ extension OneginiModuleSwift {
         bridgeConnector.toAppToWebHandler.signInAppToWeb(targetURL: url, completion: completion)
     }
 
-    func authenticateUser(profileId: String, authenticatorId: String?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
+    func authenticateUser(profileId: String, authenticatorType: AuthenticatorType?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
 
         guard let profile = SharedUserClient.instance.userProfiles.first(where: { $0.profileId == profileId }) else {
             completion(.failure(SdkError(.userProfileDoesNotExist).flutterError()))
             return
         }
-        let authenticator = SharedUserClient.instance.authenticators(.all, for: profile).first(where: { $0.identifier == authenticatorId })
+        let authenticator = SharedUserClient.instance.authenticators(.all, for: profile).first(where: { $0.type == authenticatorType })
 
         bridgeConnector.toLoginHandler.authenticateUser(profile, authenticator: authenticator) { result in
             completion(result)
         }
     }
 
-    func setPreferredAuthenticator(_ identifierId: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+    func setPreferredAuthenticator(_ authenticatorType: AuthenticatorType, completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let profile = SharedUserClient.instance.authenticatedUserProfile else {
             completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
             return
         }
-        bridgeConnector.toAuthenticatorsHandler.setPreferredAuthenticator(profile, identifierId, completion)
+        bridgeConnector.toAuthenticatorsHandler.setPreferredAuthenticator(profile, authenticatorType, completion)
     }
 
-    func deregisterBiometricAuthenticator(completion: @escaping (Result<Void, FlutterError>) -> Void) -> Void {
+    func deregisterBiometricAuthenticator(completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let profile = SharedUserClient.instance.authenticatedUserProfile else {
             completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
             return
         }
         bridgeConnector.toAuthenticatorsHandler.deregisterBiometricAuthenticator(profile, completion)
     }
-    
-    func registerBiometricAuthenticator(completion: @escaping (Result<Void, FlutterError>) -> Void) -> Void {
+
+    func registerBiometricAuthenticator(completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let profile = SharedUserClient.instance.authenticatedUserProfile else {
             completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
             return

@@ -51,6 +51,17 @@ extension OWRequestResponse {
     }
 }
 
+extension OWAuthenticatorType {
+    func toOneginiType() -> AuthenticatorType {
+        switch self {
+        case .biometric:
+            return AuthenticatorType.biometric
+        case .pin:
+            return AuthenticatorType.pin
+        }
+    }
+}
+
 extension Result where Success == Void {
     public static var success: Result { .success(()) }
 }
@@ -71,43 +82,43 @@ func toOWCustomInfo(_ info: ONGCustomInfo?) -> OWCustomInfo? {
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, ResourceMethodApi {
     func authenticateUser(profileId: String, authenticatorType: OWAuthenticatorType, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.authenticateUser(profileId: profileId, authenticatorType: OWAuthenticatorType) { result in
+        OneginiModuleSwift.sharedInstance.authenticateUser(profileId: profileId, authenticatorType: authenticatorType.toOneginiType()) { result in
             completion(result.mapError { $0 })
         }
     }
-    
+
     func authenticateUserPreferred(profileId: String, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.authenticateUser(profileId: profileId, authenticatorType: nil) { result in
             completion(result.mapError { $0 })
         }
     }
-    
+
     func getBiometricAuthenticator(profileId: String, completion: @escaping (Result<OWAuthenticator, Error>) -> Void) {
-        
+
     }
-    
+
     func getPreferredAuthenticator(profileId: String, completion: @escaping (Result<OWAuthenticator, Error>) -> Void) {
-        
+
     }
-    
+
     func setPreferredAuthenticator(authenticatorType: OWAuthenticatorType, completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.setPreferredAuthenticator(OWAuthenticatorType) { result in
+        OneginiModuleSwift.sharedInstance.setPreferredAuthenticator(authenticatorType.toOneginiType()) { result in
             completion(result.mapError { $0 })
         }
     }
-    
+
     func deregisterBiometricAuthenticator(completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.deregisterBiometricAuthenticator() { result in
+        OneginiModuleSwift.sharedInstance.deregisterBiometricAuthenticator { result in
             completion(result.mapError { $0 })
         }
     }
-    
+
     func registerBiometricAuthenticator(completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.registerBiometricAuthenticator() { result in
+        OneginiModuleSwift.sharedInstance.registerBiometricAuthenticator { result in
             completion(result.mapError { $0 })
         }
     }
-    
+
     func startApplication(securityControllerClassName: String?,
                           configModelClassName: String?,
                           customIdentityProviderConfigs: [OWCustomIdentityProvider]?,
