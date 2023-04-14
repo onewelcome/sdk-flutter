@@ -58,8 +58,7 @@ enum class HttpRequestMethod(val raw: Int) {
 
 enum class OWAuthenticatorType(val raw: Int) {
   PIN(0),
-  BIOMETRIC(1),
-  PREFERRED(2);
+  BIOMETRIC(1);
 
   companion object {
     fun ofRaw(raw: Int): OWAuthenticatorType? {
@@ -440,8 +439,8 @@ interface UserClientApi {
   fun deregisterUser(profileId: String, callback: (Result<Unit>) -> Unit)
   fun getAuthenticatedUserProfile(callback: (Result<OWUserProfile>) -> Unit)
   fun authenticateUser(profileId: String, authenticatorType: OWAuthenticatorType, callback: (Result<OWRegistrationResponse>) -> Unit)
-  fun isBiometricAuthenticatorRegistered(profileId: String, callback: (Result<Boolean>) -> Unit)
-  fun isBiometricAuthenticatorAvailable(profileId: String, callback: (Result<Boolean>) -> Unit)
+  fun authenticateUserPreferred(profileId: String, callback: (Result<OWRegistrationResponse>) -> Unit)
+  fun getBiometricAuthenticator(profileId: String, callback: (Result<OWAuthenticator>) -> Unit)
   fun getPreferredAuthenticator(profileId: String, callback: (Result<OWAuthenticator>) -> Unit)
   fun setPreferredAuthenticator(authenticatorType: OWAuthenticatorType, callback: (Result<Unit>) -> Unit)
   fun deregisterBiometricAuthenticator(callback: (Result<Unit>) -> Unit)
@@ -625,12 +624,12 @@ interface UserClientApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.isBiometricAuthenticatorRegistered", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.authenticateUserPreferred", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val profileIdArg = args[0] as String
-            api.isBiometricAuthenticatorRegistered(profileIdArg) { result: Result<Boolean> ->
+            api.authenticateUserPreferred(profileIdArg) { result: Result<OWRegistrationResponse> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -645,12 +644,12 @@ interface UserClientApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.isBiometricAuthenticatorAvailable", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.getBiometricAuthenticator", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val profileIdArg = args[0] as String
-            api.isBiometricAuthenticatorAvailable(profileIdArg) { result: Result<Boolean> ->
+            api.getBiometricAuthenticator(profileIdArg) { result: Result<OWAuthenticator> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

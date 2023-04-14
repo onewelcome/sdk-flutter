@@ -224,8 +224,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                                   .data
                                                                   .first
                                                                   ?.profileId,
-                                                              OWAuthenticatorType
-                                                                  .preferred);
+                                                              null);
                                                         },
                                                         child: Text(
                                                             'Preferred authenticator'),

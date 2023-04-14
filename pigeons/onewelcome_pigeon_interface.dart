@@ -80,7 +80,6 @@ enum HttpRequestMethod {
 enum OWAuthenticatorType {
   pin,
   biometric,
-  preferred,
 }
 
 enum ResourceRequestType { authenticated, implicit, anonymous, unauthenticated }
@@ -161,11 +160,14 @@ abstract class UserClientApi {
   OWRegistrationResponse authenticateUser(
       String profileId, OWAuthenticatorType authenticatorType);
 
+  // This api is currently required because pigeon does not allow nullable enums
+  // as arguments. This is a workaround for that so we still have the nullable
+  // enum in the user_client api.
   @async
-  bool isBiometricAuthenticatorRegistered(String profileId);
+  OWRegistrationResponse authenticateUserPreferred(String profileId);
 
   @async
-  bool isBiometricAuthenticatorAvailable(String profileId);
+  OWAuthenticator getBiometricAuthenticator(String profileId);
 
   @async
   OWAuthenticator getPreferredAuthenticator(String profileId);

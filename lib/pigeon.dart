@@ -18,7 +18,6 @@ enum HttpRequestMethod {
 enum OWAuthenticatorType {
   pin,
   biometric,
-  preferred,
 }
 
 enum ResourceRequestType {
@@ -590,9 +589,9 @@ class UserClientApi {
     }
   }
 
-  Future<bool> isBiometricAuthenticatorRegistered(String arg_profileId) async {
+  Future<OWRegistrationResponse> authenticateUserPreferred(String arg_profileId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.isBiometricAuthenticatorRegistered', codec,
+        'dev.flutter.pigeon.UserClientApi.authenticateUserPreferred', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_profileId]) as List<Object?>?;
@@ -613,13 +612,13 @@ class UserClientApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as bool?)!;
+      return (replyList[0] as OWRegistrationResponse?)!;
     }
   }
 
-  Future<bool> isBiometricAuthenticatorAvailable(String arg_profileId) async {
+  Future<OWAuthenticator> getBiometricAuthenticator(String arg_profileId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.isBiometricAuthenticatorAvailable', codec,
+        'dev.flutter.pigeon.UserClientApi.getBiometricAuthenticator', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_profileId]) as List<Object?>?;
@@ -640,7 +639,7 @@ class UserClientApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as bool?)!;
+      return (replyList[0] as OWAuthenticator?)!;
     }
   }
 

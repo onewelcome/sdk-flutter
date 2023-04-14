@@ -30,14 +30,13 @@ import com.onegini.mobile.sdk.flutter.useCases.FingerprintFallbackToPinUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAccessTokenUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAppToWebSingleSignOnUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAuthenticatedUserProfileUseCase
+import com.onegini.mobile.sdk.flutter.useCases.GetBiometricAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetIdentityProvidersUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetPreferredAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetRedirectUrlUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfilesUseCase
 import com.onegini.mobile.sdk.flutter.useCases.HandleMobileAuthWithOtpUseCase
 import com.onegini.mobile.sdk.flutter.useCases.HandleRegisteredUrlUseCase
-import com.onegini.mobile.sdk.flutter.useCases.IsBiometricAuthenticatorAvailableUseCase
-import com.onegini.mobile.sdk.flutter.useCases.IsBiometricAuthenticatorRegisteredUseCase
 import com.onegini.mobile.sdk.flutter.useCases.LogoutUseCase
 import com.onegini.mobile.sdk.flutter.useCases.OtpAcceptAuthenticationRequestUseCase
 import com.onegini.mobile.sdk.flutter.useCases.OtpDenyAuthenticationRequestUseCase
@@ -106,12 +105,6 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   lateinit var handleRegisteredUrlUseCase: HandleRegisteredUrlUseCase
 
   @Inject
-  lateinit var isBiometricAuthenticatorRegisteredUseCase: IsBiometricAuthenticatorRegisteredUseCase
-
-  @Inject
-  lateinit var isBiometricAuthenticatorAvailableUseCase: IsBiometricAuthenticatorAvailableUseCase
-
-  @Inject
   lateinit var logoutUseCase: LogoutUseCase
 
   @Inject
@@ -158,6 +151,9 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
 
   @Inject
   lateinit var fingerprintFallbackToPinUseCase: FingerprintFallbackToPinUseCase
+
+  @Inject
+  lateinit var getBiometricAuthenticatorUseCase: GetBiometricAuthenticatorUseCase
 
   @Inject
   lateinit var resourceRequestUseCase: ResourceRequestUseCase
@@ -222,12 +218,12 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
     authenticateUserUseCase(profileId, authenticatorType, callback)
   }
 
-  override fun isBiometricAuthenticatorRegistered(profileId: String, callback: (Result<Boolean>) -> Unit) {
-    isBiometricAuthenticatorRegisteredUseCase(profileId, callback)
+  override fun authenticateUserPreferred(profileId: String, callback: (Result<OWRegistrationResponse>) -> Unit) {
+    authenticateUserUseCase(profileId, null, callback)
   }
 
-  override fun isBiometricAuthenticatorAvailable(profileId: String, callback: (Result<Boolean>) -> Unit) {
-    isBiometricAuthenticatorAvailableUseCase(profileId, callback)
+  override fun getBiometricAuthenticator(profileId: String, callback: (Result<OWAuthenticator>) -> Unit) {
+    getBiometricAuthenticatorUseCase(profileId, callback)
   }
 
   override fun getPreferredAuthenticator(profileId: String, callback: (Result<OWAuthenticator>) -> Unit) {

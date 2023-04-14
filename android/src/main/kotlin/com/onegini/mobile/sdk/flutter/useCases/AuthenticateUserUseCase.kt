@@ -21,7 +21,7 @@ class AuthenticateUserUseCase @Inject constructor(
   private val oneginiSDK: OneginiSDK,
   private val getUserProfileUseCase: GetUserProfileUseCase
 ) {
-  operator fun invoke(profileId: String, authenticatorType: OWAuthenticatorType, callback: (Result<OWRegistrationResponse>) -> Unit) {
+  operator fun invoke(profileId: String, authenticatorType: OWAuthenticatorType?, callback: (Result<OWRegistrationResponse>) -> Unit) {
     val userProfile = try {
       getUserProfileUseCase(profileId)
     } catch (error: SdkError) {
@@ -29,7 +29,7 @@ class AuthenticateUserUseCase @Inject constructor(
     }
 
     val authenticator = oneginiSDK.oneginiClient.userClient.getRegisteredAuthenticators(userProfile)
-      .find { it.type == authenticatorType.toOneginiInt() }
+      .find { it.type == authenticatorType?.toOneginiInt() }
 
     authenticate(userProfile, authenticator, callback)
   }

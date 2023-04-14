@@ -56,11 +56,14 @@ class UserClient {
   Future<OWRegistrationResponse> authenticateUser(
     BuildContext? context,
     String profileId,
-    OWAuthenticatorType authenticatorType,
+    OWAuthenticatorType? authenticatorType,
   ) async {
     Onegini.instance.setEventContext(context);
-
-    return await api.authenticateUser(profileId, authenticatorType);
+    if (authenticatorType != null) {
+      return await api.authenticateUser(profileId, authenticatorType);
+    } else {
+      return await api.authenticateUserPreferred(profileId);
+    }
   }
 
   /// Starts change pin flow.
@@ -74,24 +77,26 @@ class UserClient {
   ///Set preferred authenticator
   /// todo removed boolean return update docu
   Future<void> setPreferredAuthenticator(
-      BuildContext? context, OWAuthenticatorType authenticatorType) async {
-    Onegini.instance.setEventContext(context);
+      OWAuthenticatorType authenticatorType) async {
     await api.setPreferredAuthenticator(authenticatorType);
   }
 
   // Gets the preferred authenticator for the given profile
-  Future<void> getPreferredAuthenticator(String profileId) async {
-    await api.getPreferredAuthenticator(profileId);
+  Future<OWAuthenticator> getPreferredAuthenticator(String profileId) async {
+    return await api.getPreferredAuthenticator(profileId);
   }
 
-  Future<void> deregisterBiometricAuthenticator(
-      OWAuthenticatorType authenticatorType) async {
+  Future<void> deregisterBiometricAuthenticator() async {
     await api.deregisterBiometricAuthenticator();
   }
 
-  Future<void> registerBiometricAuthenticator(
-      OWAuthenticatorType authenticatorType) async {
+  Future<void> registerBiometricAuthenticator(BuildContext context) async {
+    Onegini.instance.setEventContext(context);
     await api.registerBiometricAuthenticator();
+  }
+
+  Future<OWAuthenticator> getBiometricAuthenticator(String profileId) async {
+    return await api.getBiometricAuthenticator(profileId);
   }
 
   ///Method for log out

@@ -7,7 +7,7 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
   AUTHENTICATOR_NOT_FOUND(8004, "The requested authenticator is not found"),
   HTTP_REQUEST_ERROR(8011, "OneWelcome: HTTP Request failed internally"),
   ERROR_CODE_HTTP_REQUEST(8013, "OneWelcome: HTTP Request returned an error code. Check Response for more info"),
-  BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE(8043, "Biometric authentication is supported on this device"),
+  BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE(8043, "Biometric authentication is not supported on this device"),
 
   REGISTRATION_NOT_IN_PROGRESS(8034, "Registration is currently not in progress"),
   AUTHENTICATION_NOT_IN_PROGRESS(8037, "Authentication is currently not in progress"),

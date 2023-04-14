@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-void showFlutterToast(String message) {
+void showFlutterToast(String? message) {
   Fluttertoast.showToast(
-      msg: message,
+      msg: message ?? "No message in error",
       toastLength: Toast.LENGTH_SHORT,
       gravity: ToastGravity.BOTTOM,
       timeInSecForIosWeb: 4,
