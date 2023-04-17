@@ -2,8 +2,6 @@ package com.onegini.mobile.sdk.flutter.useCases
 
 import com.onegini.mobile.sdk.android.handlers.OneginiAuthenticatorDeregistrationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorDeregistrationError
-import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
-import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError

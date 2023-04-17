@@ -17,7 +17,6 @@ import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
 class GetIdentityProvidersUseCaseTests {
-
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   lateinit var oneginiSdk: OneginiSDK
 
@@ -27,7 +26,7 @@ class GetIdentityProvidersUseCaseTests {
   @Mock
   lateinit var oneginiIdentityProviderSecondMock: OneginiIdentityProvider
 
-  lateinit var getIdentityProvidersUseCase: GetIdentityProvidersUseCase
+  private lateinit var getIdentityProvidersUseCase: GetIdentityProvidersUseCase
 
   @Before
   fun attach() {

@@ -31,7 +31,7 @@ class HandleMobileAuthWithOtpUseCaseTest {
   @Mock
   lateinit var callbackMock: (Result<Unit>) -> Unit
 
-  lateinit var handleMobileAuthWithOtpUseCase: HandleMobileAuthWithOtpUseCase
+  private lateinit var handleMobileAuthWithOtpUseCase: HandleMobileAuthWithOtpUseCase
 
   @Before
   fun attach() {

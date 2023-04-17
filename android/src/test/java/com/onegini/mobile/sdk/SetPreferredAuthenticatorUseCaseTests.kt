@@ -19,7 +19,6 @@ import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
 class SetPreferredAuthenticatorUseCaseTests {
-
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   lateinit var oneginiSdk: OneginiSDK
 
@@ -29,7 +28,7 @@ class SetPreferredAuthenticatorUseCaseTests {
   @Mock
   lateinit var oneginiAuthenticatorMock: OneginiAuthenticator
 
-  lateinit var setPreferredAuthenticatorUseCase: SetPreferredAuthenticatorUseCase
+  private lateinit var setPreferredAuthenticatorUseCase: SetPreferredAuthenticatorUseCase
 
   @Before
   fun attach() {

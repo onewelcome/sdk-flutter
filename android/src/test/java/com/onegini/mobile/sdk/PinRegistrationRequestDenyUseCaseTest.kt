@@ -17,10 +17,6 @@ import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
 class PinRegistrationRequestDenyUseCaseTest {
-
-  @Mock
-  lateinit var oneginiPinCallbackMock: OneginiPinCallback
-
   @Mock
   lateinit var callbackMock: (Result<Unit>) -> Unit
 
@@ -30,9 +26,9 @@ class PinRegistrationRequestDenyUseCaseTest {
   @Mock
   lateinit var oneginiPinCallback: OneginiPinCallback
 
-  lateinit var pinRegistrationRequestDenyUseCase: PinRegistrationRequestDenyUseCase
+  private lateinit var pinRegistrationRequestDenyUseCase: PinRegistrationRequestDenyUseCase
 
-  lateinit var pinRequestHandler: PinRequestHandler
+  private lateinit var pinRequestHandler: PinRequestHandler
 
   @Before
   fun attach() {
@@ -48,7 +44,7 @@ class PinRegistrationRequestDenyUseCaseTest {
 
   @Test
   fun `When a pin registration callback is set, Then it should resolve successfully`() {
-    WhenPinCreationStarted()
+    whenPinCreationStarted()
 
     val result = pinRegistrationRequestDenyUseCase().getOrNull()
     Assert.assertEquals(Unit, result)
@@ -56,15 +52,14 @@ class PinRegistrationRequestDenyUseCaseTest {
 
   @Test
   fun `When a pin registration callback is set, Then it should call deny on the sdk callback`() {
-    WhenPinCreationStarted()
+    whenPinCreationStarted()
 
     pinRegistrationRequestDenyUseCase()
 
     verify(oneginiPinCallback).denyAuthenticationRequest()
   }
 
-
-  private fun WhenPinCreationStarted() {
+  private fun whenPinCreationStarted() {
     // Since we Mock the SDK we need to call the startPinCreation ourselves on the CreatePinRequestHandler
     pinRequestHandler.startPinCreation(UserProfile("123456"), oneginiPinCallback, 5)
   }

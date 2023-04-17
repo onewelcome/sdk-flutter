@@ -8,7 +8,6 @@ import javax.inject.Singleton
 
 @Module
 class FlutterOneWelcomeSdkModule(private val applicationContext: Context, private val nativeApi: NativeCallFlutterApi) {
-
   @Provides
   @Singleton
   fun provideContext() = applicationContext

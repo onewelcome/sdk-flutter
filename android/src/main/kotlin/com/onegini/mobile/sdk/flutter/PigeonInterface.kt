@@ -55,78 +55,115 @@ import javax.inject.Inject
 open class PigeonInterface : UserClientApi, ResourceMethodApi {
   @Inject
   lateinit var authenticateDeviceUseCase: AuthenticateDeviceUseCase
+
   @Inject
   lateinit var authenticateUserImplicitlyUseCase: AuthenticateUserImplicitlyUseCase
+
   @Inject
   lateinit var authenticateUserUseCase: AuthenticateUserUseCase
+
   @Inject
   lateinit var cancelCustomRegistrationActionUseCase: CancelCustomRegistrationActionUseCase
+
   @Inject
   lateinit var deregisterAuthenticatorUseCase: DeregisterAuthenticatorUseCase
+
   @Inject
   lateinit var deregisterUserUseCase: DeregisterUserUseCase
+
   @Inject
   lateinit var getAccessTokenUseCase: GetAccessTokenUseCase
+
   @Inject
   lateinit var cancelBrowserRegistrationUseCase: CancelBrowserRegistrationUseCase
+
   @Inject
   lateinit var getAllAuthenticatorsUseCase: GetAllAuthenticatorsUseCase
+
   @Inject
   lateinit var getAppToWebSingleSignOnUseCase: GetAppToWebSingleSignOnUseCase
+
   @Inject
   lateinit var getAuthenticatedUserProfileUseCase: GetAuthenticatedUserProfileUseCase
+
   @Inject
   lateinit var getIdentityProvidersUseCase: GetIdentityProvidersUseCase
+
   @Inject
   lateinit var getNotRegisteredAuthenticatorsUseCase: GetNotRegisteredAuthenticatorsUseCase
+
   @Inject
   lateinit var getRedirectUrlUseCase: GetRedirectUrlUseCase
+
   @Inject
   lateinit var getRegisteredAuthenticatorsUseCase: GetRegisteredAuthenticatorsUseCase
+
   @Inject
   lateinit var getUserProfilesUseCase: GetUserProfilesUseCase
+
   @Inject
   lateinit var handleRegisteredUrlUseCase: HandleRegisteredUrlUseCase
+
   @Inject
   lateinit var logoutUseCase: LogoutUseCase
+
   @Inject
   lateinit var registerAuthenticatorUseCase: RegisterAuthenticatorUseCase
+
   @Inject
   lateinit var registrationUseCase: RegistrationUseCase
+
   @Inject
   lateinit var setPreferredAuthenticatorUseCase: SetPreferredAuthenticatorUseCase
+
   @Inject
   lateinit var startAppUseCase: StartAppUseCase
+
   @Inject
   lateinit var submitCustomRegistrationActionUseCase: SubmitCustomRegistrationActionUseCase
+
   @Inject
   lateinit var changePinUseCase: ChangePinUseCase
+
   @Inject
   lateinit var validatePinWithPolicyUseCase: ValidatePinWithPolicyUseCase
+
   @Inject
   lateinit var pinAuthenticationRequestAcceptUseCase: PinAuthenticationRequestAcceptUseCase
+
   @Inject
   lateinit var pinAuthenticationRequestDenyUseCase: PinAuthenticationRequestDenyUseCase
+
   @Inject
   lateinit var pinRegistrationRequestAcceptUseCase: PinRegistrationRequestAcceptUseCase
+
   @Inject
   lateinit var pinRegistrationRequestDenyUseCase: PinRegistrationRequestDenyUseCase
+
   @Inject
   lateinit var fingerprintAuthenticationRequestDenyUseCase: FingerprintAuthenticationRequestDenyUseCase
+
   @Inject
   lateinit var fingerprintAuthenticationRequestAcceptUseCase: FingerprintAuthenticationRequestAcceptUseCase
+
   @Inject
   lateinit var fingerprintFallbackToPinUseCase: FingerprintFallbackToPinUseCase
+
   @Inject
   lateinit var resourceRequestUseCase: ResourceRequestUseCase
+
   @Inject
   lateinit var enrollMobileAuthenticationUseCase: EnrollMobileAuthenticationUseCase
+
   @Inject
   lateinit var handleMobileAuthWithOtpUseCase: HandleMobileAuthWithOtpUseCase
+
   @Inject
   lateinit var otpDenyAuthenticationRequestUseCase: OtpDenyAuthenticationRequestUseCase
+
   @Inject
   lateinit var otpAcceptAuthenticationRequestUseCase: OtpAcceptAuthenticationRequestUseCase
+
   @Inject
   lateinit var oneginiSDK: OneginiSDK
   override fun startApplication(
@@ -138,7 +175,14 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
     additionalResourceUrls: List<String>?, // iOS only
     callback: (Result<Unit>) -> Unit
   ) {
-    startAppUseCase(securityControllerClassName, configModelClassName, customIdentityProviderConfigs, connectionTimeout, readTimeout, callback)
+    startAppUseCase(
+      securityControllerClassName,
+      configModelClassName,
+      customIdentityProviderConfigs,
+      connectionTimeout,
+      readTimeout,
+      callback
+    )
   }
 
   override fun registerUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit) {
@@ -287,6 +331,7 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
     resourceRequestUseCase(type, details, callback)
   }
 }
+
 fun CustomInfo.mapToOwCustomInfo(): OWCustomInfo {
   return OWCustomInfo(this.status.toLong(), this.data)
 }

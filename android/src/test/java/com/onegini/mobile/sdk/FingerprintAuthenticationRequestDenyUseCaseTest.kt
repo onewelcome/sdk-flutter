@@ -17,16 +17,16 @@ import org.mockito.kotlin.verify
 
 @RunWith(MockitoJUnitRunner::class)
 class FingerprintAuthenticationRequestDenyUseCaseTest {
-
   @Mock
   lateinit var oneginiFingerprintCallbackMock: OneginiFingerprintCallback
 
   @Mock
   lateinit var nativeApi: NativeCallFlutterApi
 
-  lateinit var fingerprintAuthenticationRequestDenyUseCase: FingerprintAuthenticationRequestDenyUseCase
+  private lateinit var fingerprintAuthenticationRequestDenyUseCase: FingerprintAuthenticationRequestDenyUseCase
 
-  lateinit var fingerprintAuthenticationRequestHandler: FingerprintAuthenticationRequestHandler
+  private lateinit var fingerprintAuthenticationRequestHandler: FingerprintAuthenticationRequestHandler
+
   @Before
   fun attach() {
     fingerprintAuthenticationRequestHandler = FingerprintAuthenticationRequestHandler(nativeApi)
@@ -42,7 +42,7 @@ class FingerprintAuthenticationRequestDenyUseCaseTest {
 
   @Test
   fun `When a pin authentication callback is set, Then it should resolve successfully`() {
-    WhenFingerPrintHasStarted()
+    whenFingerPrintHasStarted()
 
     val result = fingerprintAuthenticationRequestDenyUseCase().getOrNull()
 
@@ -51,14 +51,14 @@ class FingerprintAuthenticationRequestDenyUseCaseTest {
 
   @Test
   fun `When a pin authentication callback is set, Then it should call deny on the sdk callback`() {
-    WhenFingerPrintHasStarted()
+    whenFingerPrintHasStarted()
 
     fingerprintAuthenticationRequestDenyUseCase()
 
     verify(oneginiFingerprintCallbackMock).denyAuthenticationRequest()
   }
 
-  fun WhenFingerPrintHasStarted() {
+  private fun whenFingerPrintHasStarted() {
     fingerprintAuthenticationRequestHandler.startAuthentication(UserProfile("123456"), oneginiFingerprintCallbackMock)
   }
 }

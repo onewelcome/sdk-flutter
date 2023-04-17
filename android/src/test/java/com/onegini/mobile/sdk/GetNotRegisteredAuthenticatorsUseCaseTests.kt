@@ -31,7 +31,7 @@ class GetNotRegisteredAuthenticatorsUseCaseTests {
   @Mock
   lateinit var oneginiAuthenticatorSecondMock: OneginiAuthenticator
 
-  lateinit var getNotRegisteredAuthenticatorsUseCase: GetNotRegisteredAuthenticatorsUseCase
+  private lateinit var getNotRegisteredAuthenticatorsUseCase: GetNotRegisteredAuthenticatorsUseCase
 
   @Before
   fun attach() {

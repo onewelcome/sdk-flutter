@@ -37,7 +37,7 @@ class AuthenticateUserImplicitlyUseCaseTests {
   @Mock
   lateinit var callbackMock: (Result<Unit>) -> Unit
 
-  lateinit var authenticateUserImplicitlyUseCase: AuthenticateUserImplicitlyUseCase
+  private lateinit var authenticateUserImplicitlyUseCase: AuthenticateUserImplicitlyUseCase
 
   @Before
   fun attach() {

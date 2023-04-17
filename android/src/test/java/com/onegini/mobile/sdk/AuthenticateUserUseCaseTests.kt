@@ -41,7 +41,7 @@ class AuthenticateUserUseCaseTests {
   @Mock
   lateinit var oneginiAuthenticationErrorMock: OneginiAuthenticationError
 
-  lateinit var authenticateUserUseCase: AuthenticateUserUseCase
+  private lateinit var authenticateUserUseCase: AuthenticateUserUseCase
 
   @Before
   fun attach() {
