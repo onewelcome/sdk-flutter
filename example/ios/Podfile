@@ -34,6 +34,7 @@ flutter_ios_podfile_setup
 
 target 'Runner' do
   pod 'SwiftLint'
+  pod 'Periphery'
   use_frameworks!
   use_modular_headers!
 

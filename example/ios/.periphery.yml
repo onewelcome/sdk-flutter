@@ -1,0 +1,6 @@
+retain_public: true
+schemes:
+- Runner
+targets:
+- Runner
+workspace: .symlinks/plugins/onegini/example/ios/.symlinks/plugins/onegini/example/ios/.symlinks/plugins/onegini/example/ios/.symlinks/plugins/onegini/example/ios/.symlinks/plugins/onegini/example/ios/Runner.xcworkspace
