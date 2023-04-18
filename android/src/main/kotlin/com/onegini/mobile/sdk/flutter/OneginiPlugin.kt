@@ -1,10 +1,10 @@
 package com.onegini.mobile.sdk.flutter
 
 import androidx.annotation.NonNull
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import com.onegini.mobile.sdk.flutter.module.FlutterOneWelcomeSdkModule
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceMethodApi
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 
 /** OneginiPlugin */

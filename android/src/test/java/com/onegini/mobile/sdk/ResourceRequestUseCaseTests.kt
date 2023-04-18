@@ -1,22 +1,20 @@
 package com.onegini.mobile.sdk
 
 import com.onegini.mobile.sdk.android.client.UserClient
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ERROR_CODE_HTTP_REQUEST
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.UNEXPECTED_ERROR_TYPE
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.GET
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.GET
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestDetails
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceRequestType
-import okhttp3.Callback
-import okhttp3.Headers
-import okhttp3.Response
-import org.mockito.kotlin.any
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ERROR_CODE_HTTP_REQUEST
-
 import com.onegini.mobile.sdk.flutter.useCases.ResourceRequestUseCase
 import junit.framework.Assert.fail
+import okhttp3.Callback
+import okhttp3.Headers
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -24,6 +22,7 @@ import org.junit.runner.RunWith
 import org.mockito.Answers
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
