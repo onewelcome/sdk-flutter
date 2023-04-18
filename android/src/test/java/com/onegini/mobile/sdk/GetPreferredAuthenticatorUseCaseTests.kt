@@ -8,6 +8,7 @@ import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticator
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticatorType
 import com.onegini.mobile.sdk.flutter.useCases.GetPreferredAuthenticatorUseCase
+import com.onegini.mobile.sdk.flutter.useCases.GetUserProfileUseCase
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -36,7 +37,8 @@ class GetPreferredAuthenticatorUseCaseTests {
     private val profileId = "QWERTY"
     @Before
     fun attach() {
-        getPreferredAuthenticatorUseCase = GetPreferredAuthenticatorUseCase(oneginiSdk)
+        val getUserProfileUseCase = GetUserProfileUseCase(oneginiSdk)
+        getPreferredAuthenticatorUseCase = GetPreferredAuthenticatorUseCase(oneginiSdk, getUserProfileUseCase)
     }
 
     @Test

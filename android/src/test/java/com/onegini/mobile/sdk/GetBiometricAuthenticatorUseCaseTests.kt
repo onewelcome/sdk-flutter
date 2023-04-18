@@ -8,6 +8,7 @@ import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticator
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticatorType
 import com.onegini.mobile.sdk.flutter.useCases.GetBiometricAuthenticatorUseCase
+import com.onegini.mobile.sdk.flutter.useCases.GetUserProfileUseCase
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -35,7 +36,8 @@ class GetBiometricAuthenticatorUseCaseTests {
 
     @Before
     fun attach() {
-        getBiometricAuthenticatorUseCase = GetBiometricAuthenticatorUseCase(oneginiSdk)
+        val getUserProfileUseCase = GetUserProfileUseCase(oneginiSdk)
+        getBiometricAuthenticatorUseCase = GetBiometricAuthenticatorUseCase(oneginiSdk, getUserProfileUseCase)
     }
 
     private val profileId = "QWERTY"
