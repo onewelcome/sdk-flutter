@@ -13,10 +13,14 @@ class Onegini {
   /// User client methods.
   final UserClientApi api = UserClientApi();
 
+  late final UserClient userClient;
+
   // Stream over which OW events will be send
   final StreamController<OWEvent> owEventStreamController = StreamController<OWEvent>.broadcast();
 
-  late final UserClient userClient;
+  // Close the stream when the instance gets stopped
+  static final Finalizer<StreamController<OWEvent>> _finalizer =
+      Finalizer((owEventStreamController) => owEventStreamController.close());
 
   Onegini._internal() {
     userClient = UserClient(api);
@@ -24,7 +28,10 @@ class Onegini {
 
   static final Onegini instance = Onegini._internal();
 
-  factory Onegini() => instance;
+  factory Onegini() {
+    _finalizer.attach(instance, instance.owEventStreamController, detach: instance);
+    return instance;
+  }
 
   /// Communication channel between flutter and native side.
   final MethodChannel channel = const MethodChannel('onegini');
