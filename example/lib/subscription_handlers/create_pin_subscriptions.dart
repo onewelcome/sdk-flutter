@@ -10,7 +10,7 @@ import 'package:onegini_example/screens/pin_request_screen.dart';
 
 // Event Subscriptions related to the creation of Pin
 class CreatePinSubscriptions {
-  static List<StreamSubscription<OWEvent>> getSubscriptions(BuildContext context) {
+  static List<StreamSubscription<OWEvent>> initSubscriptions(BuildContext context) {
     return [_getOpenPinCreationSub(context), _getClosePinCreationSub(context), _getPinNotAllowedSub()];
   }
 

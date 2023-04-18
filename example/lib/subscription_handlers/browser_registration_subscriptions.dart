@@ -8,7 +8,7 @@ import 'package:onegini_example/ow_broadcast_helper.dart';
 
 // Event Subscriptions related to the creation of Pin
 class BrowserRegistrationSubscriptions {
-  static List<StreamSubscription<OWEvent>> getSubscriptions() {
+  static List<StreamSubscription<OWEvent>> initSubscriptions() {
     return [_getHandleRegisteredUrSub()];
   }
 

@@ -9,7 +9,7 @@ import 'package:onegini_example/screens/auth_otp_screen.dart';
 
 // Event Subscriptions related to Custom Registration
 class OtpSubscriptions {
-  static List<StreamSubscription<OWEvent>> getSubscriptions(BuildContext context) {
+  static List<StreamSubscription<OWEvent>> initSubscriptions(BuildContext context) {
     return [_getOpenAuthOtpSub(context), _getCloseAuthOtpSub(context)];
   }
 

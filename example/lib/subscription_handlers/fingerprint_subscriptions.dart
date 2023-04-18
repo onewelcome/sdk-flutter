@@ -12,7 +12,7 @@ import 'package:onegini_example/screens/pin_request_screen.dart';
 
 // Event Subscriptions related to the creation of Pin
 class FingerprintSubscriptions {
-  static List<StreamSubscription<OWEvent>> getSubscriptions(BuildContext context) {
+  static List<StreamSubscription<OWEvent>> initSubscriptions(BuildContext context) {
     var fingerprintOverlay = OverlayEntry(builder: (context) {
       return Container(
           color: Colors.black12.withOpacity(0.5),

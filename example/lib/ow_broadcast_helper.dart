@@ -17,16 +17,16 @@ class OWBroadcastHelper {
   }
 
   static List<StreamSubscription<OWEvent>> initRegistrationSubscriptions(BuildContext context) {
-    var browserRegistrationSubs = BrowserRegistrationSubscriptions.getSubscriptions();
-    var createPinSubs = CreatePinSubscriptions.getSubscriptions(context);
-    var customRegistrationSubs = CustomRegistrationSubscriptions.getSubscriptions(context);
+    var browserRegistrationSubs = BrowserRegistrationSubscriptions.initSubscriptions();
+    var createPinSubs = CreatePinSubscriptions.initSubscriptions(context);
+    var customRegistrationSubs = CustomRegistrationSubscriptions.initSubscriptions(context);
 
     return browserRegistrationSubs + createPinSubs + customRegistrationSubs;
   }
 
   static List<StreamSubscription<OWEvent>> initAuthenticationSubscriptions(BuildContext context) {
-    var pinAuthSubs = PinAuthenticationSubscriptions.getSubscriptions(context);
-    var fingerprintSubs = FingerprintSubscriptions.getSubscriptions(context);
+    var pinAuthSubs = PinAuthenticationSubscriptions.initSubscriptions(context);
+    var fingerprintSubs = FingerprintSubscriptions.initSubscriptions(context);
 
     return pinAuthSubs + fingerprintSubs;
   }

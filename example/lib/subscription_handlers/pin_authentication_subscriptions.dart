@@ -10,7 +10,7 @@ import 'package:onegini_example/screens/pin_screen.dart';
 
 // Event Subscriptions related to the creation of Pin
 class PinAuthenticationSubscriptions {
-  static List<StreamSubscription<OWEvent>> getSubscriptions(BuildContext context) {
+  static List<StreamSubscription<OWEvent>> initSubscriptions(BuildContext context) {
     var pinScreenController = PinScreenController();
 
     return [_getOpenPinAuthSub(context, pinScreenController), _getClosePinAuthSub(context), _getNextPinAuthAttemptSub(pinScreenController)];

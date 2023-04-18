@@ -12,7 +12,7 @@ import 'package:onegini_example/screens/otp_screen.dart';
 
 // Event Subscriptions related to Custom Registration
 class CustomRegistrationSubscriptions {
-  static List<StreamSubscription<OWEvent>> getSubscriptions(BuildContext context) {
+  static List<StreamSubscription<OWEvent>> initSubscriptions(BuildContext context) {
     return [_getInitCustomRegistrationSub(), _getFinishCustomRegistrationSub(context)];
   }
 
