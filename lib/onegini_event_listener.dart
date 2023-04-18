@@ -11,91 +11,91 @@ class OneginiEventListener implements NativeCallFlutterApi {
   /// Browser Registration related events
   @override
   void n2fHandleRegisteredUrl(String url) {
-    broadcastEvent(HandleRegisteredUrlEvent(url));
+    _broadcastEvent(HandleRegisteredUrlEvent(url));
   }
 
   /// Pin Creation related events
   @override
   void n2fOpenPinCreation() {
     // renamed OpenPinRegistrationEvent to OpenPinCreationEvent
-    broadcastEvent(OpenPinCreationEvent());
+    _broadcastEvent(OpenPinCreationEvent());
   }
 
   @override
   void n2fClosePinCreation() {
     // renamed ClosePinRegistrationEvent -> ClosePinCreationEvent
-    broadcastEvent(ClosePinCreationEvent());
+    _broadcastEvent(ClosePinCreationEvent());
   }
 
   @override
   void n2fPinNotAllowed(OWOneginiError error) {
-    broadcastEvent(PinNotAllowedEvent(error));
+    _broadcastEvent(PinNotAllowedEvent(error));
   }
 
   /// Custom Registration related events
   @override
   void n2fEventInitCustomRegistration(
       OWCustomInfo? customInfo, String providerId) {
-    broadcastEvent(InitCustomRegistrationEvent(customInfo, providerId));
+    _broadcastEvent(InitCustomRegistrationEvent(customInfo, providerId));
   }
 
   @override
   void n2fEventFinishCustomRegistration(
       OWCustomInfo? customInfo, String providerId) {
-    broadcastEvent(FinishCustomRegistrationEvent(customInfo, providerId));
+    _broadcastEvent(FinishCustomRegistrationEvent(customInfo, providerId));
   }
 
   /// Pin Authentication related events
   @override
   void n2fOpenPinAuthentication() {
-    broadcastEvent(OpenPinAuthenticationEvent());
+    _broadcastEvent(OpenPinAuthenticationEvent());
   }
 
   @override
   void n2fClosePinAuthentication() {
-    broadcastEvent(ClosePinAuthenticationEvent());
+    _broadcastEvent(ClosePinAuthenticationEvent());
   }
 
   @override
   void n2fNextPinAuthenticationAttempt(
       OWAuthenticationAttempt authenticationAttempt) {
-    broadcastEvent(NextPinAuthenticationAttemptEvent(authenticationAttempt));
+    _broadcastEvent(NextPinAuthenticationAttemptEvent(authenticationAttempt));
   }
 
   /// Fingerprint related events
   @override
   void n2fShowScanningFingerprint() {
-    broadcastEvent(ShowScanningFingerprintEvent());
+    _broadcastEvent(ShowScanningFingerprintEvent());
   }
 
   @override
   void n2fOpenFingerprintScreen() {
-    broadcastEvent(OpenFingerprintEvent());
+    _broadcastEvent(OpenFingerprintEvent());
   }
 
   @override
   void n2fCloseFingerprintScreen() {
-    broadcastEvent(CloseFingerprintEvent());
+    _broadcastEvent(CloseFingerprintEvent());
   }
 
   @override
   void n2fNextFingerprintAuthenticationAttempt() {
-    broadcastEvent(NextFingerprintAuthenticationAttempt());
+    _broadcastEvent(NextFingerprintAuthenticationAttempt());
   }
 
   /// OTP Mobile authentication related events
   @override
   void n2fOpenAuthOtp(String? message) {
-    broadcastEvent(OpenAuthOtpEvent(message ?? ""));
+    _broadcastEvent(OpenAuthOtpEvent(message ?? ""));
   }
 
   @override
   void n2fCloseAuthOtp() {
-    broadcastEvent(CloseAuthOtpEvent());
+    _broadcastEvent(CloseAuthOtpEvent());
   }
 
   /// Helper method
-  void broadcastEvent(OWEvent event) {
+  void _broadcastEvent(OWEvent event) {
     Onegini.instance.userClient.owEventStreamController.sink.add(event);
   }
 }
