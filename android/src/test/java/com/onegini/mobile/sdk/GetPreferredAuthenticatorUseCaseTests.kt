@@ -61,6 +61,17 @@ class GetPreferredAuthenticatorUseCaseTests {
     }
 
     @Test
+    fun `When no preferred authenticator exists, Then we reject with a generic error`() {
+        WhenUserProfileExists()
+
+        getPreferredAuthenticatorUseCase(profileId, callbackMock)
+
+        val captor = argumentCaptor<Result<OWAuthenticator>>()
+        verify(callbackMock).invoke(captor.capture())
+        SdkErrorAssert.assertEquals(GENERIC_ERROR, captor.firstValue.exceptionOrNull())
+    }
+
+    @Test
     fun `When the preferred authenticator is biometric, Then should resolve with a biometric authenticator`() {
         WhenPreferedAuthenticatorIsBiometric()
         WhenUserProfileExists()

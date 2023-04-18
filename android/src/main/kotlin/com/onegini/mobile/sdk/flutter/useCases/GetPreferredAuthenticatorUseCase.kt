@@ -1,6 +1,5 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.GENERIC_ERROR
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.USER_PROFILE_DOES_NOT_EXIST
 import com.onegini.mobile.sdk.flutter.OneginiSDK
@@ -16,7 +15,7 @@ class GetPreferredAuthenticatorUseCase @Inject constructor(private val oneginiSD
             ?: return callback(Result.failure(SdkError(USER_PROFILE_DOES_NOT_EXIST).pigeonError()))
         val authenticators = oneginiSDK.oneginiClient.userClient.getAllAuthenticators(userProfile)
         val authenticator = authenticators.find { it.isPreferred }
-            ?: return callback(Result.failure(SdkError(BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE).pigeonError()))
+            ?: return callback(Result.failure(SdkError(GENERIC_ERROR).pigeonError()))
 
         if (authenticator.type == OWAuthenticatorType.PIN.toOneginiInt()) {
             return callback(Result.success(OWAuthenticator(authenticator.id, authenticator.name, authenticator.isRegistered, authenticator.isPreferred, OWAuthenticatorType.PIN)))
