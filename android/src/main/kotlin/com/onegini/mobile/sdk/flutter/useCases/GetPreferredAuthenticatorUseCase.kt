@@ -17,13 +17,13 @@ class GetPreferredAuthenticatorUseCase @Inject constructor(private val oneginiSD
         val authenticator = authenticators.find { it.isPreferred }
             ?: return callback(Result.failure(SdkError(GENERIC_ERROR).pigeonError()))
 
-        if (authenticator.type == OWAuthenticatorType.PIN.toOneginiInt()) {
-            return callback(Result.success(OWAuthenticator(authenticator.id, authenticator.name, authenticator.isRegistered, authenticator.isPreferred, OWAuthenticatorType.PIN)))
-        }
-        if (authenticator.type == OWAuthenticatorType.BIOMETRIC.toOneginiInt()) {
-            return callback(Result.success(OWAuthenticator(authenticator.id, authenticator.name, authenticator.isRegistered, authenticator.isPreferred, OWAuthenticatorType.BIOMETRIC)))
-        }
-        // This should never happen because we don't support CUSTOM/FIDO authenticators
-        return callback(Result.failure(SdkError(GENERIC_ERROR).pigeonError()))
+        val authenticatorType = when (authenticator.type) {
+            OWAuthenticatorType.PIN.toOneginiInt() -> OWAuthenticatorType.PIN
+            OWAuthenticatorType.BIOMETRIC.toOneginiInt() -> OWAuthenticatorType.BIOMETRIC
+            // This should never happen because we don't support CUSTOM/FIDO authenticators
+            else -> null
+        } ?: return callback(Result.failure(SdkError(GENERIC_ERROR).pigeonError()))
+
+        return  callback(Result.success(OWAuthenticator(authenticator.id, authenticator.name, authenticator.isRegistered, authenticator.isPreferred, authenticatorType)))
     }
 }
