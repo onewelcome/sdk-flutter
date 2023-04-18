@@ -354,6 +354,7 @@ class Home extends StatelessWidget {
       }
     });
     if (oneginiAppToWebSingleSignOn != null) {
+      // ignore: deprecated_member_use
       await launch(
         oneginiAppToWebSingleSignOn.redirectUrl,
         enableDomStorage: true,

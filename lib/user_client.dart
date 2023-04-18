@@ -1,15 +1,11 @@
 import 'dart:async';
 
-import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/pigeon.dart';
 
 ///Сlass with basic methods available to the developer.
 class UserClient {
   final UserClientApi api;
   UserClient(this.api);
-
-  // ignore: close_sinks
-  final owEventStreamController = StreamController<OWEvent>.broadcast();
 
   ///Start registration flow.
   ///

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini/pigeon.dart';
 import 'package:onegini_example/components/display_toast.dart';
-import 'package:onegini_example/ow_broadcast_helper.dart';
 import 'package:onegini_example/screens/login_screen.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();

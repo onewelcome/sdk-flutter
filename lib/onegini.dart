@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
+import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/onegini_event_listener.dart';
 import 'package:onegini/resources_methods.dart';
 import 'package:onegini/user_client.dart';
@@ -11,6 +12,10 @@ class Onegini {
   // UserClientApi is the flutter to native api created by the Pigeon package, see /pigeons/README.md
   /// User client methods.
   final UserClientApi api = UserClientApi();
+
+  // Stream over which OW events will be send
+  final StreamController<OWEvent> owEventStreamController = StreamController<OWEvent>.broadcast();
+
   late final UserClient userClient;
 
   Onegini._internal() {
@@ -35,7 +40,7 @@ class Onegini {
     int? connectionTimeout,
     int? readTimeout,
   }) async {
-    NativeCallFlutterApi.setup(OneginiEventListener());
+    NativeCallFlutterApi.setup(OneginiEventListener(owEventStreamController));
     await api.startApplication(
         securityControllerClassName,
         configModelClassName,

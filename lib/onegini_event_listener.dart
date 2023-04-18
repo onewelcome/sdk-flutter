@@ -1,13 +1,18 @@
+import 'dart:async';
+
 import 'package:onegini/events/browser_event.dart';
 import 'package:onegini/events/custom_registration_event.dart';
 import 'package:onegini/events/fingerprint_event.dart';
 import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/events/otp_event.dart';
 import 'package:onegini/events/pin_event.dart';
-import 'package:onegini/onegini.dart';
 import 'package:onegini/pigeon.dart';
 
 class OneginiEventListener implements NativeCallFlutterApi {
+  final StreamController<OWEvent> broadCastController;
+
+  OneginiEventListener(this.broadCastController);
+
   /// Browser Registration related events
   @override
   void n2fHandleRegisteredUrl(String url) {
@@ -17,13 +22,11 @@ class OneginiEventListener implements NativeCallFlutterApi {
   /// Pin Creation related events
   @override
   void n2fOpenPinCreation() {
-    // renamed OpenPinRegistrationEvent to OpenPinCreationEvent
     _broadcastEvent(OpenPinCreationEvent());
   }
 
   @override
   void n2fClosePinCreation() {
-    // renamed ClosePinRegistrationEvent -> ClosePinCreationEvent
     _broadcastEvent(ClosePinCreationEvent());
   }
 
@@ -96,6 +99,6 @@ class OneginiEventListener implements NativeCallFlutterApi {
 
   /// Helper method
   void _broadcastEvent(OWEvent event) {
-    Onegini.instance.userClient.owEventStreamController.sink.add(event);
+    broadCastController.sink.add(event);
   }
 }

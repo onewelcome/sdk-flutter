@@ -11,7 +11,7 @@ import 'package:onegini_example/subscription_handlers/pin_authentication_subscri
 
 class OWBroadcastHelper {
   static Stream<T> createStream<T>() {
-    var broadCastController = Onegini.instance.userClient.owEventStreamController;
+    var broadCastController = Onegini.instance.owEventStreamController;
 
     return broadCastController.stream.where((event) => event is T).cast<T>();
   }
