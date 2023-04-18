@@ -10,7 +10,6 @@ import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestDetails
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceRequestType
 import com.onegini.mobile.sdk.flutter.useCases.ResourceRequestUseCase
-import junit.framework.Assert.fail
 import okhttp3.Callback
 import okhttp3.Headers
 import okhttp3.OkHttpClient
@@ -107,7 +106,7 @@ class ResourceRequestUseCaseTests {
           Assert.assertEquals(error.message, ERROR_CODE_HTTP_REQUEST.message)
           Assert.assertEquals(((error.details as Map<*, *>).toMap()["response"] as Map<*, *>)["statusCode"], "400")
         }
-        else -> fail(UNEXPECTED_ERROR_TYPE.message)
+        else -> Assert.fail(UNEXPECTED_ERROR_TYPE.message)
       }
     }
   }

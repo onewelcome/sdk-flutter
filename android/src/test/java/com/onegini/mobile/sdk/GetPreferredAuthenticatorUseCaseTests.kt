@@ -50,8 +50,8 @@ class GetPreferredAuthenticatorUseCaseTests {
 
     @Test
     fun `When the preferred authenticator is pin, Then should resolve with a pin authenticator`() {
-        WhenPreferedAuthenticatorIsPin()
-        WhenUserProfileExists()
+        whenPreferedAuthenticatorIsPin()
+        whenUserProfileExists()
 
         getPreferredAuthenticatorUseCase(profileId, callbackMock)
 
@@ -62,7 +62,7 @@ class GetPreferredAuthenticatorUseCaseTests {
 
     @Test
     fun `When no preferred authenticator exists, Then we reject with a generic error`() {
-        WhenUserProfileExists()
+        whenUserProfileExists()
 
         getPreferredAuthenticatorUseCase(profileId, callbackMock)
 
@@ -73,8 +73,8 @@ class GetPreferredAuthenticatorUseCaseTests {
 
     @Test
     fun `When the preferred authenticator is biometric, Then should resolve with a biometric authenticator`() {
-        WhenPreferedAuthenticatorIsBiometric()
-        WhenUserProfileExists()
+        whenPreferedAuthenticatorIsBiometric()
+        whenUserProfileExists()
 
         getPreferredAuthenticatorUseCase(profileId, callbackMock)
 
@@ -85,8 +85,8 @@ class GetPreferredAuthenticatorUseCaseTests {
 
     @Test
     fun `When the preferred authenticator is not pin or fingerprint, Then should reject with a generic error`() {
-        WhenPreferedAuthenticatorIsCustom()
-        WhenUserProfileExists()
+        whenPreferedAuthenticatorIsCustom()
+        whenUserProfileExists()
 
         getPreferredAuthenticatorUseCase(profileId, callbackMock)
 
@@ -95,23 +95,23 @@ class GetPreferredAuthenticatorUseCaseTests {
         SdkErrorAssert.assertEquals(GENERIC_ERROR, captor.firstValue.exceptionOrNull())
     }
 
-    private fun WhenUserProfileExists() {
+    private fun whenUserProfileExists() {
         whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile(profileId)))
     }
 
-    private fun WhenPreferedAuthenticatorIsPin() {
+    private fun whenPreferedAuthenticatorIsPin() {
         whenever(oneginiAuthenticator.isPreferred).thenReturn(true)
         whenever(oneginiAuthenticator.type).thenReturn(OneginiAuthenticator.PIN)
         whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(any())).thenReturn(setOf(oneginiAuthenticator))
     }
 
-    private fun WhenPreferedAuthenticatorIsBiometric() {
+    private fun whenPreferedAuthenticatorIsBiometric() {
         whenever(oneginiAuthenticator.isPreferred).thenReturn(true)
         whenever(oneginiAuthenticator.type).thenReturn(OneginiAuthenticator.FINGERPRINT)
         whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(any())).thenReturn(setOf(oneginiAuthenticator))
     }
 
-    private fun WhenPreferedAuthenticatorIsCustom() {
+    private fun whenPreferedAuthenticatorIsCustom() {
         whenever(oneginiAuthenticator.isPreferred).thenReturn(true)
         whenever(oneginiAuthenticator.type).thenReturn(OneginiAuthenticator.CUSTOM)
         whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(any())).thenReturn(setOf(oneginiAuthenticator))

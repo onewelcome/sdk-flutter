@@ -1,6 +1,5 @@
 package com.onegini.mobile.sdk
 
-import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
 import com.onegini.mobile.sdk.flutter.OneginiSDK
@@ -19,9 +18,6 @@ import org.mockito.kotlin.whenever
 class GetUserProfilesUseCaseTests {
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   lateinit var oneginiSdk: OneginiSDK
-
-  @Mock
-  lateinit var clientMock: OneginiClient
 
   private lateinit var getUserProfilesUseCase: GetUserProfilesUseCase
 
@@ -57,7 +53,7 @@ class GetUserProfilesUseCaseTests {
         Assert.assertEquals(userProfiles[0].profileId, "QWERTY")
         Assert.assertEquals(userProfiles[1].profileId, "ASDFGH")
       }
-      else -> junit.framework.Assert.fail(OneWelcomeWrapperErrors.UNEXPECTED_ERROR_TYPE.message)
+      else -> Assert.fail(OneWelcomeWrapperErrors.UNEXPECTED_ERROR_TYPE.message)
     }
   }
 }

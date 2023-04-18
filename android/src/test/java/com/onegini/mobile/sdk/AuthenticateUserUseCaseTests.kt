@@ -68,7 +68,7 @@ class AuthenticateUserUseCaseTests {
 
   @Test
   fun `When a valid ProfileId is passed and null for authenticatorType, Then it should call result success with with UserProfile and CustomInfo as json`() {
-    WhenUserProfileExists()
+    whenUserProfileExists()
     whenever(
       oneginiSdk.oneginiClient.userClient.authenticateUser(
         anyOrNull(),
@@ -90,8 +90,8 @@ class AuthenticateUserUseCaseTests {
 
   @Test
   fun `When a valid ProfileId is passed with a non-null authenticatorType which is registered, Then it should call result success with with UserProfile and CustomInfo as json`() {
-    WhenUserProfileExists()
-    WhenFingerprintIsRegistered()
+    whenUserProfileExists()
+    whenFingerprintIsRegistered()
     whenever(
       oneginiSdk.oneginiClient.userClient.authenticateUser(
         anyOrNull(),
@@ -114,7 +114,7 @@ class AuthenticateUserUseCaseTests {
 
   @Test
   fun `When authenticateUser return error, Then it should call result error`() {
-    WhenUserProfileExists()
+    whenUserProfileExists()
     whenever(oneginiAuthenticationErrorMock.errorType).thenReturn(OneginiAuthenticationError.GENERAL_ERROR)
     whenever(oneginiAuthenticationErrorMock.message).thenReturn("General error")
     whenever(oneginiSdk.oneginiClient.userClient.authenticateUser(eq(UserProfile(profileId)), any())).thenAnswer {
@@ -131,11 +131,11 @@ class AuthenticateUserUseCaseTests {
     }
   }
 
-  private fun WhenUserProfileExists() {
+  private fun whenUserProfileExists() {
     whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile(profileId)))
   }
 
-  private fun WhenFingerprintIsRegistered() {
+  private fun whenFingerprintIsRegistered() {
     whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.FINGERPRINT)
     whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(
       setOf(

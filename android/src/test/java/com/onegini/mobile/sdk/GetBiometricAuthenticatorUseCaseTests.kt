@@ -51,7 +51,7 @@ class GetBiometricAuthenticatorUseCaseTests {
 
     @Test
     fun `When the biometric authenticator is not available, Then should reject with BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE`() {
-        WhenUserProfileExists()
+        whenUserProfileExists()
 
         getBiometricAuthenticatorUseCase(profileId, callbackMock)
 
@@ -62,8 +62,8 @@ class GetBiometricAuthenticatorUseCaseTests {
 
     @Test
     fun `When the biometric authenticator is available, Then should resolve with the authenticator`() {
-        WhenUserProfileExists()
-        WhenBiometricAuthenticatorAvailable()
+        whenUserProfileExists()
+        whenBiometricAuthenticatorAvailable()
 
         getBiometricAuthenticatorUseCase(profileId, callbackMock)
 
@@ -73,11 +73,11 @@ class GetBiometricAuthenticatorUseCaseTests {
     }
 
 
-    private fun WhenUserProfileExists() {
+    private fun whenUserProfileExists() {
         whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile(profileId)))
     }
 
-    private fun WhenBiometricAuthenticatorAvailable() {
+    private fun whenBiometricAuthenticatorAvailable() {
         whenever(oneginiAuthenticator.type).thenReturn(OneginiAuthenticator.FINGERPRINT)
         whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(any())).thenReturn(setOf(oneginiAuthenticator))
     }
