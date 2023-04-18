@@ -13,6 +13,7 @@ import 'package:onegini_example/models/application_details.dart';
 import 'package:onegini_example/models/client_resource.dart';
 import 'package:onegini_example/ow_broadcast_helper.dart';
 import 'package:onegini_example/screens/qr_scan_screen.dart';
+import 'package:onegini_example/subscription_handlers/otp_subscriptions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:onegini/pigeon.dart';
 
@@ -59,8 +60,8 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     this.profileId = widget.userProfileId;
 
     // Init listeners for changePin, setPreferredAuthenticators
-    this.registrationSubscriptions = OWBroadcastHelper.initRegistrationListeners(context);
-    this.authenticationSubscriptions = OWBroadcastHelper.initAuthenticationListeners(context);
+    this.registrationSubscriptions = OWBroadcastHelper.initRegistrationSubscriptions(context);
+    this.authenticationSubscriptions = OWBroadcastHelper.initAuthenticationSubscriptions(context);
 
     getAuthenticators();
   }
@@ -322,7 +323,7 @@ class Home extends StatelessWidget {
   }
 
   authWithOpt(BuildContext context) async {
-    List<StreamSubscription> otpSubscriptions = OWBroadcastHelper.initOTPListeners(context);
+    List<StreamSubscription> otpSubscriptions = OtpSubscriptions.getSubscriptions(context);
 
     var data = await Navigator.push(
       context,

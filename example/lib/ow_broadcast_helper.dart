@@ -1,158 +1,34 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:onegini/callbacks/onegini_custom_registration_callback.dart';
-import 'package:onegini/events/browser_event.dart';
-import 'package:onegini/events/custom_registration_event.dart';
-import 'package:onegini/events/fingerprint_event.dart';
 import 'package:onegini/events/onewelcome_events.dart';
-import 'package:onegini/events/otp_event.dart';
-import 'package:onegini/events/pin_event.dart';
 import 'package:onegini/onegini.dart';
-import 'package:onegini/user_client.dart';
-import 'package:onegini_example/components/display_toast.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:onegini_example/screens/auth_otp_screen.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:onegini_example/screens/fingerprint_screen.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:onegini_example/screens/otp_screen.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:onegini_example/screens/pin_request_screen.dart';
-// ignore: import_of_legacy_library_into_null_safe
-import 'package:onegini_example/screens/pin_screen.dart';
+import 'package:onegini_example/subscription_handlers/browser_registration_subscriptions.dart';
+import 'package:onegini_example/subscription_handlers/create_pin_subscriptions.dart';
+import 'package:onegini_example/subscription_handlers/custom_registration_subscriptions.dart';
+import 'package:onegini_example/subscription_handlers/fingerprint_subscriptions.dart';
+import 'package:onegini_example/subscription_handlers/pin_authentication_subscriptions.dart';
 
 class OWBroadcastHelper {
-  static List<StreamSubscription<OWEvent>> initRegistrationListeners(BuildContext context) {
+  static Stream<T> createStream<T>() {
     var broadCastController = Onegini.instance.userClient.owEventStreamController;
 
-    // Url Registration Related Events
-    StreamSubscription<OWEvent> handleRegisteredUrlSub = broadCastController.stream.where((event) => event is HandleRegisteredUrlEvent).cast<HandleRegisteredUrlEvent>().listen((event) {
-      Onegini.instance.userClient.handleRegisteredUserUrl(event.url,
-        signInType: WebSignInType.insideApp);
-    });
-
-    // Pin Registration Related Events
-    StreamSubscription<OWEvent> openPinSub = broadCastController.stream.where((event) => event is OpenPinCreationEvent).listen((event) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PinRequestScreen()),
-      );
-    });
-
-    StreamSubscription<OWEvent> closePinSub =  broadCastController.stream.where((event) => event is ClosePinCreationEvent).listen((event) {
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-    });
-
-    StreamSubscription<OWEvent> pinNotAllowedSub = broadCastController.stream.where((event) => event is PinNotAllowedEvent).cast<PinNotAllowedEvent>().listen((event) {
-      showFlutterToast("${event.error.message} Code: ${event.error.code}");
-    });
-
-    // Custom Registration related events
-    StreamSubscription<OWEvent> initCustomSub = broadCastController.stream.where((event) => event is InitCustomRegistrationEvent).cast<InitCustomRegistrationEvent>().listen((event) {
-      if (event.providerId == "2-way-otp-api") {
-        // a 2-way-otp does not require data for the initialization request
-        OneginiCustomRegistrationCallback()
-            .submitSuccessAction(event.providerId, null)
-            .catchError((error) => {
-              if (error is PlatformException)
-                {showFlutterToast(error.message ?? "An error occuring while answering init custom registration")}
-            });
-      }
-    });
-
-    StreamSubscription<OWEvent> finishCustomSub = broadCastController.stream.where((event) => event is FinishCustomRegistrationEvent).cast<FinishCustomRegistrationEvent>().listen((event) {
-      if (event.providerId == "2-way-otp-api") {
-        // a 2-way-otp does not require data for the initialization request
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => OtpScreen(
-                  password: event.customInfo?.data, providerId: event.providerId)),
-        );
-      }
-    });
-
-    return [handleRegisteredUrlSub, openPinSub, closePinSub, pinNotAllowedSub, initCustomSub, finishCustomSub];
+    return broadCastController.stream.where((event) => event is T).cast<T>();
   }
 
-  static List<StreamSubscription<OWEvent>> initAuthenticationListeners(BuildContext context) {
-    var broadCastController = Onegini.instance.userClient.owEventStreamController;
-    var pinScreenController = PinScreenController();
-    var fingerprintOverlay = OverlayEntry(builder: (context) {
-      return Container(
-          color: Colors.black12.withOpacity(0.5),
-          child: Center(
-            child: CircularProgressIndicator(),
-          ));
-    });
+  static List<StreamSubscription<OWEvent>> initRegistrationSubscriptions(BuildContext context) {
+    var browserRegistrationSubs = BrowserRegistrationSubscriptions.getSubscriptions();
+    var createPinSubs = CreatePinSubscriptions.getSubscriptions(context);
+    var customRegistrationSubs = CustomRegistrationSubscriptions.getSubscriptions(context);
 
-    // Pin Authentication related events
-    StreamSubscription<OWEvent> openPinSub = broadCastController.stream.where((event) => event is OpenPinAuthenticationEvent).listen((event) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PinScreen(controller: pinScreenController)),
-      );
-    });
-
-    StreamSubscription<OWEvent> closePinSub = broadCastController.stream.where((event) => event is ClosePinAuthenticationEvent).listen((event) {
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-    });
-
-    // Fingerprint Authentication related events
-    StreamSubscription<OWEvent> openFingerprintSub = broadCastController.stream.where((event) => event is OpenFingerprintEvent).listen((event) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => FingerprintScreen()),
-      );
-    });
-
-    StreamSubscription<OWEvent> closeFingerprintSub = broadCastController.stream.where((event) => event is CloseFingerprintEvent).listen((event) {
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-    });
-
-    StreamSubscription<OWEvent> showScanningFingerprintSub = broadCastController.stream.where((event) => event is ShowScanningFingerprintEvent).listen((event) {
-      Overlay.of(context).insert(fingerprintOverlay);
-    });
-
-    StreamSubscription<OWEvent> receivedFingerprintSub = broadCastController.stream.where((event) => event is NextFingerprintAuthenticationAttempt).listen((event) {
-      fingerprintOverlay.remove();
-    });
-
-    StreamSubscription<OWEvent> nextAuthenticationAttempt = broadCastController.stream.where((event) => event is NextPinAuthenticationAttemptEvent).cast<NextPinAuthenticationAttemptEvent>().listen((event) {
-      pinScreenController.clearState();
-      showFlutterToast("failed attempts ${event.authenticationAttempt.failedAttempts} from ${event.authenticationAttempt.maxAttempts}");
-    });
-
-    return [openPinSub, closePinSub, openFingerprintSub, closeFingerprintSub, showScanningFingerprintSub, receivedFingerprintSub, nextAuthenticationAttempt];
+    return browserRegistrationSubs + createPinSubs + customRegistrationSubs;
   }
 
-  static List<StreamSubscription<OWEvent>> initOTPListeners(BuildContext context) {
-    var broadCastController = Onegini.instance.userClient.owEventStreamController;
+  static List<StreamSubscription<OWEvent>> initAuthenticationSubscriptions(BuildContext context) {
+    var pinAuthSubs = PinAuthenticationSubscriptions.getSubscriptions(context);
+    var fingerprintSubs = FingerprintSubscriptions.getSubscriptions(context);
 
-    StreamSubscription<OWEvent> openAuthOtpSub = broadCastController.stream.where((event) => event is OpenAuthOtpEvent).cast<OpenAuthOtpEvent>().listen((event) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-            builder: (context) => AuthOtpScreen(
-                  message: event.message,
-                )),
-      );
-    });
-
-    StreamSubscription<OWEvent> closeAuthOtpSub = broadCastController.stream.where((event) => event is CloseAuthOtpEvent).listen((event) {
-      Navigator.of(context).pop();
-    });
-
-    return [openAuthOtpSub, closeAuthOtpSub];
+    return pinAuthSubs + fingerprintSubs;
   }
 
   static void stopListening(List<StreamSubscription<OWEvent>> subscriptions) {

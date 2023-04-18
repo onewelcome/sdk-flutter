@@ -27,9 +27,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   initState() {
-    // this.broadcastHelper = OWBroadcastHelper(context: context, temp: "1");
-    this.registrationSubscriptions = OWBroadcastHelper.initRegistrationListeners(context);
-    this.authenticationSubscriptions = OWBroadcastHelper.initAuthenticationListeners(context);
+    // Init subscriptipons for registration and authentication
+    this.registrationSubscriptions = OWBroadcastHelper.initRegistrationSubscriptions(context);
+    this.authenticationSubscriptions = OWBroadcastHelper.initAuthenticationSubscriptions(context);
 
     super.initState();
   }
