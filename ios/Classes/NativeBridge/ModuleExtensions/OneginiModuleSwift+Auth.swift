@@ -15,8 +15,8 @@ extension OneginiModuleSwift {
 
     public func authenticateUserImplicitly(_ profileId: String, _ scopes: [String]?,
                                            completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        guard let profile = ONGClient.sharedInstance().userClient.userProfiles().first(where: { $0.profileId == profileId }) else {
-            completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
+        guard let profile = SharedUserClient.instance.userProfiles.first(where: { $0.profileId == profileId }) else {
+            completion(.failure(SdkError(.userProfileDoesNotExist).flutterError()))
             return
         }
 

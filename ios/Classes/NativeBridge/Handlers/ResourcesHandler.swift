@@ -5,7 +5,7 @@ typealias FlutterDataCallback = (Any?, SdkError?) -> Void
 
 protocol FetchResourcesHandlerProtocol: AnyObject {
     func authenticateDevice(_ scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void)
-    func authenticateUserImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void)
+    func authenticateUserImplicitly(_ profile: UserProfile, scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void)
     func requestResource(_ type: ResourceRequestType, _ details: OWRequestDetails, completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void)
 }
 
@@ -13,8 +13,7 @@ protocol FetchResourcesHandlerProtocol: AnyObject {
 class ResourcesHandler: FetchResourcesHandlerProtocol {
 
     func authenticateDevice(_ scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        Logger.log("authenticateDevice", sender: self)
-        ONGDeviceClient.sharedInstance().authenticateDevice(scopes) { _, error in
+        SharedDeviceClient.instance.authenticateDevice(with: scopes) { error in
             if let error = error {
                 let mappedError = FlutterError(ErrorMapper().mapError(error))
                 completion(.failure(mappedError))
@@ -24,15 +23,13 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         }
     }
 
-    func authenticateUserImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        Logger.log("authenticateImplicitly", sender: self)
-        ONGUserClient.sharedInstance().implicitlyAuthenticateUser(profile, scopes: scopes) { success, error in
-            if success {
-                completion(.success)
-            } else {
-                // This error construction is obviously not good, but it will work for now till we refactor this later
-                let mappedError = FlutterError(error.flatMap { ErrorMapper().mapError($0) } ?? SdkError(.genericError))
+    func authenticateUserImplicitly(_ profile: UserProfile, scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        SharedUserClient.instance.implicitlyAuthenticate(user: profile, with: scopes) { error in
+            if let error = error {
+                let mappedError = FlutterError(ErrorMapper().mapError(error))
                 completion(.failure(mappedError))
+            } else {
+                completion(.success)
             }
         }
     }
