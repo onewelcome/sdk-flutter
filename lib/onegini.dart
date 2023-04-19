@@ -1,20 +1,27 @@
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:onegini/constants/constants.dart';
+import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/onegini_event_listener.dart';
 import 'package:onegini/resources_methods.dart';
 import 'package:onegini/user_client.dart';
 import 'package:onegini/pigeon.dart';
 
-import 'model/onegini_removed_user_profile.dart';
-
 /// The main class used to call methods.
 class Onegini {
+  // UserClientApi is the flutter to native api created by the Pigeon package, see /pigeons/README.md
+  /// User client methods.
   final UserClientApi api = UserClientApi();
+
   late final UserClient userClient;
+
+  // Stream over which OW events will be send
+  final StreamController<OWEvent> owEventStreamController =
+      StreamController<OWEvent>.broadcast();
+
+  // Close the stream when the instance gets stopped
+  static final Finalizer<StreamController<OWEvent>> _finalizer =
+      Finalizer((owEventStreamController) => owEventStreamController.close());
 
   Onegini._internal() {
     userClient = UserClient(api);
@@ -22,28 +29,20 @@ class Onegini {
 
   static final Onegini instance = Onegini._internal();
 
-  factory Onegini() => instance;
+  factory Onegini() {
+    _finalizer.attach(instance, instance.owEventStreamController,
+        detach: instance);
+    return instance;
+  }
 
   /// Communication channel between flutter and native side.
   final MethodChannel channel = const MethodChannel('onegini');
 
-  /// Reference to the event listener.
-  OneginiEventListener? _eventListener;
-
   /// Resource methods.
   ResourcesMethods resourcesMethods = ResourcesMethods();
 
-  // UserClientApi is the flutter to native api created by the Pigeon package, see /pigeons/README.md
-  /// User client methods.
-
-  /// Use this method when you want change [BuildContext] in your [OneginiEventListener]
-  setEventContext(BuildContext? context) {
-    _eventListener?.context = context;
-  }
-
   /// Initialize SDK and establish communication on [eventListener].
-  Future<void> startApplication(
-    OneginiEventListener eventListener, {
+  Future<void> startApplication({
     String? securityControllerClassName,
     String? configModelClassName,
     List<OWCustomIdentityProvider>? customIdentityProviderConfigs,
@@ -51,8 +50,7 @@ class Onegini {
     int? readTimeout,
     List<String>? additionalResourceUrls,
   }) async {
-    _eventListener = eventListener;
-    NativeCallFlutterApi.setup(_eventListener);
+    NativeCallFlutterApi.setup(OneginiEventListener(owEventStreamController));
     await api.startApplication(
         securityControllerClassName,
         configModelClassName,

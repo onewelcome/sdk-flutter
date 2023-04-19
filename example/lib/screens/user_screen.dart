@@ -1,15 +1,19 @@
 // @dart = 2.10
+import 'dart:async';
 import 'dart:convert';
 
 import "package:collection/collection.dart";
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/model/request_details.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini_example/components/display_toast.dart';
 import 'package:onegini_example/models/application_details.dart';
 import 'package:onegini_example/models/client_resource.dart';
+import 'package:onegini_example/ow_broadcast_helper.dart';
 import 'package:onegini_example/screens/qr_scan_screen.dart';
+import 'package:onegini_example/subscription_handlers/otp_subscriptions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:onegini/pigeon.dart';
 
@@ -32,6 +36,11 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
   List<OWAuthenticator> registeredAuthenticators = [];
   List<OWAuthenticator> notRegisteredAuthenticators = [];
   String profileId = "";
+  OWBroadcastHelper broadcastHelper;
+  List<StreamSubscription<OWEvent>> registrationSubscriptions;
+  List<StreamSubscription<OWEvent>> authenticationSubscriptions;
+  List<StreamSubscription<OWEvent>> otpSubscriptions;
+
 
   void onTabTapped(int index) {
     setState(() {
@@ -49,6 +58,11 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     ];
     super.initState();
     this.profileId = widget.userProfileId;
+
+    // Init listeners for changePin, setPreferredAuthenticators
+    this.registrationSubscriptions = OWBroadcastHelper.initRegistrationSubscriptions(context);
+    this.authenticationSubscriptions = OWBroadcastHelper.initAuthenticationSubscriptions(context);
+
     getAuthenticators();
   }
 
@@ -61,6 +75,10 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
   @override
   void dispose() {
     routeObserver.unsubscribe(this);
+
+    OWBroadcastHelper.stopListening(authenticationSubscriptions);
+    OWBroadcastHelper.stopListening(registrationSubscriptions);
+
     super.dispose();
   }
 
@@ -84,15 +102,15 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   Future<void> getAuthenticators() async {
     notRegisteredAuthenticators = await Onegini.instance.userClient
-        .getNotRegisteredAuthenticators(context, this.profileId);
+        .getNotRegisteredAuthenticators(this.profileId);
 
     registeredAuthenticators = await Onegini.instance.userClient
-        .getRegisteredAuthenticators(context, this.profileId);
+        .getRegisteredAuthenticators(this.profileId);
   }
 
   Future<List<OWAuthenticator>> getAllSortAuthenticators() async {
     var allAuthenticators = await Onegini.instance.userClient
-        .getAllAuthenticators(context, this.profileId);
+        .getAllAuthenticators(this.profileId);
     allAuthenticators.sort((a, b) {
       return compareAsciiUpperCase(a.name, b.name);
     });
@@ -101,13 +119,13 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   Future<List<OWAuthenticator>> getNotRegisteredAuthenticators() async {
     var authenticators = await Onegini.instance.userClient
-        .getNotRegisteredAuthenticators(context, this.profileId);
+        .getNotRegisteredAuthenticators(this.profileId);
     return authenticators;
   }
 
   registerAuthenticator(String authenticatorId) async {
     await Onegini.instance.userClient
-        .registerAuthenticator(context, authenticatorId)
+        .registerAuthenticator(authenticatorId)
         .catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);
@@ -126,7 +144,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   deregisterAuthenticator(String authenticatorId) async {
     await Onegini.instance.userClient
-        .deregisterAuthenticator(context, authenticatorId)
+        .deregisterAuthenticator(authenticatorId)
         .catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);
@@ -138,7 +156,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   setPreferredAuthenticator(String authenticatorId) async {
     await Onegini.instance.userClient
-        .setPreferredAuthenticator(context, authenticatorId)
+        .setPreferredAuthenticator(authenticatorId)
         .catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);
@@ -170,7 +188,8 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   changePin(BuildContext context) {
     Navigator.pop(context);
-    Onegini.instance.userClient.changePin(context).catchError((error) {
+
+    Onegini.instance.userClient.changePin().catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);
         // FIXME: this should be extracted into a seperate method and should also use constants (dont exist yet)
@@ -241,7 +260,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
             ),
             FutureBuilder<List<OWAuthenticator>>(
               future: Onegini.instance.userClient
-                  .getRegisteredAuthenticators(context, this.profileId),
+                  .getRegisteredAuthenticators(this.profileId),
               builder: (BuildContext context, snapshot) {
                 return PopupMenuButton<String>(
                     child: ListTile(
@@ -304,7 +323,8 @@ class Home extends StatelessWidget {
   }
 
   authWithOpt(BuildContext context) async {
-    Onegini.instance.setEventContext(context);
+    List<StreamSubscription> otpSubscriptions = initOtpSubscriptions(context);
+
     var data = await Navigator.push(
       context,
       MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
@@ -313,14 +333,15 @@ class Home extends StatelessWidget {
     if (data != null) {
       await Onegini.instance.userClient
         .handleMobileAuthWithOtp(data)
-        .then((value) => showFlutterToast("OTP1 Authentication is successfull"))
+        .then((value) => showFlutterToast("OTP Authentication is successfull"))
         .catchError((error) {
           if (error is PlatformException) {
-            print("otp1");
             print(error.message);
           }
       });
     }
+
+    OWBroadcastHelper.stopListening(otpSubscriptions);
   }
 
   getAppToWebSingleSignOn(BuildContext context) async {
@@ -333,6 +354,7 @@ class Home extends StatelessWidget {
       }
     });
     if (oneginiAppToWebSingleSignOn != null) {
+      // ignore: deprecated_member_use
       await launch(
         oneginiAppToWebSingleSignOn.redirectUrl,
         enableDomStorage: true,

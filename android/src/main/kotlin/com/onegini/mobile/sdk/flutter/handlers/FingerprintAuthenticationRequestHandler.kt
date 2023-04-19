@@ -20,7 +20,7 @@ class FingerprintAuthenticationRequestHandler @Inject constructor(private val na
   }
 
   override fun onNextAuthenticationAttempt() {
-    nativeApi.n2fReceivedFingerprint { }
+    nativeApi.n2fNextFingerprintAuthenticationAttempt { }
   }
 
   override fun onFingerprintCaptured() {

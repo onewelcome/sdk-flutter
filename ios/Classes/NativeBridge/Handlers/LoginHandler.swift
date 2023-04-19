@@ -37,21 +37,21 @@ class LoginHandler {
                 failedAttempts: Int64(challenge.previousFailureCount),
                 maxAttempts: Int64(challenge.maxFailureCount),
                 remainingAttempts: Int64(challenge.remainingFailureCount))
-            SwiftOneginiPlugin.flutterApi?.n2fNextAuthenticationAttempt(authenticationAttempt: authAttempt) {}
+            SwiftOneginiPlugin.flutterApi?.n2fNextPinAuthenticationAttempt(authenticationAttempt: authAttempt) {}
             return
         }
 
-        SwiftOneginiPlugin.flutterApi?.n2fOpenPinScreenAuth {}
+        SwiftOneginiPlugin.flutterApi?.n2fOpenPinAuthentication {}
     }
 
     func handleDidAuthenticateUser() {
         pinChallenge = nil
-        SwiftOneginiPlugin.flutterApi?.n2fClosePinAuth {}
+        SwiftOneginiPlugin.flutterApi?.n2fClosePinAuthentication {}
     }
 
     func handleDidFailToAuthenticateUser() {
         guard pinChallenge != nil else { return }
-        SwiftOneginiPlugin.flutterApi?.n2fClosePinAuth {}
+        SwiftOneginiPlugin.flutterApi?.n2fClosePinAuthentication {}
         pinChallenge = nil
     }
 

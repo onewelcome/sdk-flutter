@@ -1,6 +1,5 @@
 import 'package:onegini/pigeon.dart';
 
-
 /// A callback for registration.
 class OneginiRegistrationCallback {
   final api = UserClientApi();

@@ -1,160 +1,104 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
+import 'dart:async';
+
+import 'package:onegini/events/browser_event.dart';
+import 'package:onegini/events/custom_registration_event.dart';
+import 'package:onegini/events/fingerprint_event.dart';
+import 'package:onegini/events/onewelcome_events.dart';
+import 'package:onegini/events/otp_event.dart';
+import 'package:onegini/events/pin_event.dart';
 import 'package:onegini/pigeon.dart';
-import 'model/authentication_attempt.dart';
-import 'model/onegini_event.dart';
 
-/// Extend from this class to describe the events that will take place inside OneginiSDK
-abstract class OneginiEventListener implements NativeCallFlutterApi {
-  BuildContext? _context;
+class OneginiEventListener implements NativeCallFlutterApi {
+  final StreamController<OWEvent> broadCastController;
 
-  /// Saves the build context
-  set context(BuildContext? context) {
-    _context = context;
+  OneginiEventListener(this.broadCastController);
+
+  /// Browser Registration related events
+  @override
+  void n2fHandleRegisteredUrl(String url) {
+    _broadcastEvent(HandleRegisteredUrlEvent(url));
   }
 
-  ///Called to handle registration URL
-  void handleRegisteredUrl(BuildContext? buildContext, String url);
-
-  /// Called to open OTP authentication.
-  void openAuthOtp(BuildContext? buildContext, String message);
-
-  /// Called to close OTP authentication.
-  void closeAuthOtp(BuildContext? buildContext);
-
-  /// Called to open pin registration screen.
-  void openPinRequestScreen(BuildContext? buildContext);
-
-  /// Called to open pin authentication screen.
-  void openPinScreenAuth(BuildContext? buildContext);
-
-  /// Called to open pin authentication screen.
-  void openPinAuthenticator(BuildContext? buildContext);
-
-  /// Called to attempt next authentication.
-  void nextAuthenticationAttempt(
-      BuildContext? buildContext, AuthenticationAttempt authenticationAttempt);
-
-  /// Called to close pin registration screen.
-  void closePin(BuildContext? buildContext);
-
-  /// Called to close pin authentication screen.
-  void closePinAuth(BuildContext? buildContext);
-
-  /// Called to open fingerprint screen.
-  void openFingerprintScreen(BuildContext? buildContext);
-
-  /// Called to scan fingerprint.
-  void showScanningFingerprint(BuildContext? buildContext);
-
-  /// Called when fingerprint was received.
-  void receivedFingerprint(BuildContext? buildContext);
-
-  /// Called to close fingerprint screen.
-  void closeFingerprintScreen(BuildContext? buildContext);
-
-  /// Called when the InitCustomRegistration event occurs and a response should be given (only for two-step)
-  void eventInitCustomRegistration(
-      BuildContext? buildContext, OWCustomInfo? customInfo, String providerId);
-
-  /// Called when the FinishCustomRegistration event occurs and a response should be given
-  void eventFinishCustomRegistration(
-      BuildContext? buildContext, OWCustomInfo? customInfo, String providerId);
-
-  /// Called when error event was received.
-  void eventError(BuildContext? buildContext, PlatformException error);
-
-  /// Called when custom event was received.
-  void eventOther(BuildContext? buildContext, Event event);
-
-  void pinNotAllowed(OWOneginiError error);
-
+  /// Pin Creation related events
   @override
-  void n2fCloseAuthOtp() {
-    closeAuthOtp(_context);
+  void n2fOpenPinCreation() {
+    _broadcastEvent(OpenPinCreationEvent());
   }
 
   @override
-  void n2fCloseFingerprintScreen() {
-    closeFingerprintScreen(_context);
+  void n2fClosePinCreation() {
+    _broadcastEvent(ClosePinCreationEvent());
   }
 
   @override
-  void n2fClosePin() {
-    closePin(_context);
+  void n2fPinNotAllowed(OWOneginiError error) {
+    _broadcastEvent(PinNotAllowedEvent(error));
   }
 
+  /// Custom Registration related events
   @override
-  void n2fClosePinAuth() {
-    closePinAuth(_context);
+  void n2fEventInitCustomRegistration(
+      OWCustomInfo? customInfo, String providerId) {
+    _broadcastEvent(InitCustomRegistrationEvent(customInfo, providerId));
   }
 
   @override
   void n2fEventFinishCustomRegistration(
       OWCustomInfo? customInfo, String providerId) {
-    eventFinishCustomRegistration(_context, customInfo, providerId);
+    _broadcastEvent(FinishCustomRegistrationEvent(customInfo, providerId));
+  }
+
+  /// Pin Authentication related events
+  @override
+  void n2fOpenPinAuthentication() {
+    _broadcastEvent(OpenPinAuthenticationEvent());
   }
 
   @override
-  void n2fEventInitCustomRegistration(
-      OWCustomInfo? customInfo, String providerId) {
-    eventInitCustomRegistration(_context, customInfo, providerId);
+  void n2fClosePinAuthentication() {
+    _broadcastEvent(ClosePinAuthenticationEvent());
   }
 
   @override
-  void n2fHandleRegisteredUrl(String url) {
-    print("hello from handleRegisteredUrl");
-    handleRegisteredUrl(_context, url);
-  }
-
-  @override
-  void n2fNextAuthenticationAttempt(
+  void n2fNextPinAuthenticationAttempt(
       OWAuthenticationAttempt authenticationAttempt) {
-    nextAuthenticationAttempt(
-        _context,
-        AuthenticationAttempt(
-            failedAttempts: authenticationAttempt.failedAttempts,
-            maxAttempts: authenticationAttempt.maxAttempts,
-            remainingAttempts: authenticationAttempt.remainingAttempts));
+    _broadcastEvent(NextPinAuthenticationAttemptEvent(authenticationAttempt));
   }
 
+  /// Fingerprint related events
   @override
-  void n2fOpenAuthOtp(String? message) {
-    openAuthOtp(_context, message != null ? message : "");
+  void n2fShowScanningFingerprint() {
+    _broadcastEvent(ShowScanningFingerprintEvent());
   }
 
   @override
   void n2fOpenFingerprintScreen() {
-    openFingerprintScreen(_context);
+    _broadcastEvent(OpenFingerprintEvent());
   }
 
   @override
-  void n2fOpenPinAuthenticator() {
-    openPinAuthenticator(_context);
+  void n2fCloseFingerprintScreen() {
+    _broadcastEvent(CloseFingerprintEvent());
   }
 
   @override
-  void n2fOpenPinRequestScreen() {
-    openPinRequestScreen(_context);
+  void n2fNextFingerprintAuthenticationAttempt() {
+    _broadcastEvent(NextFingerprintAuthenticationAttempt());
+  }
+
+  /// OTP Mobile authentication related events
+  @override
+  void n2fOpenAuthOtp(String? message) {
+    _broadcastEvent(OpenAuthOtpEvent(message ?? ""));
   }
 
   @override
-  void n2fOpenPinScreenAuth() {
-    openPinScreenAuth(_context);
+  void n2fCloseAuthOtp() {
+    _broadcastEvent(CloseAuthOtpEvent());
   }
 
-  @override
-  void n2fReceivedFingerprint() {
-    receivedFingerprint(_context);
-  }
-
-  @override
-  void n2fShowScanningFingerprint() {
-    showScanningFingerprint(_context);
-  }
-
-  @override
-  void n2fEventPinNotAllowed(OWOneginiError error) {
-    pinNotAllowed(error);
+  /// Helper method
+  void _broadcastEvent(OWEvent event) {
+    broadCastController.sink.add(event);
   }
 }

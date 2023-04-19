@@ -18,7 +18,7 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
 
   activateFingerprint() async {
     await OneginiFingerprintCallback()
-        .acceptAuthenticationRequest(context)
+        .acceptAuthenticationRequest()
         .catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);

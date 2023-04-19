@@ -67,10 +67,10 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
     func handleDidReceivePinRegistrationChallenge(_ challenge: CreatePinChallenge) {
         createPinChallenge = challenge
         if let pinError = mapErrorFromPinChallenge(challenge) {
-            SwiftOneginiPlugin.flutterApi?.n2fEventPinNotAllowed(error: OWOneginiError(code: Int64(pinError.code), message: pinError.errorDescription)) {}
+            SwiftOneginiPlugin.flutterApi?.n2fPinNotAllowed(error: OWOneginiError(code: Int64(pinError.code), message: pinError.errorDescription)) {}
         } else {
             // FIXME: we should be sending the pin length here.
-            SwiftOneginiPlugin.flutterApi?.n2fOpenPinRequestScreen {}
+            SwiftOneginiPlugin.flutterApi?.n2fOpenPinCreation {}
         }
     }
 
@@ -81,14 +81,14 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
         createPinChallenge = nil
         customRegistrationChallenge = nil
         browserRegistrationChallenge = nil
-        SwiftOneginiPlugin.flutterApi?.n2fClosePin {}
+        SwiftOneginiPlugin.flutterApi?.n2fClosePinCreation {}
     }
 
     func handleDidRegisterUser() {
         createPinChallenge = nil
         customRegistrationChallenge = nil
         browserRegistrationChallenge = nil
-        SwiftOneginiPlugin.flutterApi?.n2fClosePin {}
+        SwiftOneginiPlugin.flutterApi?.n2fClosePinCreation {}
     }
 
     func registerUser(_ providerId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {

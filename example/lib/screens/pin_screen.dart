@@ -66,7 +66,7 @@ class _PinScreenState extends State<PinScreen> {
       pin += element;
     });
     OneginiPinAuthenticationCallback()
-        .acceptAuthenticationRequest(context, pin)
+        .acceptAuthenticationRequest(pin)
         .catchError((error) {
       if (error is PlatformException) {
         setState(() => {isLoading = false});
