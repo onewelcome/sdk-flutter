@@ -1,5 +1,6 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
+import android.util.Patterns
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ERROR_CODE_HTTP_REQUEST
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR
 import com.onegini.mobile.sdk.flutter.OneginiSDK
@@ -19,8 +20,6 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.IOException
-import java.net.MalformedURLException
-import java.net.URL
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -50,16 +49,22 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
       .build()
   }
 
-  private fun getCompleteResourceUrl(path: String): String {
+  private fun getCompleteResourceUrl(path: String): Result<String> {
     val resourceBaseUrl = oneginiSDK.oneginiClient.configModel.resourceBaseUrl
 
-    // Check for absolute or relative url
-    return try {
-      URL(path)
-      path
-    } catch (e: MalformedURLException) {
-      resourceBaseUrl + path
+    return when {
+      isValidUrl(path) -> Result.success(path)
+      isValidUrl(path + resourceBaseUrl) -> Result.success(path + resourceBaseUrl)
+      else -> Result.failure(
+        SdkError(
+          wrapperError = HTTP_REQUEST_ERROR
+        ).pigeonError()
+      )
     }
+  }
+
+  private fun isValidUrl(path: String): Boolean {
+    return Patterns.WEB_URL.matcher(path).matches()
   }
 
   private fun getHeaders(headers: Map<String?, String?>?): Headers {
