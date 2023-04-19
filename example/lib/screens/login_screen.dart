@@ -146,7 +146,8 @@ class _LoginScreenState extends State<LoginScreen> {
       await Onegini.instance.userClient.authenticateUserImplicitly(profileId, ["read"]);
       var response = await Onegini.instance.resourcesMethods.requestResource(
         ResourceRequestType.implicit,
-        RequestDetails(path: "user-id-decorated", method: HttpRequestMethod.get));
+        RequestDetails(path: "https://....^%%&^%*^/....user-id-decorated", method: HttpRequestMethod.get));
+        // RequestDetails(path: "https://token-mobile.test.onegini.com/resources/user-id-decorated", method: HttpRequestMethod.get));
 
       var res = json.decode(response.body);
 

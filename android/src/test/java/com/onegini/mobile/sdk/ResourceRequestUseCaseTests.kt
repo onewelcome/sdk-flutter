@@ -2,6 +2,7 @@ package com.onegini.mobile.sdk
 
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.UNEXPECTED_ERROR_TYPE
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.GET
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
@@ -13,6 +14,7 @@ import okhttp3.Headers
 import okhttp3.Response
 import org.mockito.kotlin.any
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ERROR_CODE_HTTP_REQUEST
+import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 
 import com.onegini.mobile.sdk.flutter.useCases.ResourceRequestUseCase
 import junit.framework.Assert.fail
@@ -43,6 +45,9 @@ class ResourceRequestUseCaseTests {
   @Mock
   lateinit var okhttp3CallMock: okhttp3.Call
 
+  @Mock
+  lateinit var owRequestResponseDetails: OWRequestDetails
+
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   lateinit var responseMock: Response
 
@@ -61,6 +66,20 @@ class ResourceRequestUseCaseTests {
     whenever(oneginiSdk.oneginiClient.deviceClient.unauthenticatedResourceOkHttpClient).thenReturn(resourceOkHttpClientMock)
 
     whenever(oneginiSdk.oneginiClient.configModel.resourceBaseUrl).thenReturn("https://token-mobile.test.onegini.com/resources/")
+  }
+
+  @Test
+  fun `When an invalid url is given, Then the function should resolve with an error`() {
+    whenever(oneginiSdk.oneginiClient.configModel.resourceBaseUrl).thenReturn("https://token-mobile.test.onegini.com/resources/")
+    whenever(owRequestResponseDetails.path).thenReturn("https://^%%&^%*^/user-id-decorated")
+    resourceRequestUseCase(ResourceRequestType.IMPLICIT, owRequestResponseDetails, callbackMock)
+
+    argumentCaptor<Result<OWRequestResponse>>().apply {
+      verify(callbackMock).invoke(capture())
+
+      val expected = FlutterError(HTTP_REQUEST_ERROR.code.toString(), HTTP_REQUEST_ERROR.message)
+      SdkErrorAssert.assertEquals(expected, firstValue.exceptionOrNull())
+    }
   }
 
   @Test

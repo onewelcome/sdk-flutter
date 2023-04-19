@@ -26,10 +26,37 @@ import javax.inject.Singleton
 @Singleton
 class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
   operator fun invoke(type: ResourceRequestType, details: OWRequestDetails, callback: (Result<OWRequestResponse>) -> Unit) {
-    val resourceClient = getOkHttpClient(type)
-    val request = buildRequest(details)
+    val pathResult = getCompleteResourceUrl(details.path)
 
-    performCall(resourceClient, request, callback)
+    when {
+      pathResult.isFailure -> pathResult.exceptionOrNull()?.let { callback(Result.failure(it)) }
+      pathResult.isSuccess -> {
+        pathResult.getOrNull()?.let {
+          val resourceClient = getOkHttpClient(type)
+          val request = buildRequest(details, it)
+
+          performCall(resourceClient, request, callback)
+        }
+      }
+    }
+  }
+
+  private fun getCompleteResourceUrl(path: String): Result<String> {
+    val resourceBaseUrl = oneginiSDK.oneginiClient.configModel.resourceBaseUrl
+
+    return when {
+      isValidUrl(path) -> Result.success(path)
+      isValidUrl(resourceBaseUrl + path) -> Result.success(resourceBaseUrl + path)
+      else -> Result.failure(
+        SdkError(
+          wrapperError = HTTP_REQUEST_ERROR
+        ).pigeonError()
+      )
+    }
+  }
+
+  private fun isValidUrl(path: String): Boolean {
+    return Patterns.WEB_URL.matcher(path).matches()
   }
 
   private fun getOkHttpClient(type: ResourceRequestType): OkHttpClient {
@@ -41,30 +68,12 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
     }
   }
 
-  private fun buildRequest(details: OWRequestDetails): Request {
+  private fun buildRequest(details: OWRequestDetails, path: String): Request {
     return Request.Builder()
-      .url(getCompleteResourceUrl(details.path))
+      .url(path)
       .headers(getHeaders(details.headers))
       .setMethod(details)
       .build()
-  }
-
-  private fun getCompleteResourceUrl(path: String): Result<String> {
-    val resourceBaseUrl = oneginiSDK.oneginiClient.configModel.resourceBaseUrl
-
-    return when {
-      isValidUrl(path) -> Result.success(path)
-      isValidUrl(path + resourceBaseUrl) -> Result.success(path + resourceBaseUrl)
-      else -> Result.failure(
-        SdkError(
-          wrapperError = HTTP_REQUEST_ERROR
-        ).pigeonError()
-      )
-    }
-  }
-
-  private fun isValidUrl(path: String): Boolean {
-    return Patterns.WEB_URL.matcher(path).matches()
   }
 
   private fun getHeaders(headers: Map<String?, String?>?): Headers {
