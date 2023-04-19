@@ -9,8 +9,13 @@ import 'package:onegini_example/ow_broadcast_helper.dart';
 import 'package:onegini_example/screens/pin_request_screen.dart';
 
 // Event Subscriptions related to the creation of Pin
-List<StreamSubscription<OWEvent>> initCreatePinSubscriptions(BuildContext context) {
-  return [_getOpenPinCreationSub(context), _getClosePinCreationSub(context), _getPinNotAllowedSub()];
+List<StreamSubscription<OWEvent>> initCreatePinSubscriptions(
+    BuildContext context) {
+  return [
+    _getOpenPinCreationSub(context),
+    _getClosePinCreationSub(context),
+    _getPinNotAllowedSub()
+  ];
 }
 
 StreamSubscription<OWEvent> _getOpenPinCreationSub(BuildContext context) {
@@ -23,7 +28,8 @@ StreamSubscription<OWEvent> _getOpenPinCreationSub(BuildContext context) {
 }
 
 StreamSubscription<OWEvent> _getClosePinCreationSub(BuildContext context) {
-  return OWBroadcastHelper.createStream<ClosePinCreationEvent>().listen((event) {
+  return OWBroadcastHelper.createStream<ClosePinCreationEvent>()
+      .listen((event) {
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
     }

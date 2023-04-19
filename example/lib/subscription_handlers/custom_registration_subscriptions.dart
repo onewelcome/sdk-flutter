@@ -11,33 +11,44 @@ import 'package:onegini_example/ow_broadcast_helper.dart';
 import 'package:onegini_example/screens/otp_screen.dart';
 
 // Event Subscriptions related to Custom Registration
-List<StreamSubscription<OWEvent>> initCustomRegistrationSubscriptions(BuildContext context) {
-  return [_getInitCustomRegistrationSub(), _getFinishCustomRegistrationSub(context)];
+List<StreamSubscription<OWEvent>> initCustomRegistrationSubscriptions(
+    BuildContext context) {
+  return [
+    _getInitCustomRegistrationSub(),
+    _getFinishCustomRegistrationSub(context)
+  ];
 }
 
 StreamSubscription<OWEvent> _getInitCustomRegistrationSub() {
-  return OWBroadcastHelper.createStream<InitCustomRegistrationEvent>().listen((event) {
+  return OWBroadcastHelper.createStream<InitCustomRegistrationEvent>()
+      .listen((event) {
     if (event.providerId == "2-way-otp-api") {
       // a 2-way-otp does not require data for the initialization request
       OneginiCustomRegistrationCallback()
           .submitSuccessAction(event.providerId, null)
           .catchError((error) => {
-            if (error is PlatformException)
-              {showFlutterToast(error.message ?? "An error occuring while answering init custom registration")}
-          });
+                if (error is PlatformException)
+                  {
+                    showFlutterToast(error.message ??
+                        "An error occuring while answering init custom registration")
+                  }
+              });
     }
   });
 }
 
-StreamSubscription<OWEvent> _getFinishCustomRegistrationSub(BuildContext context) {
-  return OWBroadcastHelper.createStream<FinishCustomRegistrationEvent>().listen((event) {
+StreamSubscription<OWEvent> _getFinishCustomRegistrationSub(
+    BuildContext context) {
+  return OWBroadcastHelper.createStream<FinishCustomRegistrationEvent>()
+      .listen((event) {
     if (event.providerId == "2-way-otp-api") {
       // a 2-way-otp does not require data for the initialization request
       Navigator.push(
         context,
         MaterialPageRoute(
             builder: (context) => OtpScreen(
-                password: event.customInfo?.data, providerId: event.providerId)),
+                password: event.customInfo?.data,
+                providerId: event.providerId)),
       );
     }
   });

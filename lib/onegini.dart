@@ -16,7 +16,8 @@ class Onegini {
   late final UserClient userClient;
 
   // Stream over which OW events will be send
-  final StreamController<OWEvent> owEventStreamController = StreamController<OWEvent>.broadcast();
+  final StreamController<OWEvent> owEventStreamController =
+      StreamController<OWEvent>.broadcast();
 
   // Close the stream when the instance gets stopped
   static final Finalizer<StreamController<OWEvent>> _finalizer =
@@ -29,7 +30,8 @@ class Onegini {
   static final Onegini instance = Onegini._internal();
 
   factory Onegini() {
-    _finalizer.attach(instance, instance.owEventStreamController, detach: instance);
+    _finalizer.attach(instance, instance.owEventStreamController,
+        detach: instance);
     return instance;
   }
 

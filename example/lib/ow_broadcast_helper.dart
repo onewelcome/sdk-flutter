@@ -16,7 +16,8 @@ class OWBroadcastHelper {
     return broadCastController.stream.where((event) => event is T).cast<T>();
   }
 
-  static List<StreamSubscription<OWEvent>> initRegistrationSubscriptions(BuildContext context) {
+  static List<StreamSubscription<OWEvent>> initRegistrationSubscriptions(
+      BuildContext context) {
     var browserRegistrationSubs = initBrowserRegistrationSubscriptions();
     var createPinSubs = initCreatePinSubscriptions(context);
     var customRegistrationSubs = initCustomRegistrationSubscriptions(context);
@@ -24,7 +25,8 @@ class OWBroadcastHelper {
     return browserRegistrationSubs + createPinSubs + customRegistrationSubs;
   }
 
-  static List<StreamSubscription<OWEvent>> initAuthenticationSubscriptions(BuildContext context) {
+  static List<StreamSubscription<OWEvent>> initAuthenticationSubscriptions(
+      BuildContext context) {
     var pinAuthSubs = initPinAuthenticationSubscriptions(context);
     var fingerprintSubs = initFingerprintSubscriptions(context);
 
@@ -32,6 +34,8 @@ class OWBroadcastHelper {
   }
 
   static void stopListening(List<StreamSubscription<OWEvent>> subscriptions) {
-    subscriptions.forEach((element) { element.cancel(); });
+    subscriptions.forEach((element) {
+      element.cancel();
+    });
   }
 }

@@ -12,8 +12,9 @@ List<StreamSubscription<OWEvent>> initBrowserRegistrationSubscriptions() {
 }
 
 StreamSubscription<OWEvent> _getHandleRegisteredUrSub() {
-  return OWBroadcastHelper.createStream<HandleRegisteredUrlEvent>().listen((event) {
+  return OWBroadcastHelper.createStream<HandleRegisteredUrlEvent>()
+      .listen((event) {
     Onegini.instance.userClient.handleRegisteredUserUrl(event.url,
-      signInType: WebSignInType.insideApp);
+        signInType: WebSignInType.insideApp);
   });
 }

@@ -14,5 +14,6 @@ class ShowScanningFingerprintEvent extends OWEvent {
 }
 
 class NextFingerprintAuthenticationAttempt extends OWEvent {
-  NextFingerprintAuthenticationAttempt() : super(OWAction.nextFingerprintAuthenticationAttempt);
+  NextFingerprintAuthenticationAttempt()
+      : super(OWAction.nextFingerprintAuthenticationAttempt);
 }

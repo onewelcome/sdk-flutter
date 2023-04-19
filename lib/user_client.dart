@@ -36,14 +36,14 @@ class UserClient {
   }
 
   /// Returns a list of authenticators registered and available to the user.
-  Future<List<OWAuthenticator>> getRegisteredAuthenticators(String profileId) async {
+  Future<List<OWAuthenticator>> getRegisteredAuthenticators(
+      String profileId) async {
     final registeredAuthenticators =
         await api.getRegisteredAuthenticators(profileId);
     return registeredAuthenticators.whereType<OWAuthenticator>().toList();
   }
 
   Future<List<OWAuthenticator>> getAllAuthenticators(String profileId) async {
-
     final allAuthenticators = await api.getAllAuthenticators(profileId);
     return allAuthenticators.whereType<OWAuthenticator>().toList();
   }

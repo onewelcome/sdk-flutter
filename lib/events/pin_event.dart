@@ -27,5 +27,6 @@ class ClosePinAuthenticationEvent extends OWEvent {
 
 class NextPinAuthenticationAttemptEvent extends OWEvent {
   OWAuthenticationAttempt authenticationAttempt;
-  NextPinAuthenticationAttemptEvent(this.authenticationAttempt) : super(OWAction.nextPinAuthenticationAttempt);
+  NextPinAuthenticationAttemptEvent(this.authenticationAttempt)
+      : super(OWAction.nextPinAuthenticationAttempt);
 }
