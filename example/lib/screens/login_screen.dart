@@ -28,15 +28,16 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   initState() {
     // Init subscriptipons for registration and authentication
-    this.registrationSubscriptions = OWBroadcastHelper.initRegistrationSubscriptions(context);
-    this.authenticationSubscriptions = OWBroadcastHelper.initAuthenticationSubscriptions(context);
+    this.registrationSubscriptions =
+        OWBroadcastHelper.initRegistrationSubscriptions(context);
+    this.authenticationSubscriptions =
+        OWBroadcastHelper.initAuthenticationSubscriptions(context);
 
     super.initState();
   }
 
   @override
   void dispose() {
-    print("disposing listeners");
     OWBroadcastHelper.stopListening(registrationSubscriptions);
     OWBroadcastHelper.stopListening(authenticationSubscriptions);
 
@@ -162,14 +163,16 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<String> getImplicitUserDetails(String profileId) async {
     var returnString = "";
     try {
-      await Onegini.instance.userClient.authenticateUserImplicitly(profileId, ["read"]);
+      await Onegini.instance.userClient
+          .authenticateUserImplicitly(profileId, ["read"]);
       var response = await Onegini.instance.resourcesMethods.requestResource(
-        ResourceRequestType.implicit,
-        RequestDetails(path: "user-id-decorated", method: HttpRequestMethod.get));
+          ResourceRequestType.implicit,
+          RequestDetails(
+              path: "user-id-decorated", method: HttpRequestMethod.get));
 
       var res = json.decode(response.body);
 
-      returnString =res["decorated_user_id"];
+      returnString = res["decorated_user_id"];
 
       return returnString;
     } catch (err) {
@@ -359,8 +362,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 20,
                   ),
                   FutureBuilder<List<OWIdentityProvider>>(
-                    future: Onegini.instance.userClient
-                        .getIdentityProviders(),
+                    future: Onegini.instance.userClient.getIdentityProviders(),
                     builder: (BuildContext context, identityProviders) {
                       return identityProviders.hasData
                           ? PopupMenuButton<String>(
