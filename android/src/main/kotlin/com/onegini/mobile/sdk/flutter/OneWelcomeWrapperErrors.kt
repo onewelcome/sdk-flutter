@@ -14,6 +14,7 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
   OTP_AUTHENTICATION_NOT_IN_PROGRESS(8039, "OTP Authentication is currently not in progress"),
   BROWSER_REGISTRATION_NOT_IN_PROGRESS(8040, "Browser registration is currently not in progress"),
   PIN_CREATION_NOT_IN_PROGRESS(8042, "Pin creation is currently not in progress"),
+  HTTP_REQUEST_URL_ERROR(8043, "OneWelcome: HTTP Request failed due to an invalid url"),
 
   // Errors that only occur on Android
   IDENTITY_PROVIDER_NOT_FOUND(8005, "The requested identity provider is not found"),

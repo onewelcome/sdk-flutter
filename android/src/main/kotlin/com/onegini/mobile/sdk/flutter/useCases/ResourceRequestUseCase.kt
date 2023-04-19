@@ -2,6 +2,7 @@ package com.onegini.mobile.sdk.flutter.useCases
 
 import android.util.Patterns
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ERROR_CODE_HTTP_REQUEST
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_URL_ERROR
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
@@ -28,6 +29,7 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
   operator fun invoke(type: ResourceRequestType, details: OWRequestDetails, callback: (Result<OWRequestResponse>) -> Unit) {
     val pathResult = getCompleteResourceUrl(details.path)
 
+    // Additional check for valid url
     when {
       pathResult.isFailure -> pathResult.exceptionOrNull()?.let { callback(Result.failure(it)) }
       pathResult.isSuccess -> {
@@ -49,7 +51,7 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
       isValidUrl(resourceBaseUrl + path) -> Result.success(resourceBaseUrl + path)
       else -> Result.failure(
         SdkError(
-          wrapperError = HTTP_REQUEST_ERROR
+          wrapperError = HTTP_REQUEST_URL_ERROR
         ).pigeonError()
       )
     }

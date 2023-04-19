@@ -15,6 +15,7 @@ enum OneWelcomeWrapperError: Int {
     case authenticationNotInProgress = 8037
     case otpAuthenticationNotInProgress = 8039
     case browserRegistrationNotInProgress = 8040
+    case httpRequestUrlError = 8043
 
     // iOS only
     case providedUrlIncorrect = 8014
@@ -95,6 +96,8 @@ enum OneWelcomeWrapperError: Int {
             return "Mobile Authentication is already in progress and can not be performed concurrently."
         case .browserRegistrationNotInProgress:
             return "Browser registration is currently not in progress."
+        case .httpRequestUrlError:
+            return "OneWelcome: HTTP Request failed due to an invalid url."
         }
     }
 }
