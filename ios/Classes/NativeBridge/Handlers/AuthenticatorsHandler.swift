@@ -17,7 +17,7 @@ class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     func registerBiometricAuthenticator(_ profile: UserProfile, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
         // We don't have to check if the authenticator is already registered as the sdk will do that for us.
         let authenticators = SharedUserClient.instance.authenticators(.all, for: profile)
-        guard let authenticator = authenticators.first(where: { $0.type == AuthenticatorType.biometric }) else {
+        guard let authenticator = authenticators.first(where: { $0.type == .biometric }) else {
             completion(.failure(FlutterError(.biometricAuthenticationNotAvailable)))
             return
         }
@@ -26,7 +26,7 @@ class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     }
 
     func deregisterBiometricAuthenticator(_ profile: UserProfile, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        guard let authenticator = SharedUserClient.instance.authenticators(.all, for: profile).first(where: {$0.type == AuthenticatorType.biometric}) else {
+        guard let authenticator = SharedUserClient.instance.authenticators(.all, for: profile).first(where: { $0.type == .biometric }) else {
             completion(.failure(FlutterError(.biometricAuthenticationNotAvailable)))
             return
         }
@@ -35,7 +35,7 @@ class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     }
 
     func setPreferredAuthenticator(_ userProfile: UserProfile, _ authenticatorType: AuthenticatorType, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        guard let authenticator = SharedUserClient.instance.authenticators(.all, for: userProfile).first(where: {$0.type == authenticatorType}) else {
+        guard let authenticator = SharedUserClient.instance.authenticators(.all, for: userProfile).first(where: { $0.type == authenticatorType }) else {
             completion(.failure(FlutterError(.authenticatorNotFound)))
             return
         }
@@ -50,24 +50,24 @@ class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     }
 
     func getBiometricAuthenticator(_ userProfile: UserProfile, completion: @escaping (Result<OWAuthenticator, Error>) -> Void) {
-        guard let authenticator = SharedUserClient.instance.authenticators(.all, for: userProfile).first(where: {$0.type == AuthenticatorType.biometric}) else {
+        guard let authenticator = SharedUserClient.instance.authenticators(.all, for: userProfile).first(where: { $0.type == AuthenticatorType.biometric }) else {
             completion(.failure(FlutterError(.biometricAuthenticationNotAvailable)))
             return
         }
-        completion(.success(OWAuthenticator(id: authenticator.identifier, name: authenticator.name, isRegistered: authenticator.isRegistered, isPreferred: authenticator.isPreferred, authenticatorType: OWAuthenticatorType.biometric)))
+        completion(.success(OWAuthenticator(id: authenticator.identifier, name: authenticator.name, isRegistered: authenticator.isRegistered, isPreferred: authenticator.isPreferred, authenticatorType: .biometric)))
     }
 
     func getPreferredAuthenticator(_ userProfile: UserProfile, completion: @escaping (Result<OWAuthenticator, Error>) -> Void) {
-        guard let authenticator = SharedUserClient.instance.authenticators(.all, for: userProfile).first(where: {$0.isPreferred}) else {
+        guard let authenticator = SharedUserClient.instance.authenticators(.all, for: userProfile).first(where: { $0.isPreferred }) else {
             completion(.failure(FlutterError(.authenticatorNotFound)))
             return
         }
-        if authenticator.type == AuthenticatorType.biometric {
-            completion(.success(OWAuthenticator(id: authenticator.identifier, name: authenticator.name, isRegistered: authenticator.isRegistered, isPreferred: authenticator.isPreferred, authenticatorType: OWAuthenticatorType.biometric)))
+        if authenticator.type == .biometric {
+            completion(.success(OWAuthenticator(id: authenticator.identifier, name: authenticator.name, isRegistered: authenticator.isRegistered, isPreferred: authenticator.isPreferred, authenticatorType: .biometric)))
             return
         }
-        if authenticator.type == AuthenticatorType.pin {
-            completion(.success(OWAuthenticator(id: authenticator.identifier, name: authenticator.name, isRegistered: authenticator.isRegistered, isPreferred: authenticator.isPreferred, authenticatorType: OWAuthenticatorType.pin)))
+        if authenticator.type == .pin {
+            completion(.success(OWAuthenticator(id: authenticator.identifier, name: authenticator.name, isRegistered: authenticator.isRegistered, isPreferred: authenticator.isPreferred, authenticatorType: .pin)))
             return
         }
         // Should never happen because we don't support custom/fido authenticators
