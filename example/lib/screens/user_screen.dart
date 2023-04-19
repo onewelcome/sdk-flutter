@@ -323,7 +323,7 @@ class Home extends StatelessWidget {
   }
 
   authWithOpt(BuildContext context) async {
-    List<StreamSubscription> otpSubscriptions = OtpSubscriptions.initSubscriptions(context);
+    List<StreamSubscription> otpSubscriptions = initOtpSubscriptions(context);
 
     var data = await Navigator.push(
       context,

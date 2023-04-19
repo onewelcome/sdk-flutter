@@ -9,31 +9,29 @@ import 'package:onegini_example/ow_broadcast_helper.dart';
 import 'package:onegini_example/screens/pin_request_screen.dart';
 
 // Event Subscriptions related to the creation of Pin
-class CreatePinSubscriptions {
-  static List<StreamSubscription<OWEvent>> initSubscriptions(BuildContext context) {
-    return [_getOpenPinCreationSub(context), _getClosePinCreationSub(context), _getPinNotAllowedSub()];
-  }
+List<StreamSubscription<OWEvent>> initCreatePinSubscriptions(BuildContext context) {
+  return [_getOpenPinCreationSub(context), _getClosePinCreationSub(context), _getPinNotAllowedSub()];
+}
 
-  static StreamSubscription<OWEvent> _getOpenPinCreationSub(BuildContext context) {
-    return OWBroadcastHelper.createStream<OpenPinCreationEvent>().listen((event) {
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (context) => PinRequestScreen()),
-      );
-    });
-  }
+StreamSubscription<OWEvent> _getOpenPinCreationSub(BuildContext context) {
+  return OWBroadcastHelper.createStream<OpenPinCreationEvent>().listen((event) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => PinRequestScreen()),
+    );
+  });
+}
 
-  static StreamSubscription<OWEvent> _getClosePinCreationSub(BuildContext context) {
-    return OWBroadcastHelper.createStream<ClosePinCreationEvent>().listen((event) {
-      if (Navigator.of(context).canPop()) {
-        Navigator.of(context).pop();
-      }
-    });
-  }
+StreamSubscription<OWEvent> _getClosePinCreationSub(BuildContext context) {
+  return OWBroadcastHelper.createStream<ClosePinCreationEvent>().listen((event) {
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
+  });
+}
 
-  static StreamSubscription<OWEvent> _getPinNotAllowedSub() {
-    return OWBroadcastHelper.createStream<PinNotAllowedEvent>().listen((event) {
-      showFlutterToast("${event.error.message} Code: ${event.error.code}");
-    });
-  }
+StreamSubscription<OWEvent> _getPinNotAllowedSub() {
+  return OWBroadcastHelper.createStream<PinNotAllowedEvent>().listen((event) {
+    showFlutterToast("${event.error.message} Code: ${event.error.code}");
+  });
 }
