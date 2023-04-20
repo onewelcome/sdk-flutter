@@ -17,8 +17,6 @@ import org.mockito.Answers
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.any
-import org.mockito.kotlin.argumentCaptor
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
@@ -44,22 +42,18 @@ class GetBiometricAuthenticatorUseCaseTests {
 
     @Test
     fun `When userProfile does not exist, Then should reject with USER_PROFILE_DOES_NOT_EXIST`() {
-        getBiometricAuthenticatorUseCase(profileId, callbackMock)
+        val result = getBiometricAuthenticatorUseCase(profileId)
 
-        val captor = argumentCaptor<Result<OWAuthenticator>>()
-        verify(callbackMock).invoke(captor.capture())
-        SdkErrorAssert.assertEquals(USER_PROFILE_DOES_NOT_EXIST, captor.firstValue.exceptionOrNull())
+        SdkErrorAssert.assertEquals(USER_PROFILE_DOES_NOT_EXIST, result.exceptionOrNull())
     }
 
     @Test
     fun `When the biometric authenticator is not available, Then should reject with BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE`() {
         whenUserProfileExists()
 
-        getBiometricAuthenticatorUseCase(profileId, callbackMock)
+        val result = getBiometricAuthenticatorUseCase(profileId)
 
-        val captor = argumentCaptor<Result<OWAuthenticator>>()
-        verify(callbackMock).invoke(captor.capture())
-        SdkErrorAssert.assertEquals(BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE, captor.firstValue.exceptionOrNull())
+        SdkErrorAssert.assertEquals(BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE, result.exceptionOrNull())
     }
 
     @Test
@@ -67,11 +61,9 @@ class GetBiometricAuthenticatorUseCaseTests {
         whenUserProfileExists()
         whenBiometricAuthenticatorAvailable()
 
-        getBiometricAuthenticatorUseCase(profileId, callbackMock)
+        val result = getBiometricAuthenticatorUseCase(profileId)
 
-        val captor = argumentCaptor<Result<OWAuthenticator>>()
-        verify(callbackMock).invoke(captor.capture())
-        assertEquals(captor.firstValue.getOrNull()?.authenticatorType, OWAuthenticatorType.BIOMETRIC)
+        assertEquals(OWAuthenticatorType.BIOMETRIC, result.getOrNull()?.authenticatorType)
     }
 
 

@@ -10,17 +10,17 @@ import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticatorType
 import javax.inject.Inject
 
 class GetBiometricAuthenticatorUseCase @Inject constructor(private val oneginiSDK: OneginiSDK, private val getUserProfileUseCase: GetUserProfileUseCase) {
-    operator fun invoke(profileId: String, callback: (Result<OWAuthenticator>) -> Unit) {
+    operator fun invoke(profileId: String): Result<OWAuthenticator> {
         val userProfile = try {
             getUserProfileUseCase(profileId)
         } catch (error: SdkError) {
-            return callback(Result.failure(error.pigeonError()))
+            return Result.failure(error.pigeonError())
         }
         val authenticators = oneginiSDK.oneginiClient.userClient.getAllAuthenticators(userProfile)
         val authenticator = authenticators.find { it.type ==  OneginiAuthenticator.FINGERPRINT }
-            ?: return callback(Result.failure(SdkError(BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE).pigeonError()))
+            ?: return Result.failure(SdkError(BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE).pigeonError())
 
-        return callback(Result.success(OWAuthenticator(authenticator.id, authenticator.name, authenticator.isRegistered, authenticator.isPreferred, OWAuthenticatorType.BIOMETRIC)))
+        return Result.success(OWAuthenticator(authenticator.id, authenticator.name, authenticator.isRegistered, authenticator.isPreferred, OWAuthenticatorType.BIOMETRIC))
 
     }
 }

@@ -214,11 +214,11 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   }
 
   override fun getBiometricAuthenticator(profileId: String, callback: (Result<OWAuthenticator>) -> Unit) {
-    getBiometricAuthenticatorUseCase(profileId, callback)
+    callback(getBiometricAuthenticatorUseCase(profileId))
   }
 
   override fun getPreferredAuthenticator(profileId: String, callback: (Result<OWAuthenticator>) -> Unit) {
-    getPreferredAuthenticatorUseCase(profileId, callback)
+    callback(getPreferredAuthenticatorUseCase(profileId))
   }
 
   override fun setPreferredAuthenticator(authenticatorType: OWAuthenticatorType, callback: (Result<Unit>) -> Unit) {

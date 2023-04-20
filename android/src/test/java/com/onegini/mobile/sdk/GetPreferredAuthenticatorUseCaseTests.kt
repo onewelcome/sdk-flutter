@@ -43,11 +43,9 @@ class GetPreferredAuthenticatorUseCaseTests {
 
     @Test
     fun `When no userprofile does not exist, Then should reject with USER_PROFILE_DOES_NOT_EXIST`() {
-        getPreferredAuthenticatorUseCase(profileId, callbackMock)
+        val result = getPreferredAuthenticatorUseCase(profileId)
 
-        val captor = argumentCaptor<Result<OWAuthenticator>>()
-        verify(callbackMock).invoke(captor.capture())
-        SdkErrorAssert.assertEquals(USER_PROFILE_DOES_NOT_EXIST, captor.firstValue.exceptionOrNull())
+        SdkErrorAssert.assertEquals(USER_PROFILE_DOES_NOT_EXIST, result.exceptionOrNull())
     }
 
     @Test
@@ -55,22 +53,18 @@ class GetPreferredAuthenticatorUseCaseTests {
         whenPreferedAuthenticatorIsPin()
         whenUserProfileExists()
 
-        getPreferredAuthenticatorUseCase(profileId, callbackMock)
+        val result = getPreferredAuthenticatorUseCase(profileId)
 
-        val captor = argumentCaptor<Result<OWAuthenticator>>()
-        verify(callbackMock).invoke(captor.capture())
-        assertEquals(OWAuthenticatorType.PIN, captor.firstValue.getOrNull()?.authenticatorType)
+        assertEquals(OWAuthenticatorType.PIN, result.getOrNull()?.authenticatorType)
     }
 
     @Test
     fun `When no preferred authenticator exists, Then we reject with a generic error`() {
         whenUserProfileExists()
 
-        getPreferredAuthenticatorUseCase(profileId, callbackMock)
+        val result = getPreferredAuthenticatorUseCase(profileId)
 
-        val captor = argumentCaptor<Result<OWAuthenticator>>()
-        verify(callbackMock).invoke(captor.capture())
-        SdkErrorAssert.assertEquals(GENERIC_ERROR, captor.firstValue.exceptionOrNull())
+        SdkErrorAssert.assertEquals(GENERIC_ERROR, result.exceptionOrNull())
     }
 
     @Test
@@ -78,11 +72,9 @@ class GetPreferredAuthenticatorUseCaseTests {
         whenPreferedAuthenticatorIsBiometric()
         whenUserProfileExists()
 
-        getPreferredAuthenticatorUseCase(profileId, callbackMock)
+        val result = getPreferredAuthenticatorUseCase(profileId)
 
-        val captor = argumentCaptor<Result<OWAuthenticator>>()
-        verify(callbackMock).invoke(captor.capture())
-        assertEquals(OWAuthenticatorType.BIOMETRIC, captor.firstValue.getOrNull()?.authenticatorType)
+        assertEquals(OWAuthenticatorType.BIOMETRIC, result.getOrNull()?.authenticatorType)
     }
 
     @Test
@@ -90,11 +82,9 @@ class GetPreferredAuthenticatorUseCaseTests {
         whenPreferedAuthenticatorIsCustom()
         whenUserProfileExists()
 
-        getPreferredAuthenticatorUseCase(profileId, callbackMock)
+        val result = getPreferredAuthenticatorUseCase(profileId)
 
-        val captor = argumentCaptor<Result<OWAuthenticator>>()
-        verify(callbackMock).invoke(captor.capture())
-        SdkErrorAssert.assertEquals(GENERIC_ERROR, captor.firstValue.exceptionOrNull())
+        SdkErrorAssert.assertEquals(GENERIC_ERROR, result.exceptionOrNull())
     }
 
     private fun whenUserProfileExists() {

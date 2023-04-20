@@ -10,23 +10,23 @@ import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticatorType
 import javax.inject.Inject
 
 class GetPreferredAuthenticatorUseCase @Inject constructor(private val oneginiSDK: OneginiSDK, private val getUserProfileUseCase: GetUserProfileUseCase) {
-    operator fun invoke(profileId: String, callback: (Result<OWAuthenticator>) -> Unit) {
+    operator fun invoke(profileId: String): Result<OWAuthenticator> {
         val userProfile = try {
             getUserProfileUseCase(profileId)
         } catch (error: SdkError) {
-            return callback(Result.failure(error.pigeonError()))
+            return Result.failure(error.pigeonError())
         }
         val authenticators = oneginiSDK.oneginiClient.userClient.getAllAuthenticators(userProfile)
         val authenticator = authenticators.find { it.isPreferred }
-            ?: return callback(Result.failure(SdkError(GENERIC_ERROR).pigeonError()))
+            ?: return Result.failure(SdkError(GENERIC_ERROR).pigeonError())
 
         val authenticatorType = when (authenticator.type) {
             OWAuthenticatorType.PIN.toOneginiInt() -> OWAuthenticatorType.PIN
             OWAuthenticatorType.BIOMETRIC.toOneginiInt() -> OWAuthenticatorType.BIOMETRIC
             // This should never happen because we don't support CUSTOM/FIDO authenticators
             else -> null
-        } ?: return callback(Result.failure(SdkError(GENERIC_ERROR).pigeonError()))
+        } ?: return Result.failure(SdkError(GENERIC_ERROR).pigeonError())
 
-        return  callback(Result.success(OWAuthenticator(authenticator.id, authenticator.name, authenticator.isRegistered, authenticator.isPreferred, authenticatorType)))
+        return  Result.success(OWAuthenticator(authenticator.id, authenticator.name, authenticator.isRegistered, authenticator.isPreferred, authenticatorType))
     }
 }
