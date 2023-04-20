@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:onegini/callbacks/onegini_custom_registration_callback.dart';
 import 'package:onegini/callbacks/onegini_registration_callback.dart';
 import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/model/request_details.dart';
@@ -148,6 +149,23 @@ class _LoginScreenState extends State<LoginScreen> {
         showFlutterToast(error.message);
       }
     });
+  }
+
+  testFunc() async {
+    print("ghalooooo");
+
+    final providers = await Onegini.instance.userClient.getIdentityProviders();
+
+    if (providers.length > 0) {
+      OneginiCustomRegistrationCallback()
+          .submitErrorAction("Registration canceled")
+          .catchError((error) {
+        if (error is PlatformException) {
+          print(error);
+          showFlutterToast(error.message);
+        }
+      });
+    }
   }
 
   Future<List<OWUserProfile>> getUserProfiles() async {
@@ -342,6 +360,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ])
                             : SizedBox.shrink();
                       }),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  ElevatedButton(
+                    onPressed: () {
+                      testFunc();
+                    },
+                    child: Text('Test button'),
+                  ),
+                  SizedBox(
+                    height: 20,
+                  ),
                   SizedBox(
                     height: 20,
                   ),

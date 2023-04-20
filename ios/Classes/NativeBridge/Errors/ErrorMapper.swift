@@ -1,39 +1,81 @@
 // swiftlint:disable cyclomatic_complexity
 import OneginiSDKiOS
 
-enum OneWelcomeWrapperError: Int {
+enum OneWelcomeWrapperError {
     // iOS and Android
-    case genericError = 8000
-    case userProfileDoesNotExist = 8001
-    case noUserProfileIsAuthenticated = 8002
-    case authenticatorNotFound = 8004
-    case httpRequestError = 8011
-    case errorCodeHttpRequest = 8013
-    case registrationNotInProgress = 8034
-    case unauthenticatedImplicitly = 8035
-    case methodArgumentNotFound = 8036
-    case authenticationNotInProgress = 8037
-    case otpAuthenticationNotInProgress = 8039
-    case browserRegistrationNotInProgress = 8040
+    case genericError
+    case userProfileDoesNotExist
+    case noUserProfileIsAuthenticated
+    case authenticatorNotFound
+    case httpRequestError
+    case errorCodeHttpRequest
+    case registrationNotInProgress
+    case customRegistrationNotInProgress
+    case unauthenticatedImplicitly
+    case authenticationNotInProgress
+    case otpAuthenticationNotInProgress
+    case browserRegistrationNotInProgress
 
     // iOS only
-    case providedUrlIncorrect = 8014
-    case loginCanceled = 8015
-    case enrollmentFailed = 8016
-    case authenticationCancelled = 8017
-    case registrationCancelled = 8020
-    case cantHandleOTP = 8021
-    case incorrectResourcesAccess = 8022
-    case authenticatorNotRegistered = 8023
-    case authenticatorDeregistrationCancelled = 8024
-    case failedToParseData = 8025
-    case responseIsNull = 8026
-    case authenticatorIdIsNull = 8027
-    case emptyInputValue = 8028
-    case unsupportedPinAction = 8029
-    case unsupportedCustomRegistrationAction = 8030
-    case authenticatorRegistrationCancelled = 8031
-    case mobileAuthInProgress = 8041
+    case providedUrlIncorrect
+    case loginCanceled
+    case enrollmentFailed
+    case authenticationCancelled
+    case registrationCancelled
+    case authenticatorNotRegistered
+    case authenticatorDeregistrationCancelled
+    case responseIsNull
+    case authenticatorRegistrationCancelled
+    case mobileAuthInProgress
+
+    func code() -> Int {
+        switch self {
+        case .genericError:
+            return 8000
+        case .userProfileDoesNotExist:
+            return 8001
+        case .noUserProfileIsAuthenticated:
+            return 8002
+        case .authenticatorNotFound:
+            return 8004
+        case .httpRequestError:
+            return 8011
+        case .errorCodeHttpRequest:
+            return 8013
+        case .registrationNotInProgress, .customRegistrationNotInProgress:
+            return 8034
+        case .unauthenticatedImplicitly:
+            return 8035
+        case .authenticationNotInProgress:
+            return 8037
+        case .otpAuthenticationNotInProgress:
+            return 8039
+        case .browserRegistrationNotInProgress:
+            return 8040
+
+        // iOS only
+        case .providedUrlIncorrect:
+            return 8014
+        case .loginCanceled:
+            return 8015
+        case .enrollmentFailed:
+            return 8016
+        case .authenticationCancelled:
+            return 8017
+        case .registrationCancelled:
+            return 8020
+        case .authenticatorNotRegistered:
+            return 8023
+        case .authenticatorDeregistrationCancelled:
+            return 8024
+        case .responseIsNull:
+            return 8026
+        case .authenticatorRegistrationCancelled:
+            return 8031
+        case .mobileAuthInProgress:
+            return 8041
+        }
+    }
 
     func message() -> String {
         switch self {
@@ -57,34 +99,18 @@ enum OneWelcomeWrapperError: Int {
             return "Authenticator deregistration cancelled."
         case .registrationCancelled:
             return "Registration cancelled."
-        case .cantHandleOTP:
-            return "Can't handle otp authentication request."
-        case .incorrectResourcesAccess:
-            return "Incorrect access to resources."
         case .authenticatorNotRegistered:
             return "This authenticator is not registered."
-        case .failedToParseData:
-            return "Failed to parse data."
         case .responseIsNull:
             return "Response doesn't contain data."
-        case .authenticatorIdIsNull:
-            return "Authenticator ID is empty."
-        case .emptyInputValue:
-            return "Empty input value."
         case .errorCodeHttpRequest:
             return "OneWelcome: HTTP Request failed. Check Response for more info."
         case .httpRequestError:
             return "OneWelcome: HTTP Request failed. Check iosCode and iosMessage for more info."
-        case .unsupportedPinAction:
-            return "Unsupported pin action. Contact SDK maintainer."
-        case .unsupportedCustomRegistrationAction:
-            return "Unsupported custom registration action. Contact SDK maintainer."
         case .authenticatorRegistrationCancelled:
             return "The authenticator-registration was cancelled."
         case .unauthenticatedImplicitly:
             return "The requested action requires you to be authenticated implicitly."
-        case .methodArgumentNotFound:
-            return "The passed argument from Flutter could not be found."
         case .registrationNotInProgress:
             return "Registration is currently not in progress."
         case .authenticationNotInProgress:

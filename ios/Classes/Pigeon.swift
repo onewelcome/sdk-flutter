@@ -418,8 +418,8 @@ protocol UserClientApi {
   func authenticateDevice(scopes: [String]?, completion: @escaping (Result<Void, Error>) -> Void)
   func authenticateUserImplicitly(profileId: String, scopes: [String]?, completion: @escaping (Result<Void, Error>) -> Void)
   /// Custom Registration Callbacks
-  func submitCustomRegistrationAction(identityProviderId: String, data: String?, completion: @escaping (Result<Void, Error>) -> Void)
-  func cancelCustomRegistrationAction(identityProviderId: String, error: String, completion: @escaping (Result<Void, Error>) -> Void)
+  func submitCustomRegistrationAction(data: String?, completion: @escaping (Result<Void, Error>) -> Void)
+  func cancelCustomRegistrationAction(error: String, completion: @escaping (Result<Void, Error>) -> Void)
   /// Fingerprint Callbacks
   func fingerprintFallbackToPin(completion: @escaping (Result<Void, Error>) -> Void)
   func fingerprintDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void)
@@ -848,9 +848,8 @@ class UserClientApiSetup {
     if let api = api {
       submitCustomRegistrationActionChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let identityProviderIdArg = args[0] as! String
-        let dataArg: String? = nilOrValue(args[1])
-        api.submitCustomRegistrationAction(identityProviderId: identityProviderIdArg, data: dataArg) { result in
+        let dataArg: String? = nilOrValue(args[0])
+        api.submitCustomRegistrationAction(data: dataArg) { result in
           switch result {
             case .success:
               reply(wrapResult(nil))
@@ -866,9 +865,8 @@ class UserClientApiSetup {
     if let api = api {
       cancelCustomRegistrationActionChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let identityProviderIdArg = args[0] as! String
-        let errorArg = args[1] as! String
-        api.cancelCustomRegistrationAction(identityProviderId: identityProviderIdArg, error: errorArg) { result in
+        let errorArg = args[0] as! String
+        api.cancelCustomRegistrationAction(error: errorArg) { result in
           switch result {
             case .success:
               reply(wrapResult(nil))
@@ -1178,7 +1176,6 @@ class NativeCallFlutterApi {
     }
   }
   /// Called to open pin creation screen.
-  /// changed  n2fOpenPinRequestScreen into n2fOpenPinCreation
   func n2fOpenPinCreation(completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinCreation", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage(nil) { _ in
@@ -1186,7 +1183,6 @@ class NativeCallFlutterApi {
     }
   }
   /// Called to close pin registration screen.
-  /// changed  n2fClosePin  into n2fClosePinCreation
   func n2fClosePinCreation(completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePinCreation", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage(nil) { _ in
@@ -1194,7 +1190,6 @@ class NativeCallFlutterApi {
     }
   }
   /// Called to indicate that the given pin is not allowed for pin creation
-  /// changed n2fEventPinNotAllowed into n2fPinNotAllowed
   func n2fPinNotAllowed(error errorArg: OWOneginiError, completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fPinNotAllowed", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([errorArg] as [Any?]) { _ in
@@ -1202,7 +1197,6 @@ class NativeCallFlutterApi {
     }
   }
   /// Called to open pin authentication screen.
-  /// changed  n2fOpenPinScreenAuth into n2fOpenPinAuthentication
   func n2fOpenPinAuthentication(completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinAuthentication", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage(nil) { _ in
@@ -1210,7 +1204,6 @@ class NativeCallFlutterApi {
     }
   }
   /// Called to close pin authentication screen.
-  /// changed n2fClosePinAuth into n2fClosePinAuthentication    
   func n2fClosePinAuthentication(completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePinAuthentication", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage(nil) { _ in
@@ -1218,7 +1211,6 @@ class NativeCallFlutterApi {
     }
   }
   /// Called to attempt next pin authentication.
-  /// changed n2fNextAuthenticationAttempt into n2fNextPinAuthenticationAttempt
   func n2fNextPinAuthenticationAttempt(authenticationAttempt authenticationAttemptArg: OWAuthenticationAttempt, completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fNextPinAuthenticationAttempt", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([authenticationAttemptArg] as [Any?]) { _ in
