@@ -22,7 +22,7 @@ class PinAuthenticationRequestHandler @Inject constructor(private val nativeApi:
     attemptCounter: AuthenticationAttemptCounter
   ) {
     callback = oneginiPinCallback
-    nativeApi.n2fOpenPinScreenAuth { }
+    nativeApi.n2fOpenPinAuthentication { }
   }
 
   override fun onNextAuthenticationAttempt(attemptCounter: AuthenticationAttemptCounter) {
@@ -31,11 +31,11 @@ class PinAuthenticationRequestHandler @Inject constructor(private val nativeApi:
       attemptCounter.maxAttempts.toLong(),
       attemptCounter.remainingAttempts.toLong()
     )
-    nativeApi.n2fNextAuthenticationAttempt(authenticationAttempt) {}
+    nativeApi.n2fNextPinAuthenticationAttempt(authenticationAttempt) {}
   }
 
   override fun finishAuthentication() {
-    nativeApi.n2fClosePinAuth { }
+    nativeApi.n2fClosePinAuthentication { }
     callback = null
   }
 

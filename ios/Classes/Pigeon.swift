@@ -1178,6 +1178,54 @@ class NativeCallFlutterApi {
       completion()
     }
   }
+  /// Called to open pin creation screen.
+  /// changed  n2fOpenPinRequestScreen into n2fOpenPinCreation
+  func n2fOpenPinCreation(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinCreation", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Called to close pin registration screen.
+  /// changed  n2fClosePin  into n2fClosePinCreation
+  func n2fClosePinCreation(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePinCreation", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Called to indicate that the given pin is not allowed for pin creation
+  /// changed n2fEventPinNotAllowed into n2fPinNotAllowed
+  func n2fPinNotAllowed(error errorArg: OWOneginiError, completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fPinNotAllowed", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([errorArg] as [Any?]) { _ in
+      completion()
+    }
+  }
+  /// Called to open pin authentication screen.
+  /// changed  n2fOpenPinScreenAuth into n2fOpenPinAuthentication
+  func n2fOpenPinAuthentication(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinAuthentication", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Called to close pin authentication screen.
+  /// changed n2fClosePinAuth into n2fClosePinAuthentication    
+  func n2fClosePinAuthentication(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePinAuthentication", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Called to attempt next pin authentication.
+  /// changed n2fNextAuthenticationAttempt into n2fNextPinAuthenticationAttempt
+  func n2fNextPinAuthenticationAttempt(authenticationAttempt authenticationAttemptArg: OWAuthenticationAttempt, completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fNextPinAuthenticationAttempt", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([authenticationAttemptArg] as [Any?]) { _ in
+      completion()
+    }
+  }
   /// Called to open OTP authentication.
   func n2fOpenAuthOtp(message messageArg: String?, completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenAuthOtp", binaryMessenger: binaryMessenger, codec: codec)
@@ -1192,51 +1240,16 @@ class NativeCallFlutterApi {
       completion()
     }
   }
-  /// Called to open pin registration screen.
-  func n2fOpenPinRequestScreen(completion: @escaping () -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinRequestScreen", binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage(nil) { _ in
-      completion()
-    }
-  }
-  /// Called to open pin authentication screen.
-  func n2fOpenPinScreenAuth(completion: @escaping () -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinScreenAuth", binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage(nil) { _ in
-      completion()
-    }
-  }
-  /// Called to open pin authentication screen.
-  func n2fOpenPinAuthenticator(completion: @escaping () -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinAuthenticator", binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage(nil) { _ in
-      completion()
-    }
-  }
-  /// Called to attempt next authentication.
-  func n2fNextAuthenticationAttempt(authenticationAttempt authenticationAttemptArg: OWAuthenticationAttempt, completion: @escaping () -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fNextAuthenticationAttempt", binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([authenticationAttemptArg] as [Any?]) { _ in
-      completion()
-    }
-  }
-  /// Called to close pin registration screen.
-  func n2fClosePin(completion: @escaping () -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePin", binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage(nil) { _ in
-      completion()
-    }
-  }
-  /// Called to close pin authentication screen.
-  func n2fClosePinAuth(completion: @escaping () -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePinAuth", binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage(nil) { _ in
-      completion()
-    }
-  }
   /// Called to open fingerprint screen.
   func n2fOpenFingerprintScreen(completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenFingerprintScreen", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Called to close fingerprint screen.
+  func n2fCloseFingerprintScreen(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fCloseFingerprintScreen", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage(nil) { _ in
       completion()
     }
@@ -1249,15 +1262,8 @@ class NativeCallFlutterApi {
     }
   }
   /// Called when fingerprint was received.
-  func n2fReceivedFingerprint(completion: @escaping () -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fReceivedFingerprint", binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage(nil) { _ in
-      completion()
-    }
-  }
-  /// Called to close fingerprint screen.
-  func n2fCloseFingerprintScreen(completion: @escaping () -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fCloseFingerprintScreen", binaryMessenger: binaryMessenger, codec: codec)
+  func n2fNextFingerprintAuthenticationAttempt(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fNextFingerprintAuthenticationAttempt", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage(nil) { _ in
       completion()
     }
@@ -1273,12 +1279,6 @@ class NativeCallFlutterApi {
   func n2fEventFinishCustomRegistration(customInfo customInfoArg: OWCustomInfo?, providerId providerIdArg: String, completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fEventFinishCustomRegistration", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([customInfoArg, providerIdArg] as [Any?]) { _ in
-      completion()
-    }
-  }
-  func n2fEventPinNotAllowed(error errorArg: OWOneginiError, completion: @escaping () -> Void) {
-    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fEventPinNotAllowed", binaryMessenger: binaryMessenger, codec: codec)
-    channel.sendMessage([errorArg] as [Any?]) { _ in
       completion()
     }
   }

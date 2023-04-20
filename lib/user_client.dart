@@ -1,10 +1,6 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:onegini/onegini_event_listener.dart';
-import 'package:onegini/pigeon.dart';
+import 'dart:async';
 
-import 'constants/constants.dart';
-import 'onegini.dart';
+import 'package:onegini/pigeon.dart';
 
 ///Сlass with basic methods available to the developer.
 class UserClient {
@@ -16,26 +12,20 @@ class UserClient {
   /// If [identityProviderId] is null, starts standard browser registration.
   /// Use your [scopes] for registration. By default it is "read".
   Future<OWRegistrationResponse> registerUser(
-    BuildContext? context,
     String? identityProviderId,
     List<String>? scopes,
   ) async {
-    Onegini.instance.setEventContext(context);
     return await api.registerUser(identityProviderId, scopes);
   }
 
   /// Start browser Registration logic
-  Future<void> handleRegisteredUserUrl(BuildContext? context, String url,
+  Future<void> handleRegisteredUserUrl(String url,
       {WebSignInType signInType = WebSignInType.insideApp}) async {
-    Onegini.instance.setEventContext(context);
     await api.handleRegisteredUserUrl(url, signInType.value);
   }
 
   /// Returns a list of available identity providers.
-  Future<List<OWIdentityProvider>> getIdentityProviders(
-      BuildContext? context) async {
-    Onegini.instance.setEventContext(context);
-
+  Future<List<OWIdentityProvider>> getIdentityProviders() async {
     final providers = await api.getIdentityProviders();
     return providers.whereType<OWIdentityProvider>().toList();
   }
@@ -54,11 +44,9 @@ class UserClient {
   /// If [registeredAuthenticatorId] is null, starts authentication by default authenticator.
   /// Usually it is Pin authenticator.
   Future<OWRegistrationResponse> authenticateUser(
-    BuildContext? context,
     String profileId,
     OWAuthenticatorType? authenticatorType,
   ) async {
-    Onegini.instance.setEventContext(context);
     if (authenticatorType != null) {
       return await api.authenticateUser(profileId, authenticatorType);
     } else {
@@ -67,10 +55,7 @@ class UserClient {
   }
 
   /// Starts change pin flow.
-  Future<void> changePin(
-    BuildContext? context,
-  ) async {
-    Onegini.instance.setEventContext(context);
+  Future<void> changePin() async {
     await api.changePin();
   }
 
@@ -90,8 +75,7 @@ class UserClient {
     await api.deregisterBiometricAuthenticator();
   }
 
-  Future<void> registerBiometricAuthenticator(BuildContext context) async {
-    Onegini.instance.setEventContext(context);
+  Future<void> registerBiometricAuthenticator() async {
     await api.registerBiometricAuthenticator();
   }
 
@@ -99,18 +83,17 @@ class UserClient {
     return await api.getBiometricAuthenticator(profileId);
   }
 
-  ///Method for log out
-  /// todo removed boolean return update docu
+  /// Method for log out
   Future<void> logout() async {
     await api.logout();
   }
 
-  // TODO Implement these functions within example app after.
-  // https://onewelcome.atlassian.net/browse/FP-69
+  /// Enroll for MobileAuthentication (enable OTP)
   Future<void> enrollMobileAuthentication() async {
     await api.enrollMobileAuthentication();
   }
 
+  /// Respond to mobile authentication with OTP
   Future<void> handleMobileAuthWithOtp(String data) async {
     await api.handleMobileAuthWithOtp(data);
   }

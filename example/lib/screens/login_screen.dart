@@ -1,12 +1,15 @@
 // @dart = 2.10
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/callbacks/onegini_registration_callback.dart';
+import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/model/request_details.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini/pigeon.dart';
+import 'package:onegini_example/ow_broadcast_helper.dart';
 import 'package:onegini_example/screens/user_screen.dart';
 
 import '../components/display_toast.dart';
@@ -18,18 +21,35 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
+  OWBroadcastHelper broadcastHelper;
+  List<StreamSubscription<OWEvent>> registrationSubscriptions;
+  List<StreamSubscription<OWEvent>> authenticationSubscriptions;
 
   @override
   initState() {
+    // Init subscriptipons for registration and authentication
+    this.registrationSubscriptions =
+        OWBroadcastHelper.initRegistrationSubscriptions(context);
+    this.authenticationSubscriptions =
+        OWBroadcastHelper.initAuthenticationSubscriptions(context);
+
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    OWBroadcastHelper.stopListening(registrationSubscriptions);
+    OWBroadcastHelper.stopListening(authenticationSubscriptions);
+
+    super.dispose();
   }
 
   openWeb() async {
     /// Start registration
     setState(() => {isLoading = true});
+
     try {
       var registrationResponse = await Onegini.instance.userClient.registerUser(
-        context,
         null,
         ["read"],
       );
@@ -54,10 +74,10 @@ class _LoginScreenState extends State<LoginScreen> {
     setState(() => {isLoading = true});
     try {
       var registrationResponse = await Onegini.instance.userClient.registerUser(
-        context,
         identityProviderId,
         ["read"],
       );
+
       if (registrationResponse.userProfile.profileId != null)
         Navigator.pushAndRemoveUntil(
             context,
@@ -77,7 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
   authenticate(String profileId, OWAuthenticatorType authenticatorType) async {
     try {
       var registrationResponse = await Onegini.instance.userClient
-          .authenticateUser(context, profileId, authenticatorType);
+          .authenticateUser(profileId, authenticatorType);
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -291,8 +311,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 20,
                   ),
                   FutureBuilder<List<OWIdentityProvider>>(
-                    future: Onegini.instance.userClient
-                        .getIdentityProviders(context),
+                    future: Onegini.instance.userClient.getIdentityProviders(),
                     builder: (BuildContext context, identityProviders) {
                       return identityProviders.hasData
                           ? PopupMenuButton<String>(

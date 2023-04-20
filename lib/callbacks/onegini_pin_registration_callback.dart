@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
 import 'package:onegini/pigeon.dart';
-
-import '../onegini.dart';
 
 /// A callback for pin REGISTRATION.
 class OneginiPinRegistrationCallback {
@@ -13,10 +10,7 @@ class OneginiPinRegistrationCallback {
   }
 
   /// Accepts pin registration and sent [pin] to the OneginiSdk.
-  Future<void> acceptAuthenticationRequest(
-      BuildContext? context, String pin) async {
-    Onegini.instance.setEventContext(context);
-
+  Future<void> acceptAuthenticationRequest(String pin) async {
     await api.pinAcceptRegistrationRequest(pin);
   }
 }

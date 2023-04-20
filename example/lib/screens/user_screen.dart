@@ -1,14 +1,18 @@
+import 'dart:async';
 import 'dart:convert';
 
 import "package:collection/collection.dart";
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/model/request_details.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini_example/components/display_toast.dart';
 import 'package:onegini_example/models/application_details.dart';
 import 'package:onegini_example/models/client_resource.dart';
+import 'package:onegini_example/ow_broadcast_helper.dart';
 import 'package:onegini_example/screens/qr_scan_screen.dart';
+import 'package:onegini_example/subscription_handlers/otp_subscriptions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:onegini/pigeon.dart';
 
@@ -30,6 +34,9 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
   OWAuthenticator? _biometricAuthenticator = null;
   OWAuthenticator? _preferredAuthenticator = null;
   String profileId = "";
+  late final List<StreamSubscription<OWEvent>>? registrationSubscriptions;
+  late final List<StreamSubscription<OWEvent>>? authenticationSubscriptions;
+  late final List<StreamSubscription<OWEvent>>? otpSubscriptions;
 
   void onTabTapped(int index) {
     setState(() {
@@ -47,6 +54,14 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     ];
     super.initState();
     this.profileId = widget.userProfileId;
+
+    // Init listeners for changePin, setPreferredAuthenticators
+    this.registrationSubscriptions =
+        OWBroadcastHelper.initRegistrationSubscriptions(context);
+    this.authenticationSubscriptions =
+        OWBroadcastHelper.initAuthenticationSubscriptions(context);
+    this.otpSubscriptions = initOtpSubscriptions(context);
+
     getAuthenticators();
   }
 
@@ -72,6 +87,20 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
         showFlutterToast(err.message);
       }
     }
+  }
+
+  @override
+  void dispose() {
+    routeObserver.unsubscribe(this);
+    OWBroadcastHelper.stopListening(authenticationSubscriptions);
+    OWBroadcastHelper.stopListening(registrationSubscriptions);
+    OWBroadcastHelper.stopListening(otpSubscriptions);
+    super.dispose();
+  }
+
+  @override
+  void didPopNext() {
+    getAuthenticators();
   }
 
   logOut(BuildContext context) async {
@@ -103,7 +132,8 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 
   changePin(BuildContext context) {
     Navigator.pop(context);
-    Onegini.instance.userClient.changePin(context).catchError((error) {
+
+    Onegini.instance.userClient.changePin().catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);
         // FIXME: this should be extracted into a seperate method and should also use constants (dont exist yet)
@@ -132,7 +162,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
                   if (newValue)
                     {
                       Onegini.instance.userClient
-                          .registerBiometricAuthenticator(context)
+                          .registerBiometricAuthenticator()
                           .whenComplete(() => getAuthenticators())
                     }
                   else
@@ -255,8 +285,7 @@ class Home extends StatelessWidget {
   }
 
   authWithOpt(BuildContext context) async {
-    Onegini.instance.setEventContext(context);
-    var data = await Navigator.push(
+    final data = await Navigator.push(
       context,
       MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
     );
@@ -265,10 +294,9 @@ class Home extends StatelessWidget {
       await Onegini.instance.userClient
           .handleMobileAuthWithOtp(data)
           .then(
-              (value) => showFlutterToast("OTP1 Authentication is successfull"))
+              (value) => showFlutterToast("OTP Authentication is successfull"))
           .catchError((error) {
         if (error is PlatformException) {
-          print("otp1");
           print(error.message);
         }
       });
@@ -285,6 +313,7 @@ class Home extends StatelessWidget {
       }
     });
     if (oneginiAppToWebSingleSignOn != null) {
+      // ignore: deprecated_member_use
       await launch(
         oneginiAppToWebSingleSignOn.redirectUrl,
         enableDomStorage: true,
