@@ -33,8 +33,8 @@ class OWBroadcastHelper {
     return pinAuthSubs + fingerprintSubs;
   }
 
-  static void stopListening(List<StreamSubscription<OWEvent>> subscriptions) {
-    subscriptions.forEach((element) {
+  static void stopListening(List<StreamSubscription<OWEvent>>? subscriptions) {
+    subscriptions?.forEach((element) {
       element.cancel();
     });
   }

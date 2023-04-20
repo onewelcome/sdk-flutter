@@ -94,17 +94,10 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  authenticateWithPreferredAuthenticator(String profileId) async {
-    setState(() => {isLoading = true});
-    var registrationResponse = await Onegini.instance.userClient
-        .authenticateUser(profileId, null)
-        .catchError((error) {
-      setState(() => isLoading = false);
-      if (error is PlatformException) {
-        showFlutterToast(error.message);
-      }
-    });
-    if (registrationResponse?.userProfile?.profileId != null)
+  authenticate(String profileId, OWAuthenticatorType authenticatorType) async {
+    try {
+      var registrationResponse = await Onegini.instance.userClient
+          .authenticateUser(profileId, authenticatorType);
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -112,30 +105,11 @@ class _LoginScreenState extends State<LoginScreen> {
                     userProfileId: registrationResponse.userProfile.profileId,
                   )),
           (Route<dynamic> route) => false);
-  }
-
-  authenticateWithRegisteredAuthenticators(
-      String registeredAuthenticatorId, String profileId) async {
-    setState(() => {isLoading = true});
-    // var result = await Onegini.instance.userClient.setPreferredAuthenticator(context, registeredAuthenticatorId);
-    // print(result);
-
-    var registrationResponse = await Onegini.instance.userClient
-        .authenticateUser(profileId, registeredAuthenticatorId)
-        .catchError((error) {
-      setState(() => isLoading = false);
+    } catch (error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);
       }
-    });
-    if (registrationResponse.userProfile?.profileId != null)
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (context) => UserScreen(
-                    userProfileId: registrationResponse.userProfile.profileId,
-                  )),
-          (Route<dynamic> route) => false);
+    }
   }
 
   cancelRegistration() async {
@@ -265,77 +239,52 @@ class _LoginScreenState extends State<LoginScreen> {
                                                       ),
                                                       ElevatedButton(
                                                         onPressed: () {
-                                                          authenticateWithPreferredAuthenticator(
+                                                          authenticate(
                                                               userProfiles
                                                                   .data
                                                                   .first
-                                                                  ?.profileId);
+                                                                  ?.profileId,
+                                                              null);
                                                         },
                                                         child: Text(
-                                                            'Authenticate with preferred authenticator'),
+                                                            'Preferred authenticator'),
                                                       ),
-                                                      SizedBox(
-                                                        height: 10,
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .center,
+                                                        children: [
+                                                          ElevatedButton(
+                                                            onPressed: () {
+                                                              authenticate(
+                                                                  userProfiles
+                                                                      .data
+                                                                      .first
+                                                                      ?.profileId,
+                                                                  OWAuthenticatorType
+                                                                      .pin);
+                                                            },
+                                                            child: Text('Pin'),
+                                                          ),
+                                                          SizedBox(
+                                                            height: 10,
+                                                            width: 10,
+                                                          ),
+                                                          ElevatedButton(
+                                                            onPressed: () {
+                                                              authenticate(
+                                                                  userProfiles
+                                                                      .data
+                                                                      .first
+                                                                      ?.profileId,
+                                                                  OWAuthenticatorType
+                                                                      .biometric);
+                                                            },
+                                                            child: Text(
+                                                                'Biometrics'),
+                                                          ),
+                                                        ],
                                                       ),
-                                                      FutureBuilder<
-                                                          List<
-                                                              OWAuthenticator>>(
-                                                        future: Onegini
-                                                            .instance.userClient
-                                                            .getRegisteredAuthenticators(
-                                                                userProfiles
-                                                                    .data
-                                                                    .first
-                                                                    ?.profileId),
-                                                        builder: (BuildContext
-                                                                context,
-                                                            registeredAuthenticators) {
-                                                          return registeredAuthenticators
-                                                                  .hasData
-                                                              ? PopupMenuButton<
-                                                                      String>(
-                                                                  child:
-                                                                      Container(
-                                                                    padding:
-                                                                        EdgeInsets.all(
-                                                                            20),
-                                                                    color: Colors
-                                                                        .blue,
-                                                                    child: Text(
-                                                                      "Authenticators",
-                                                                      style: TextStyle(
-                                                                          color: Colors
-                                                                              .white,
-                                                                          fontSize:
-                                                                              16,
-                                                                          fontWeight:
-                                                                              FontWeight.w700),
-                                                                    ),
-                                                                  ),
-                                                                  onSelected:
-                                                                      (value) {
-                                                                    authenticateWithRegisteredAuthenticators(
-                                                                        userProfiles
-                                                                            .data
-                                                                            .first
-                                                                            ?.profileId,
-                                                                        value);
-                                                                  },
-                                                                  itemBuilder:
-                                                                      (context) {
-                                                                    return registeredAuthenticators
-                                                                        .data
-                                                                        .map((e) =>
-                                                                            PopupMenuItem<String>(
-                                                                              child: Text(e.name ?? ""),
-                                                                              value: e.id,
-                                                                            ))
-                                                                        .toList();
-                                                                  })
-                                                              : SizedBox
-                                                                  .shrink();
-                                                        },
-                                                      )
                                                     ])
                                               : SizedBox.shrink();
                                         })

@@ -1,6 +1,5 @@
 package com.onegini.mobile.sdk
 
-import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiPinValidationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
 import com.onegini.mobile.sdk.flutter.OneginiSDK
@@ -27,9 +26,6 @@ class ValidatePinWithPolicyUseCaseTests {
 
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   lateinit var oneginiSdk: OneginiSDK
-
-  @Mock
-  lateinit var clientMock: OneginiClient
 
   @Mock
   lateinit var callbackMock: (Result<Unit>) -> Unit

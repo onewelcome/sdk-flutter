@@ -1,7 +1,6 @@
 package com.onegini.mobile.sdk
 
 import com.google.common.truth.Truth.assertThat
-import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiRegistrationHandler
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
@@ -27,9 +26,6 @@ import org.mockito.kotlin.*
 class RegistrationUseCaseTests {
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   lateinit var oneginiSdk: OneginiSDK
-
-  @Mock
-  lateinit var clientMock: OneginiClient
 
   @Mock
   lateinit var callbackMock: (Result<OWRegistrationResponse>) -> Unit

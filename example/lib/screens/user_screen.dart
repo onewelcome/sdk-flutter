@@ -1,4 +1,3 @@
-// @dart = 2.10
 import 'dart:async';
 import 'dart:convert';
 
@@ -23,7 +22,7 @@ import 'login_screen.dart';
 class UserScreen extends StatefulWidget {
   final String userProfileId;
 
-  const UserScreen({Key key, this.userProfileId}) : super(key: key);
+  const UserScreen({Key? key, required this.userProfileId}) : super(key: key);
 
   @override
   _UserScreenState createState() => _UserScreenState();
@@ -31,16 +30,13 @@ class UserScreen extends StatefulWidget {
 
 class _UserScreenState extends State<UserScreen> with RouteAware {
   int _currentIndex = 0;
-  List<Widget> _children;
-  bool isContainNotRegisteredAuthenticators = true;
-  List<OWAuthenticator> registeredAuthenticators = [];
-  List<OWAuthenticator> notRegisteredAuthenticators = [];
+  late List<Widget> _children;
+  OWAuthenticator? _biometricAuthenticator = null;
+  OWAuthenticator? _preferredAuthenticator = null;
   String profileId = "";
-  OWBroadcastHelper broadcastHelper;
-  List<StreamSubscription<OWEvent>> registrationSubscriptions;
-  List<StreamSubscription<OWEvent>> authenticationSubscriptions;
-  List<StreamSubscription<OWEvent>> otpSubscriptions;
-
+  late final List<StreamSubscription<OWEvent>>? registrationSubscriptions;
+  late final List<StreamSubscription<OWEvent>>? authenticationSubscriptions;
+  late final List<StreamSubscription<OWEvent>>? otpSubscriptions;
 
   void onTabTapped(int index) {
     setState(() {
@@ -60,25 +56,45 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     this.profileId = widget.userProfileId;
 
     // Init listeners for changePin, setPreferredAuthenticators
-    this.registrationSubscriptions = OWBroadcastHelper.initRegistrationSubscriptions(context);
-    this.authenticationSubscriptions = OWBroadcastHelper.initAuthenticationSubscriptions(context);
+    this.registrationSubscriptions =
+        OWBroadcastHelper.initRegistrationSubscriptions(context);
+    this.authenticationSubscriptions =
+        OWBroadcastHelper.initAuthenticationSubscriptions(context);
+    this.otpSubscriptions = initOtpSubscriptions(context);
 
     getAuthenticators();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    routeObserver.subscribe(this, ModalRoute.of(context));
+  getAuthenticators() async {
+    try {
+      final preferredAuthenticator = await Onegini.instance.userClient
+          .getPreferredAuthenticator(profileId);
+      setState(() {
+        _preferredAuthenticator = preferredAuthenticator;
+      });
+    } on PlatformException catch (err) {
+      showFlutterToast(err.message);
+    }
+
+    try {
+      final biometricAuthenticator = await Onegini.instance.userClient
+          .getBiometricAuthenticator(profileId);
+      setState(() {
+        _biometricAuthenticator = biometricAuthenticator;
+      });
+    } on PlatformException catch (err) {
+      if (err.code != "8043") {
+        showFlutterToast(err.message);
+      }
+    }
   }
 
   @override
   void dispose() {
     routeObserver.unsubscribe(this);
-
     OWBroadcastHelper.stopListening(authenticationSubscriptions);
     OWBroadcastHelper.stopListening(registrationSubscriptions);
-
+    OWBroadcastHelper.stopListening(otpSubscriptions);
     super.dispose();
   }
 
@@ -100,79 +116,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     );
   }
 
-  Future<void> getAuthenticators() async {
-    notRegisteredAuthenticators = await Onegini.instance.userClient
-        .getNotRegisteredAuthenticators(this.profileId);
-
-    registeredAuthenticators = await Onegini.instance.userClient
-        .getRegisteredAuthenticators(this.profileId);
-  }
-
-  Future<List<OWAuthenticator>> getAllSortAuthenticators() async {
-    var allAuthenticators = await Onegini.instance.userClient
-        .getAllAuthenticators(this.profileId);
-    allAuthenticators.sort((a, b) {
-      return compareAsciiUpperCase(a.name, b.name);
-    });
-    return allAuthenticators;
-  }
-
-  Future<List<OWAuthenticator>> getNotRegisteredAuthenticators() async {
-    var authenticators = await Onegini.instance.userClient
-        .getNotRegisteredAuthenticators(this.profileId);
-    return authenticators;
-  }
-
-  registerAuthenticator(String authenticatorId) async {
-    await Onegini.instance.userClient
-        .registerAuthenticator(authenticatorId)
-        .catchError((error) {
-      if (error is PlatformException) {
-        showFlutterToast(error.message);
-      }
-    });
-    await getAuthenticators();
-    setState(() {});
-  }
-
-  bool isRegisteredAuthenticator(String authenticatorId) {
-    for (var authenticator in registeredAuthenticators) {
-      if (authenticator.id == authenticatorId) return true;
-    }
-    return false;
-  }
-
-  deregisterAuthenticator(String authenticatorId) async {
-    await Onegini.instance.userClient
-        .deregisterAuthenticator(authenticatorId)
-        .catchError((error) {
-      if (error is PlatformException) {
-        showFlutterToast(error.message);
-      }
-    });
-    await getAuthenticators();
-    setState(() {});
-  }
-
-  setPreferredAuthenticator(String authenticatorId) async {
-    await Onegini.instance.userClient
-        .setPreferredAuthenticator(authenticatorId)
-        .catchError((error) {
-      if (error is PlatformException) {
-        showFlutterToast(error.message);
-      }
-    });
-    Navigator.pop(context);
-  }
-
   deregister(BuildContext context) async {
-    Navigator.pop(context);
-    var profiles = await Onegini.instance.userClient.getUserProfiles();
-    var profileId = profiles.first?.profileId;
-    if (profileId == null) {
-      return;
-    }
-
     await Onegini.instance.userClient
         .deregisterUser(profileId)
         .catchError((error) {
@@ -207,6 +151,60 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     });
   }
 
+  Widget biometricAuthenticatorWidget() {
+    final authenticator = _biometricAuthenticator;
+    if (authenticator != null) {
+      return ListTile(
+        title: Text(authenticator.name),
+        leading: Switch(
+            value: authenticator.isRegistered,
+            onChanged: (newValue) => {
+                  if (newValue)
+                    {
+                      Onegini.instance.userClient
+                          .registerBiometricAuthenticator()
+                          .whenComplete(() => getAuthenticators())
+                    }
+                  else
+                    {
+                      Onegini.instance.userClient
+                          .deregisterBiometricAuthenticator()
+                          .whenComplete(() => getAuthenticators())
+                    }
+                }),
+      );
+    }
+    return SizedBox.shrink();
+  }
+
+  Widget preferredAuthenticatorSelectorWidget() {
+    final biometricAuthenticator = _biometricAuthenticator;
+    return PopupMenuButton<OWAuthenticatorType>(
+        child: ListTile(
+          title: Text("set preferred authenticator"),
+          leading: Icon(Icons.add_to_home_screen),
+        ),
+        onSelected: (value) {
+          Onegini.instance.userClient
+              .setPreferredAuthenticator(value)
+              .whenComplete(() => getAuthenticators());
+        },
+        itemBuilder: (context) {
+          return [
+            PopupMenuItem<OWAuthenticatorType>(
+              child: Text("Pin"),
+              value: OWAuthenticatorType.pin,
+            ),
+            if (biometricAuthenticator != null &&
+                biometricAuthenticator.isRegistered)
+              PopupMenuItem<OWAuthenticatorType>(
+                child: Text(biometricAuthenticator.name),
+                value: OWAuthenticatorType.biometric,
+              ),
+          ];
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -228,58 +226,21 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
             DrawerHeader(
               child: Container(),
             ),
-            FutureBuilder<List<OWAuthenticator>>(
-              future: getAllSortAuthenticators(),
-              builder: (BuildContext context, snapshot) {
-                return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: snapshot.hasData ? snapshot.data.length : 0,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(
-                          snapshot.data[index].name,
-                        ),
-                        leading: Switch(
-                          value: snapshot.data[index].name == "PIN"
-                              ? true
-                              : isRegisteredAuthenticator(
-                                  snapshot.data[index].id),
-                          onChanged: snapshot.data[index].name == "PIN"
-                              ? null
-                              : (value) {
-                                  value
-                                      ? registerAuthenticator(
-                                          snapshot.data[index].id)
-                                      : deregisterAuthenticator(
-                                          snapshot.data[index].id);
-                                },
-                        ),
-                      );
-                    });
-              },
+            ListTile(
+              title: Text("Authenticators"),
+              leading: Icon(Icons.lock_rounded),
             ),
-            FutureBuilder<List<OWAuthenticator>>(
-              future: Onegini.instance.userClient
-                  .getRegisteredAuthenticators(this.profileId),
-              builder: (BuildContext context, snapshot) {
-                return PopupMenuButton<String>(
-                    child: ListTile(
-                      title: Text("set preferred authenticator"),
-                      leading: Icon(Icons.add_to_home_screen),
-                    ),
-                    onSelected: (value) {
-                      setPreferredAuthenticator(value);
-                    },
-                    itemBuilder: (context) {
-                      return snapshot.data
-                          .map((e) => PopupMenuItem<String>(
-                                child: Text(e.name ?? ""),
-                                value: e.id,
-                              ))
-                          .toList();
-                    });
-              },
+            ListTile(
+              title: Text("Pin"),
+              leading: Switch(value: true, onChanged: null),
             ),
+            biometricAuthenticatorWidget(),
+            ListTile(
+              title: Text(
+                  "Preferred Authenticator: ${_preferredAuthenticator?.name} "),
+            ),
+            preferredAuthenticatorSelectorWidget(),
+            Divider(),
             ListTile(
               title: Text("Change pin"),
               onTap: () => changePin(context),
@@ -293,7 +254,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
             ListTile(
               title: Text("Deregister"),
               onTap: () => deregister(context),
-              leading: Icon(Icons.app_registration),
+              leading: Icon(Icons.delete),
             )
           ],
         ),
@@ -314,34 +275,32 @@ class Home extends StatelessWidget {
   enrollMobileAuthentication() async {
     await Onegini.instance.userClient
         .enrollMobileAuthentication()
-        .then((value) => showFlutterToast("Mobile Authentication enrollment success"))
+        .then((value) =>
+            showFlutterToast("Mobile Authentication enrollment success"))
         .catchError((error) {
-          if (error is PlatformException) {
-            showFlutterToast(error.message);
-          }
-      });
+      if (error is PlatformException) {
+        showFlutterToast(error.message);
+      }
+    });
   }
 
   authWithOpt(BuildContext context) async {
-    List<StreamSubscription> otpSubscriptions = initOtpSubscriptions(context);
-
-    var data = await Navigator.push(
+    final data = await Navigator.push(
       context,
       MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
     );
 
     if (data != null) {
       await Onegini.instance.userClient
-        .handleMobileAuthWithOtp(data)
-        .then((value) => showFlutterToast("OTP Authentication is successfull"))
-        .catchError((error) {
-          if (error is PlatformException) {
-            print(error.message);
-          }
+          .handleMobileAuthWithOtp(data)
+          .then(
+              (value) => showFlutterToast("OTP Authentication is successfull"))
+          .catchError((error) {
+        if (error is PlatformException) {
+          print(error.message);
+        }
       });
     }
-
-    OWBroadcastHelper.stopListening(otpSubscriptions);
   }
 
   getAppToWebSingleSignOn(BuildContext context) async {
@@ -385,10 +344,11 @@ class Home extends StatelessWidget {
 
   performUnauthenticatedRequest() async {
     var response = await Onegini.instance.resourcesMethods
-        .requestResourceUnauthenticated(RequestDetails(path: "unauthenticated", method: HttpRequestMethod.get))
+        .requestResourceUnauthenticated(RequestDetails(
+            path: "unauthenticated", method: HttpRequestMethod.get))
         .catchError((error) {
-          print("An error occured $error");
-          showFlutterToast("An error occured $error");
+      print("An error occured $error");
+      showFlutterToast("An error occured $error");
     });
 
     showFlutterToast("Response: ${response.body}");
@@ -399,68 +359,52 @@ class Home extends StatelessWidget {
     return Container(
       child: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                getAppToWebSingleSignOn(context);
-              },
-              child: Text('Single Sign On'),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                enrollMobileAuthentication();
-              },
-              child: Text('Enroll for Mobile Authentication'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                authWithOpt(context);
-              },
-              child: Text('Auth with opt'),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                userProfiles(context);
-              },
-              child: Text('User profiles'),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                showAuthenticatedUserProfile(context);
-              },
-              child: Text('Authenticated Userprofile'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                showAccessToken(context);
-              },
-              child: Text('Access Token'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                performUnauthenticatedRequest();
-              },
-              child: Text('Perform Unauthenticated Request'),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-          ],
-        ),
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  getAppToWebSingleSignOn(context);
+                },
+                child: Text('Single Sign On'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  enrollMobileAuthentication();
+                },
+                child: Text('Enroll for Mobile Authentication'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  authWithOpt(context);
+                },
+                child: Text('Auth with opt'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  userProfiles(context);
+                },
+                child: Text('User profiles'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  showAuthenticatedUserProfile(context);
+                },
+                child: Text('Authenticated Userprofile'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  showAccessToken(context);
+                },
+                child: Text('Access Token'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  performUnauthenticatedRequest();
+                },
+                child: Text('Perform Unauthenticated Request'),
+              ),
+            ]),
       ),
     );
   }
@@ -469,7 +413,7 @@ class Home extends StatelessWidget {
 class Info extends StatefulWidget {
   final String userProfileId;
 
-  const Info({Key key, this.userProfileId}) : super(key: key);
+  const Info({Key? key, required this.userProfileId}) : super(key: key);
 
   @override
   _InfoState createState() => _InfoState();
@@ -479,14 +423,18 @@ class _InfoState extends State<Info> {
   Future<ApplicationDetails> getApplicationDetails() async {
     await Onegini.instance.userClient
         .authenticateDevice(["read", "write", "application-details"]);
-    var response = await Onegini.instance.resourcesMethods.requestResource(ResourceRequestType.anonymous, RequestDetails(path: "application-details", method: HttpRequestMethod.get));
+    var response = await Onegini.instance.resourcesMethods.requestResource(
+        ResourceRequestType.anonymous,
+        RequestDetails(
+            path: "application-details", method: HttpRequestMethod.get));
     var res = json.decode(response.body);
     return applicationDetailsFromJson(res);
   }
 
   Future<ClientResource> getClientResource() async {
     var response = await Onegini.instance.resourcesMethods
-        .requestResourceAuthenticated(RequestDetails(path: "devices", method: HttpRequestMethod.get))
+        .requestResourceAuthenticated(
+            RequestDetails(path: "devices", method: HttpRequestMethod.get))
         .catchError((error) {
       print('Caught error: $error');
 
@@ -520,7 +468,7 @@ class _InfoState extends State<Info> {
                                   style: TextStyle(fontSize: 18),
                                 ),
                                 Text(
-                                  snapshot.data.applicationIdentifier ?? "",
+                                  snapshot.data?.applicationIdentifier ?? "",
                                   style: TextStyle(fontSize: 18),
                                 )
                               ],
@@ -535,7 +483,7 @@ class _InfoState extends State<Info> {
                                   style: TextStyle(fontSize: 18),
                                 ),
                                 Text(
-                                  snapshot.data.applicationPlatform ?? "",
+                                  snapshot.data?.applicationPlatform ?? "",
                                   style: TextStyle(fontSize: 18),
                                 )
                               ],
@@ -550,7 +498,7 @@ class _InfoState extends State<Info> {
                                   style: TextStyle(fontSize: 18),
                                 ),
                                 Text(
-                                  snapshot.data.applicationVersion ?? "",
+                                  snapshot.data?.applicationVersion ?? "",
                                   style: TextStyle(fontSize: 18),
                                 )
                               ],
@@ -567,38 +515,39 @@ class _InfoState extends State<Info> {
                 child: FutureBuilder<ClientResource>(
                   future: getClientResource(),
                   builder: (context, snapshot) {
-                    return snapshot.hasData
+                    final snapshotData = snapshot.data;
+                    return snapshotData != null
                         ? ListView.builder(
-                            itemCount: snapshot.data.devices.length,
+                            itemCount: snapshotData.devices.length,
                             itemBuilder: (BuildContext context, int index) {
                               return ExpansionTile(
-                                title: Text(snapshot.data.devices[index].name),
+                                title: Text(snapshotData.devices[index].name),
                                 expandedCrossAxisAlignment:
                                     CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "Id => ${snapshot.data.devices[index].id}",
+                                    "Id => ${snapshotData.devices[index].id}",
                                     style: TextStyle(fontSize: 18),
                                   ),
                                   SizedBox(
                                     height: 10,
                                   ),
                                   Text(
-                                    "Application => ${snapshot.data.devices[index].application}",
+                                    "Application => ${snapshotData.devices[index].application}",
                                     style: TextStyle(fontSize: 18),
                                   ),
                                   SizedBox(
                                     height: 10,
                                   ),
                                   Text(
-                                    "Mobile authentication enabled => ${snapshot.data.devices[index].mobileAuthenticationEnabled.toString()}",
+                                    "Mobile authentication enabled => ${snapshotData.devices[index].mobileAuthenticationEnabled.toString()}",
                                     style: TextStyle(fontSize: 18),
                                   ),
                                   SizedBox(
                                     height: 10,
                                   ),
                                   Text(
-                                    "Platform => ${snapshot.data.devices[index].platform}",
+                                    "Platform => ${snapshotData.devices[index].platform}",
                                     style: TextStyle(fontSize: 18),
                                   ),
                                   SizedBox(
@@ -608,7 +557,11 @@ class _InfoState extends State<Info> {
                               );
                             },
                           )
-                        : SizedBox.shrink();
+                        : Center(
+                            child: SizedBox(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
                   },
                 ),
               ),

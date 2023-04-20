@@ -41,6 +41,11 @@ enum HttpRequestMethod: Int {
   case delete = 3
 }
 
+enum OWAuthenticatorType: Int {
+  case pin = 0
+  case biometric = 1
+}
+
 enum ResourceRequestType: Int {
   case authenticated = 0
   case implicit = 1
@@ -118,14 +123,14 @@ struct OWAuthenticator {
   var name: String
   var isRegistered: Bool
   var isPreferred: Bool
-  var authenticatorType: Int64
+  var authenticatorType: OWAuthenticatorType
 
   static func fromList(_ list: [Any]) -> OWAuthenticator? {
     let id = list[0] as! String
     let name = list[1] as! String
     let isRegistered = list[2] as! Bool
     let isPreferred = list[3] as! Bool
-    let authenticatorType = list[4] is Int64 ? list[4] as! Int64 : Int64(list[4] as! Int32)
+    let authenticatorType = OWAuthenticatorType(rawValue: list[4] as! Int)!
 
     return OWAuthenticator(
       id: id,
@@ -141,7 +146,7 @@ struct OWAuthenticator {
       name,
       isRegistered,
       isPreferred,
-      authenticatorType,
+      authenticatorType.rawValue,
     ]
   }
 }
@@ -398,15 +403,15 @@ protocol UserClientApi {
   func handleRegisteredUserUrl(url: String, signInType: Int64, completion: @escaping (Result<Void, Error>) -> Void)
   func getIdentityProviders(completion: @escaping (Result<[OWIdentityProvider], Error>) -> Void)
   func deregisterUser(profileId: String, completion: @escaping (Result<Void, Error>) -> Void)
-  func getRegisteredAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void)
-  func getAllAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void)
   func getAuthenticatedUserProfile(completion: @escaping (Result<OWUserProfile, Error>) -> Void)
-  func authenticateUser(profileId: String, registeredAuthenticatorId: String?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void)
-  func getNotRegisteredAuthenticators(profileId: String, completion: @escaping (Result<[OWAuthenticator], Error>) -> Void)
+  func authenticateUser(profileId: String, authenticatorType: OWAuthenticatorType, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void)
+  func authenticateUserPreferred(profileId: String, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void)
+  func getBiometricAuthenticator(profileId: String, completion: @escaping (Result<OWAuthenticator, Error>) -> Void)
+  func getPreferredAuthenticator(profileId: String, completion: @escaping (Result<OWAuthenticator, Error>) -> Void)
+  func setPreferredAuthenticator(authenticatorType: OWAuthenticatorType, completion: @escaping (Result<Void, Error>) -> Void)
+  func deregisterBiometricAuthenticator(completion: @escaping (Result<Void, Error>) -> Void)
+  func registerBiometricAuthenticator(completion: @escaping (Result<Void, Error>) -> Void)
   func changePin(completion: @escaping (Result<Void, Error>) -> Void)
-  func setPreferredAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void)
-  func deregisterAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void)
-  func registerAuthenticator(authenticatorId: String, completion: @escaping (Result<Void, Error>) -> Void)
   func logout(completion: @escaping (Result<Void, Error>) -> Void)
   func enrollMobileAuthentication(completion: @escaping (Result<Void, Error>) -> Void)
   func handleMobileAuthWithOtp(data: String, completion: @escaping (Result<Void, Error>) -> Void)
@@ -532,40 +537,6 @@ class UserClientApiSetup {
     } else {
       deregisterUserChannel.setMessageHandler(nil)
     }
-    let getRegisteredAuthenticatorsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.getRegisteredAuthenticators", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      getRegisteredAuthenticatorsChannel.setMessageHandler { message, reply in
-        let args = message as! [Any]
-        let profileIdArg = args[0] as! String
-        api.getRegisteredAuthenticators(profileId: profileIdArg) { result in
-          switch result {
-            case .success(let res):
-              reply(wrapResult(res))
-            case .failure(let error):
-              reply(wrapError(error))
-          }
-        }
-      }
-    } else {
-      getRegisteredAuthenticatorsChannel.setMessageHandler(nil)
-    }
-    let getAllAuthenticatorsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.getAllAuthenticators", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      getAllAuthenticatorsChannel.setMessageHandler { message, reply in
-        let args = message as! [Any]
-        let profileIdArg = args[0] as! String
-        api.getAllAuthenticators(profileId: profileIdArg) { result in
-          switch result {
-            case .success(let res):
-              reply(wrapResult(res))
-            case .failure(let error):
-              reply(wrapError(error))
-          }
-        }
-      }
-    } else {
-      getAllAuthenticatorsChannel.setMessageHandler(nil)
-    }
     let getAuthenticatedUserProfileChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.getAuthenticatedUserProfile", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getAuthenticatedUserProfileChannel.setMessageHandler { _, reply in
@@ -586,8 +557,8 @@ class UserClientApiSetup {
       authenticateUserChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
         let profileIdArg = args[0] as! String
-        let registeredAuthenticatorIdArg: String? = nilOrValue(args[1])
-        api.authenticateUser(profileId: profileIdArg, registeredAuthenticatorId: registeredAuthenticatorIdArg) { result in
+        let authenticatorTypeArg = OWAuthenticatorType(rawValue: args[1] as! Int)!
+        api.authenticateUser(profileId: profileIdArg, authenticatorType: authenticatorTypeArg) { result in
           switch result {
             case .success(let res):
               reply(wrapResult(res))
@@ -599,12 +570,12 @@ class UserClientApiSetup {
     } else {
       authenticateUserChannel.setMessageHandler(nil)
     }
-    let getNotRegisteredAuthenticatorsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.getNotRegisteredAuthenticators", binaryMessenger: binaryMessenger, codec: codec)
+    let authenticateUserPreferredChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.authenticateUserPreferred", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      getNotRegisteredAuthenticatorsChannel.setMessageHandler { message, reply in
+      authenticateUserPreferredChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
         let profileIdArg = args[0] as! String
-        api.getNotRegisteredAuthenticators(profileId: profileIdArg) { result in
+        api.authenticateUserPreferred(profileId: profileIdArg) { result in
           switch result {
             case .success(let res):
               reply(wrapResult(res))
@@ -614,7 +585,88 @@ class UserClientApiSetup {
         }
       }
     } else {
-      getNotRegisteredAuthenticatorsChannel.setMessageHandler(nil)
+      authenticateUserPreferredChannel.setMessageHandler(nil)
+    }
+    let getBiometricAuthenticatorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.getBiometricAuthenticator", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getBiometricAuthenticatorChannel.setMessageHandler { message, reply in
+        let args = message as! [Any]
+        let profileIdArg = args[0] as! String
+        api.getBiometricAuthenticator(profileId: profileIdArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      getBiometricAuthenticatorChannel.setMessageHandler(nil)
+    }
+    let getPreferredAuthenticatorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.getPreferredAuthenticator", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getPreferredAuthenticatorChannel.setMessageHandler { message, reply in
+        let args = message as! [Any]
+        let profileIdArg = args[0] as! String
+        api.getPreferredAuthenticator(profileId: profileIdArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      getPreferredAuthenticatorChannel.setMessageHandler(nil)
+    }
+    let setPreferredAuthenticatorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.setPreferredAuthenticator", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setPreferredAuthenticatorChannel.setMessageHandler { message, reply in
+        let args = message as! [Any]
+        let authenticatorTypeArg = OWAuthenticatorType(rawValue: args[0] as! Int)!
+        api.setPreferredAuthenticator(authenticatorType: authenticatorTypeArg) { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      setPreferredAuthenticatorChannel.setMessageHandler(nil)
+    }
+    let deregisterBiometricAuthenticatorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.deregisterBiometricAuthenticator", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      deregisterBiometricAuthenticatorChannel.setMessageHandler { _, reply in
+        api.deregisterBiometricAuthenticator() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      deregisterBiometricAuthenticatorChannel.setMessageHandler(nil)
+    }
+    let registerBiometricAuthenticatorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.registerBiometricAuthenticator", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      registerBiometricAuthenticatorChannel.setMessageHandler { _, reply in
+        api.registerBiometricAuthenticator() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      registerBiometricAuthenticatorChannel.setMessageHandler(nil)
     }
     let changePinChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.changePin", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
@@ -630,57 +682,6 @@ class UserClientApiSetup {
       }
     } else {
       changePinChannel.setMessageHandler(nil)
-    }
-    let setPreferredAuthenticatorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.setPreferredAuthenticator", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      setPreferredAuthenticatorChannel.setMessageHandler { message, reply in
-        let args = message as! [Any]
-        let authenticatorIdArg = args[0] as! String
-        api.setPreferredAuthenticator(authenticatorId: authenticatorIdArg) { result in
-          switch result {
-            case .success:
-              reply(wrapResult(nil))
-            case .failure(let error):
-              reply(wrapError(error))
-          }
-        }
-      }
-    } else {
-      setPreferredAuthenticatorChannel.setMessageHandler(nil)
-    }
-    let deregisterAuthenticatorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.deregisterAuthenticator", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      deregisterAuthenticatorChannel.setMessageHandler { message, reply in
-        let args = message as! [Any]
-        let authenticatorIdArg = args[0] as! String
-        api.deregisterAuthenticator(authenticatorId: authenticatorIdArg) { result in
-          switch result {
-            case .success:
-              reply(wrapResult(nil))
-            case .failure(let error):
-              reply(wrapError(error))
-          }
-        }
-      }
-    } else {
-      deregisterAuthenticatorChannel.setMessageHandler(nil)
-    }
-    let registerAuthenticatorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.registerAuthenticator", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      registerAuthenticatorChannel.setMessageHandler { message, reply in
-        let args = message as! [Any]
-        let authenticatorIdArg = args[0] as! String
-        api.registerAuthenticator(authenticatorId: authenticatorIdArg) { result in
-          switch result {
-            case .success:
-              reply(wrapResult(nil))
-            case .failure(let error):
-              reply(wrapError(error))
-          }
-        }
-      }
-    } else {
-      registerAuthenticatorChannel.setMessageHandler(nil)
     }
     let logoutChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.logout", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {

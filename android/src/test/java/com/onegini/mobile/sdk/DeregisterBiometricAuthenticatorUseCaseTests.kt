@@ -8,7 +8,7 @@ import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
-import com.onegini.mobile.sdk.flutter.useCases.DeregisterAuthenticatorUseCase
+import com.onegini.mobile.sdk.flutter.useCases.DeregisterBiometricAuthenticatorUseCase
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -23,7 +23,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
-class DeregisterAuthenticatorUseCaseTests {
+class DeregisterBiometricAuthenticatorUseCaseTests {
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   lateinit var oneginiSdk: OneginiSDK
 
@@ -36,18 +36,18 @@ class DeregisterAuthenticatorUseCaseTests {
   @Mock
   lateinit var oneginiAuthenticatorDeregistrationErrorMock: OneginiAuthenticatorDeregistrationError
 
-  private lateinit var deregisterAuthenticatorUseCase: DeregisterAuthenticatorUseCase
+  private lateinit var deregisterBiometricAuthenticatorUseCase: DeregisterBiometricAuthenticatorUseCase
 
   @Before
   fun attach() {
-    deregisterAuthenticatorUseCase = DeregisterAuthenticatorUseCase(oneginiSdk)
+    deregisterBiometricAuthenticatorUseCase = DeregisterBiometricAuthenticatorUseCase(oneginiSdk)
   }
 
   @Test
   fun `When no user is authenticated, Then it should return error`() {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(null)
 
-    deregisterAuthenticatorUseCase("test", callbackMock)
+    deregisterBiometricAuthenticatorUseCase(callbackMock)
 
     argumentCaptor<Result<Unit>>().apply {
       verify(callbackMock).invoke(capture())
@@ -56,50 +56,46 @@ class DeregisterAuthenticatorUseCaseTests {
   }
 
   @Test
-  fun `When the given authenticator id is not found within the registered authenticators of the authenticated user, Then it should return an error`() {
+  fun `When the given Biometric authenticator is not available, Then it should return an BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE error`() {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
-    whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(
-      setOf(
-        oneginiAuthenticatorMock
-      )
+    whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(
+      setOf(oneginiAuthenticatorMock)
     )
-    whenever(oneginiAuthenticatorMock.id).thenReturn("other_test")
+    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.PIN)
 
-    deregisterAuthenticatorUseCase("test", callbackMock)
+    deregisterBiometricAuthenticatorUseCase(callbackMock)
 
     argumentCaptor<Result<Unit>>().apply {
       verify(callbackMock).invoke(capture())
-      SdkErrorAssert.assertEquals(AUTHENTICATOR_NOT_FOUND, firstValue.exceptionOrNull())
+      SdkErrorAssert.assertEquals(BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE, firstValue.exceptionOrNull())
     }
   }
 
   @Test
-  fun `When getRegisteredAuthenticators method returns empty set, Then an error should be returned`() {
+  fun `When biometric authenticator exists for the authenticated user, Then it should return call userClient_deregisterAuthenticator`() {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
-    whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(emptySet())
+    whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(
+      setOf(oneginiAuthenticatorMock)
+    )
+    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.FINGERPRINT)
 
-    deregisterAuthenticatorUseCase("test", callbackMock)
+    deregisterBiometricAuthenticatorUseCase(callbackMock)
 
-    argumentCaptor<Result<Unit>>().apply {
-      verify(callbackMock).invoke(capture())
-      SdkErrorAssert.assertEquals(AUTHENTICATOR_NOT_FOUND, firstValue.exceptionOrNull())
-    }
+    verify(oneginiSdk.oneginiClient.userClient).deregisterAuthenticator(any(), any())
   }
 
   @Test
-  fun `When getRegisteredAuthenticators finds an authenticator for a authenticated user, Then it should return true`() {
+  fun `When deregisterAuthenticator calls onSuccess, Then it should resolve`() {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
-    whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(
-      setOf(
-        oneginiAuthenticatorMock
-      )
+    whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(
+      setOf(oneginiAuthenticatorMock)
     )
-    whenever(oneginiAuthenticatorMock.id).thenReturn("test")
+    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.FINGERPRINT)
     whenever(oneginiSdk.oneginiClient.userClient.deregisterAuthenticator(eq(oneginiAuthenticatorMock), any())).thenAnswer {
       it.getArgument<OneginiAuthenticatorDeregistrationHandler>(1).onSuccess()
     }
 
-    deregisterAuthenticatorUseCase("test", callbackMock)
+    deregisterBiometricAuthenticatorUseCase(callbackMock)
 
     argumentCaptor<Result<Unit>>().apply {
       verify(callbackMock).invoke(capture())
@@ -110,19 +106,17 @@ class DeregisterAuthenticatorUseCaseTests {
   @Test
   fun `When deregisterAuthenticator method returns error, Then the function should return an error`() {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
-    whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(
-      setOf(
-        oneginiAuthenticatorMock
-      )
+    whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(
+      setOf(oneginiAuthenticatorMock)
     )
-    whenever(oneginiAuthenticatorMock.id).thenReturn("test")
+    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.FINGERPRINT)
     whenever(oneginiAuthenticatorDeregistrationErrorMock.errorType).thenReturn(OneginiAuthenticatorDeregistrationError.GENERAL_ERROR)
     whenever(oneginiAuthenticatorDeregistrationErrorMock.message).thenReturn("General error")
     whenever(oneginiSdk.oneginiClient.userClient.deregisterAuthenticator(eq(oneginiAuthenticatorMock), any())).thenAnswer {
       it.getArgument<OneginiAuthenticatorDeregistrationHandler>(1).onError(oneginiAuthenticatorDeregistrationErrorMock)
     }
 
-    deregisterAuthenticatorUseCase("test", callbackMock)
+    deregisterBiometricAuthenticatorUseCase(callbackMock)
 
     argumentCaptor<Result<Unit>>().apply {
       verify(callbackMock).invoke(capture())
