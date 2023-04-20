@@ -37,36 +37,35 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     func requestResource(_ requestType: ResourceRequestType, _ details: OWRequestDetails, completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) {
         Logger.log("requestResource", sender: self)
 
-        let request = generateONGResourceRequest(details)
+        let request = generateResourceRequest(details)
         let requestCompletion = getRequestCompletion(completion)
 
         switch requestType {
         case ResourceRequestType.implicit:
             // For consistency with Android we perform this step
-            if ONGUserClient.sharedInstance().implicitlyAuthenticatedUserProfile() == nil {
+
+            if SharedUserClient.instance.implicitlyAuthenticatedUserProfile == nil {
                 completion(.failure(FlutterError(SdkError(.unauthenticatedImplicitly))))
                 return
             }
-
-            ONGUserClient.sharedInstance().fetchImplicitResource(request, completion: requestCompletion)
+            SharedUserClient.instance.sendImplicitRequest(request, completion: requestCompletion)
         case ResourceRequestType.anonymous:
-            ONGDeviceClient.sharedInstance().fetchResource(request, completion: requestCompletion)
+            SharedDeviceClient.instance.sendRequest(request, completion: requestCompletion)
         case ResourceRequestType.authenticated:
-            ONGUserClient.sharedInstance().fetchResource(request, completion: requestCompletion)
+            SharedUserClient.instance.sendAuthenticatedRequest(request, completion: requestCompletion)
         case ResourceRequestType.unauthenticated:
-            ONGDeviceClient.sharedInstance().fetchUnauthenticatedResource(request, completion: requestCompletion)
+            SharedDeviceClient.instance.sendUnauthenticatedRequest(request, completion: requestCompletion)
         }
     }
 }
 
 private extension ResourcesHandler {
-    func generateONGResourceRequest(_ details: OWRequestDetails) -> ONGResourceRequest {
-        Logger.log("generateONGResourceRequest", sender: self)
-        return ONGResourceRequest(path: details.path,
-                                  method: details.method.stringValue,
-                                  body: details.body?.data(using: .utf8),
-                                  headers: getRequestHeaders(details.headers)
-                                 )
+    func generateResourceRequest(_ details: OWRequestDetails) -> ResourceRequest {
+        return ResourceRequestFactory.makeResourceRequest(path: details.path,
+                                                          method: details.method.toHTTPMethod(),
+                                                          body: details.body?.data(using: .utf8),
+                                                          headers: getRequestHeaders(details.headers)
+                                                            )
     }
 
     func getRequestHeaders(_ headers: [String?: String?]?) -> [String: String]? {
@@ -77,9 +76,9 @@ private extension ResourcesHandler {
         return headers.filter { $0.key != nil && $0.value != nil } as? [String: String]
     }
 
-    func getRequestCompletion(_ completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) -> ((ONGResourceResponse?, Error?) -> Void)? {
+    func getRequestCompletion(_ completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) -> ((ResourceResponse?, Error?) -> Void) {
         Logger.log("getCompletionRequest", sender: self)
-        let completionRequest: ((ONGResourceResponse?, Error?) -> Void)? = { response, error in
+        let completionRequest: ((ResourceResponse?, Error?) -> Void) = { response, error in
             if let error = error {
                 if response != nil {
                     let flutterError = FlutterError(SdkError(.errorCodeHttpRequest, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
@@ -102,12 +101,12 @@ private extension ResourcesHandler {
 }
 
 private extension HttpRequestMethod {
-    var stringValue: String {
+    func toHTTPMethod() -> HTTPMethod {
         switch self {
-        case .get: return "GET"
-        case .post: return "POST"
-        case .delete: return "DELETE"
-        case .put: return "PUT"
+        case .get: return HTTPMethod.get
+        case .post: return HTTPMethod.post
+        case .delete: return HTTPMethod.delete
+        case .put: return HTTPMethod.put
         }
     }
 }
