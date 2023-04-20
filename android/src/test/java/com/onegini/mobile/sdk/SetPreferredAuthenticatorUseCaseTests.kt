@@ -27,6 +27,7 @@ class SetPreferredAuthenticatorUseCaseTests {
 
   private lateinit var setPreferredAuthenticatorUseCase: SetPreferredAuthenticatorUseCase
 
+  private val profileId = "QWERTY"
   @Before
   fun attach() {
     setPreferredAuthenticatorUseCase = SetPreferredAuthenticatorUseCase(oneginiSdk)
@@ -43,8 +44,8 @@ class SetPreferredAuthenticatorUseCaseTests {
 
   @Test
   fun `When an authenticatorType is given that is not related to the authenticated user, Then should reject with AUTHENTICATOR_NOT_FOUND`() {
-    whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
-    whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(emptySet())
+    whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile(profileId))
+    whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile(profileId)))).thenReturn(emptySet())
 
     val result = setPreferredAuthenticatorUseCase(OWAuthenticatorType.BIOMETRIC).exceptionOrNull()
 
@@ -53,8 +54,8 @@ class SetPreferredAuthenticatorUseCaseTests {
 
   @Test
   fun `When the given authenticatorType is biometric and is registered, Then it should resolve with success`() {
-    whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
-    whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(
+    whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile(profileId))
+    whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile(profileId)))).thenReturn(
       setOf(
         oneginiAuthenticatorMock
       )
@@ -68,8 +69,8 @@ class SetPreferredAuthenticatorUseCaseTests {
 
   @Test
   fun `When the given authenticatorType is pin and is registered, Then it should resolve with success`() {
-    whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
-    whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(
+    whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile(profileId))
+    whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile(profileId)))).thenReturn(
       setOf(
         oneginiAuthenticatorMock
       )

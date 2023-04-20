@@ -57,7 +57,7 @@ class AuthenticateUserUseCaseTests {
   fun `When the requested UserProfileId is not registered, Then it should call result error`() {
     whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(emptySet())
 
-    authenticateUserUseCase("QWERTY", null, callbackMock)
+    authenticateUserUseCase(profileId, null, callbackMock)
 
     argumentCaptor<Result<OWRegistrationResponse>>().apply {
       verify(callbackMock).invoke(capture())
@@ -75,14 +75,14 @@ class AuthenticateUserUseCaseTests {
         anyOrNull()
       )
     ).thenAnswer {
-      it.getArgument<OneginiAuthenticationHandler>(1).onSuccess(UserProfile("QWERTY"), CustomInfo(0, ""))
+      it.getArgument<OneginiAuthenticationHandler>(1).onSuccess(UserProfile(profileId), CustomInfo(0, ""))
     }
 
-    authenticateUserUseCase("QWERTY", null, callbackMock)
+    authenticateUserUseCase(profileId, null, callbackMock)
 
     argumentCaptor<Result<OWRegistrationResponse>>().apply {
       verify(callbackMock).invoke(capture())
-      val testUser = OWUserProfile("QWERTY")
+      val testUser = OWUserProfile(profileId)
       val testInfo = OWCustomInfo(0, "")
       Assert.assertEquals(firstValue.getOrNull(), OWRegistrationResponse(testUser, testInfo))
     }
@@ -99,14 +99,14 @@ class AuthenticateUserUseCaseTests {
         anyOrNull()
       )
     ).thenAnswer {
-      it.getArgument<OneginiAuthenticationHandler>(2).onSuccess(UserProfile("QWERTY"), CustomInfo(0, ""))
+      it.getArgument<OneginiAuthenticationHandler>(2).onSuccess(UserProfile(profileId), CustomInfo(0, ""))
     }
 
-    authenticateUserUseCase("QWERTY", OWAuthenticatorType.BIOMETRIC, callbackMock)
+    authenticateUserUseCase(profileId, OWAuthenticatorType.BIOMETRIC, callbackMock)
 
     argumentCaptor<Result<OWRegistrationResponse>>().apply {
       verify(callbackMock).invoke(capture())
-      val testUser = OWUserProfile("QWERTY")
+      val testUser = OWUserProfile(profileId)
       val testInfo = OWCustomInfo(0, "")
       Assert.assertEquals(firstValue.getOrNull(), OWRegistrationResponse(testUser, testInfo))
     }
@@ -121,7 +121,7 @@ class AuthenticateUserUseCaseTests {
       it.getArgument<OneginiAuthenticationHandler>(1).onError(oneginiAuthenticationErrorMock)
     }
 
-    authenticateUserUseCase("QWERTY", null, callbackMock)
+    authenticateUserUseCase(profileId, null, callbackMock)
 
     argumentCaptor<Result<OWRegistrationResponse>>().apply {
       verify(callbackMock).invoke(capture())
@@ -137,7 +137,7 @@ class AuthenticateUserUseCaseTests {
 
   private fun whenFingerprintIsRegistered() {
     whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.FINGERPRINT)
-    whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(
+    whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile(profileId)))).thenReturn(
       setOf(
         oneginiAuthenticatorMock
       )
