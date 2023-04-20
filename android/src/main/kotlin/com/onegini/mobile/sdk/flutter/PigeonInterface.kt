@@ -95,7 +95,6 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   @Inject
   lateinit var getUserProfilesUseCase: GetUserProfilesUseCase
 
-
   @Inject
   lateinit var handleRegisteredUrlUseCase: HandleRegisteredUrlUseCase
 
@@ -237,7 +236,6 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   override fun changePin(callback: (Result<Unit>) -> Unit) {
     changePinUseCase(callback)
   }
-
 
   override fun logout(callback: (Result<Unit>) -> Unit) {
     logoutUseCase(callback)
