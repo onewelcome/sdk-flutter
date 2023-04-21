@@ -17,5 +17,3 @@ jobs:
         run: dart format --output=none --set-exit-if-changed .
       - name: Analyze project source
         run: flutter analyze --fatal-infos
-      - name: output
-        run: echo CACHE-PATH=${{ steps.flutter-action.outputs.CACHE-PATH }}
