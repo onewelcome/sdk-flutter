@@ -421,28 +421,102 @@ class Info extends StatefulWidget {
 }
 
 class _InfoState extends State<Info> {
-  Future<ApplicationDetails> getApplicationDetails() async {
+  Future<ApplicationDetails> _getApplicationDetails() async {
     await Onegini.instance.userClient
         .authenticateDevice(["read", "write", "application-details"]);
-    var response = await Onegini.instance.resourcesMethods.requestResource(
+    final response = await Onegini.instance.resourcesMethods.requestResource(
         ResourceRequestType.anonymous,
         RequestDetails(
             path: "application-details", method: HttpRequestMethod.get));
-    var res = json.decode(response.body);
-    return applicationDetailsFromJson(res);
+    return applicationDetailsFromJson(response.body);
   }
 
-  Future<ClientResource> getClientResource() async {
-    var response = await Onegini.instance.resourcesMethods
+  Future<ClientResource> _getClientResource() async {
+    final response = await Onegini.instance.resourcesMethods
         .requestResourceAuthenticated(
-            RequestDetails(path: "devices", method: HttpRequestMethod.get))
-        .catchError((error) {
-      print('Caught error: $error');
-
-      showFlutterToast(error.message);
-    });
-
+            RequestDetails(path: "devices", method: HttpRequestMethod.get));
     return clientResourceFromJson(response.body);
+  }
+
+  FutureBuilder<ClientResource> _buildDeviceInfoList() {
+    return FutureBuilder<ClientResource>(
+      future: _getClientResource(),
+      builder: (context, snapshot) {
+        final snapshotData = snapshot.data;
+        return snapshotData != null
+            ? ListView.builder(
+                itemCount: snapshotData.devices.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ExpansionTile(
+                    title: Text(snapshotData.devices[index].name),
+                    expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ListTile(
+                          title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Id => ${snapshotData.devices[index].id}",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Application => ${snapshotData.devices[index].application}",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Mobile authentication enabled => ${snapshotData.devices[index].mobileAuthenticationEnabled.toString()}",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Platform => ${snapshotData.devices[index].platform}",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          SizedBox(),
+                        ],
+                      ))
+                    ],
+                  );
+                },
+              )
+            : Center(
+                child: SizedBox(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+      },
+    );
+  }
+
+  FutureBuilder<ApplicationDetails> _buildApplicationDetails() {
+    return FutureBuilder<ApplicationDetails>(
+      future: _getApplicationDetails(),
+      builder: (context, snapshot) {
+        return snapshot.hasData
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "application identifier => ${snapshot.data?.applicationIdentifier}",
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "application platform => ${snapshot.data?.applicationPlatform}",
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "application version => ${snapshot.data?.applicationVersion}",
+                    style: TextStyle(fontSize: 15),
+                  ),
+                ],
+              )
+            : CircularProgressIndicator();
+      },
+    );
   }
 
   @override
@@ -453,118 +527,11 @@ class _InfoState extends State<Info> {
           margin: EdgeInsets.all(20),
           child: Column(
             children: [
-              SizedBox(
-                height: 20,
-              ),
-              FutureBuilder<ApplicationDetails>(
-                future: getApplicationDetails(),
-                builder: (context, snapshot) {
-                  return snapshot.hasData
-                      ? Column(
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  "application identifier => ",
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                Text(
-                                  snapshot.data?.applicationIdentifier ?? "",
-                                  style: TextStyle(fontSize: 18),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  "application platform => ",
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                Text(
-                                  snapshot.data?.applicationPlatform ?? "",
-                                  style: TextStyle(fontSize: 18),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  "application version => ",
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                Text(
-                                  snapshot.data?.applicationVersion ?? "",
-                                  style: TextStyle(fontSize: 18),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                          ],
-                        )
-                      : Text("");
-                },
-              ),
+              SizedBox(height: 20),
+              _buildApplicationDetails(),
+              Divider(),
               Expanded(
-                child: FutureBuilder<ClientResource>(
-                  future: getClientResource(),
-                  builder: (context, snapshot) {
-                    final snapshotData = snapshot.data;
-                    return snapshotData != null
-                        ? ListView.builder(
-                            itemCount: snapshotData.devices.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ExpansionTile(
-                                title: Text(snapshotData.devices[index].name),
-                                expandedCrossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Id => ${snapshotData.devices[index].id}",
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    "Application => ${snapshotData.devices[index].application}",
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    "Mobile authentication enabled => ${snapshotData.devices[index].mobileAuthenticationEnabled.toString()}",
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    "Platform => ${snapshotData.devices[index].platform}",
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                ],
-                              );
-                            },
-                          )
-                        : Center(
-                            child: SizedBox(
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
-                  },
-                ),
+                child: _buildDeviceInfoList(),
               ),
             ],
           ),
