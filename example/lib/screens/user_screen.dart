@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import "package:collection/collection.dart";
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/events/onewelcome_events.dart';
@@ -151,7 +150,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     });
   }
 
-  Widget biometricAuthenticatorWidget() {
+  Widget _buildBiometricAuthenticatorWidget() {
     final authenticator = _biometricAuthenticator;
     if (authenticator != null) {
       return ListTile(
@@ -177,32 +176,38 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     return SizedBox.shrink();
   }
 
-  Widget preferredAuthenticatorSelectorWidget() {
+  Widget _buildPreferredAuthenticatorSelectorWidget() {
     final biometricAuthenticator = _biometricAuthenticator;
-    return PopupMenuButton<OWAuthenticatorType>(
-        child: ListTile(
-          title: Text("set preferred authenticator"),
-          leading: Icon(Icons.add_to_home_screen),
-        ),
-        onSelected: (value) {
-          Onegini.instance.userClient
-              .setPreferredAuthenticator(value)
-              .whenComplete(() => getAuthenticators());
-        },
-        itemBuilder: (context) {
-          return [
-            PopupMenuItem<OWAuthenticatorType>(
-              child: Text("Pin"),
-              value: OWAuthenticatorType.pin,
-            ),
-            if (biometricAuthenticator != null &&
-                biometricAuthenticator.isRegistered)
+    return Column(mainAxisSize: MainAxisSize.min, children: [
+      ListTile(
+        title:
+            Text("Preferred Authenticator: ${_preferredAuthenticator?.name} "),
+      ),
+      PopupMenuButton<OWAuthenticatorType>(
+          child: ListTile(
+            title: Text("set preferred authenticator"),
+            leading: Icon(Icons.add_to_home_screen),
+          ),
+          onSelected: (value) {
+            Onegini.instance.userClient
+                .setPreferredAuthenticator(value)
+                .whenComplete(() => getAuthenticators());
+          },
+          itemBuilder: (context) {
+            return [
               PopupMenuItem<OWAuthenticatorType>(
-                child: Text(biometricAuthenticator.name),
-                value: OWAuthenticatorType.biometric,
+                child: Text("Pin"),
+                value: OWAuthenticatorType.pin,
               ),
-          ];
-        });
+              if (biometricAuthenticator != null &&
+                  biometricAuthenticator.isRegistered)
+                PopupMenuItem<OWAuthenticatorType>(
+                  child: Text(biometricAuthenticator.name),
+                  value: OWAuthenticatorType.biometric,
+                ),
+            ];
+          })
+    ]);
   }
 
   @override
@@ -234,12 +239,8 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
               title: Text("Pin"),
               leading: Switch(value: true, onChanged: null),
             ),
-            biometricAuthenticatorWidget(),
-            ListTile(
-              title: Text(
-                  "Preferred Authenticator: ${_preferredAuthenticator?.name} "),
-            ),
-            preferredAuthenticatorSelectorWidget(),
+            _buildBiometricAuthenticatorWidget(),
+            _buildPreferredAuthenticatorSelectorWidget(),
             Divider(),
             ListTile(
               title: Text("Change pin"),
