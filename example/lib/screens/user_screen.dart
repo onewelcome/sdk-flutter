@@ -309,12 +309,11 @@ class Home extends StatelessWidget {
       final oneginiAppToWebSingleSignOn = await Onegini.instance.userClient
           .getAppToWebSingleSignOn(
               "https://login-mobile.test.onegini.com/personal/dashboard");
-      // FIXME: Find a different way to launch this.
-      // ignore: deprecated_member_use
-      await launch(
-        oneginiAppToWebSingleSignOn.redirectUrl,
-        enableDomStorage: true,
-      );
+      if (!await launchUrl(Uri.parse(oneginiAppToWebSingleSignOn.redirectUrl),
+          mode: LaunchMode.externalApplication)) {
+        throw Exception(
+            'Could not launch ${oneginiAppToWebSingleSignOn.redirectUrl}');
+      }
     } on PlatformException catch (error) {
       showFlutterToast(error.message);
     }
