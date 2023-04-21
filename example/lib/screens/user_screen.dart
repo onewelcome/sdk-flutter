@@ -176,7 +176,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     return SizedBox.shrink();
   }
 
-  Widget _buildPreferredAuthenticatorSelectorWidget() {
+  Widget _buildPreferredAuthenticatorWidget() {
     final biometricAuthenticator = _biometricAuthenticator;
     return Column(mainAxisSize: MainAxisSize.min, children: [
       ListTile(
@@ -240,7 +240,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
               leading: Switch(value: true, onChanged: null),
             ),
             _buildBiometricAuthenticatorWidget(),
-            _buildPreferredAuthenticatorSelectorWidget(),
+            _buildPreferredAuthenticatorWidget(),
             Divider(),
             ListTile(
               title: Text("Change pin"),
