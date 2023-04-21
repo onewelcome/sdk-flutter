@@ -1,0 +1,20 @@
+name: Main workflow
+on: [push, pull_request]
+
+jobs:
+  lint_and_format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+      - run: flutter --version
+      - name: Install dependencies
+        run: dart pub get
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+      - name: Analyze project source
+        run: dart analyze --fatal-infos
+      - name: output
+        run: echo CACHE-PATH=${{ steps.flutter-action.outputs.CACHE-PATH }}
