@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import "package:collection/collection.dart";
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/events/onewelcome_events.dart';
@@ -11,12 +10,14 @@ import 'package:onegini_example/components/display_toast.dart';
 import 'package:onegini_example/models/application_details.dart';
 import 'package:onegini_example/models/client_resource.dart';
 import 'package:onegini_example/ow_broadcast_helper.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:onegini_example/screens/qr_scan_screen.dart';
 import 'package:onegini_example/subscription_handlers/otp_subscriptions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:onegini/pigeon.dart';
-
+// ignore: import_of_legacy_library_into_null_safe
 import '../main.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'login_screen.dart';
 
 class UserScreen extends StatefulWidget {
@@ -304,20 +305,17 @@ class Home extends StatelessWidget {
   }
 
   getAppToWebSingleSignOn(BuildContext context) async {
-    var oneginiAppToWebSingleSignOn = await Onegini.instance.userClient
-        .getAppToWebSingleSignOn(
-            "https://login-mobile.test.onegini.com/personal/dashboard")
-        .catchError((error) {
-      if (error is PlatformException) {
-        showFlutterToast(error.message);
+    try {
+      final oneginiAppToWebSingleSignOn = await Onegini.instance.userClient
+          .getAppToWebSingleSignOn(
+              "https://login-mobile.test.onegini.com/personal/dashboard");
+      if (!await launchUrl(Uri.parse(oneginiAppToWebSingleSignOn.redirectUrl),
+          mode: LaunchMode.externalApplication)) {
+        throw Exception(
+            'Could not launch ${oneginiAppToWebSingleSignOn.redirectUrl}');
       }
-    });
-    if (oneginiAppToWebSingleSignOn != null) {
-      // ignore: deprecated_member_use
-      await launch(
-        oneginiAppToWebSingleSignOn.redirectUrl,
-        enableDomStorage: true,
-      );
+    } on PlatformException catch (error) {
+      showFlutterToast(error.message);
     }
   }
 
@@ -343,15 +341,15 @@ class Home extends StatelessWidget {
   }
 
   performUnauthenticatedRequest() async {
-    var response = await Onegini.instance.resourcesMethods
-        .requestResourceUnauthenticated(RequestDetails(
-            path: "unauthenticated", method: HttpRequestMethod.get))
-        .catchError((error) {
-      print("An error occured $error");
-      showFlutterToast("An error occured $error");
-    });
-
-    showFlutterToast("Response: ${response.body}");
+    try {
+      final response = await Onegini.instance.resourcesMethods
+          .requestResourceUnauthenticated(RequestDetails(
+              path: "unauthenticated", method: HttpRequestMethod.get));
+      showFlutterToast("Response: ${response.body}");
+    } on PlatformException catch (error) {
+      print("An error occured ${error.message}");
+      showFlutterToast("An error occured ${error.message}");
+    }
   }
 
   @override
@@ -435,6 +433,8 @@ class _InfoState extends State<Info> {
     var response = await Onegini.instance.resourcesMethods
         .requestResourceAuthenticated(
             RequestDetails(path: "devices", method: HttpRequestMethod.get))
+        // Will be fixed in FP-51
+        // ignore: body_might_complete_normally_catch_error
         .catchError((error) {
       print('Caught error: $error');
 
