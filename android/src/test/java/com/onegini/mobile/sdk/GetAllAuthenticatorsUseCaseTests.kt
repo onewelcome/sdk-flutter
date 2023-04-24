@@ -38,7 +38,7 @@ class GetAllAuthenticatorsUseCaseTests {
   @Test
   fun `When an unknown or unregistered profileId is given, Then an error should be thrown`() {
     val result = getAllAuthenticatorsUseCase("QWERTY").exceptionOrNull()
-    SdkErrorAssert.assertEquals(USER_PROFILE_DOES_NOT_EXIST, result)
+    SdkErrorAssert.assertEquals(DOES_NOT_EXIST_USER_PROFILE, result)
   }
 
   @Test

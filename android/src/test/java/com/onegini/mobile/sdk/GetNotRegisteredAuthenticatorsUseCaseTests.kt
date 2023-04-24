@@ -53,7 +53,7 @@ class GetNotRegisteredAuthenticatorsUseCaseTests {
   fun `When the UserProfile is not found, Then an error should be returned`() {
     val result = getNotRegisteredAuthenticatorsUseCase("QWERTY").exceptionOrNull()
 
-    SdkErrorAssert.assertEquals(USER_PROFILE_DOES_NOT_EXIST, result)
+    SdkErrorAssert.assertEquals(DOES_NOT_EXIST_USER_PROFILE, result)
   }
 
   @Test

@@ -109,7 +109,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
         }
     }
 
-    func submitCustomRegistrationAction(identityProviderId: String, data: String?, completion: @escaping (Result<Void, Error>) -> Void) {
+    func submitCustomRegistrationAction(data: String?, completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.submitCustomRegistrationSuccess(data) { result in
             completion(result.mapError { $0 })
         }

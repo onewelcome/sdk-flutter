@@ -75,7 +75,7 @@ class AuthenticateUserUseCaseTests {
     argumentCaptor<Result<OWRegistrationResponse>>().apply {
       verify(callbackMock).invoke(capture())
 
-      SdkErrorAssert.assertEquals(USER_PROFILE_DOES_NOT_EXIST, firstValue.exceptionOrNull())
+      SdkErrorAssert.assertEquals(DOES_NOT_EXIST_USER_PROFILE, firstValue.exceptionOrNull())
     }
   }
 
@@ -89,7 +89,7 @@ class AuthenticateUserUseCaseTests {
     argumentCaptor<Result<OWRegistrationResponse>>().apply {
       verify(callbackMock).invoke(capture())
 
-      SdkErrorAssert.assertEquals(AUTHENTICATOR_NOT_FOUND, firstValue.exceptionOrNull())
+      SdkErrorAssert.assertEquals(NOT_FOUND_AUTHENTICATOR, firstValue.exceptionOrNull())
     }
   }
 

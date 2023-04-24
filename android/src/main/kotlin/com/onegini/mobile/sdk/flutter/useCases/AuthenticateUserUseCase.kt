@@ -30,7 +30,7 @@ class AuthenticateUserUseCase @Inject constructor(
       .find { it.id == authenticatorId }
 
     when {
-      authenticatorId != null && authenticator == null -> callback(Result.failure(SdkError(AUTHENTICATOR_NOT_FOUND).pigeonError()))
+      authenticatorId != null && authenticator == null -> callback(Result.failure(SdkError(NOT_FOUND_AUTHENTICATOR).pigeonError()))
       else -> authenticate(userProfile, authenticator, callback)
     }
   }

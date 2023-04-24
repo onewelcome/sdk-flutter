@@ -51,7 +51,7 @@ class DeregisterAuthenticatorUseCaseTests {
 
     argumentCaptor<Result<Unit>>().apply {
       verify(callbackMock).invoke(capture())
-      SdkErrorAssert.assertEquals(NO_USER_PROFILE_IS_AUTHENTICATED, firstValue.exceptionOrNull())
+      SdkErrorAssert.assertEquals(NOT_AUTHENTICATED_USER, firstValue.exceptionOrNull())
     }
   }
 
@@ -69,7 +69,7 @@ class DeregisterAuthenticatorUseCaseTests {
 
     argumentCaptor<Result<Unit>>().apply {
       verify(callbackMock).invoke(capture())
-      SdkErrorAssert.assertEquals(AUTHENTICATOR_NOT_FOUND, firstValue.exceptionOrNull())
+      SdkErrorAssert.assertEquals(NOT_FOUND_AUTHENTICATOR, firstValue.exceptionOrNull())
     }
   }
 
@@ -82,7 +82,7 @@ class DeregisterAuthenticatorUseCaseTests {
 
     argumentCaptor<Result<Unit>>().apply {
       verify(callbackMock).invoke(capture())
-      SdkErrorAssert.assertEquals(AUTHENTICATOR_NOT_FOUND, firstValue.exceptionOrNull())
+      SdkErrorAssert.assertEquals(NOT_FOUND_AUTHENTICATOR, firstValue.exceptionOrNull())
     }
   }
 

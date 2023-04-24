@@ -12,7 +12,7 @@ import okhttp3.Callback
 import okhttp3.Headers
 import okhttp3.Response
 import org.mockito.kotlin.any
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ERROR_CODE_HTTP_REQUEST
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR_CODE
 
 import com.onegini.mobile.sdk.flutter.useCases.ResourceRequestUseCase
 import junit.framework.Assert.fail
@@ -104,8 +104,8 @@ class ResourceRequestUseCaseTests {
 
       when (val error = firstValue.exceptionOrNull()) {
         is FlutterError -> {
-          Assert.assertEquals(error.code.toInt(), ERROR_CODE_HTTP_REQUEST.code)
-          Assert.assertEquals(error.message, ERROR_CODE_HTTP_REQUEST.message)
+          Assert.assertEquals(error.code.toInt(), HTTP_REQUEST_ERROR_CODE.code)
+          Assert.assertEquals(error.message, HTTP_REQUEST_ERROR_CODE.message)
           Assert.assertEquals(((error.details as Map<*, *>).toMap()["response"] as Map<*, *>)["statusCode"], "400")
         }
         else -> fail(UNEXPECTED_ERROR_TYPE.message)

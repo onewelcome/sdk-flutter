@@ -12,6 +12,10 @@ import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 class CustomTwoStepRegistrationActionImpl(private val providerId: String, private val nativeApi: NativeCallFlutterApi) : OneginiCustomTwoStepRegistrationAction, CustomRegistrationAction {
     var callback: OneginiCustomRegistrationCallback? = null
 
+    override fun isInProgress(): Boolean {
+        return callback != null
+    }
+
     override fun initRegistration(callback: OneginiCustomRegistrationCallback, info: CustomInfo?) {
         this.callback = callback
         nativeApi.n2fEventInitCustomRegistration(info?.mapToOwCustomInfo(), providerId) {}
@@ -35,7 +39,7 @@ class CustomTwoStepRegistrationActionImpl(private val providerId: String, privat
             customRegistrationCallback.returnSuccess(result)
             callback = null
             Result.success(Unit)
-        } ?: Result.failure(SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).pigeonError())
+        } ?: Result.failure(SdkError(OneWelcomeWrapperErrors.NOT_IN_PROGRESS_REGISTRATION).pigeonError())
     }
 
     override fun returnError(exception: Exception?): Result<Unit> {
@@ -43,6 +47,6 @@ class CustomTwoStepRegistrationActionImpl(private val providerId: String, privat
             customRegistrationCallback.returnError(exception)
             callback = null
             Result.success(Unit)
-        } ?: Result.failure(SdkError(OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS).pigeonError())
+        } ?: Result.failure(SdkError(OneWelcomeWrapperErrors.NOT_IN_PROGRESS_REGISTRATION).pigeonError())
     }
 }

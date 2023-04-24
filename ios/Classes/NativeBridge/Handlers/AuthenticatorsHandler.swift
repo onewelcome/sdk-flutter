@@ -15,14 +15,14 @@ class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     }
     func registerAuthenticator(_ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let profile = SharedUserClient.instance.authenticatedUserProfile else {
-            completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
+            completion(.failure(FlutterError(.notAuthenticatedUser)))
             return
         }
 
         // We don't have to check if the authenticator is already registered as the sdk will do that for us.
         let authenticators = SharedUserClient.instance.authenticators(.all, for: profile)
         guard let authenticator = authenticators.first(where: { $0.identifier == authenticatorId }) else {
-            completion(.failure(FlutterError(.authenticatorNotFound)))
+            completion(.failure(FlutterError(.notFoundAuthenticator)))
             return
         }
         let delegate = AuthenticatorRegistrationDelegateImpl(loginHandler: loginHandler, completion: completion)
@@ -31,7 +31,7 @@ class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
 
     func deregisterAuthenticator(_ userProfile: UserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let authenticator = SharedUserClient.instance.authenticators(.all, for: userProfile).first(where: {$0.identifier == authenticatorId}) else {
-            completion(.failure(FlutterError(.authenticatorNotFound)))
+            completion(.failure(FlutterError(.notFoundAuthenticator)))
             return
         }
 
@@ -45,7 +45,7 @@ class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
 
     func setPreferredAuthenticator(_ userProfile: UserProfile, _ authenticatorId: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let authenticator = SharedUserClient.instance.authenticators(.all, for: userProfile).first(where: {$0.identifier == authenticatorId}) else {
-            completion(.failure(FlutterError(.authenticatorNotFound)))
+            completion(.failure(FlutterError(.notFoundAuthenticator)))
             return
         }
 
@@ -84,7 +84,7 @@ class AuthenticatorRegistrationDelegateImpl: AuthenticatorRegistrationDelegate {
     func userClient(_ userClient: UserClient, didFailToRegister authenticator: Authenticator, for userProfile: UserProfile, error: Error) {
         Logger.log("[AUTH] userClient didFailToRegister ONGAuthenticator", sender: self)
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            completion(.failure(FlutterError(.authenticatorRegistrationCancelled)))
+            completion(.failure(FlutterError(.processCanceledAuthenticatorRegistration)))
         } else {
             let mappedError = ErrorMapper().mapError(error)
             completion(.failure(FlutterError(mappedError)))
@@ -117,7 +117,7 @@ class AuthenticatorDeregistrationDelegateImpl: AuthenticatorDeregistrationDelega
     func userClient(_ userClient: UserClient, didFailToDeregister authenticator: Authenticator, forUser userProfile: UserProfile, error: Error) {
         Logger.log("[AUTH] userClient didFailToDeregister ONGAuthenticator", sender: self)
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            completion(.failure(FlutterError(.authenticatorDeregistrationCancelled)))
+            completion(.failure(FlutterError(.processCanceledAuthenticatorDeregistration)))
         } else {
             let mappedError = ErrorMapper().mapError(error)
             completion(.failure(FlutterError(mappedError)))

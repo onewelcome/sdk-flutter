@@ -47,7 +47,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         case ResourceRequestType.implicit:
             // For consistency with Android we perform this step
             if ONGUserClient.sharedInstance().implicitlyAuthenticatedUserProfile() == nil {
-                completion(.failure(FlutterError(SdkError(.unauthenticatedImplicitly))))
+                completion(.failure(FlutterError(SdkError(.notAuthenticatedImplicit))))
                 return
             }
 
@@ -85,17 +85,17 @@ private extension ResourcesHandler {
         let completionRequest: ((ONGResourceResponse?, Error?) -> Void)? = { response, error in
             if let error = error {
                 if response != nil {
-                    let flutterError = FlutterError(SdkError(.errorCodeHttpRequest, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
+                    let flutterError = FlutterError(SdkError(.httpRequestErrorCode, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
                     completion(.failure(flutterError))
                 } else {
-                    let flutterError = FlutterError(SdkError(.httpRequestError, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
+                    let flutterError = FlutterError(SdkError(.httpRequestErrorInternal, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
                     completion(.failure(flutterError))
                 }
             } else {
                 if let response = response {
                     completion(.success(OWRequestResponse(response)))
                 } else {
-                    completion(.failure(FlutterError(SdkError(.responseIsNull))))
+                    completion(.failure(FlutterError(SdkError(.httpRequestErrorNoResponse))))
                 }
             }
         }

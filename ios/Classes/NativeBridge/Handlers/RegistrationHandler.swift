@@ -48,7 +48,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
 
     func handlePin(pin: String, completion: (Result<Void, FlutterError>) -> Void) {
         guard let createPinChallenge = createPinChallenge else {
-            completion(.failure(FlutterError(.registrationNotInProgress)))
+            completion(.failure(FlutterError(.notInProgressPinCreation)))
             return
         }
         createPinChallenge.sender.respond(with: pin, to: createPinChallenge)
@@ -57,7 +57,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
 
     func cancelPinRegistration(completion: (Result<Void, FlutterError>) -> Void) {
         guard let createPinChallenge = self.createPinChallenge else {
-            completion(.failure(FlutterError(.registrationNotInProgress)))
+            completion(.failure(FlutterError(.notInProgressPinCreation)))
             return
         }
         createPinChallenge.sender.cancel(createPinChallenge)
@@ -113,7 +113,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
 
     func submitCustomRegistrationSuccess(_ data: String?, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let customRegistrationChallenge = self.customRegistrationChallenge else {
-            completion(.failure(SdkError(OneWelcomeWrapperError.registrationNotInProgress).flutterError()))
+            completion(.failure(SdkError(OneWelcomeWrapperError.actionNotAllowedCustomRegistrationSubmit).flutterError()))
             return
         }
         customRegistrationChallenge.sender.respond(with: data, to: customRegistrationChallenge)
@@ -122,7 +122,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
 
     func cancelCustomRegistration(_ error: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let customRegistrationChallenge = self.customRegistrationChallenge else {
-            completion(.failure(SdkError(OneWelcomeWrapperError.registrationNotInProgress).flutterError()))
+            completion(.failure(SdkError(OneWelcomeWrapperError.actionNotAllowedCustomRegistrationCancel).flutterError()))
             return
         }
         customRegistrationChallenge.sender.cancel(customRegistrationChallenge)
@@ -131,7 +131,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
 
     func cancelBrowserRegistration(_ completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let browserRegistrationChallenge = self.browserRegistrationChallenge else {
-            completion(.failure(FlutterError(.browserRegistrationNotInProgress)))
+            completion(.failure(FlutterError(.actionNotAllowedBrowserRegistrationCancel)))
             return
         }
         browserRegistrationChallenge.sender.cancel(browserRegistrationChallenge)
@@ -186,7 +186,7 @@ class RegistrationDelegateImpl: RegistrationDelegate {
     func userClient(_ userClient: UserClient, didFailToRegisterUserWith identityProvider: IdentityProvider, error: Error) {
         registrationHandler.handleDidFailToRegister()
         if error.code == ONGGenericError.actionCancelled.rawValue {
-            completion(.failure(FlutterError(.registrationCancelled)))
+            completion(.failure(FlutterError(.processCanceledRegistration)))
         } else {
             let mappedError = ErrorMapper().mapError(error)
             completion(.failure(FlutterError(mappedError)))

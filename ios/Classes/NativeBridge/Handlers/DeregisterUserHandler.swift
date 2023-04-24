@@ -8,7 +8,7 @@ protocol DeregisterUserHandlerProtocol: AnyObject {
 class DeregisterUserHandler: DeregisterUserHandlerProtocol {
     func deregister(profileId: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let profile = SharedUserClient.instance.userProfiles.first(where: { $0.profileId == profileId }) else {
-            completion(.failure(FlutterError(.userProfileDoesNotExist)))
+            completion(.failure(FlutterError(.doesNotExistUserProfile)))
             return
         }
         SharedUserClient.instance.deregister(user: profile) { error in

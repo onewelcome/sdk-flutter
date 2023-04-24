@@ -43,13 +43,13 @@ class PinAuthenticationRequestHandler @Inject constructor(private val nativeApi:
     return callback?.let {
       it.acceptAuthenticationRequest(pin)
       Result.success(Unit)
-    } ?: Result.failure(SdkError(AUTHENTICATION_NOT_IN_PROGRESS).pigeonError())
+    } ?: Result.failure(SdkError(NOT_IN_PROGRESS_AUTHENTICATION).pigeonError())
   }
 
   fun denyAuthenticationRequest(): Result<Unit> {
     return callback?.let {
       it.denyAuthenticationRequest()
       Result.success(Unit)
-    } ?: Result.failure(SdkError(AUTHENTICATION_NOT_IN_PROGRESS).pigeonError())
+    } ?: Result.failure(SdkError(NOT_IN_PROGRESS_AUTHENTICATION).pigeonError())
   }
 }

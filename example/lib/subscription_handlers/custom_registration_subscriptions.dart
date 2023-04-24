@@ -25,7 +25,7 @@ StreamSubscription<OWEvent> _getInitCustomRegistrationSub() {
     if (event.providerId == "2-way-otp-api") {
       // a 2-way-otp does not require data for the initialization request
       OneginiCustomRegistrationCallback()
-          .submitSuccessAction(event.providerId, null)
+          .submitSuccessAction(null)
           .catchError((error) => {
                 if (error is PlatformException)
                   {

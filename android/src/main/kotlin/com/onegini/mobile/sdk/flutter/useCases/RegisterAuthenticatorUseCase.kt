@@ -13,11 +13,11 @@ import javax.inject.Singleton
 class RegisterAuthenticatorUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
   operator fun invoke(authenticatorId: String, callback: (Result<Unit>) -> Unit) {
     val authenticatedUserProfile = oneginiSDK.oneginiClient.userClient.authenticatedUserProfile
-      ?: return callback(Result.failure(SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).pigeonError()))
+      ?: return callback(Result.failure(SdkError(NOT_AUTHENTICATED_USER).pigeonError()))
 
     val authenticator = oneginiSDK.oneginiClient.userClient
       .getAllAuthenticators(authenticatedUserProfile).find { it.id == authenticatorId }
-      ?: return callback(Result.failure(SdkError(AUTHENTICATOR_NOT_FOUND).pigeonError()))
+      ?: return callback(Result.failure(SdkError(NOT_FOUND_AUTHENTICATOR).pigeonError()))
 
     oneginiSDK.oneginiClient.userClient.registerAuthenticator(authenticator, object : OneginiAuthenticatorRegistrationHandler {
       override fun onSuccess(customInfo: CustomInfo?) {

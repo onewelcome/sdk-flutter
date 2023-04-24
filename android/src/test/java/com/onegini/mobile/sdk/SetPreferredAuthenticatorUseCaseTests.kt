@@ -39,7 +39,7 @@ class SetPreferredAuthenticatorUseCaseTests {
   fun `When no user is authenticated, Then return an error`() {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(null)
     val result = setPreferredAuthenticatorUseCase("test").exceptionOrNull()
-    SdkErrorAssert.assertEquals(NO_USER_PROFILE_IS_AUTHENTICATED, result)
+    SdkErrorAssert.assertEquals(NOT_AUTHENTICATED_USER, result)
   }
 
   @Test
@@ -48,7 +48,7 @@ class SetPreferredAuthenticatorUseCaseTests {
     whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(emptySet())
 
     val result = setPreferredAuthenticatorUseCase("test").exceptionOrNull()
-    SdkErrorAssert.assertEquals(AUTHENTICATOR_NOT_FOUND, result)
+    SdkErrorAssert.assertEquals(NOT_FOUND_AUTHENTICATOR, result)
   }
 
   @Test

@@ -57,7 +57,7 @@ class GetRegisteredAuthenticatorsUseCaseTests {
     whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(emptySet())
 
     val result = getRegisteredAuthenticatorsUseCase("QWERTY").exceptionOrNull()
-    SdkErrorAssert.assertEquals(USER_PROFILE_DOES_NOT_EXIST, result)
+    SdkErrorAssert.assertEquals(DOES_NOT_EXIST_USER_PROFILE, result)
   }
 
   @Test

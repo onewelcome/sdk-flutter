@@ -21,7 +21,7 @@ class RegistrationUseCase @Inject constructor(private val oneginiSDK: OneginiSDK
     val identityProvider = oneginiSDK.oneginiClient.userClient.identityProviders.find { it.id == identityProviderId }
 
     if (identityProviderId != null && identityProvider == null) {
-      callback(Result.failure(SdkError(IDENTITY_PROVIDER_NOT_FOUND).pigeonError()))
+      callback(Result.failure(SdkError(NOT_FOUND_IDENTITY_PROVIDER).pigeonError()))
     }
 
     val registerScopes = scopes?.toTypedArray()
