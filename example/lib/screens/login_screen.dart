@@ -245,6 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           },
                                           child: Text('Pin'),
                                         ),
+                                        SizedBox(height: 10, width: 10),
                                         ElevatedButton(
                                           onPressed: () {
                                             authenticate(
