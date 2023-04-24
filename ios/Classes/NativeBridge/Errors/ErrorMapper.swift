@@ -12,9 +12,7 @@ enum OneWelcomeWrapperError {
     case httpRequestErrorNoResponse // ios only
     case providedUrlIncorrect // ios only
     case enrollmentFailed // ios only
-    case processCanceledLogin // ios only
     case processCanceledAuthentication // ios only
-    case processCanceledRegistration // ios only
     case processCanceledAuthenticatorDeregistration // ios only
     case processCanceledAuthenticatorRegistration // ios only
     case authenticatorNotRegistered // ios only
@@ -43,7 +41,7 @@ enum OneWelcomeWrapperError {
             return 8014
         case .enrollmentFailed:
             return 8016
-        case .processCanceledAuthentication, .processCanceledRegistration, .processCanceledLogin, .processCanceledAuthenticatorRegistration, .processCanceledAuthenticatorDeregistration:
+        case .processCanceledAuthentication, .processCanceledAuthenticatorRegistration, .processCanceledAuthenticatorDeregistration:
             return 8017
         case .authenticatorNotRegistered:
             return 8023
@@ -72,14 +70,10 @@ enum OneWelcomeWrapperError {
             return "Provided url is incorrect."
         case .enrollmentFailed:
             return "Enrollment failed. Please try again or contact maintainer."
-        case .processCanceledLogin:
-            return "Login cancelled."
         case .processCanceledAuthentication:
             return "Authentication cancelled."
         case .processCanceledAuthenticatorDeregistration:
             return "Authenticator deregistration cancelled."
-        case .processCanceledRegistration:
-            return "Registration cancelled."
         case .authenticatorNotRegistered:
             return "This authenticator is not registered."
         case .httpRequestErrorNoResponse:

@@ -91,11 +91,7 @@ class AuthenticationDelegateImpl: AuthenticationDelegate {
     func userClient(_ userClient: UserClient, didFailToAuthenticateUser profile: UserProfile, authenticator: Authenticator, error: Error) {
         loginHandler.handleDidFailToAuthenticateUser()
 
-        if error.code == ONGGenericError.actionCancelled.rawValue {
-            completion(.failure(FlutterError(.processCanceledLogin)))
-        } else {
-            let mappedError = ErrorMapper().mapError(error)
-            completion(.failure(FlutterError(mappedError)))
-        }
+        let mappedError = ErrorMapper().mapError(error)
+        completion(.failure(FlutterError(mappedError)))
     }
 }

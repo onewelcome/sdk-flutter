@@ -26,7 +26,8 @@ import javax.inject.Singleton
 @Singleton
 class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
   operator fun invoke(type: ResourceRequestType, details: OWRequestDetails, callback: (Result<OWRequestResponse>) -> Unit) {
-    if (type == ResourceRequestType.IMPLICIT) {
+    // Align with iOS behavior
+    if (type == ResourceRequestType.IMPLICIT && oneginiSDK.oneginiClient.userClient.implicitlyAuthenticatedUserProfile == null) {
       callback(
         Result.failure(
           SdkError(

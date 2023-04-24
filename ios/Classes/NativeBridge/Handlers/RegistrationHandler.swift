@@ -185,12 +185,9 @@ class RegistrationDelegateImpl: RegistrationDelegate {
 
     func userClient(_ userClient: UserClient, didFailToRegisterUserWith identityProvider: IdentityProvider, error: Error) {
         registrationHandler.handleDidFailToRegister()
-        if error.code == ONGGenericError.actionCancelled.rawValue {
-            completion(.failure(FlutterError(.processCanceledRegistration)))
-        } else {
-            let mappedError = ErrorMapper().mapError(error)
-            completion(.failure(FlutterError(mappedError)))
-        }
+
+        let mappedError = ErrorMapper().mapError(error)
+        completion(.failure(FlutterError(mappedError)))
     }
 }
 
