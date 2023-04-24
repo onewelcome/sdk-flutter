@@ -1,4 +1,3 @@
-// @dart = 2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/callbacks/onegini_pin_registration_callback.dart';
@@ -13,9 +12,9 @@ class PinRequestScreen extends StatefulWidget {
   final bool customAuthenticator;
 
   const PinRequestScreen(
-      {Key key,
+      {Key? key,
       this.confirmation = false,
-      this.previousCode,
+      this.previousCode = "",
       this.customAuthenticator = false})
       : super(key: key);
 
@@ -24,34 +23,34 @@ class PinRequestScreen extends StatefulWidget {
 }
 
 class _PinRequestScreenState extends State<PinRequestScreen> {
-  var pinCode = List<String>.filled(5, null);
+  var pinCode = List<String>.filled(5, "");
 
   enterNum(String num) {
     for (var i = 0; i < pinCode.length; i++) {
-      if (pinCode[i] == null) {
+      if (pinCode[i] == "") {
         setState(() => pinCode[i] = num);
         break;
       }
     }
-    if (!pinCode.contains(null)) {
+    if (!pinCode.contains("")) {
       done();
     }
   }
 
   clearAllDigits() {
     for (var i = 0; i < pinCode.length; i++) {
-      setState(() => pinCode[i] = null);
+      setState(() => pinCode[i] = "");
     }
   }
 
   removeLast() {
     for (var i = 0; i < pinCode.length; i++) {
-      if (pinCode[i] == null && i != 0) {
-        setState(() => pinCode[i - 1] = null);
+      if (pinCode[i] == "" && i != 0) {
+        setState(() => pinCode[i - 1] = "");
         break;
       }
-      if (pinCode[i] != null && i == pinCode.length - 1) {
-        setState(() => pinCode[i] = null);
+      if (pinCode[i] != "" && i == pinCode.length - 1) {
+        setState(() => pinCode[i] = "");
         break;
       }
     }
@@ -134,11 +133,11 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
               NumPad(
                 enterNum: enterNum,
                 removeLast: removeLast,
-                done: null,
+                done: () => {},
               ),
               SizedBox(
                 height: 10,
-              )
+              ),
             ],
           ),
         ),
@@ -147,7 +146,7 @@ class _PinRequestScreenState extends State<PinRequestScreen> {
   }
 
   Widget pinItem(String item) {
-    return item == null
+    return item == ""
         ? Container(
             width: 10,
             height: 2,
@@ -165,7 +164,11 @@ class NumPad extends StatelessWidget {
   final Function removeLast;
   final Function done;
 
-  const NumPad({Key key, this.enterNum, this.removeLast, this.done})
+  const NumPad(
+      {Key? key,
+      required this.enterNum,
+      required this.removeLast,
+      required this.done})
       : super(key: key);
 
   @override
@@ -226,7 +229,7 @@ class NumPad extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.all(2),
         child: TextButton(
-          onPressed: onTap,
+          onPressed: () => onTap(),
           child: Text(
             text,
             style: TextStyle(fontSize: 20),
