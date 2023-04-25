@@ -52,14 +52,13 @@ class _LoginScreenState extends State<LoginScreen> {
         ["read"],
       );
 
-      if (registrationResponse.userProfile.profileId != null)
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => UserScreen(
-                      userProfileId: registrationResponse.userProfile.profileId,
-                    )),
-            (Route<dynamic> route) => false);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => UserScreen(
+                    userProfileId: registrationResponse.userProfile.profileId,
+                  )),
+          (Route<dynamic> route) => false);
     } catch (error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
@@ -76,14 +75,13 @@ class _LoginScreenState extends State<LoginScreen> {
         ["read"],
       );
 
-      if (registrationResponse.userProfile.profileId != null)
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => UserScreen(
-                      userProfileId: registrationResponse.userProfile.profileId,
-                    )),
-            (Route<dynamic> route) => false);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => UserScreen(
+                    userProfileId: registrationResponse.userProfile.profileId,
+                  )),
+          (Route<dynamic> route) => false);
     } catch (error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
