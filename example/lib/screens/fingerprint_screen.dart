@@ -1,4 +1,3 @@
-// @dart = 2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/callbacks/onegini_fingerprint_callback.dart';

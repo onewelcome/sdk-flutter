@@ -47,7 +47,7 @@ StreamSubscription<OWEvent> _getFinishCustomRegistrationSub(
         context,
         MaterialPageRoute(
             builder: (context) => OtpScreen(
-                password: event.customInfo?.data,
+                password: event.customInfo?.data ?? "",
                 providerId: event.providerId)),
       );
     }
