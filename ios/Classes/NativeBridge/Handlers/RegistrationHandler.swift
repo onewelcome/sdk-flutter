@@ -119,7 +119,7 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
 
     func submitCustomRegistrationSuccess(_ data: String?, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
         guard let customRegistrationChallenge = self.customRegistrationChallenge else {
-            completion(.failure(SdkError(OneWelcomeWrapperError.actionNotAllowedCustomRegistrationSubmit).flutterError()))
+            completion(.failure(SdkError(OneWelcomeWrapperError.notInProgressCustomRegistration).flutterError()))
             return
         }
         customRegistrationChallenge.sender.respond(with: data, to: customRegistrationChallenge)

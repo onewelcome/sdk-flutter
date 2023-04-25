@@ -39,7 +39,7 @@ class CustomTwoStepRegistrationActionImpl(private val providerId: String, privat
             customRegistrationCallback.returnSuccess(result)
             callback = null
             Result.success(Unit)
-        } ?: Result.failure(SdkError(OneWelcomeWrapperErrors.NOT_IN_PROGRESS_REGISTRATION).pigeonError())
+        } ?: Result.failure(SdkError(OneWelcomeWrapperErrors.NOT_IN_PROGRESS_CUSTOM_REGISTRATION).pigeonError())
     }
 
     override fun returnError(exception: Exception?): Result<Unit> {
@@ -47,6 +47,6 @@ class CustomTwoStepRegistrationActionImpl(private val providerId: String, privat
             customRegistrationCallback.returnError(exception)
             callback = null
             Result.success(Unit)
-        } ?: Result.failure(SdkError(OneWelcomeWrapperErrors.NOT_IN_PROGRESS_REGISTRATION).pigeonError())
+        } ?: Result.failure(SdkError(OneWelcomeWrapperErrors.NOT_IN_PROGRESS_CUSTOM_REGISTRATION).pigeonError())
     }
 }

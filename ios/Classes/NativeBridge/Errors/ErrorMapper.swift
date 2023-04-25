@@ -15,9 +15,9 @@ enum OneWelcomeWrapperError {
     case notInProgressAuthentication
     case notInProgressOtpAuthentication
     case notInProgressPinCreation
+    case notInProgressCustomRegistration
     case alreadyInProgressMobileAuth // ios only
     case actionNotAllowedCustomRegistrationCancel
-    case actionNotAllowedCustomRegistrationSubmit
     case actionNotAllowedBrowserRegistrationCancel
     case biometricAuthenticationNotAvailable
 
@@ -25,22 +25,40 @@ enum OneWelcomeWrapperError {
         switch self {
         case .genericError:
             return 8000
-        case .notAuthenticatedUser, .notAuthenticatedImplicit:
-            return 8002
-        case .notFoundUserProfile, .notFoundAuthenticator, .notFoundIdentityProvider:
-            return 8004
-        case .httpRequestErrorInternal, .httpRequestErrorCode, .httpRequestErrorNoResponse:
-            return 8011
-        case .providedUrlIncorrect:
-            return 8014
-        case .notInProgressAuthentication, .notInProgressOtpAuthentication, .notInProgressPinCreation:
-            return 8034
-        case .alreadyInProgressMobileAuth:
+        case .notAuthenticatedUser:
+            return 8040
+        case .notAuthenticatedImplicit:
             return 8041
-        case .actionNotAllowedCustomRegistrationSubmit, .actionNotAllowedCustomRegistrationCancel, .actionNotAllowedBrowserRegistrationCancel:
+        case .notFoundUserProfile:
             return 8042
-        case .biometricAuthenticationNotAvailable:
+        case .notFoundAuthenticator:
             return 8043
+        case .notFoundIdentityProvider:
+            return 8044
+        case .httpRequestErrorInternal:
+            return 8046
+        case .httpRequestErrorCode:
+            return 8047
+        case .httpRequestErrorNoResponse:
+            return 8048
+        case .providedUrlIncorrect:
+            return 8050
+        case .notInProgressCustomRegistration:
+            return 8051
+        case .notInProgressAuthentication:
+            return 8052
+        case .notInProgressOtpAuthentication:
+            return 8053
+        case .notInProgressPinCreation:
+            return 8054
+        case .alreadyInProgressMobileAuth:
+            return 8056
+        case .actionNotAllowedCustomRegistrationCancel:
+            return 8057
+        case .actionNotAllowedBrowserRegistrationCancel:
+            return 8058
+        case .biometricAuthenticationNotAvailable:
+            return 8060
         }
     }
 
@@ -74,7 +92,7 @@ enum OneWelcomeWrapperError {
             return "Pin Creation is currently not in progress"
         case .alreadyInProgressMobileAuth:
             return "Mobile Authentication is already in progress and can not be performed concurrently."
-        case .actionNotAllowedCustomRegistrationSubmit:
+        case .notInProgressCustomRegistration:
             return "Submitting the Custom registration right now is not allowed. Registration is not in progress or pin creation has already started."
         case .actionNotAllowedCustomRegistrationCancel:
             return "Canceling the Custom registration right now is not allowed. Registration is not in progress or pin creation has already started."
