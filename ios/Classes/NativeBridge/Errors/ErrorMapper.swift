@@ -79,11 +79,11 @@ enum OneWelcomeWrapperError {
         case .providedUrlIncorrect:
             return "Provided url is incorrect."
         case .httpRequestErrorNoResponse:
-            return "OneWelcome: HTTP Request failed. Response doesn't contain data."
+            return "The resource Request failed. The HTTP response doesn't contain data."
         case .httpRequestErrorCode:
-            return "OneWelcome: HTTP Request returned an http error code. Check Response for more info."
+            return "The resource Request returned an http error code. Check Response for more info."
         case .httpRequestErrorInternal:
-            return "OneWelcome: HTTP Request failed internally. Check iosCode and iosMessage for more info."
+            return "The resource Request failed internally. Check iosCode and iosMessage for more info."
         case .notInProgressAuthentication:
             return "Authentication is currently not in progress."
         case .notInProgressOtpAuthentication:
