@@ -30,22 +30,20 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
     val pathResult = getCompleteResourceUrl(details.path)
 
     // Additional check for valid url
-    when {
-      pathResult.isFailure -> pathResult.exceptionOrNull()?.let { callback(Result.failure(it)) }
-      pathResult.isSuccess -> {
-        pathResult.getOrNull()?.let {
-          val resourceClient = getOkHttpClient(type)
-          val request = buildRequest(details, it)
+    pathResult.onSuccess {
+      val resourceClient = getOkHttpClient(type)
+      val request = buildRequest(details, it)
 
-          performCall(resourceClient, request, callback)
-        }
-      }
+      performCall(resourceClient, request, callback)
+    }
+
+    pathResult.onFailure {
+      callback(Result.failure(it))
     }
   }
 
   private fun getCompleteResourceUrl(path: String): Result<String> {
     val resourceBaseUrl = oneginiSDK.oneginiClient.configModel.resourceBaseUrl
-
     return when {
       isValidUrl(path) -> Result.success(path)
       isValidUrl(resourceBaseUrl + path) -> Result.success(resourceBaseUrl + path)
