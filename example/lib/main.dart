@@ -1,5 +1,5 @@
-// @dart = 2.10
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini/pigeon.dart';
 import 'package:onegini_example/components/display_toast.dart';
@@ -63,7 +63,7 @@ class _BodyWidgetState extends State<BodyWidget> {
           ],
           connectionTimeout: 5,
           readTimeout: 25);
-    } catch (error) {
+    } on PlatformException catch (error) {
       showFlutterToast(error.message);
     }
 

@@ -1,4 +1,3 @@
-// @dart = 2.10
 import 'dart:async';
 import 'dart:convert';
 
@@ -21,9 +20,8 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
-  OWBroadcastHelper broadcastHelper;
-  List<StreamSubscription<OWEvent>> registrationSubscriptions;
-  List<StreamSubscription<OWEvent>> authenticationSubscriptions;
+  List<StreamSubscription<OWEvent>>? registrationSubscriptions;
+  List<StreamSubscription<OWEvent>>? authenticationSubscriptions;
 
   @override
   initState() {
@@ -54,14 +52,13 @@ class _LoginScreenState extends State<LoginScreen> {
         ["read"],
       );
 
-      if (registrationResponse.userProfile.profileId != null)
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => UserScreen(
-                      userProfileId: registrationResponse.userProfile.profileId,
-                    )),
-            (Route<dynamic> route) => false);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => UserScreen(
+                    userProfileId: registrationResponse.userProfile.profileId,
+                  )),
+          (Route<dynamic> route) => false);
     } catch (error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
@@ -78,14 +75,13 @@ class _LoginScreenState extends State<LoginScreen> {
         ["read"],
       );
 
-      if (registrationResponse.userProfile.profileId != null)
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => UserScreen(
-                      userProfileId: registrationResponse.userProfile.profileId,
-                    )),
-            (Route<dynamic> route) => false);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => UserScreen(
+                    userProfileId: registrationResponse.userProfile.profileId,
+                  )),
+          (Route<dynamic> route) => false);
     } catch (error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
@@ -94,7 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  authenticate(String profileId, OWAuthenticatorType authenticatorType) async {
+  authenticate(String profileId, OWAuthenticatorType? authenticatorType) async {
     try {
       var registrationResponse = await Onegini.instance.userClient
           .authenticateUser(profileId, authenticatorType);
@@ -155,6 +151,19 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Widget _buildImplicitUserData(String profileId) {
+    return FutureBuilder<String>(
+        future: getImplicitUserDetails(profileId),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            return Text("${snapshot.data}");
+          } else if (snapshot.hasError) {
+            return Text("Error getting implicit details.");
+          }
+          return CircularProgressIndicator();
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -199,95 +208,52 @@ class _LoginScreenState extends State<LoginScreen> {
                   FutureBuilder<List<OWUserProfile>>(
                       //userProfiles
                       future: getUserProfiles(),
-                      builder: (context, userProfiles) {
-                        return (userProfiles.hasData &&
-                                userProfiles.data.length > 0)
+                      builder: (context, snapshot) {
+                        final userProfileData = snapshot.data;
+                        return (userProfileData != null &&
+                                userProfileData.length > 0)
                             ? Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                    FutureBuilder<String>(
-                                        //implicit
-                                        future: getImplicitUserDetails(
-                                            userProfiles.data.first?.profileId),
-                                        builder:
-                                            (context, implicitUserDetails) {
-                                          return implicitUserDetails.hasData
-                                              ? Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: [
-                                                      Text(
-                                                        "──── Login ────",
-                                                        style: TextStyle(
-                                                            fontSize: 30),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                      Text(
-                                                        implicitUserDetails
-                                                            .data,
-                                                        style: TextStyle(
-                                                            fontSize: 20),
-                                                        textAlign:
-                                                            TextAlign.center,
-                                                      ),
-                                                      SizedBox(
-                                                        height: 20,
-                                                      ),
-                                                      ElevatedButton(
-                                                        onPressed: () {
-                                                          authenticate(
-                                                              userProfiles
-                                                                  .data
-                                                                  .first
-                                                                  ?.profileId,
-                                                              null);
-                                                        },
-                                                        child: Text(
-                                                            'Preferred authenticator'),
-                                                      ),
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .center,
-                                                        children: [
-                                                          ElevatedButton(
-                                                            onPressed: () {
-                                                              authenticate(
-                                                                  userProfiles
-                                                                      .data
-                                                                      .first
-                                                                      ?.profileId,
-                                                                  OWAuthenticatorType
-                                                                      .pin);
-                                                            },
-                                                            child: Text('Pin'),
-                                                          ),
-                                                          SizedBox(
-                                                            height: 10,
-                                                            width: 10,
-                                                          ),
-                                                          ElevatedButton(
-                                                            onPressed: () {
-                                                              authenticate(
-                                                                  userProfiles
-                                                                      .data
-                                                                      .first
-                                                                      ?.profileId,
-                                                                  OWAuthenticatorType
-                                                                      .biometric);
-                                                            },
-                                                            child: Text(
-                                                                'Biometrics'),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ])
-                                              : SizedBox.shrink();
-                                        })
+                                    Text(
+                                      "──── Login ────",
+                                      style: TextStyle(fontSize: 30),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    _buildImplicitUserData(
+                                        userProfileData.first.profileId),
+                                    ElevatedButton(
+                                      onPressed: () {
+                                        authenticate(
+                                            userProfileData.first.profileId,
+                                            null);
+                                      },
+                                      child: Text('Preferred authenticator'),
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            authenticate(
+                                                userProfileData.first.profileId,
+                                                OWAuthenticatorType.pin);
+                                          },
+                                          child: Text('Pin'),
+                                        ),
+                                        SizedBox(height: 10, width: 10),
+                                        ElevatedButton(
+                                          onPressed: () {
+                                            authenticate(
+                                                userProfileData.first.profileId,
+                                                OWAuthenticatorType.biometric);
+                                          },
+                                          child: Text('Biometrics'),
+                                        ),
+                                      ],
+                                    ),
                                   ])
                             : SizedBox.shrink();
                       }),
@@ -312,8 +278,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   FutureBuilder<List<OWIdentityProvider>>(
                     future: Onegini.instance.userClient.getIdentityProviders(),
-                    builder: (BuildContext context, identityProviders) {
-                      return identityProviders.hasData
+                    builder: (BuildContext context, snapshot) {
+                      final identityProviders = snapshot.data;
+                      return identityProviders != null
                           ? PopupMenuButton<String>(
                               child: Container(
                                 padding: EdgeInsets.all(20),
@@ -330,9 +297,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 registrationWithIdentityProvider(value);
                               },
                               itemBuilder: (context) {
-                                return identityProviders.data
+                                return identityProviders
                                     .map((e) => PopupMenuItem<String>(
-                                          child: Text(e.name ?? ""),
+                                          child: Text(e.name),
                                           value: e.id,
                                         ))
                                     .toList();
