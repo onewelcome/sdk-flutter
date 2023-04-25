@@ -42,7 +42,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 
         // Additional check for valid url
         let resourceUrl = ONGClient.sharedInstance().configModel.resourceBaseURL ?? ""
-        if checkValidUrl(details.path) == false && checkValidUrl(resourceUrl + details.path) == false {
+        if isValidUrl(details.path) == false && isValidUrl(resourceUrl + details.path) == false {
             completion(.failure(FlutterError(SdkError(.invalidUrl))))
             return
         }
@@ -70,7 +70,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 }
 
 private extension ResourcesHandler {
-    func checkValidUrl(_ path: String) -> Bool {
+    func isValidUrl(_ path: String) -> Bool {
         if let url = URL(string: path) {
             return UIApplication.shared.canOpenURL(url)
         }
