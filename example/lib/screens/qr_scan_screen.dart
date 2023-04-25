@@ -1,4 +1,3 @@
-// @dart = 2.10
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -10,9 +9,8 @@ class QrScanScreen extends StatefulWidget {
 }
 
 class _QrScanScreenState extends State<QrScanScreen> {
-  Barcode result;
   int counter = 0;
-  QRViewController controller;
+  QRViewController? controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
   // In order to get hot reload to work we need to pause the camera if the platform
@@ -21,26 +19,29 @@ class _QrScanScreenState extends State<QrScanScreen> {
   void reassemble() {
     super.reassemble();
     if (Platform.isAndroid) {
-      controller.pauseCamera();
+      controller?.pauseCamera();
     }
-    controller.resumeCamera();
+    controller?.resumeCamera();
   }
 
-  void onQRViewCreated(QRViewController controllerr) {
-    setState(() => controller = controllerr);
+  void onQRViewCreated(QRViewController controller) {
+    setState(() => this.controller = controller);
     controller.scannedDataStream.listen((scanData) {
       if (counter >= 1) {
         return;
       }
-      sendDataBack(scanData.code);
+      final code = scanData.code;
+      if (code != null) {
+        sendDataBack(code);
+      }
     });
   }
 
   sendDataBack(String data) async {
     counter++;
-    await controller.pauseCamera();
+    await controller?.pauseCamera();
     if (counter >= 1) {
-      controller.stopCamera();
+      controller?.stopCamera();
       Navigator.of(context)..pop(data);
     }
   }
