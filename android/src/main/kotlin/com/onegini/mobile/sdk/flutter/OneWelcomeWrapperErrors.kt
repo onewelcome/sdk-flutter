@@ -9,7 +9,7 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
   NOT_FOUND_IDENTITY_PROVIDER(8044, "The requested identity provider is not found"),
   NOT_FOUND_SECURITY_CONTROLLER(8045, "The requested Security controller class is not found"), // Android only
   HTTP_REQUEST_ERROR_INTERNAL(8046, "OneWelcome: HTTP Request failed internally"),
-  HTTP_REQUEST_ERROR_CODE(8047, "OneWelcome: HTTP Request returned an error code. Check Response for more info"),
+  HTTP_REQUEST_ERROR_CODE(8047, "OneWelcome: HTTP Request returned an http error code. Check Response for more info"),
   ONEWELCOME_SDK_NOT_INITIALIZED(8049, "OneWelcomeSDK is not initialized"), // Android only
   NOT_IN_PROGRESS_CUSTOM_REGISTRATION(8051, "Custom Registration is currently not in progress"),
   NOT_IN_PROGRESS_AUTHENTICATION(8052, "Authentication is currently not in progress"),
