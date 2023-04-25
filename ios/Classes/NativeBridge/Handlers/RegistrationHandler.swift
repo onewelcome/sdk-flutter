@@ -100,11 +100,11 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
     func processRedirectURL(url: String, webSignInType: Int) -> Result<Void, FlutterError> {
         let webSignInType = WebSignInType(rawValue: webSignInType)
         guard let url = URL.init(string: url) else {
-            return .failure(FlutterError(.providedUrlIncorrect))
+            return .failure(FlutterError(.invalidUrl))
         }
 
         if webSignInType != .insideApp && !UIApplication.shared.canOpenURL(url) {
-            return .failure(FlutterError(.providedUrlIncorrect))
+            return .failure(FlutterError(.invalidUrl))
         }
 
         presentBrowserUserRegistrationView(registrationUserURL: url, webSignInType: webSignInType)

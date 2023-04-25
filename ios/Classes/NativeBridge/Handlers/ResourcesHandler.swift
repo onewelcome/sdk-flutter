@@ -43,7 +43,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         // Additional check for valid url
         let resourceUrl = ONGClient.sharedInstance().configModel.resourceBaseURL ?? ""
         if checkValidUrl(details.path) == false && checkValidUrl(resourceUrl + details.path) == false {
-            completion(.failure(FlutterError(SdkError(.httpRequestUrlError))))
+            completion(.failure(FlutterError(SdkError(.invalidUrl))))
             return
         }
 

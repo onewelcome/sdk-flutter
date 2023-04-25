@@ -15,11 +15,10 @@ enum OneWelcomeWrapperError: Int {
     case authenticationNotInProgress = 8037
     case otpAuthenticationNotInProgress = 8039
     case browserRegistrationNotInProgress = 8040
-    case httpRequestUrlError = 8050
     case biometricAuthenticationNotAvailable = 8043
 
     // iOS only
-    case providedUrlIncorrect = 8014
+    case invalidUrl = 8014
     case loginCanceled = 8015
     case enrollmentFailed = 8016
     case authenticationCancelled = 8017
@@ -47,8 +46,8 @@ enum OneWelcomeWrapperError: Int {
             return "There is currently no User Profile authenticated."
         case .authenticatorNotFound:
             return "The requested authenticator is not found."
-        case .providedUrlIncorrect:
-            return "Provided url is incorrect."
+        case .invalidUrl:
+            return "The provided url is invalid or incorrect."
         case .enrollmentFailed:
             return "Enrollment failed. Please try again or contact maintainer."
         case .loginCanceled:
@@ -97,8 +96,6 @@ enum OneWelcomeWrapperError: Int {
             return "Mobile Authentication is already in progress and can not be performed concurrently."
         case .browserRegistrationNotInProgress:
             return "Browser registration is currently not in progress."
-        case .httpRequestUrlError:
-            return "OneWelcome: HTTP Request failed due to an invalid url."
         case .biometricAuthenticationNotAvailable:
             return "Biometric authentication is not supported on this device."
         }

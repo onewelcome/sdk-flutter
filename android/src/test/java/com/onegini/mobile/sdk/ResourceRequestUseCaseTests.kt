@@ -3,7 +3,7 @@ package com.onegini.mobile.sdk
 import com.onegini.mobile.sdk.android.client.UserClient
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ERROR_CODE_HTTP_REQUEST
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.UNEXPECTED_ERROR_TYPE
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_URL_ERROR
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.PROVIDED_URL_INCORRECT
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.GET
@@ -75,7 +75,7 @@ class ResourceRequestUseCaseTests {
     argumentCaptor<Result<OWRequestResponse>>().apply {
       verify(callbackMock).invoke(capture())
 
-      val expected = FlutterError(HTTP_REQUEST_URL_ERROR.code.toString(), HTTP_REQUEST_URL_ERROR.message)
+      val expected = FlutterError(PROVIDED_URL_INCORRECT.code.toString(), PROVIDED_URL_INCORRECT.message)
       SdkErrorAssert.assertEquals(expected, firstValue.exceptionOrNull())
     }
   }
