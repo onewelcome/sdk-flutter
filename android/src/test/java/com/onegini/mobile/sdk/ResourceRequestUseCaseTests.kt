@@ -44,7 +44,7 @@ class ResourceRequestUseCaseTests {
   lateinit var okhttp3CallMock: okhttp3.Call
 
   @Mock
-  lateinit var owRequestResponseDetails: OWRequestDetails
+  lateinit var owRequestDetails: OWRequestDetails
 
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   lateinit var responseMock: Response
@@ -69,8 +69,8 @@ class ResourceRequestUseCaseTests {
   @Test
   fun `When an invalid url is given, Then the function should resolve with an error`() {
     whenever(oneginiSdk.oneginiClient.configModel.resourceBaseUrl).thenReturn("https://token-mobile.test.onegini.com/resources/")
-    whenever(owRequestResponseDetails.path).thenReturn("https://^%%&^%*^/user-id-decorated")
-    resourceRequestUseCase(ResourceRequestType.IMPLICIT, owRequestResponseDetails, callbackMock)
+    whenever(owRequestDetails.path).thenReturn("https://^%%&^%*^/user-id-decorated")
+    resourceRequestUseCase(ResourceRequestType.IMPLICIT, owRequestDetails, callbackMock)
 
     argumentCaptor<Result<OWRequestResponse>>().apply {
       verify(callbackMock).invoke(capture())
@@ -84,7 +84,7 @@ class ResourceRequestUseCaseTests {
   fun `When a successful http response is send, Then the call should resolve with an OWRequestResponse containing correct information`() {
     setupSuccessFullResponseMock()
     whenever(resourceOkHttpClientMock.newCall(any())).thenReturn(okhttp3CallMock)
-    argumentCaptor<Callback> {
+    argumentCaptor<Callback>().apply {
       whenever(
         okhttp3CallMock.enqueue(capture())
       ).thenAnswer {
@@ -106,7 +106,7 @@ class ResourceRequestUseCaseTests {
   fun `When a successful http response is send but with an error http code, Then the call should resolve with an flutter error`() {
     setupErrorFullResponseMock()
     whenever(resourceOkHttpClientMock.newCall(any())).thenReturn(okhttp3CallMock)
-    argumentCaptor<Callback> {
+    argumentCaptor<Callback>().apply {
       whenever(
         okhttp3CallMock.enqueue(capture())
       ).thenAnswer {

@@ -1,9 +1,11 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
+import android.net.Uri
+import android.util.Log
 import android.util.Patterns
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ERROR_CODE_HTTP_REQUEST
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.PROVIDED_URL_INCORRECT
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.PROVIDED_URL_INCORRECT
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.DELETE
@@ -21,6 +23,7 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.IOException
+import java.net.URI
 import javax.inject.Inject
 import javax.inject.Singleton
 
