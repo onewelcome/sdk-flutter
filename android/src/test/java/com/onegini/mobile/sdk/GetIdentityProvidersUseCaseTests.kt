@@ -5,7 +5,6 @@ import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWIdentityProvider
 import com.onegini.mobile.sdk.flutter.useCases.GetIdentityProvidersUseCase
-import junit.framework.Assert.fail
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -64,7 +63,7 @@ class GetIdentityProvidersUseCaseTests {
         Assert.assertEquals(identityProviders[1].id, "secondId")
         Assert.assertEquals(identityProviders[1].name, "secondName")
       }
-      else -> fail(OneWelcomeWrapperErrors.UNEXPECTED_ERROR_TYPE.message)
+      else -> Assert.fail(OneWelcomeWrapperErrors.UNEXPECTED_ERROR_TYPE.message)
     }
   }
 }

@@ -1,24 +1,22 @@
 package com.onegini.mobile.sdk
 
 import com.onegini.mobile.sdk.android.client.UserClient
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ERROR_CODE_HTTP_REQUEST
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.UNEXPECTED_ERROR_TYPE
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_URL_ERROR
 import com.onegini.mobile.sdk.flutter.OneginiSDK
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.GET
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.GET
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestDetails
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceRequestType
 import okhttp3.Callback
 import okhttp3.Headers
-import okhttp3.Response
 import org.mockito.kotlin.any
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ERROR_CODE_HTTP_REQUEST
 import com.onegini.mobile.sdk.flutter.SdkErrorAssert
-
 import com.onegini.mobile.sdk.flutter.useCases.ResourceRequestUseCase
-import junit.framework.Assert.fail
 import okhttp3.OkHttpClient
+import okhttp3.Response
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -127,7 +125,7 @@ class ResourceRequestUseCaseTests {
           Assert.assertEquals(error.message, ERROR_CODE_HTTP_REQUEST.message)
           Assert.assertEquals(((error.details as Map<*, *>).toMap()["response"] as Map<*, *>)["statusCode"], "400")
         }
-        else -> fail(UNEXPECTED_ERROR_TYPE.message)
+        else -> Assert.fail(UNEXPECTED_ERROR_TYPE.message)
       }
     }
   }

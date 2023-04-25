@@ -1,8 +1,8 @@
 package com.onegini.mobile.sdk.flutter.facade
 
-import javax.inject.Singleton
-import javax.inject.Inject
 import android.net.Uri
+import javax.inject.Inject
+import javax.inject.Singleton
 
 @Singleton
 class UriFacadeImpl @Inject constructor() : UriFacade {

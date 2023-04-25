@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:onegini/events/fingerprint_event.dart';
 import 'package:onegini/events/onewelcome_events.dart';
-import 'package:onegini/events/pin_event.dart';
 import 'package:onegini_example/ow_broadcast_helper.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:onegini_example/screens/fingerprint_screen.dart';
@@ -20,7 +19,7 @@ List<StreamSubscription<OWEvent>> initFingerprintSubscriptions(
   });
 
   var openSub = _getOpenFingerprintSub(context);
-  var closeSub = _getCloseFingerprintSub(context);
+  var closeSub = _getCloseFingerprintSub(context, fingerprintOverlay);
   var showScanningSub =
       _getShowScanningFingerprintSub(context, fingerprintOverlay);
   var receivedSub = _getReceivedFingerprintSub(fingerprintOverlay);
@@ -37,9 +36,11 @@ StreamSubscription<OWEvent> _getOpenFingerprintSub(BuildContext context) {
   });
 }
 
-StreamSubscription<OWEvent> _getCloseFingerprintSub(BuildContext context) {
+StreamSubscription<OWEvent> _getCloseFingerprintSub(
+    BuildContext context, OverlayEntry fingerprintOverlay) {
   return OWBroadcastHelper.createStream<CloseFingerprintEvent>()
       .listen((event) {
+    fingerprintOverlay.remove();
     if (Navigator.of(context).canPop()) {
       Navigator.of(context).pop();
     }
@@ -56,7 +57,8 @@ StreamSubscription<OWEvent> _getShowScanningFingerprintSub(
 
 StreamSubscription<OWEvent> _getReceivedFingerprintSub(
     OverlayEntry fingerprintOverlay) {
-  return OWBroadcastHelper.createStream<PinNotAllowedEvent>().listen((event) {
+  return OWBroadcastHelper.createStream<NextFingerprintAuthenticationAttempt>()
+      .listen((event) {
     fingerprintOverlay.remove();
   });
 }

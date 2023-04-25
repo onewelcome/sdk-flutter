@@ -1,6 +1,5 @@
 package com.onegini.mobile.sdk
 
-import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.useCases.GetRedirectUrlUseCase
@@ -17,9 +16,6 @@ import org.mockito.kotlin.whenever
 class GetRedirectUrlUseCaseTests {
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   lateinit var oneginiSdk: OneginiSDK
-
-  @Mock
-  lateinit var clientMock: OneginiClient
 
   @Mock
   lateinit var oneginiClientConfigModelMock: OneginiClientConfigModel

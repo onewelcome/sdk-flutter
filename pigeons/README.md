@@ -8,6 +8,7 @@ flutter pub run pigeon \
   --experimental_kotlin_out ./android/src/main/kotlin/com/onegini/mobile/sdk/flutter/pigeonPlugin/Pigeon.kt  \
   --experimental_kotlin_package "com.onegini.mobile.sdk.flutter.pigeonPlugin" \
   --experimental_swift_out ios/Classes/Pigeon.swift
+dart format lib/pigeon.dart
 
 ## Missing documentation
 Pigeon is poorly documented; so to keep knowledge on why and how certain things are done we will refer to pull requests where we obtained information.

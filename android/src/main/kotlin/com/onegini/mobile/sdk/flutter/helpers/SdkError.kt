@@ -1,7 +1,7 @@
 package com.onegini.mobile.sdk.flutter.helpers
 
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.GENERIC_ERROR
 import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_BODY
 import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_HEADERS
 import com.onegini.mobile.sdk.flutter.constants.Constants.Companion.RESPONSE_STATUS_CODE
