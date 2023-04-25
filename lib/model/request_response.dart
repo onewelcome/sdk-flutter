@@ -5,5 +5,9 @@ class RequestResponse {
   bool ok;
   int status;
 
-  RequestResponse({required this.headers, required this.body, required this.ok, required this.status});
+  RequestResponse(
+      {required this.headers,
+      required this.body,
+      required this.ok,
+      required this.status});
 }

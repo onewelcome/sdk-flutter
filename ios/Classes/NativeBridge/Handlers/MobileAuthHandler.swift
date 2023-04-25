@@ -112,12 +112,8 @@ class MobileAuthDelegate: MobileAuthRequestDelegate {
         BridgeConnector.shared?.toMobileAuthHandler.finishMobileAuthenticationFlow()
         SwiftOneginiPlugin.flutterApi?.n2fCloseAuthOtp {}
 
-        if error.code == ONGGenericError.actionCancelled.rawValue {
-            handleMobileAuthCompletion(.failure(FlutterError(SdkError(.processCanceledAuthentication))))
-        } else {
-            let mappedError = ErrorMapper().mapError(error)
-            handleMobileAuthCompletion(.failure(FlutterError(mappedError)))
-        }
+        let mappedError = ErrorMapper().mapError(error)
+        handleMobileAuthCompletion(.failure(FlutterError(mappedError)))
     }
 
     func userClient(_ userClient: UserClient, didHandleRequest request: MobileAuthRequest, authenticator: Authenticator?, info customAuthenticatorInfo: CustomInfo?) {

@@ -35,19 +35,6 @@ class UserClient {
     await api.deregisterUser(profileId);
   }
 
-  /// Returns a list of authenticators registered and available to the user.
-  Future<List<OWAuthenticator>> getRegisteredAuthenticators(
-      String profileId) async {
-    final registeredAuthenticators =
-        await api.getRegisteredAuthenticators(profileId);
-    return registeredAuthenticators.whereType<OWAuthenticator>().toList();
-  }
-
-  Future<List<OWAuthenticator>> getAllAuthenticators(String profileId) async {
-    final allAuthenticators = await api.getAllAuthenticators(profileId);
-    return allAuthenticators.whereType<OWAuthenticator>().toList();
-  }
-
   Future<OWUserProfile> getAuthenticatedUserProfile() async {
     return await api.getAuthenticatedUserProfile();
   }
@@ -58,17 +45,13 @@ class UserClient {
   /// Usually it is Pin authenticator.
   Future<OWRegistrationResponse> authenticateUser(
     String profileId,
-    String? registeredAuthenticatorId,
+    OWAuthenticatorType? authenticatorType,
   ) async {
-    return await api.authenticateUser(profileId, registeredAuthenticatorId);
-  }
-
-  /// Returns a list of authenticators available to the user, but not yet registered.
-  Future<List<OWAuthenticator>> getNotRegisteredAuthenticators(
-      String profileId) async {
-    final notRegisteredAuthenticators =
-        await api.getNotRegisteredAuthenticators(profileId);
-    return notRegisteredAuthenticators.whereType<OWAuthenticator>().toList();
+    if (authenticatorType != null) {
+      return await api.authenticateUser(profileId, authenticatorType);
+    } else {
+      return await api.authenticateUserPreferred(profileId);
+    }
   }
 
   /// Starts change pin flow.
@@ -76,19 +59,28 @@ class UserClient {
     await api.changePin();
   }
 
-  /// Registers authenticator from [getNotRegisteredAuthenticators] list.
-  Future<void> registerAuthenticator(String authenticatorId) async {
-    await api.registerAuthenticator(authenticatorId);
+  ///Set preferred authenticator
+  /// todo removed boolean return update docu
+  Future<void> setPreferredAuthenticator(
+      OWAuthenticatorType authenticatorType) async {
+    await api.setPreferredAuthenticator(authenticatorType);
   }
 
-  /// Set preferred authenticator
-  Future<void> setPreferredAuthenticator(String authenticatorId) async {
-    await api.setPreferredAuthenticator(authenticatorId);
+  // Gets the preferred authenticator for the given profile
+  Future<OWAuthenticator> getPreferredAuthenticator(String profileId) async {
+    return await api.getPreferredAuthenticator(profileId);
   }
 
-  /// Deregister Authenticator
-  Future<void> deregisterAuthenticator(String authenticatorId) async {
-    await api.deregisterAuthenticator(authenticatorId);
+  Future<void> deregisterBiometricAuthenticator() async {
+    await api.deregisterBiometricAuthenticator();
+  }
+
+  Future<void> registerBiometricAuthenticator() async {
+    await api.registerBiometricAuthenticator();
+  }
+
+  Future<OWAuthenticator> getBiometricAuthenticator(String profileId) async {
+    return await api.getBiometricAuthenticator(profileId);
   }
 
   /// Method for log out

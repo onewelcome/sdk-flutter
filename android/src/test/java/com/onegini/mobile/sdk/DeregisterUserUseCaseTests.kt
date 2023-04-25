@@ -49,7 +49,7 @@ class DeregisterUserUseCaseTests {
 
     argumentCaptor<Result<Unit>>().apply {
       verify(callbackMock).invoke(capture())
-      SdkErrorAssert.assertEquals(DOES_NOT_EXIST_USER_PROFILE, firstValue.exceptionOrNull())
+      SdkErrorAssert.assertEquals(NOT_FOUND_USER_PROFILE, firstValue.exceptionOrNull())
     }
   }
 

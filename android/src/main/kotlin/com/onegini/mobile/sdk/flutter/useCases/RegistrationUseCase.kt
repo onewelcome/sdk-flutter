@@ -5,13 +5,12 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiRegistrationError
 import com.onegini.mobile.sdk.android.model.OneginiIdentityProvider
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_FOUND_IDENTITY_PROVIDER
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.mapToOwCustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWUserProfile
-
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -22,6 +21,7 @@ class RegistrationUseCase @Inject constructor(private val oneginiSDK: OneginiSDK
 
     if (identityProviderId != null && identityProvider == null) {
       callback(Result.failure(SdkError(NOT_FOUND_IDENTITY_PROVIDER).pigeonError()))
+      return
     }
 
     val registerScopes = scopes?.toTypedArray()

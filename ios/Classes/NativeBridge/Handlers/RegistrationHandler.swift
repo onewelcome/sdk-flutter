@@ -93,6 +93,12 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
 
     func registerUser(_ providerId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
         let identityProvider = SharedUserClient.instance.identityProviders.first(where: { $0.identifier == providerId})
+
+        if providerId != nil && identityProvider != nil {
+            completion(.failure(SdkError(OneWelcomeWrapperError.notFoundIdentityProvider).flutterError()))
+            return
+        }
+
         let delegate = RegistrationDelegateImpl(registrationHandler: self, completion: completion)
         SharedUserClient.instance.registerUserWith(identityProvider: identityProvider, scopes: scopes, delegate: delegate)
     }

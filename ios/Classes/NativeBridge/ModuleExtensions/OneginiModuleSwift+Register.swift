@@ -45,34 +45,6 @@ extension OneginiModuleSwift {
         bridgeConnector.toRegistrationHandler.cancelBrowserRegistration(completion)
     }
 
-    func registerAuthenticator(_ authenticatorId: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        bridgeConnector.toAuthenticatorsHandler.registerAuthenticator(authenticatorId, completion)
-    }
-
-    func getRegisteredAuthenticators(_ profileId: String) -> Result<[OWAuthenticator], FlutterError> {
-        guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
-            return .failure(FlutterError(.doesNotExistUserProfile))
-        }
-        let registeredAuthenticators = ONGUserClient.sharedInstance().registeredAuthenticators(forUser: profile)
-        return .success(registeredAuthenticators.compactMap { OWAuthenticator($0) })
-    }
-
-    func getNotRegisteredAuthenticators(_ profileId: String) -> Result<[OWAuthenticator], FlutterError> {
-        guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
-            return .failure(FlutterError(.doesNotExistUserProfile))
-        }
-        let notRegisteredAuthenticators = ONGUserClient.sharedInstance().nonRegisteredAuthenticators(forUser: profile)
-        return .success(notRegisteredAuthenticators.compactMap { OWAuthenticator($0) })
-    }
-
-    func getAllAuthenticators(_ profileId: String) -> Result<[OWAuthenticator], FlutterError> {
-        guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
-            return .failure(FlutterError(.doesNotExistUserProfile))
-        }
-        let allAuthenticators = ONGUserClient.sharedInstance().allAuthenticators(forUser: profile)
-        return .success(allAuthenticators.compactMap { OWAuthenticator($0) })
-    }
-
     func getRedirectUrl() -> Result<String, FlutterError> {
         return .success(ONGClient.sharedInstance().configModel.redirectURL)
     }

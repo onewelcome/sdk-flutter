@@ -5,13 +5,13 @@ import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_AUTHENTICATED_IMPLICIT
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestDetails
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestResponse
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceRequestType
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.DELETE
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.GET
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.POST
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.PUT
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.DELETE
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestDetails
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestResponse
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceRequestType
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Headers

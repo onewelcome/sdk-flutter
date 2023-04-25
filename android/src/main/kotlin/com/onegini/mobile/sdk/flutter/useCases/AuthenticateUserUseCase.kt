@@ -5,10 +5,11 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticationError
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.extensions.toOneginiInt
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.mapToOwCustomInfo
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticatorType
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWUserProfile
 import javax.inject.Inject
@@ -19,7 +20,7 @@ class AuthenticateUserUseCase @Inject constructor(
   private val oneginiSDK: OneginiSDK,
   private val getUserProfileUseCase: GetUserProfileUseCase
 ) {
-  operator fun invoke(profileId: String, authenticatorId: String?, callback: (Result<OWRegistrationResponse>) -> Unit) {
+  operator fun invoke(profileId: String, authenticatorType: OWAuthenticatorType?, callback: (Result<OWRegistrationResponse>) -> Unit) {
     val userProfile = try {
       getUserProfileUseCase(profileId)
     } catch (error: SdkError) {
@@ -27,12 +28,9 @@ class AuthenticateUserUseCase @Inject constructor(
     }
 
     val authenticator = oneginiSDK.oneginiClient.userClient.getRegisteredAuthenticators(userProfile)
-      .find { it.id == authenticatorId }
+      .find { it.type == authenticatorType?.toOneginiInt() }
 
-    when {
-      authenticatorId != null && authenticator == null -> callback(Result.failure(SdkError(NOT_FOUND_AUTHENTICATOR).pigeonError()))
-      else -> authenticate(userProfile, authenticator, callback)
-    }
+    authenticate(userProfile, authenticator, callback)
   }
 
   private fun authenticate(

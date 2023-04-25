@@ -15,6 +15,11 @@ enum HttpRequestMethod {
   delete,
 }
 
+enum OWAuthenticatorType {
+  pin,
+  biometric,
+}
+
 enum ResourceRequestType {
   authenticated,
   implicit,
@@ -113,7 +118,7 @@ class OWAuthenticator {
 
   bool isPreferred;
 
-  int authenticatorType;
+  OWAuthenticatorType authenticatorType;
 
   Object encode() {
     return <Object?>[
@@ -121,7 +126,7 @@ class OWAuthenticator {
       name,
       isRegistered,
       isPreferred,
-      authenticatorType,
+      authenticatorType.index,
     ];
   }
 
@@ -132,7 +137,7 @@ class OWAuthenticator {
       name: result[1]! as String,
       isRegistered: result[2]! as bool,
       isPreferred: result[3]! as bool,
-      authenticatorType: result[4]! as int,
+      authenticatorType: OWAuthenticatorType.values[result[4]! as int],
     );
   }
 }
@@ -530,60 +535,6 @@ class UserClientApi {
     }
   }
 
-  Future<List<OWAuthenticator?>> getRegisteredAuthenticators(String arg_profileId) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.getRegisteredAuthenticators', codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_profileId]) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else if (replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (replyList[0] as List<Object?>?)!.cast<OWAuthenticator?>();
-    }
-  }
-
-  Future<List<OWAuthenticator?>> getAllAuthenticators(String arg_profileId) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.getAllAuthenticators', codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_profileId]) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else if (replyList[0] == null) {
-      throw PlatformException(
-        code: 'null-error',
-        message: 'Host platform returned null value for non-null return value.',
-      );
-    } else {
-      return (replyList[0] as List<Object?>?)!.cast<OWAuthenticator?>();
-    }
-  }
-
   Future<OWUserProfile> getAuthenticatedUserProfile() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.getAuthenticatedUserProfile', codec,
@@ -611,12 +562,12 @@ class UserClientApi {
     }
   }
 
-  Future<OWRegistrationResponse> authenticateUser(String arg_profileId, String? arg_registeredAuthenticatorId) async {
+  Future<OWRegistrationResponse> authenticateUser(String arg_profileId, OWAuthenticatorType arg_authenticatorType) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.authenticateUser', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_profileId, arg_registeredAuthenticatorId]) as List<Object?>?;
+        await channel.send(<Object?>[arg_profileId, arg_authenticatorType.index]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -638,9 +589,9 @@ class UserClientApi {
     }
   }
 
-  Future<List<OWAuthenticator?>> getNotRegisteredAuthenticators(String arg_profileId) async {
+  Future<OWRegistrationResponse> authenticateUserPreferred(String arg_profileId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.getNotRegisteredAuthenticators', codec,
+        'dev.flutter.pigeon.UserClientApi.authenticateUserPreferred', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_profileId]) as List<Object?>?;
@@ -661,13 +612,89 @@ class UserClientApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as List<Object?>?)!.cast<OWAuthenticator?>();
+      return (replyList[0] as OWRegistrationResponse?)!;
     }
   }
 
-  Future<void> changePin() async {
+  Future<OWAuthenticator> getBiometricAuthenticator(String arg_profileId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.changePin', codec,
+        'dev.flutter.pigeon.UserClientApi.getBiometricAuthenticator', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_profileId]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as OWAuthenticator?)!;
+    }
+  }
+
+  Future<OWAuthenticator> getPreferredAuthenticator(String arg_profileId) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.UserClientApi.getPreferredAuthenticator', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_profileId]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as OWAuthenticator?)!;
+    }
+  }
+
+  Future<void> setPreferredAuthenticator(OWAuthenticatorType arg_authenticatorType) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.UserClientApi.setPreferredAuthenticator', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_authenticatorType.index]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> deregisterBiometricAuthenticator() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.UserClientApi.deregisterBiometricAuthenticator', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(null) as List<Object?>?;
@@ -687,12 +714,12 @@ class UserClientApi {
     }
   }
 
-  Future<void> setPreferredAuthenticator(String arg_authenticatorId) async {
+  Future<void> registerBiometricAuthenticator() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.setPreferredAuthenticator', codec,
+        'dev.flutter.pigeon.UserClientApi.registerBiometricAuthenticator', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_authenticatorId]) as List<Object?>?;
+        await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -709,34 +736,12 @@ class UserClientApi {
     }
   }
 
-  Future<void> deregisterAuthenticator(String arg_authenticatorId) async {
+  Future<void> changePin() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.deregisterAuthenticator', codec,
+        'dev.flutter.pigeon.UserClientApi.changePin', codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_authenticatorId]) as List<Object?>?;
-    if (replyList == null) {
-      throw PlatformException(
-        code: 'channel-error',
-        message: 'Unable to establish connection on channel.',
-      );
-    } else if (replyList.length > 1) {
-      throw PlatformException(
-        code: replyList[0]! as String,
-        message: replyList[1] as String?,
-        details: replyList[2],
-      );
-    } else {
-      return;
-    }
-  }
-
-  Future<void> registerAuthenticator(String arg_authenticatorId) async {
-    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.registerAuthenticator', codec,
-        binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_authenticatorId]) as List<Object?>?;
+        await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

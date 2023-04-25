@@ -2,9 +2,9 @@ package com.onegini.mobile.sdk.flutter
 
 enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
   GENERIC_ERROR(8000, "Something went wrong"),
-  DOES_NOT_EXIST_USER_PROFILE(8001, "The requested User profile does not exist"),
   NOT_AUTHENTICATED_USER(8002, "There is currently no User Profile authenticated"),
   NOT_AUTHENTICATED_IMPLICIT(8002, "The requested action requires you to be authenticated implicitly"),
+  NOT_FOUND_USER_PROFILE(8004, "The requested User profile is not found"),
   NOT_FOUND_AUTHENTICATOR(8004, "The requested authenticator is not found"),
   NOT_FOUND_IDENTITY_PROVIDER(8004, "The requested identity provider is not found"), // Android only
   NOT_FOUND_SECURITY_CONTROLLER(8004, "The requested Security controller class is not found"), // Android only
@@ -32,6 +32,6 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
     "Canceling the Browser registration right now is not allowed." +
         " Registration is not in progress or pin creation has already started"
   ),
+  BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE(8043, "Biometric authentication is not supported on this device"),
   UNEXPECTED_ERROR_TYPE(8999, "An unexpected error type was returned"), // Android only
-
 }

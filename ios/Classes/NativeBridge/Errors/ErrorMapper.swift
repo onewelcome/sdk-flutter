@@ -3,20 +3,15 @@ import OneginiSDKiOS
 
 enum OneWelcomeWrapperError {
     case genericError
-    case doesNotExistUserProfile
     case notAuthenticatedUser
     case notAuthenticatedImplicit
+    case notFoundUserProfile
     case notFoundAuthenticator
+    case notFoundIdentityProvider
     case httpRequestErrorInternal
     case httpRequestErrorCode
     case httpRequestErrorNoResponse // ios only
     case providedUrlIncorrect // ios only
-    case enrollmentFailed // ios only
-    case processCanceledAuthentication // ios only
-    case processCanceledAuthenticatorDeregistration // ios only
-    case processCanceledAuthenticatorRegistration // ios only
-    case authenticatorNotRegistered // ios only
-    case notInProgressRegistration
     case notInProgressAuthentication
     case notInProgressOtpAuthentication
     case notInProgressPinCreation
@@ -24,33 +19,28 @@ enum OneWelcomeWrapperError {
     case actionNotAllowedCustomRegistrationCancel
     case actionNotAllowedCustomRegistrationSubmit
     case actionNotAllowedBrowserRegistrationCancel
+    case biometricAuthenticationNotAvailable
 
     func code() -> Int {
         switch self {
         case .genericError:
             return 8000
-        case .doesNotExistUserProfile:
-            return 8001
         case .notAuthenticatedUser, .notAuthenticatedImplicit:
             return 8002
-        case .notFoundAuthenticator:
+        case .notFoundUserProfile, .notFoundAuthenticator, .notFoundIdentityProvider:
             return 8004
         case .httpRequestErrorInternal, .httpRequestErrorCode, .httpRequestErrorNoResponse:
             return 8011
         case .providedUrlIncorrect:
             return 8014
-        case .enrollmentFailed:
-            return 8016
-        case .processCanceledAuthentication, .processCanceledAuthenticatorRegistration, .processCanceledAuthenticatorDeregistration:
-            return 8017
-        case .authenticatorNotRegistered:
-            return 8023
-        case .notInProgressRegistration, .notInProgressAuthentication, .notInProgressOtpAuthentication, .notInProgressPinCreation:
+        case .notInProgressAuthentication, .notInProgressOtpAuthentication, .notInProgressPinCreation:
             return 8034
         case .alreadyInProgressMobileAuth:
             return 8041
         case .actionNotAllowedCustomRegistrationSubmit, .actionNotAllowedCustomRegistrationCancel, .actionNotAllowedBrowserRegistrationCancel:
             return 8042
+        case .biometricAuthenticationNotAvailable:
+            return 8043
         }
     }
 
@@ -58,7 +48,7 @@ enum OneWelcomeWrapperError {
         switch self {
         case .genericError:
             return "Something went wrong."
-        case .doesNotExistUserProfile:
+        case .notFoundUserProfile:
             return "The requested User profile does not exist."
         case .notAuthenticatedUser:
             return "There is currently no User Profile authenticated."
@@ -66,26 +56,16 @@ enum OneWelcomeWrapperError {
             return "The requested action requires you to be authenticated implicitly."
         case .notFoundAuthenticator:
             return "The requested authenticator is not found."
+        case .notFoundIdentityProvider:
+            return "The requested identity provider is not found"
         case .providedUrlIncorrect:
             return "Provided url is incorrect."
-        case .enrollmentFailed:
-            return "Enrollment failed. Please try again or contact maintainer."
-        case .processCanceledAuthentication:
-            return "Authentication cancelled."
-        case .processCanceledAuthenticatorDeregistration:
-            return "Authenticator deregistration cancelled."
-        case .authenticatorNotRegistered:
-            return "This authenticator is not registered."
         case .httpRequestErrorNoResponse:
             return "OneWelcome: HTTP Request failed. Response doesn't contain data."
         case .httpRequestErrorCode:
             return "OneWelcome: HTTP Request failed. Check Response for more info."
         case .httpRequestErrorInternal:
             return "OneWelcome: HTTP Request failed. Check iosCode and iosMessage for more info."
-        case .processCanceledAuthenticatorRegistration:
-            return "The authenticator-registration was cancelled."
-        case .notInProgressRegistration:
-            return "Registration is currently not in progress."
         case .notInProgressAuthentication:
             return "Authentication is currently not in progress."
         case .notInProgressOtpAuthentication:
@@ -100,6 +80,8 @@ enum OneWelcomeWrapperError {
             return "Canceling the Custom registration right now is not allowed. Registration is not in progress or pin creation has already started."
         case .actionNotAllowedBrowserRegistrationCancel:
             return "Canceling the Browser registration right now is not allowed. Registration is not in progress or pin creation has already started."
+        case .biometricAuthenticationNotAvailable:
+            return "Biometric authentication is not supported on this device."
         }
     }
 }

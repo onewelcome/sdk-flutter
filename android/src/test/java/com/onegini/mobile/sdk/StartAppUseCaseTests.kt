@@ -1,6 +1,5 @@
 package com.onegini.mobile.sdk
 
-import com.onegini.mobile.sdk.android.client.OneginiClient
 import com.onegini.mobile.sdk.android.handlers.OneginiInitializationHandler
 import com.onegini.mobile.sdk.android.handlers.error.OneginiInitializationError
 import com.onegini.mobile.sdk.flutter.OneginiSDK
@@ -21,9 +20,6 @@ import org.mockito.kotlin.*
 class StartAppUseCaseTests {
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   lateinit var oneginiSdk: OneginiSDK
-
-  @Mock
-  lateinit var clientMock: OneginiClient
 
   @Mock
   lateinit var callbackMock: (Result<Unit>) -> Unit

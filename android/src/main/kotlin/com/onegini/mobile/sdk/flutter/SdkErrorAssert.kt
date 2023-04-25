@@ -11,8 +11,8 @@ class SdkErrorAssert : Assert() {
     fun assertEquals(expected: OneWelcomeWrapperErrors, actual: Any?) {
       when (actual) {
         is FlutterError -> {
-          assertEquals(actual.code.toInt(), expected.code)
-          assertEquals(actual.message, expected.message)
+          assertEquals(expected.code, actual.code.toInt())
+          assertEquals(expected.message, actual.message)
         }
         else -> fail(UNEXPECTED_ERROR_TYPE.message)
       }
@@ -21,8 +21,8 @@ class SdkErrorAssert : Assert() {
     fun assertEquals(expected: FlutterError, actual: Any?) {
       when (actual) {
         is FlutterError -> {
-          assertEquals(actual.code, expected.code)
-          assertEquals(actual.message, expected.message)
+          assertEquals(expected.code, actual.code)
+          assertEquals(expected.message, actual.message)
         }
         else -> fail(UNEXPECTED_ERROR_TYPE.message)
       }
