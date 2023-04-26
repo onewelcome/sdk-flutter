@@ -11,7 +11,7 @@ enum OneWelcomeWrapperError {
     case httpRequestErrorInternal
     case httpRequestErrorCode
     case httpRequestErrorNoResponse // ios only
-    case providedUrlIncorrect
+    case invalidUrl
     case notInProgressAuthentication
     case notInProgressOtpAuthentication
     case notInProgressPinCreation
@@ -41,7 +41,7 @@ enum OneWelcomeWrapperError {
             return 8047
         case .httpRequestErrorNoResponse:
             return 8048
-        case .providedUrlIncorrect:
+        case .invalidUrl:
             return 8050
         case .notInProgressCustomRegistration:
             return 8051
@@ -76,7 +76,7 @@ enum OneWelcomeWrapperError {
             return "The requested authenticator is not found."
         case .notFoundIdentityProvider:
             return "The requested identity provider is not found"
-        case .providedUrlIncorrect:
+        case .invalidUrl:
             return "Provided url is incorrect."
         case .httpRequestErrorNoResponse:
             return "The resource Request failed. The HTTP response doesn't contain data."

@@ -1,7 +1,7 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
 import android.util.Patterns
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.PROVIDED_URL_INCORRECT
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.INVALID_URL
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR_CODE
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR_INTERNAL
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_AUTHENTICATED_IMPLICIT
@@ -62,7 +62,7 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
       isValidUrl(resourceBaseUrl + path) -> Result.success(resourceBaseUrl + path)
       else -> Result.failure(
         SdkError(
-          wrapperError = PROVIDED_URL_INCORRECT
+          wrapperError = INVALID_URL
         ).pigeonError()
       )
     }
