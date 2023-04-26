@@ -384,19 +384,19 @@ class _UserClientApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return OWAppToWebSingleSignOn.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return OWAuthenticator.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return OWCustomIdentityProvider.decode(readValue(buffer)!);
-      case 131: 
+      case 131:
         return OWCustomInfo.decode(readValue(buffer)!);
-      case 132: 
+      case 132:
         return OWIdentityProvider.decode(readValue(buffer)!);
-      case 133: 
+      case 133:
         return OWRegistrationResponse.decode(readValue(buffer)!);
-      case 134: 
+      case 134:
         return OWUserProfile.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -415,12 +415,24 @@ class UserClientApi {
 
   static const MessageCodec<Object?> codec = _UserClientApiCodec();
 
-  Future<void> startApplication(String? arg_securityControllerClassName, String? arg_configModelClassName, List<OWCustomIdentityProvider?>? arg_customIdentityProviderConfigs, int? arg_connectionTimeout, int? arg_readTimeout, List<String?>? arg_additionalResourceUrls) async {
+  Future<void> startApplication(
+      String? arg_securityControllerClassName,
+      String? arg_configModelClassName,
+      List<OWCustomIdentityProvider?>? arg_customIdentityProviderConfigs,
+      int? arg_connectionTimeout,
+      int? arg_readTimeout,
+      List<String?>? arg_additionalResourceUrls) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.startApplication', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_securityControllerClassName, arg_configModelClassName, arg_customIdentityProviderConfigs, arg_connectionTimeout, arg_readTimeout, arg_additionalResourceUrls]) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(<Object?>[
+      arg_securityControllerClassName,
+      arg_configModelClassName,
+      arg_customIdentityProviderConfigs,
+      arg_connectionTimeout,
+      arg_readTimeout,
+      arg_additionalResourceUrls
+    ]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -437,12 +449,13 @@ class UserClientApi {
     }
   }
 
-  Future<OWRegistrationResponse> registerUser(String? arg_identityProviderId, List<String?>? arg_scopes) async {
+  Future<OWRegistrationResponse> registerUser(
+      String? arg_identityProviderId, List<String?>? arg_scopes) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.registerUser', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_identityProviderId, arg_scopes]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identityProviderId, arg_scopes]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -464,12 +477,13 @@ class UserClientApi {
     }
   }
 
-  Future<void> handleRegisteredUserUrl(String arg_url, int arg_signInType) async {
+  Future<void> handleRegisteredUserUrl(
+      String arg_url, int arg_signInType) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.handleRegisteredUserUrl', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_url, arg_signInType]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_url, arg_signInType]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -490,8 +504,7 @@ class UserClientApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.getIdentityProviders', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -539,8 +552,7 @@ class UserClientApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.getAuthenticatedUserProfile', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -562,12 +574,14 @@ class UserClientApi {
     }
   }
 
-  Future<OWRegistrationResponse> authenticateUser(String arg_profileId, OWAuthenticatorType arg_authenticatorType) async {
+  Future<OWRegistrationResponse> authenticateUser(
+      String arg_profileId, OWAuthenticatorType arg_authenticatorType) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.authenticateUser', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_profileId, arg_authenticatorType.index]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_profileId, arg_authenticatorType.index])
+        as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -589,7 +603,8 @@ class UserClientApi {
     }
   }
 
-  Future<OWRegistrationResponse> authenticateUserPreferred(String arg_profileId) async {
+  Future<OWRegistrationResponse> authenticateUserPreferred(
+      String arg_profileId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.authenticateUserPreferred', codec,
         binaryMessenger: _binaryMessenger);
@@ -616,7 +631,8 @@ class UserClientApi {
     }
   }
 
-  Future<OWAuthenticator> getBiometricAuthenticator(String arg_profileId) async {
+  Future<OWAuthenticator> getBiometricAuthenticator(
+      String arg_profileId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.getBiometricAuthenticator', codec,
         binaryMessenger: _binaryMessenger);
@@ -643,7 +659,8 @@ class UserClientApi {
     }
   }
 
-  Future<OWAuthenticator> getPreferredAuthenticator(String arg_profileId) async {
+  Future<OWAuthenticator> getPreferredAuthenticator(
+      String arg_profileId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.getPreferredAuthenticator', codec,
         binaryMessenger: _binaryMessenger);
@@ -670,12 +687,13 @@ class UserClientApi {
     }
   }
 
-  Future<void> setPreferredAuthenticator(OWAuthenticatorType arg_authenticatorType) async {
+  Future<void> setPreferredAuthenticator(
+      OWAuthenticatorType arg_authenticatorType) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.setPreferredAuthenticator', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_authenticatorType.index]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_authenticatorType.index]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -694,10 +712,10 @@ class UserClientApi {
 
   Future<void> deregisterBiometricAuthenticator() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.deregisterBiometricAuthenticator', codec,
+        'dev.flutter.pigeon.UserClientApi.deregisterBiometricAuthenticator',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -716,10 +734,10 @@ class UserClientApi {
 
   Future<void> registerBiometricAuthenticator() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.registerBiometricAuthenticator', codec,
+        'dev.flutter.pigeon.UserClientApi.registerBiometricAuthenticator',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -740,8 +758,7 @@ class UserClientApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.changePin', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -762,8 +779,7 @@ class UserClientApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.logout', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -784,8 +800,7 @@ class UserClientApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.enrollMobileAuthentication', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -855,8 +870,7 @@ class UserClientApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.getAccessToken', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -882,8 +896,7 @@ class UserClientApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.getRedirectUrl', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -909,8 +922,7 @@ class UserClientApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.getUserProfiles', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -976,12 +988,13 @@ class UserClientApi {
     }
   }
 
-  Future<void> authenticateUserImplicitly(String arg_profileId, List<String?>? arg_scopes) async {
+  Future<void> authenticateUserImplicitly(
+      String arg_profileId, List<String?>? arg_scopes) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.authenticateUserImplicitly', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_profileId, arg_scopes]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_profileId, arg_scopes]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1001,7 +1014,8 @@ class UserClientApi {
   /// Custom Registration Callbacks
   Future<void> submitCustomRegistrationAction(String? arg_data) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.submitCustomRegistrationAction', codec,
+        'dev.flutter.pigeon.UserClientApi.submitCustomRegistrationAction',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_data]) as List<Object?>?;
@@ -1023,7 +1037,8 @@ class UserClientApi {
 
   Future<void> cancelCustomRegistrationAction(String arg_error) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.cancelCustomRegistrationAction', codec,
+        'dev.flutter.pigeon.UserClientApi.cancelCustomRegistrationAction',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_error]) as List<Object?>?;
@@ -1048,8 +1063,7 @@ class UserClientApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.fingerprintFallbackToPin', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1068,10 +1082,10 @@ class UserClientApi {
 
   Future<void> fingerprintDenyAuthenticationRequest() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.fingerprintDenyAuthenticationRequest', codec,
+        'dev.flutter.pigeon.UserClientApi.fingerprintDenyAuthenticationRequest',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1090,10 +1104,10 @@ class UserClientApi {
 
   Future<void> fingerprintAcceptAuthenticationRequest() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.fingerprintAcceptAuthenticationRequest', codec,
+        'dev.flutter.pigeon.UserClientApi.fingerprintAcceptAuthenticationRequest',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1115,8 +1129,7 @@ class UserClientApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.otpDenyAuthenticationRequest', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1135,10 +1148,10 @@ class UserClientApi {
 
   Future<void> otpAcceptAuthenticationRequest() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.otpAcceptAuthenticationRequest', codec,
+        'dev.flutter.pigeon.UserClientApi.otpAcceptAuthenticationRequest',
+        codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1160,8 +1173,7 @@ class UserClientApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.pinDenyAuthenticationRequest', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1180,7 +1192,8 @@ class UserClientApi {
 
   Future<void> pinAcceptAuthenticationRequest(String arg_pin) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-        'dev.flutter.pigeon.UserClientApi.pinAcceptAuthenticationRequest', codec,
+        'dev.flutter.pigeon.UserClientApi.pinAcceptAuthenticationRequest',
+        codec,
         binaryMessenger: _binaryMessenger);
     final List<Object?>? replyList =
         await channel.send(<Object?>[arg_pin]) as List<Object?>?;
@@ -1205,8 +1218,7 @@ class UserClientApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.pinDenyRegistrationRequest', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1250,8 +1262,7 @@ class UserClientApi {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.cancelBrowserRegistration', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1287,9 +1298,9 @@ class _ResourceMethodApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return OWRequestDetails.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return OWRequestResponse.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -1307,12 +1318,13 @@ class ResourceMethodApi {
 
   static const MessageCodec<Object?> codec = _ResourceMethodApiCodec();
 
-  Future<OWRequestResponse> requestResource(ResourceRequestType arg_type, OWRequestDetails arg_details) async {
+  Future<OWRequestResponse> requestResource(
+      ResourceRequestType arg_type, OWRequestDetails arg_details) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.ResourceMethodApi.requestResource', codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList =
-        await channel.send(<Object?>[arg_type.index, arg_details]) as List<Object?>?;
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_type.index, arg_details]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1356,11 +1368,11 @@ class _NativeCallFlutterApiCodec extends StandardMessageCodec {
   @override
   Object? readValueOfType(int type, ReadBuffer buffer) {
     switch (type) {
-      case 128: 
+      case 128:
         return OWAuthenticationAttempt.decode(readValue(buffer)!);
-      case 129: 
+      case 129:
         return OWCustomInfo.decode(readValue(buffer)!);
-      case 130: 
+      case 130:
         return OWOneginiError.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -1391,7 +1403,8 @@ abstract class NativeCallFlutterApi {
   void n2fClosePinAuthentication();
 
   /// Called to attempt next pin authentication.
-  void n2fNextPinAuthenticationAttempt(OWAuthenticationAttempt authenticationAttempt);
+  void n2fNextPinAuthenticationAttempt(
+      OWAuthenticationAttempt authenticationAttempt);
 
   /// Called to open OTP authentication.
   void n2fOpenAuthOtp(String? message);
@@ -1412,22 +1425,26 @@ abstract class NativeCallFlutterApi {
   void n2fNextFingerprintAuthenticationAttempt();
 
   /// Called when the InitCustomRegistration event occurs and a response should be given (only for two-step)
-  void n2fEventInitCustomRegistration(OWCustomInfo? customInfo, String providerId);
+  void n2fEventInitCustomRegistration(
+      OWCustomInfo? customInfo, String providerId);
 
   /// Called when the FinishCustomRegistration event occurs and a response should be given
-  void n2fEventFinishCustomRegistration(OWCustomInfo? customInfo, String providerId);
+  void n2fEventFinishCustomRegistration(
+      OWCustomInfo? customInfo, String providerId);
 
-  static void setup(NativeCallFlutterApi? api, {BinaryMessenger? binaryMessenger}) {
+  static void setup(NativeCallFlutterApi? api,
+      {BinaryMessenger? binaryMessenger}) {
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.NativeCallFlutterApi.n2fHandleRegisteredUrl', codec,
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fHandleRegisteredUrl',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fHandleRegisteredUrl was null.');
+              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fHandleRegisteredUrl was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_url = (args[0] as String?);
           assert(arg_url != null,
@@ -1474,7 +1491,7 @@ abstract class NativeCallFlutterApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fPinNotAllowed was null.');
+              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fPinNotAllowed was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final OWOneginiError? arg_error = (args[0] as OWOneginiError?);
           assert(arg_error != null,
@@ -1486,7 +1503,8 @@ abstract class NativeCallFlutterApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinAuthentication', codec,
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinAuthentication',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
@@ -1500,7 +1518,8 @@ abstract class NativeCallFlutterApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePinAuthentication', codec,
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePinAuthentication',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
@@ -1514,16 +1533,18 @@ abstract class NativeCallFlutterApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.NativeCallFlutterApi.n2fNextPinAuthenticationAttempt', codec,
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fNextPinAuthenticationAttempt',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fNextPinAuthenticationAttempt was null.');
+              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fNextPinAuthenticationAttempt was null.');
           final List<Object?> args = (message as List<Object?>?)!;
-          final OWAuthenticationAttempt? arg_authenticationAttempt = (args[0] as OWAuthenticationAttempt?);
+          final OWAuthenticationAttempt? arg_authenticationAttempt =
+              (args[0] as OWAuthenticationAttempt?);
           assert(arg_authenticationAttempt != null,
               'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fNextPinAuthenticationAttempt was null, expected non-null OWAuthenticationAttempt.');
           api.n2fNextPinAuthenticationAttempt(arg_authenticationAttempt!);
@@ -1540,7 +1561,7 @@ abstract class NativeCallFlutterApi {
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenAuthOtp was null.');
+              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenAuthOtp was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final String? arg_message = (args[0] as String?);
           api.n2fOpenAuthOtp(arg_message);
@@ -1564,7 +1585,8 @@ abstract class NativeCallFlutterApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenFingerprintScreen', codec,
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenFingerprintScreen',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
@@ -1578,7 +1600,8 @@ abstract class NativeCallFlutterApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.NativeCallFlutterApi.n2fCloseFingerprintScreen', codec,
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fCloseFingerprintScreen',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
@@ -1592,7 +1615,8 @@ abstract class NativeCallFlutterApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.NativeCallFlutterApi.n2fShowScanningFingerprint', codec,
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fShowScanningFingerprint',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
@@ -1606,7 +1630,8 @@ abstract class NativeCallFlutterApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.NativeCallFlutterApi.n2fNextFingerprintAuthenticationAttempt', codec,
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fNextFingerprintAuthenticationAttempt',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
@@ -1620,14 +1645,15 @@ abstract class NativeCallFlutterApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.NativeCallFlutterApi.n2fEventInitCustomRegistration', codec,
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fEventInitCustomRegistration',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fEventInitCustomRegistration was null.');
+              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fEventInitCustomRegistration was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final OWCustomInfo? arg_customInfo = (args[0] as OWCustomInfo?);
           final String? arg_providerId = (args[1] as String?);
@@ -1640,14 +1666,15 @@ abstract class NativeCallFlutterApi {
     }
     {
       final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
-          'dev.flutter.pigeon.NativeCallFlutterApi.n2fEventFinishCustomRegistration', codec,
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fEventFinishCustomRegistration',
+          codec,
           binaryMessenger: binaryMessenger);
       if (api == null) {
         channel.setMessageHandler(null);
       } else {
         channel.setMessageHandler((Object? message) async {
           assert(message != null,
-          'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fEventFinishCustomRegistration was null.');
+              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fEventFinishCustomRegistration was null.');
           final List<Object?> args = (message as List<Object?>?)!;
           final OWCustomInfo? arg_customInfo = (args[0] as OWCustomInfo?);
           final String? arg_providerId = (args[1] as String?);
