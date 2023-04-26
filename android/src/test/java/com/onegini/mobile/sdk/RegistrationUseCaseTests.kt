@@ -83,7 +83,7 @@ class RegistrationUseCaseTests {
 
     argumentCaptor<Result<OWRegistrationResponse>>().apply {
       verify(callbackMock).invoke(capture())
-      SdkErrorAssert.assertEquals(IDENTITY_PROVIDER_NOT_FOUND, firstValue.exceptionOrNull())
+      SdkErrorAssert.assertEquals(NOT_FOUND_IDENTITY_PROVIDER, firstValue.exceptionOrNull())
     }
   }
 

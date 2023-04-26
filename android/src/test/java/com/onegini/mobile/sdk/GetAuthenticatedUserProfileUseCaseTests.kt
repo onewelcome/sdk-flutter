@@ -31,7 +31,7 @@ class GetAuthenticatedUserProfileUseCaseTests {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(null)
 
     val result = getAuthenticatedUserProfileUseCase().exceptionOrNull()
-    SdkErrorAssert.assertEquals(NO_USER_PROFILE_IS_AUTHENTICATED, result)
+    SdkErrorAssert.assertEquals(NOT_AUTHENTICATED_USER, result)
   }
 
   @Test

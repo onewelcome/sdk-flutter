@@ -141,7 +141,7 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
     }
 
     func handleMobileAuthWithOtp(data: String, completion: @escaping (Result<Void, Error>) -> Void) {
-        OneginiModuleSwift.sharedInstance.handleMobileAuthWithOtp2(data) { result in
+        OneginiModuleSwift.sharedInstance.handleMobileAuthWithOtp(data) { result in
             completion(result.mapError { $0 })
         }
     }
@@ -152,13 +152,13 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
         }
     }
 
-    func submitCustomRegistrationAction(identityProviderId: String, data: String?, completion: @escaping (Result<Void, Error>) -> Void) {
+    func submitCustomRegistrationAction(data: String?, completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.submitCustomRegistrationSuccess(data) { result in
             completion(result.mapError { $0 })
         }
     }
 
-    func cancelCustomRegistrationAction(identityProviderId: String, error: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    func cancelCustomRegistrationAction(error: String, completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.submitCustomRegistrationError(error) { result in
             completion(result.mapError { $0 })
         }

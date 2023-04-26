@@ -1010,14 +1010,13 @@ class UserClientApi {
   }
 
   /// Custom Registration Callbacks
-  Future<void> submitCustomRegistrationAction(
-      String arg_identityProviderId, String? arg_data) async {
+  Future<void> submitCustomRegistrationAction(String? arg_data) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.submitCustomRegistrationAction',
         codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel
-        .send(<Object?>[arg_identityProviderId, arg_data]) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_data]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1034,14 +1033,13 @@ class UserClientApi {
     }
   }
 
-  Future<void> cancelCustomRegistrationAction(
-      String arg_identityProviderId, String arg_error) async {
+  Future<void> cancelCustomRegistrationAction(String arg_error) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.cancelCustomRegistrationAction',
         codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel
-        .send(<Object?>[arg_identityProviderId, arg_error]) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_error]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1388,27 +1386,21 @@ abstract class NativeCallFlutterApi {
   void n2fHandleRegisteredUrl(String url);
 
   /// Called to open pin creation screen.
-  /// changed  n2fOpenPinRequestScreen into n2fOpenPinCreation
   void n2fOpenPinCreation();
 
   /// Called to close pin registration screen.
-  /// changed  n2fClosePin  into n2fClosePinCreation
   void n2fClosePinCreation();
 
   /// Called to indicate that the given pin is not allowed for pin creation
-  /// changed n2fEventPinNotAllowed into n2fPinNotAllowed
   void n2fPinNotAllowed(OWOneginiError error);
 
   /// Called to open pin authentication screen.
-  /// changed  n2fOpenPinScreenAuth into n2fOpenPinAuthentication
   void n2fOpenPinAuthentication();
 
   /// Called to close pin authentication screen.
-  /// changed n2fClosePinAuth into n2fClosePinAuthentication
   void n2fClosePinAuthentication();
 
   /// Called to attempt next pin authentication.
-  /// changed n2fNextAuthenticationAttempt into n2fNextPinAuthenticationAttempt
   void n2fNextPinAuthenticationAttempt(
       OWAuthenticationAttempt authenticationAttempt);
 

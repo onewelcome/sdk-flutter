@@ -16,7 +16,7 @@ class SdkError: Error {
     }
 
     init(_ wrapperError: OneWelcomeWrapperError) {
-        self.code = wrapperError.rawValue
+        self.code = wrapperError.code()
         self.errorDescription = wrapperError.message()
 
         setGenericDetails()
@@ -32,7 +32,7 @@ class SdkError: Error {
     }
 
     init(_ wrapperError: OneWelcomeWrapperError, info: [String: Any?]?) {
-        self.code = wrapperError.rawValue
+        self.code = wrapperError.code()
         self.errorDescription = wrapperError.message()
 
         setGenericDetails()
@@ -49,7 +49,7 @@ class SdkError: Error {
     }
 
     init(_ wrapperError: OneWelcomeWrapperError, response: ONGResourceResponse?, iosCode: Int? = nil, iosMessage: String? = nil) {
-        self.code = wrapperError.rawValue
+        self.code = wrapperError.code()
         self.errorDescription = wrapperError.message()
 
         setGenericDetails()

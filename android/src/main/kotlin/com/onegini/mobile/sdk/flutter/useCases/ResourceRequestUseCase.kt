@@ -1,7 +1,8 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ERROR_CODE_HTTP_REQUEST
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR_CODE
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR_INTERNAL
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_AUTHENTICATED_IMPLICIT
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.DELETE
@@ -25,6 +26,18 @@ import javax.inject.Singleton
 @Singleton
 class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
   operator fun invoke(type: ResourceRequestType, details: OWRequestDetails, callback: (Result<OWRequestResponse>) -> Unit) {
+    // Align with iOS behavior
+    if (type == ResourceRequestType.IMPLICIT && oneginiSDK.oneginiClient.userClient.implicitlyAuthenticatedUserProfile == null) {
+      callback(
+        Result.failure(
+          SdkError(
+            wrapperError = NOT_AUTHENTICATED_IMPLICIT
+          ).pigeonError()
+        )
+      )
+      return
+    }
+
     val resourceClient = getOkHttpClient(type)
     val request = buildRequest(details)
 
@@ -94,7 +107,7 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
         callback(
           Result.failure(
             SdkError(
-              code = HTTP_REQUEST_ERROR.code,
+              code = HTTP_REQUEST_ERROR_INTERNAL.code,
               message = e.message.toString()
             ).pigeonError()
           )
@@ -107,7 +120,7 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
           callback(
             Result.failure(
               SdkError(
-                wrapperError = ERROR_CODE_HTTP_REQUEST,
+                wrapperError = HTTP_REQUEST_ERROR_CODE,
                 httpResponse = response
               ).pigeonError()
             )

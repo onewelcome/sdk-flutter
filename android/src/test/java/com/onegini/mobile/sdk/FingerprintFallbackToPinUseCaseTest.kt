@@ -2,7 +2,7 @@ package com.onegini.mobile.sdk
 
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiFingerprintCallback
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.FINGERPRINT_AUTHENTICATION_NOT_IN_PROGRESS
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_IN_PROGRESS_FINGERPRINT_AUTHENTICATION
 import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
@@ -37,7 +37,7 @@ class FingerprintFallbackToPinUseCaseTest {
   fun `When no fingerprint authentication callback is set, Then it should resolve with an error`() {
     val result = fingerprintFallbackToPinUseCase().exceptionOrNull()
 
-    SdkErrorAssert.assertEquals(FINGERPRINT_AUTHENTICATION_NOT_IN_PROGRESS, result)
+    SdkErrorAssert.assertEquals(NOT_IN_PROGRESS_FINGERPRINT_AUTHENTICATION, result)
   }
 
   @Test

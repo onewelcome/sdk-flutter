@@ -1,7 +1,6 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.GENERIC_ERROR
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.USER_PROFILE_DOES_NOT_EXIST
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.extensions.toOneginiInt
 import com.onegini.mobile.sdk.flutter.helpers.SdkError

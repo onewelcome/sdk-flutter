@@ -3,7 +3,7 @@ package com.onegini.mobile.sdk
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallback
 import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.AUTHENTICATION_NOT_IN_PROGRESS
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_IN_PROGRESS_AUTHENTICATION
 import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
@@ -44,7 +44,7 @@ class PinAuthenticationRequestAcceptUseCaseTest {
   fun `When no pin registration callback is set, Then it should fail with an error`() {
     val result = pinAuthenticationRequestAcceptUseCase("12345").exceptionOrNull()
 
-    SdkErrorAssert.assertEquals(AUTHENTICATION_NOT_IN_PROGRESS, result)
+    SdkErrorAssert.assertEquals(NOT_IN_PROGRESS_AUTHENTICATION, result)
   }
 
   @Test

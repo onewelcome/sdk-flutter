@@ -39,7 +39,7 @@ class SetPreferredAuthenticatorUseCaseTests {
 
     val result = setPreferredAuthenticatorUseCase(OWAuthenticatorType.BIOMETRIC).exceptionOrNull()
 
-    SdkErrorAssert.assertEquals(NO_USER_PROFILE_IS_AUTHENTICATED, result)
+    SdkErrorAssert.assertEquals(NOT_AUTHENTICATED_USER, result)
   }
 
   @Test
@@ -49,7 +49,7 @@ class SetPreferredAuthenticatorUseCaseTests {
 
     val result = setPreferredAuthenticatorUseCase(OWAuthenticatorType.BIOMETRIC).exceptionOrNull()
 
-    SdkErrorAssert.assertEquals(AUTHENTICATOR_NOT_FOUND, result)
+    SdkErrorAssert.assertEquals(NOT_FOUND_AUTHENTICATOR, result)
   }
 
   @Test

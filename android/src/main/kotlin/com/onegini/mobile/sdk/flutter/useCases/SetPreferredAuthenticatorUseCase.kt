@@ -1,7 +1,7 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.AUTHENTICATOR_NOT_FOUND
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NO_USER_PROFILE_IS_AUTHENTICATED
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_FOUND_AUTHENTICATOR
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_AUTHENTICATED_USER
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.extensions.toOneginiInt
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
@@ -14,11 +14,11 @@ class SetPreferredAuthenticatorUseCase @Inject constructor(private val oneginiSD
   operator fun invoke(authenticatorType: OWAuthenticatorType): Result<Unit> {
 
     val userProfile = oneginiSDK.oneginiClient.userClient.authenticatedUserProfile
-      ?: return Result.failure(SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).pigeonError())
+      ?: return Result.failure(SdkError(NOT_AUTHENTICATED_USER).pigeonError())
 
     val authenticator = oneginiSDK.oneginiClient.userClient
       .getRegisteredAuthenticators(userProfile).find { it.type == authenticatorType.toOneginiInt() }
-      ?: return Result.failure(SdkError(AUTHENTICATOR_NOT_FOUND).pigeonError())
+      ?: return Result.failure(SdkError(NOT_FOUND_AUTHENTICATOR).pigeonError())
 
     oneginiSDK.oneginiClient.userClient.setPreferredAuthenticator(authenticator)
     return Result.success(Unit)

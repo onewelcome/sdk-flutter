@@ -39,7 +39,7 @@ class PinRegistrationRequestDenyUseCaseTest {
   @Test
   fun `When no pin registration callback is set, Then it should resolve with an error`() {
     val result = pinRegistrationRequestDenyUseCase().exceptionOrNull()
-    SdkErrorAssert.assertEquals(PIN_CREATION_NOT_IN_PROGRESS, result)
+    SdkErrorAssert.assertEquals(NOT_IN_PROGRESS_PIN_CREATION, result)
   }
 
   @Test
