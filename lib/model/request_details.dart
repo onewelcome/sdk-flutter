@@ -1,4 +1,4 @@
-import 'package:onegini/pigeon.dart';
+import 'package:onegini/onegini.gen.dart';
 
 // Wrapper class for pigeon class to enforce non null map values.
 class RequestDetails {

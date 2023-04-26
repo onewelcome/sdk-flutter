@@ -6,7 +6,7 @@ import 'package:onegini/events/fingerprint_event.dart';
 import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/events/otp_event.dart';
 import 'package:onegini/events/pin_event.dart';
-import 'package:onegini/pigeon.dart';
+import 'package:onegini/onegini.gen.dart';
 
 class OneginiEventListener implements NativeCallFlutterApi {
   final StreamController<OWEvent> broadCastController;

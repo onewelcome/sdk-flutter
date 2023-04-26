@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/onegini.dart';
-import 'package:onegini/pigeon.dart';
+import 'package:onegini/onegini.gen.dart';
 import 'package:onegini_example/components/display_toast.dart';
 import 'package:onegini_example/screens/login_screen.dart';
 

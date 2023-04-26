@@ -7,7 +7,7 @@ import 'package:onegini/callbacks/onegini_registration_callback.dart';
 import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/model/request_details.dart';
 import 'package:onegini/onegini.dart';
-import 'package:onegini/pigeon.dart';
+import 'package:onegini/onegini.gen.dart';
 import 'package:onegini_example/ow_broadcast_helper.dart';
 import 'package:onegini_example/screens/user_screen.dart';
 

@@ -5,7 +5,7 @@ import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/onegini_event_listener.dart';
 import 'package:onegini/resources_methods.dart';
 import 'package:onegini/user_client.dart';
-import 'package:onegini/pigeon.dart';
+import 'package:onegini/onegini.gen.dart';
 
 /// The main class used to call methods.
 class Onegini {
