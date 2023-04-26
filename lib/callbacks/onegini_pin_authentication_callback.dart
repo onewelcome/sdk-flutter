@@ -1,4 +1,4 @@
-import 'package:onegini/pigeon.dart';
+import 'package:onegini/auto_generated_pigeon.dart';
 
 /// A callback for pin AUTHENTICATION.
 class OneginiPinAuthenticationCallback {

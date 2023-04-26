@@ -1,7 +1,7 @@
 import 'model/request_details.dart';
 import 'model/request_response.dart';
 
-import 'package:onegini/pigeon.dart';
+import 'package:onegini/auto_generated_pigeon.dart';
 
 /// The class with resources methods
 class ResourcesMethods {

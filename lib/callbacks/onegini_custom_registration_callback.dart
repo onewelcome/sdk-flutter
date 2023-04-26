@@ -1,4 +1,4 @@
-import 'package:onegini/pigeon.dart';
+import 'package:onegini/auto_generated_pigeon.dart';
 
 class OneginiCustomRegistrationCallback {
   final api = UserClientApi();
