@@ -59,7 +59,9 @@ class _BodyWidgetState extends State<BodyWidget> {
               "com.onegini.mobile.onegini_example.OneginiConfigModel",
           customIdentityProviderConfigs: [
             OWCustomIdentityProvider(
-                providerId: "2-way-otp-api", isTwoStep: true)
+                providerId: "2-way-otp-api", isTwoStep: true),
+            OWCustomIdentityProvider(
+                providerId: "qr_registration", isTwoStep: false)
           ],
           connectionTimeout: 5,
           readTimeout: 25,

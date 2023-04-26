@@ -51,5 +51,10 @@ StreamSubscription<OWEvent> _getFinishCustomRegistrationSub(
                 providerId: event.providerId)),
       );
     }
+    if (event.providerId == "qr_registration") {
+      // This identity provider is set up to accept a body with 'Onegini'
+      // Normally this would contain some single use token.
+      OneginiCustomRegistrationCallback().submitSuccessAction('Onegini');
+    }
   });
 }
