@@ -17,8 +17,6 @@ import org.mockito.Answers
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.any
-import org.mockito.kotlin.argumentCaptor
-import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
 @RunWith(MockitoJUnitRunner::class)
@@ -45,7 +43,7 @@ class GetPreferredAuthenticatorUseCaseTests {
     fun `When no userprofile does not exist, Then should reject with USER_PROFILE_DOES_NOT_EXIST`() {
         val result = getPreferredAuthenticatorUseCase(profileId)
 
-        SdkErrorAssert.assertEquals(USER_PROFILE_DOES_NOT_EXIST, result.exceptionOrNull())
+        SdkErrorAssert.assertEquals(NOT_FOUND_USER_PROFILE, result.exceptionOrNull())
     }
 
     @Test

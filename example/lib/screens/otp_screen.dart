@@ -22,7 +22,7 @@ class _OtpScreenState extends State<OtpScreen> {
   ok() async {
     if (myController.text.isNotEmpty) {
       OneginiCustomRegistrationCallback()
-          .submitSuccessAction(widget.providerId, myController.text)
+          .submitSuccessAction(myController.text)
           .catchError((error) => {
                 if (error is PlatformException)
                   {showFlutterToast(error.message)}
@@ -34,7 +34,7 @@ class _OtpScreenState extends State<OtpScreen> {
 
   cancel() async {
     OneginiCustomRegistrationCallback()
-        .submitErrorAction(widget.providerId, "Registration canceled")
+        .submitErrorAction("Registration canceled")
         .catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);

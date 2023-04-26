@@ -457,8 +457,8 @@ interface UserClientApi {
   fun authenticateDevice(scopes: List<String>?, callback: (Result<Unit>) -> Unit)
   fun authenticateUserImplicitly(profileId: String, scopes: List<String>?, callback: (Result<Unit>) -> Unit)
   /** Custom Registration Callbacks */
-  fun submitCustomRegistrationAction(identityProviderId: String, data: String?, callback: (Result<Unit>) -> Unit)
-  fun cancelCustomRegistrationAction(identityProviderId: String, error: String, callback: (Result<Unit>) -> Unit)
+  fun submitCustomRegistrationAction(data: String?, callback: (Result<Unit>) -> Unit)
+  fun cancelCustomRegistrationAction(error: String, callback: (Result<Unit>) -> Unit)
   /** Fingerprint Callbacks */
   fun fingerprintFallbackToPin(callback: (Result<Unit>) -> Unit)
   fun fingerprintDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit)
@@ -944,9 +944,8 @@ interface UserClientApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val identityProviderIdArg = args[0] as String
-            val dataArg = args[1] as String?
-            api.submitCustomRegistrationAction(identityProviderIdArg, dataArg) { result: Result<Unit> ->
+            val dataArg = args[0] as String?
+            api.submitCustomRegistrationAction(dataArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -964,9 +963,8 @@ interface UserClientApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val identityProviderIdArg = args[0] as String
-            val errorArg = args[1] as String
-            api.cancelCustomRegistrationAction(identityProviderIdArg, errorArg) { result: Result<Unit> ->
+            val errorArg = args[0] as String
+            api.cancelCustomRegistrationAction(errorArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

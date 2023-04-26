@@ -3,6 +3,8 @@ package com.onegini.mobile.sdk.flutter.providers
 import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomRegistrationAction
 
 interface CustomRegistrationAction {
+    fun isInProgress(): Boolean
+
     fun getCustomRegistrationAction(): OneginiCustomRegistrationAction
 
     fun getIdProvider(): String

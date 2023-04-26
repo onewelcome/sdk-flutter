@@ -423,8 +423,8 @@ protocol UserClientApi {
   func authenticateDevice(scopes: [String]?, completion: @escaping (Result<Void, Error>) -> Void)
   func authenticateUserImplicitly(profileId: String, scopes: [String]?, completion: @escaping (Result<Void, Error>) -> Void)
   /// Custom Registration Callbacks
-  func submitCustomRegistrationAction(identityProviderId: String, data: String?, completion: @escaping (Result<Void, Error>) -> Void)
-  func cancelCustomRegistrationAction(identityProviderId: String, error: String, completion: @escaping (Result<Void, Error>) -> Void)
+  func submitCustomRegistrationAction(data: String?, completion: @escaping (Result<Void, Error>) -> Void)
+  func cancelCustomRegistrationAction(error: String, completion: @escaping (Result<Void, Error>) -> Void)
   /// Fingerprint Callbacks
   func fingerprintFallbackToPin(completion: @escaping (Result<Void, Error>) -> Void)
   func fingerprintDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void)
@@ -850,9 +850,8 @@ class UserClientApiSetup {
     if let api = api {
       submitCustomRegistrationActionChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let identityProviderIdArg = args[0] as! String
-        let dataArg: String? = nilOrValue(args[1])
-        api.submitCustomRegistrationAction(identityProviderId: identityProviderIdArg, data: dataArg) { result in
+        let dataArg: String? = nilOrValue(args[0])
+        api.submitCustomRegistrationAction(data: dataArg) { result in
           switch result {
             case .success:
               reply(wrapResult(nil))
@@ -868,9 +867,8 @@ class UserClientApiSetup {
     if let api = api {
       cancelCustomRegistrationActionChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let identityProviderIdArg = args[0] as! String
-        let errorArg = args[1] as! String
-        api.cancelCustomRegistrationAction(identityProviderId: identityProviderIdArg, error: errorArg) { result in
+        let errorArg = args[0] as! String
+        api.cancelCustomRegistrationAction(error: errorArg) { result in
           switch result {
             case .success:
               reply(wrapResult(nil))

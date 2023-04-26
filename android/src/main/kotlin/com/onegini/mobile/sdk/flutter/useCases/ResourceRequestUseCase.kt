@@ -1,11 +1,10 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
-import android.net.Uri
-import android.util.Log
 import android.util.Patterns
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ERROR_CODE_HTTP_REQUEST
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.PROVIDED_URL_INCORRECT
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR_CODE
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR_INTERNAL
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_AUTHENTICATED_IMPLICIT
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.DELETE
@@ -23,13 +22,24 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import java.io.IOException
-import java.net.URI
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
   operator fun invoke(type: ResourceRequestType, details: OWRequestDetails, callback: (Result<OWRequestResponse>) -> Unit) {
+    // Align with iOS behavior
+    if (type == ResourceRequestType.IMPLICIT && oneginiSDK.oneginiClient.userClient.implicitlyAuthenticatedUserProfile == null) {
+      callback(
+        Result.failure(
+          SdkError(
+            wrapperError = NOT_AUTHENTICATED_IMPLICIT
+          ).pigeonError()
+        )
+      )
+      return
+    }
+
     val pathResult = getCompleteResourceUrl(details.path)
 
     // Additional check for valid url
@@ -115,7 +125,7 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
         callback(
           Result.failure(
             SdkError(
-              code = HTTP_REQUEST_ERROR.code,
+              code = HTTP_REQUEST_ERROR_INTERNAL.code,
               message = e.message.toString()
             ).pigeonError()
           )
@@ -128,7 +138,7 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
           callback(
             Result.failure(
               SdkError(
-                wrapperError = ERROR_CODE_HTTP_REQUEST,
+                wrapperError = HTTP_REQUEST_ERROR_CODE,
                 httpResponse = response
               ).pigeonError()
             )

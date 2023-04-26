@@ -6,7 +6,7 @@ class LoginHandler {
 
     func handlePin(pin: String, completion: (Result<Void, FlutterError>) -> Void) {
         guard let pinChallenge = pinChallenge else {
-            completion(.failure(FlutterError(.authenticationNotInProgress)))
+            completion(.failure(FlutterError(.notInProgressAuthentication)))
             return
         }
         pinChallenge.sender.respond(with: pin, to: pinChallenge)
@@ -15,7 +15,7 @@ class LoginHandler {
 
     func cancelPinAuthentication(completion: (Result<Void, FlutterError>) -> Void) {
         guard let pinChallenge = pinChallenge else {
-            completion(.failure(FlutterError(.authenticationNotInProgress)))
+            completion(.failure(FlutterError(.notInProgressAuthentication)))
             return
         }
         pinChallenge.sender.cancel(pinChallenge)
@@ -91,11 +91,7 @@ class AuthenticationDelegateImpl: AuthenticationDelegate {
     func userClient(_ userClient: UserClient, didFailToAuthenticateUser profile: UserProfile, authenticator: Authenticator, error: Error) {
         loginHandler.handleDidFailToAuthenticateUser()
 
-        if error.code == ONGGenericError.actionCancelled.rawValue {
-            completion(.failure(FlutterError(.loginCanceled)))
-        } else {
-            let mappedError = ErrorMapper().mapError(error)
-            completion(.failure(FlutterError(mappedError)))
-        }
+        let mappedError = ErrorMapper().mapError(error)
+        completion(.failure(FlutterError(mappedError)))
     }
 }

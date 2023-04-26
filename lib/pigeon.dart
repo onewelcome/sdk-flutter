@@ -1012,14 +1012,13 @@ class UserClientApi {
   }
 
   /// Custom Registration Callbacks
-  Future<void> submitCustomRegistrationAction(
-      String arg_identityProviderId, String? arg_data) async {
+  Future<void> submitCustomRegistrationAction(String? arg_data) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.submitCustomRegistrationAction',
         codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel
-        .send(<Object?>[arg_identityProviderId, arg_data]) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_data]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1036,14 +1035,13 @@ class UserClientApi {
     }
   }
 
-  Future<void> cancelCustomRegistrationAction(
-      String arg_identityProviderId, String arg_error) async {
+  Future<void> cancelCustomRegistrationAction(String arg_error) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.cancelCustomRegistrationAction',
         codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel
-        .send(<Object?>[arg_identityProviderId, arg_error]) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_error]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

@@ -2,7 +2,7 @@ package com.onegini.mobile.sdk
 
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiAcceptDenyCallback
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthenticationRequest
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.OTP_AUTHENTICATION_NOT_IN_PROGRESS
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_IN_PROGRESS_OTP_AUTHENTICATION
 import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
@@ -40,7 +40,7 @@ class OtpAcceptAuthenticationRequestUseCaseTest {
   fun `When no otp authentication callback is set, Then it should resolve with an error`() {
     val result = otpAcceptAuthenticationRequestUseCase().exceptionOrNull()
 
-    SdkErrorAssert.assertEquals(OTP_AUTHENTICATION_NOT_IN_PROGRESS, result)
+    SdkErrorAssert.assertEquals(NOT_IN_PROGRESS_OTP_AUTHENTICATION, result)
   }
 
   @Test

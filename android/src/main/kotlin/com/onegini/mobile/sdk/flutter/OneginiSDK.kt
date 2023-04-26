@@ -6,7 +6,7 @@ import com.onegini.mobile.sdk.android.client.OneginiClientBuilder
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.CONFIG_ERROR
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ONEWELCOME_SDK_NOT_INITIALIZED
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.SECURITY_CONTROLLER_NOT_FOUND
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_FOUND_SECURITY_CONTROLLER
 import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
 import com.onegini.mobile.sdk.flutter.handlers.BrowserRegistrationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
@@ -122,10 +122,10 @@ class OneginiSDK @Inject constructor(
     } catch (e: ClassNotFoundException) {
       e.message?.let { message ->
         throw SdkError(
-          code = SECURITY_CONTROLLER_NOT_FOUND.code,
+          code = NOT_FOUND_SECURITY_CONTROLLER.code,
           message = message
         )
-      } ?: throw SdkError(SECURITY_CONTROLLER_NOT_FOUND)
+      } ?: throw SdkError(NOT_FOUND_SECURITY_CONTROLLER)
     }
   }
 }

@@ -75,7 +75,7 @@ class AuthenticateUserImplicitlyUseCaseTests {
     argumentCaptor<Result<Unit>>().apply {
       verify(callbackMock).invoke(capture())
 
-      SdkErrorAssert.assertEquals(USER_PROFILE_DOES_NOT_EXIST, firstValue.exceptionOrNull())
+      SdkErrorAssert.assertEquals(NOT_FOUND_USER_PROFILE, firstValue.exceptionOrNull())
     }
   }
 

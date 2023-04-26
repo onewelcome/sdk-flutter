@@ -216,10 +216,10 @@ abstract class UserClientApi {
 
   /// Custom Registration Callbacks
   @async
-  void submitCustomRegistrationAction(String identityProviderId, String? data);
+  void submitCustomRegistrationAction(String? data);
 
   @async
-  void cancelCustomRegistrationAction(String identityProviderId, String error);
+  void cancelCustomRegistrationAction(String error);
 
   /// Fingerprint Callbacks
   @async

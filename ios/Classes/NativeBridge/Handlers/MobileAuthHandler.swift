@@ -21,13 +21,13 @@ extension MobileAuthHandler: MobileAuthConnectorToHandlerProtocol {
 
         // Check to prevent breaking iOS SDK; https://onewelcome.atlassian.net/browse/SDKIOS-987
         guard SharedUserClient.instance.authenticatedUserProfile != nil else {
-            completion(.failure(FlutterError(.noUserProfileIsAuthenticated)))
+            completion(.failure(FlutterError(.notAuthenticatedUser)))
             return
         }
 
         // Prevent concurrent OTP mobile authentication flows at same time; https://onewelcome.atlassian.net/browse/SDKIOS-989
         guard !isFlowInProgress else {
-            completion(.failure(FlutterError(.mobileAuthInProgress)))
+            completion(.failure(FlutterError(.alreadyInProgressMobileAuth)))
             return
         }
 
@@ -53,7 +53,7 @@ extension MobileAuthHandler: MobileAuthConnectorToHandlerProtocol {
     func acceptMobileAuthRequest(completion: @escaping (Result<Void, FlutterError>) -> Void) {
         Logger.log("acceptMobileAuthRequest", sender: self)
         guard let callback = mobileAuthCallback else {
-            completion(.failure(FlutterError(SdkError(.otpAuthenticationNotInProgress))))
+            completion(.failure(FlutterError(SdkError(.notInProgressOtpAuthentication))))
             return
         }
 
@@ -65,7 +65,7 @@ extension MobileAuthHandler: MobileAuthConnectorToHandlerProtocol {
     func denyMobileAuthRequest(completion: @escaping (Result<Void, FlutterError>) -> Void) {
         Logger.log("denyMobileAuthRequest", sender: self)
         guard let callback = mobileAuthCallback else {
-            completion(.failure(FlutterError(SdkError(.otpAuthenticationNotInProgress))))
+            completion(.failure(FlutterError(SdkError(.notInProgressOtpAuthentication))))
             return
         }
 
@@ -112,12 +112,8 @@ class MobileAuthDelegate: MobileAuthRequestDelegate {
         BridgeConnector.shared?.toMobileAuthHandler.finishMobileAuthenticationFlow()
         SwiftOneginiPlugin.flutterApi?.n2fCloseAuthOtp {}
 
-        if error.code == ONGGenericError.actionCancelled.rawValue {
-            handleMobileAuthCompletion(.failure(FlutterError(SdkError(.authenticationCancelled))))
-        } else {
-            let mappedError = ErrorMapper().mapError(error)
-            handleMobileAuthCompletion(.failure(FlutterError(mappedError)))
-        }
+        let mappedError = ErrorMapper().mapError(error)
+        handleMobileAuthCompletion(.failure(FlutterError(mappedError)))
     }
 
     func userClient(_ userClient: UserClient, didHandleRequest request: MobileAuthRequest, authenticator: Authenticator?, info customAuthenticatorInfo: CustomInfo?) {
