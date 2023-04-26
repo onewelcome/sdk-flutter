@@ -40,7 +40,7 @@ class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
             return
         }
 
-        SharedUserClient.instance.setPreferred(authenticator: authenticator)
+        SharedUserClient.instance.setPreferredAuthenticator(authenticator)
         completion(.success)
     }
 
