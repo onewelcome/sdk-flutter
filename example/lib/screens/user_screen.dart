@@ -84,7 +84,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
         _biometricAuthenticator = biometricAuthenticator;
       });
     } on PlatformException catch (err) {
-      if (err.code != "8043") {
+      if (err.code != "8060") {
         showFlutterToast(err.message);
       }
     }
