@@ -48,6 +48,7 @@ class Onegini {
     List<OWCustomIdentityProvider>? customIdentityProviderConfigs,
     int? connectionTimeout,
     int? readTimeout,
+    List<String>? additionalResourceUrls,
   }) async {
     NativeCallFlutterApi.setup(OneginiEventListener(owEventStreamController));
     await api.startApplication(
@@ -55,6 +56,7 @@ class Onegini {
         configModelClassName,
         customIdentityProviderConfigs,
         connectionTimeout,
-        readTimeout);
+        readTimeout,
+        additionalResourceUrls);
   }
 }

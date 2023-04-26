@@ -398,7 +398,7 @@ class UserClientApiCodec: FlutterStandardMessageCodec {
 ///
 /// Generated protocol from Pigeon that represents a handler of messages from Flutter.
 protocol UserClientApi {
-  func startApplication(securityControllerClassName: String?, configModelClassName: String?, customIdentityProviderConfigs: [OWCustomIdentityProvider]?, connectionTimeout: Int64?, readTimeout: Int64?, completion: @escaping (Result<Void, Error>) -> Void)
+  func startApplication(securityControllerClassName: String?, configModelClassName: String?, customIdentityProviderConfigs: [OWCustomIdentityProvider]?, connectionTimeout: Int64?, readTimeout: Int64?, additionalResourceUrls: [String]?, completion: @escaping (Result<Void, Error>) -> Void)
   func registerUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void)
   func handleRegisteredUserUrl(url: String, signInType: Int64, completion: @escaping (Result<Void, Error>) -> Void)
   func getIdentityProviders(completion: @escaping (Result<[OWIdentityProvider], Error>) -> Void)
@@ -457,7 +457,8 @@ class UserClientApiSetup {
         let customIdentityProviderConfigsArg: [OWCustomIdentityProvider]? = nilOrValue(args[2])
         let connectionTimeoutArg: Int64? = args[3] is NSNull ? nil : (args[3] is Int64? ? args[3] as! Int64? : Int64(args[3] as! Int32))
         let readTimeoutArg: Int64? = args[4] is NSNull ? nil : (args[4] is Int64? ? args[4] as! Int64? : Int64(args[4] as! Int32))
-        api.startApplication(securityControllerClassName: securityControllerClassNameArg, configModelClassName: configModelClassNameArg, customIdentityProviderConfigs: customIdentityProviderConfigsArg, connectionTimeout: connectionTimeoutArg, readTimeout: readTimeoutArg) { result in
+        let additionalResourceUrlsArg: [String]? = nilOrValue(args[5])
+        api.startApplication(securityControllerClassName: securityControllerClassNameArg, configModelClassName: configModelClassNameArg, customIdentityProviderConfigs: customIdentityProviderConfigsArg, connectionTimeout: connectionTimeoutArg, readTimeout: readTimeoutArg, additionalResourceUrls: additionalResourceUrlsArg) { result in
           switch result {
             case .success:
               reply(wrapResult(nil))

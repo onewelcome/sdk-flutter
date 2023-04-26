@@ -420,7 +420,8 @@ class UserClientApi {
       String? arg_configModelClassName,
       List<OWCustomIdentityProvider?>? arg_customIdentityProviderConfigs,
       int? arg_connectionTimeout,
-      int? arg_readTimeout) async {
+      int? arg_readTimeout,
+      List<String?>? arg_additionalResourceUrls) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.startApplication', codec,
         binaryMessenger: _binaryMessenger);
@@ -429,7 +430,8 @@ class UserClientApi {
       arg_configModelClassName,
       arg_customIdentityProviderConfigs,
       arg_connectionTimeout,
-      arg_readTimeout
+      arg_readTimeout,
+      arg_additionalResourceUrls
     ]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(

@@ -169,6 +169,7 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
     customIdentityProviderConfigs: List<OWCustomIdentityProvider>?,
     connectionTimeout: Long?,
     readTimeout: Long?,
+    additionalResourceUrls: List<String>?, // iOS only
     callback: (Result<Unit>) -> Unit
   ) {
     startAppUseCase(

@@ -40,6 +40,13 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     func requestResource(_ requestType: ResourceRequestType, _ details: OWRequestDetails, completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) {
         Logger.log("requestResource", sender: self)
 
+        // Additional check for valid url
+        let resourceUrl = ONGClient.sharedInstance().configModel.resourceBaseURL ?? ""
+        if isValidUrl(details.path) == false && isValidUrl(resourceUrl + details.path) == false {
+            completion(.failure(FlutterError(SdkError(.invalidUrl))))
+            return
+        }
+
         let request = generateONGResourceRequest(details)
         let requestCompletion = getRequestCompletion(completion)
 
@@ -63,8 +70,17 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 }
 
 private extension ResourcesHandler {
+    func isValidUrl(_ path: String) -> Bool {
+        if let url = URL(string: path) {
+            return UIApplication.shared.canOpenURL(url)
+        }
+
+        return false
+    }
+
     func generateONGResourceRequest(_ details: OWRequestDetails) -> ONGResourceRequest {
         Logger.log("generateONGResourceRequest", sender: self)
+
         return ONGResourceRequest(path: details.path,
                                   method: details.method.stringValue,
                                   body: details.body?.data(using: .utf8),

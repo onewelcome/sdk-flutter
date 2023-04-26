@@ -432,7 +432,7 @@ private object UserClientApiCodec : StandardMessageCodec() {
  * Generated interface from Pigeon that represents a handler of messages from Flutter.
  */
 interface UserClientApi {
-  fun startApplication(securityControllerClassName: String?, configModelClassName: String?, customIdentityProviderConfigs: List<OWCustomIdentityProvider>?, connectionTimeout: Long?, readTimeout: Long?, callback: (Result<Unit>) -> Unit)
+  fun startApplication(securityControllerClassName: String?, configModelClassName: String?, customIdentityProviderConfigs: List<OWCustomIdentityProvider>?, connectionTimeout: Long?, readTimeout: Long?, additionalResourceUrls: List<String>?, callback: (Result<Unit>) -> Unit)
   fun registerUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit)
   fun handleRegisteredUserUrl(url: String, signInType: Long, callback: (Result<Unit>) -> Unit)
   fun getIdentityProviders(callback: (Result<List<OWIdentityProvider>>) -> Unit)
@@ -493,7 +493,8 @@ interface UserClientApi {
             val customIdentityProviderConfigsArg = args[2] as List<OWCustomIdentityProvider>?
             val connectionTimeoutArg = args[3].let { if (it is Int) it.toLong() else it as Long? }
             val readTimeoutArg = args[4].let { if (it is Int) it.toLong() else it as Long? }
-            api.startApplication(securityControllerClassNameArg, configModelClassNameArg, customIdentityProviderConfigsArg, connectionTimeoutArg, readTimeoutArg) { result: Result<Unit> ->
+            val additionalResourceUrlsArg = args[5] as List<String>?
+            api.startApplication(securityControllerClassNameArg, configModelClassNameArg, customIdentityProviderConfigsArg, connectionTimeoutArg, readTimeoutArg, additionalResourceUrlsArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

@@ -19,9 +19,9 @@ PODS:
     - Flutter
     - Toast
   - MTBBarcodeScanner (5.0.11)
-  - onegini (1.2.0):
+  - onegini (1.2.1):
     - Flutter
-    - OneginiSDKiOS (~> 12.1.0)
+    - OneginiSDKiOS (~> 12.1.1)
   - OneginiSDKiOS (12.1.1):
     - AFNetworking (~> 4.0.1)
     - Typhoon (~> 4.0.8)
@@ -76,7 +76,7 @@ SPEC CHECKSUMS:
   Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
   fluttertoast: eb263d302cc92e04176c053d2385237e9f43fad0
   MTBBarcodeScanner: f453b33c4b7dfe545d8c6484ed744d55671788cb
-  onegini: bcef895403897119a1f340413bc75b8c1328624c
+  onegini: b50096e5ee0b261f160acf4437bba6a85a5188d0
   OneginiSDKiOS: 81e27e24e901cfe41e09f46b8c673fd5b5b855e9
   qr_code_scanner: bb67d64904c3b9658ada8c402e8b4d406d5d796e
   SwiftLint: 77f7cb2b9bb81ab4a12fcc86448ba3f11afa50c6

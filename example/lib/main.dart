@@ -62,7 +62,8 @@ class _BodyWidgetState extends State<BodyWidget> {
                 providerId: "2-way-otp-api", isTwoStep: true)
           ],
           connectionTimeout: 5,
-          readTimeout: 25);
+          readTimeout: 25,
+          additionalResourceUrls: []);
     } on PlatformException catch (error) {
       showFlutterToast(error.message);
     }

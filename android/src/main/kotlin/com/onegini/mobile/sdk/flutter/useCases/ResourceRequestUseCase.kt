@@ -1,5 +1,7 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
+import android.util.Patterns
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.INVALID_URL
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR_CODE
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR_INTERNAL
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_AUTHENTICATED_IMPLICIT
@@ -38,10 +40,36 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
       return
     }
 
-    val resourceClient = getOkHttpClient(type)
-    val request = buildRequest(details)
+    val pathResult = getCompleteResourceUrl(details.path)
 
-    performCall(resourceClient, request, callback)
+    // Additional check for valid url
+    pathResult.onSuccess {
+      val resourceClient = getOkHttpClient(type)
+      val request = buildRequest(details, it)
+
+      performCall(resourceClient, request, callback)
+    }
+
+    pathResult.onFailure {
+      callback(Result.failure(it))
+    }
+  }
+
+  private fun getCompleteResourceUrl(path: String): Result<String> {
+    val resourceBaseUrl = oneginiSDK.oneginiClient.configModel.resourceBaseUrl
+    return when {
+      isValidUrl(path) -> Result.success(path)
+      isValidUrl(resourceBaseUrl + path) -> Result.success(resourceBaseUrl + path)
+      else -> Result.failure(
+        SdkError(
+          wrapperError = INVALID_URL
+        ).pigeonError()
+      )
+    }
+  }
+
+  private fun isValidUrl(path: String): Boolean {
+    return Patterns.WEB_URL.matcher(path).matches()
   }
 
   private fun getOkHttpClient(type: ResourceRequestType): OkHttpClient {
@@ -53,22 +81,12 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
     }
   }
 
-  private fun buildRequest(details: OWRequestDetails): Request {
+  private fun buildRequest(details: OWRequestDetails, path: String): Request {
     return Request.Builder()
-      .url(getCompleteResourceUrl(details.path))
+      .url(path)
       .headers(getHeaders(details.headers))
       .setMethod(details)
       .build()
-  }
-
-  private fun getCompleteResourceUrl(path: String): String {
-    // TODO Add support for multiple base resource urls; https://onewelcome.atlassian.net/browse/FP-38
-    val resourceBaseUrl = oneginiSDK.oneginiClient.configModel.resourceBaseUrl
-
-    return when (path.startsWith(resourceBaseUrl)) {
-      true -> path
-      else -> resourceBaseUrl + path
-    }
   }
 
   private fun getHeaders(headers: Map<String?, String?>?): Headers {

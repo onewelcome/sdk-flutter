@@ -11,6 +11,7 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
   HTTP_REQUEST_ERROR_INTERNAL(8046, "The resource Request failed internally"),
   HTTP_REQUEST_ERROR_CODE(8047, "The resource Request returned an HTTP error code. Check Response for more info"),
   ONEWELCOME_SDK_NOT_INITIALIZED(8049, "OneWelcomeSDK is not initialized"), // Android only
+  INVALID_URL(8050, "The provided url is invalid or incorrect"),
   NOT_IN_PROGRESS_CUSTOM_REGISTRATION(8051, "Custom Registration is currently not in progress"),
   NOT_IN_PROGRESS_AUTHENTICATION(8052, "Authentication is currently not in progress"),
   NOT_IN_PROGRESS_OTP_AUTHENTICATION(8053, "OTP Authentication is currently not in progress"),
@@ -28,5 +29,7 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
   ),
   CONFIG_ERROR(8059, "Something went wrong while setting the configuration"), // Android only
   BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE(8060, "Biometric authentication is not supported on this device"),
+
+  // Only used for internal testing
   UNEXPECTED_ERROR_TYPE(8999, "An unexpected error type was returned"), // Android only
 }

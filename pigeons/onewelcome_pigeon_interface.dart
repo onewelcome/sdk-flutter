@@ -133,12 +133,12 @@ class OWCustomIdentityProvider {
 abstract class UserClientApi {
   @async
   void startApplication(
-    String? securityControllerClassName,
-    String? configModelClassName,
-    List<OWCustomIdentityProvider>? customIdentityProviderConfigs,
-    int? connectionTimeout,
-    int? readTimeout,
-  );
+      String? securityControllerClassName,
+      String? configModelClassName,
+      List<OWCustomIdentityProvider>? customIdentityProviderConfigs,
+      int? connectionTimeout,
+      int? readTimeout,
+      List<String>? additionalResourceUrls);
 
   @async
   OWRegistrationResponse registerUser(

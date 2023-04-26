@@ -26,7 +26,7 @@ extension OneginiModuleSwift {
     func runSingleSignOn(_ path: String, completion: @escaping (Result<OWAppToWebSingleSignOn, FlutterError>) -> Void) {
 
         guard let url = URL(string: path) else {
-            completion(.failure(FlutterError(.providedUrlIncorrect)))
+            completion(.failure(FlutterError(.invalidUrl)))
             return
         }
         bridgeConnector.toAppToWebHandler.signInAppToWeb(targetURL: url, completion: completion)
