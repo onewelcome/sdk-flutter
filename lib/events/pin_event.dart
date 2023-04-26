@@ -1,6 +1,6 @@
 // Wrapper for Pin Events
 import 'package:onegini/events/onewelcome_events.dart';
-import 'package:onegini/auto_generated_pigeon.dart';
+import 'package:onegini/onegini.gen.dart';
 
 // For Pin Creation
 class OpenPinCreationEvent extends OWEvent {

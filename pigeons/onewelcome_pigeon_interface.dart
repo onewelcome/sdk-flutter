@@ -21,12 +21,6 @@ class OWUserProfile {
   OWUserProfile({required this.profileId});
 }
 
-class OWRemovedUserProfile {
-  String profileId;
-
-  OWRemovedUserProfile(this.profileId);
-}
-
 class OWCustomInfo {
   int status;
   String? data;

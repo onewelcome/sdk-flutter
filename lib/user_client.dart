@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:onegini/auto_generated_pigeon.dart';
+import 'package:onegini/onegini.gen.dart';
 
 ///Сlass with basic methods available to the developer.
 class UserClient {

@@ -1,6 +1,6 @@
 // Wrapper for Custom Registration Events
 import 'package:onegini/events/onewelcome_events.dart';
-import 'package:onegini/auto_generated_pigeon.dart';
+import 'package:onegini/onegini.gen.dart';
 
 class InitCustomRegistrationEvent extends OWEvent {
   OWCustomInfo? customInfo;

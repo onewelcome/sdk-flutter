@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:onegini/auto_generated_pigeon.dart';
+import 'package:onegini/onegini.gen.dart';
 
 /// A callback of fingerprint authentication.
 ///

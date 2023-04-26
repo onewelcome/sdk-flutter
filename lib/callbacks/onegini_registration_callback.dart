@@ -1,4 +1,4 @@
-import 'package:onegini/auto_generated_pigeon.dart';
+import 'package:onegini/onegini.gen.dart';
 
 /// A callback for registration.
 class OneginiRegistrationCallback {

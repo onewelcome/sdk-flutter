@@ -68,7 +68,7 @@ struct OWUserProfile {
   }
   func toList() -> [Any?] {
     return [
-      profileId
+      profileId,
     ]
   }
 }
@@ -76,7 +76,7 @@ struct OWUserProfile {
 /// Generated class from Pigeon that represents data sent in messages.
 struct OWCustomInfo {
   var status: Int64
-  var data: String?
+  var data: String? = nil
 
   static func fromList(_ list: [Any]) -> OWCustomInfo? {
     let status = list[0] is Int64 ? list[0] as! Int64 : Int64(list[0] as! Int32)
@@ -90,7 +90,7 @@ struct OWCustomInfo {
   func toList() -> [Any?] {
     return [
       status,
-      data
+      data,
     ]
   }
 }
@@ -112,7 +112,7 @@ struct OWIdentityProvider {
   func toList() -> [Any?] {
     return [
       id,
-      name
+      name,
     ]
   }
 }
@@ -146,7 +146,7 @@ struct OWAuthenticator {
       name,
       isRegistered,
       isPreferred,
-      authenticatorType.rawValue
+      authenticatorType.rawValue,
     ]
   }
 }
@@ -168,7 +168,7 @@ struct OWAppToWebSingleSignOn {
   func toList() -> [Any?] {
     return [
       token,
-      redirectUrl
+      redirectUrl,
     ]
   }
 }
@@ -176,11 +176,11 @@ struct OWAppToWebSingleSignOn {
 /// Generated class from Pigeon that represents data sent in messages.
 struct OWRegistrationResponse {
   var userProfile: OWUserProfile
-  var customInfo: OWCustomInfo?
+  var customInfo: OWCustomInfo? = nil
 
   static func fromList(_ list: [Any]) -> OWRegistrationResponse? {
     let userProfile = OWUserProfile.fromList(list[0] as! [Any])!
-    var customInfo: OWCustomInfo?
+    var customInfo: OWCustomInfo? = nil
     if let customInfoList = list[1] as! [Any]? {
       customInfo = OWCustomInfo.fromList(customInfoList)
     }
@@ -193,7 +193,7 @@ struct OWRegistrationResponse {
   func toList() -> [Any?] {
     return [
       userProfile.toList(),
-      customInfo?.toList()
+      customInfo?.toList(),
     ]
   }
 }
@@ -202,8 +202,8 @@ struct OWRegistrationResponse {
 struct OWRequestDetails {
   var path: String
   var method: HttpRequestMethod
-  var headers: [String?: String?]?
-  var body: String?
+  var headers: [String?: String?]? = nil
+  var body: String? = nil
 
   static func fromList(_ list: [Any]) -> OWRequestDetails? {
     let path = list[0] as! String
@@ -223,7 +223,7 @@ struct OWRequestDetails {
       path,
       method.rawValue,
       headers,
-      body
+      body,
     ]
   }
 }
@@ -253,7 +253,7 @@ struct OWRequestResponse {
       headers,
       body,
       ok,
-      status
+      status,
     ]
   }
 }
@@ -279,7 +279,7 @@ struct OWAuthenticationAttempt {
     return [
       failedAttempts,
       maxAttempts,
-      remainingAttempts
+      remainingAttempts,
     ]
   }
 }
@@ -301,7 +301,7 @@ struct OWOneginiError {
   func toList() -> [Any?] {
     return [
       code,
-      message
+      message,
     ]
   }
 }
@@ -323,7 +323,7 @@ struct OWCustomIdentityProvider {
   func toList() -> [Any?] {
     return [
       providerId,
-      isTwoStep
+      isTwoStep,
     ]
   }
 }
@@ -509,7 +509,7 @@ class UserClientApiSetup {
     let getIdentityProvidersChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.getIdentityProviders", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getIdentityProvidersChannel.setMessageHandler { _, reply in
-        api.getIdentityProviders { result in
+        api.getIdentityProviders() { result in
           switch result {
             case .success(let res):
               reply(wrapResult(res))
@@ -541,7 +541,7 @@ class UserClientApiSetup {
     let getAuthenticatedUserProfileChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.getAuthenticatedUserProfile", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getAuthenticatedUserProfileChannel.setMessageHandler { _, reply in
-        api.getAuthenticatedUserProfile { result in
+        api.getAuthenticatedUserProfile() { result in
           switch result {
             case .success(let res):
               reply(wrapResult(res))
@@ -642,7 +642,7 @@ class UserClientApiSetup {
     let deregisterBiometricAuthenticatorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.deregisterBiometricAuthenticator", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       deregisterBiometricAuthenticatorChannel.setMessageHandler { _, reply in
-        api.deregisterBiometricAuthenticator { result in
+        api.deregisterBiometricAuthenticator() { result in
           switch result {
             case .success:
               reply(wrapResult(nil))
@@ -657,7 +657,7 @@ class UserClientApiSetup {
     let registerBiometricAuthenticatorChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.registerBiometricAuthenticator", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       registerBiometricAuthenticatorChannel.setMessageHandler { _, reply in
-        api.registerBiometricAuthenticator { result in
+        api.registerBiometricAuthenticator() { result in
           switch result {
             case .success:
               reply(wrapResult(nil))
@@ -672,7 +672,7 @@ class UserClientApiSetup {
     let changePinChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.changePin", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       changePinChannel.setMessageHandler { _, reply in
-        api.changePin { result in
+        api.changePin() { result in
           switch result {
             case .success:
               reply(wrapResult(nil))
@@ -687,7 +687,7 @@ class UserClientApiSetup {
     let logoutChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.logout", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       logoutChannel.setMessageHandler { _, reply in
-        api.logout { result in
+        api.logout() { result in
           switch result {
             case .success:
               reply(wrapResult(nil))
@@ -702,7 +702,7 @@ class UserClientApiSetup {
     let enrollMobileAuthenticationChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.enrollMobileAuthentication", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       enrollMobileAuthenticationChannel.setMessageHandler { _, reply in
-        api.enrollMobileAuthentication { result in
+        api.enrollMobileAuthentication() { result in
           switch result {
             case .success:
               reply(wrapResult(nil))
@@ -751,7 +751,7 @@ class UserClientApiSetup {
     let getAccessTokenChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.getAccessToken", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getAccessTokenChannel.setMessageHandler { _, reply in
-        api.getAccessToken { result in
+        api.getAccessToken() { result in
           switch result {
             case .success(let res):
               reply(wrapResult(res))
@@ -766,7 +766,7 @@ class UserClientApiSetup {
     let getRedirectUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.getRedirectUrl", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getRedirectUrlChannel.setMessageHandler { _, reply in
-        api.getRedirectUrl { result in
+        api.getRedirectUrl() { result in
           switch result {
             case .success(let res):
               reply(wrapResult(res))
@@ -781,7 +781,7 @@ class UserClientApiSetup {
     let getUserProfilesChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.getUserProfiles", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       getUserProfilesChannel.setMessageHandler { _, reply in
-        api.getUserProfiles { result in
+        api.getUserProfiles() { result in
           switch result {
             case .success(let res):
               reply(wrapResult(res))
@@ -884,7 +884,7 @@ class UserClientApiSetup {
     let fingerprintFallbackToPinChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.fingerprintFallbackToPin", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       fingerprintFallbackToPinChannel.setMessageHandler { _, reply in
-        api.fingerprintFallbackToPin { result in
+        api.fingerprintFallbackToPin() { result in
           switch result {
             case .success:
               reply(wrapResult(nil))
@@ -899,7 +899,7 @@ class UserClientApiSetup {
     let fingerprintDenyAuthenticationRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.fingerprintDenyAuthenticationRequest", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       fingerprintDenyAuthenticationRequestChannel.setMessageHandler { _, reply in
-        api.fingerprintDenyAuthenticationRequest { result in
+        api.fingerprintDenyAuthenticationRequest() { result in
           switch result {
             case .success:
               reply(wrapResult(nil))
@@ -914,7 +914,7 @@ class UserClientApiSetup {
     let fingerprintAcceptAuthenticationRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.fingerprintAcceptAuthenticationRequest", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       fingerprintAcceptAuthenticationRequestChannel.setMessageHandler { _, reply in
-        api.fingerprintAcceptAuthenticationRequest { result in
+        api.fingerprintAcceptAuthenticationRequest() { result in
           switch result {
             case .success:
               reply(wrapResult(nil))
@@ -930,7 +930,7 @@ class UserClientApiSetup {
     let otpDenyAuthenticationRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.otpDenyAuthenticationRequest", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       otpDenyAuthenticationRequestChannel.setMessageHandler { _, reply in
-        api.otpDenyAuthenticationRequest { result in
+        api.otpDenyAuthenticationRequest() { result in
           switch result {
             case .success:
               reply(wrapResult(nil))
@@ -945,7 +945,7 @@ class UserClientApiSetup {
     let otpAcceptAuthenticationRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.otpAcceptAuthenticationRequest", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       otpAcceptAuthenticationRequestChannel.setMessageHandler { _, reply in
-        api.otpAcceptAuthenticationRequest { result in
+        api.otpAcceptAuthenticationRequest() { result in
           switch result {
             case .success:
               reply(wrapResult(nil))
@@ -961,7 +961,7 @@ class UserClientApiSetup {
     let pinDenyAuthenticationRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.pinDenyAuthenticationRequest", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pinDenyAuthenticationRequestChannel.setMessageHandler { _, reply in
-        api.pinDenyAuthenticationRequest { result in
+        api.pinDenyAuthenticationRequest() { result in
           switch result {
             case .success:
               reply(wrapResult(nil))
@@ -994,7 +994,7 @@ class UserClientApiSetup {
     let pinDenyRegistrationRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.pinDenyRegistrationRequest", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       pinDenyRegistrationRequestChannel.setMessageHandler { _, reply in
-        api.pinDenyRegistrationRequest { result in
+        api.pinDenyRegistrationRequest() { result in
           switch result {
             case .success:
               reply(wrapResult(nil))
@@ -1027,7 +1027,7 @@ class UserClientApiSetup {
     let cancelBrowserRegistrationChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.cancelBrowserRegistration", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       cancelBrowserRegistrationChannel.setMessageHandler { _, reply in
-        api.cancelBrowserRegistration { result in
+        api.cancelBrowserRegistration() { result in
           switch result {
             case .success:
               reply(wrapResult(nil))
@@ -1164,13 +1164,13 @@ class NativeCallFlutterApiCodec: FlutterStandardMessageCodec {
 /// Generated class from Pigeon that represents Flutter messages that can be called from Swift.
 class NativeCallFlutterApi {
   private let binaryMessenger: FlutterBinaryMessenger
-  init(binaryMessenger: FlutterBinaryMessenger) {
+  init(binaryMessenger: FlutterBinaryMessenger){
     self.binaryMessenger = binaryMessenger
   }
   var codec: FlutterStandardMessageCodec {
     return NativeCallFlutterApiCodec.shared
   }
-  /// Called to handle registration URL
+  ///Called to handle registration URL
   func n2fHandleRegisteredUrl(url urlArg: String, completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fHandleRegisteredUrl", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([urlArg] as [Any?]) { _ in
