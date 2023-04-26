@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:onegini/callbacks/onegini_custom_registration_callback.dart';
 import 'package:onegini/callbacks/onegini_registration_callback.dart';
 import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/model/request_details.dart';
@@ -110,14 +111,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   cancelRegistration() async {
     setState(() => isLoading = false);
-
-    await OneginiRegistrationCallback()
-        .cancelBrowserRegistration()
-        .catchError((error) {
-      if (error is PlatformException) {
-        showFlutterToast(error.message);
-      }
-    });
+    try {
+      await Future.any([
+        OneginiRegistrationCallback().cancelBrowserRegistration(),
+        OneginiCustomRegistrationCallback().submitErrorAction('Canceled')
+      ]);
+    } on PlatformException catch (error) {
+      showFlutterToast(error.message);
+    }
   }
 
   Future<List<OWUserProfile>> getUserProfiles() async {
