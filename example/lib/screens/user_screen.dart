@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -430,8 +429,7 @@ class _InfoState extends State<Info> {
         ResourceRequestType.anonymous,
         RequestDetails(
             path: "application-details", method: HttpRequestMethod.get));
-    var res = json.decode(response.body);
-    return applicationDetailsFromJson(res);
+    return applicationDetailsFromJson(response.body);
   }
 
   Future<ClientResource> getClientResource() async {
@@ -470,11 +468,11 @@ class _InfoState extends State<Info> {
                               children: [
                                 Text(
                                   "application identifier => ",
-                                  style: TextStyle(fontSize: 18),
+                                  style: TextStyle(fontSize: 15),
                                 ),
                                 Text(
                                   snapshot.data?.applicationIdentifier ?? "",
-                                  style: TextStyle(fontSize: 18),
+                                  style: TextStyle(fontSize: 15),
                                 )
                               ],
                             ),
@@ -485,11 +483,11 @@ class _InfoState extends State<Info> {
                               children: [
                                 Text(
                                   "application platform => ",
-                                  style: TextStyle(fontSize: 18),
+                                  style: TextStyle(fontSize: 15),
                                 ),
                                 Text(
                                   snapshot.data?.applicationPlatform ?? "",
-                                  style: TextStyle(fontSize: 18),
+                                  style: TextStyle(fontSize: 15),
                                 )
                               ],
                             ),
@@ -500,11 +498,11 @@ class _InfoState extends State<Info> {
                               children: [
                                 Text(
                                   "application version => ",
-                                  style: TextStyle(fontSize: 18),
+                                  style: TextStyle(fontSize: 15),
                                 ),
                                 Text(
                                   snapshot.data?.applicationVersion ?? "",
-                                  style: TextStyle(fontSize: 18),
+                                  style: TextStyle(fontSize: 15),
                                 )
                               ],
                             ),
