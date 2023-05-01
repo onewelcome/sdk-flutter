@@ -228,6 +228,11 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
               child: Container(),
             ),
             ListTile(
+              title: Text("ProfileId: ${profileId}"),
+              leading: Icon(Icons.person),
+            ),
+            Divider(),
+            ListTile(
               title: Text("Authenticators"),
               leading: Icon(Icons.lock_rounded),
             ),
