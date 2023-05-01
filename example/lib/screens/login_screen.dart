@@ -24,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isLoading = false;
   List<StreamSubscription<OWEvent>>? registrationSubscriptions;
   List<StreamSubscription<OWEvent>>? authenticationSubscriptions;
+  List<OWUserProfile> userProfiles = [];
   String? selectedProfileId;
 
   @override
@@ -34,6 +35,7 @@ class _LoginScreenState extends State<LoginScreen> {
     this.authenticationSubscriptions =
         OWBroadcastHelper.initAuthenticationSubscriptions(context);
     super.initState();
+    getUserProfiles();
   }
 
   @override
@@ -124,10 +126,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<List<OWUserProfile>> getUserProfiles() async {
     try {
-      var profiles = await Onegini.instance.userClient.getUserProfiles();
-      if (selectedProfileId == null) {
-        selectedProfileId = profiles.firstOrNull?.profileId;
-      }
+      final profiles = await Onegini.instance.userClient.getUserProfiles();
+      setState(() {
+        userProfiles = profiles;
+        if (selectedProfileId == null) {
+          selectedProfileId = profiles.firstOrNull?.profileId;
+        }
+      });
       return profiles;
     } catch (err) {
       print("caught error in getUserProfiles: $err");
@@ -199,55 +204,46 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  FutureBuilder<List<OWUserProfile>> _buildLoginWidget() {
-    return FutureBuilder<List<OWUserProfile>>(
-        //userProfiles
-        future: getUserProfiles(),
-        builder: (context, snapshot) {
-          final userProfileData = snapshot.data;
-          final profileId = selectedProfileId;
-          return (userProfileData != null &&
-                  userProfileData.length > 0 &&
-                  profileId != null)
-              ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
+  Widget _buildLoginWidget() {
+    final profileId = selectedProfileId;
+    return (userProfiles.length > 0 && profileId != null)
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+                Text(
+                  "──── Login ────",
+                  style: TextStyle(fontSize: 30),
+                  textAlign: TextAlign.center,
+                ),
+                _buildSelectUserProfile(userProfiles),
+                _buildImplicitUserData(profileId),
+                ElevatedButton(
+                  onPressed: () {
+                    authenticate(profileId, null);
+                  },
+                  child: Text('Preferred authenticator'),
+                ),
+                Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                      Text(
-                        "──── Login ────",
-                        style: TextStyle(fontSize: 30),
-                        textAlign: TextAlign.center,
-                      ),
-                      _buildSelectUserProfile(userProfileData),
-                      _buildImplicitUserData(profileId),
-                      ElevatedButton(
-                        onPressed: () {
-                          authenticate(profileId, null);
-                        },
-                        child: Text('Preferred authenticator'),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              authenticate(profileId, OWAuthenticatorType.pin);
-                            },
-                            child: Text('Pin'),
-                          ),
-                          SizedBox(height: 10, width: 10),
-                          ElevatedButton(
-                            onPressed: () {
-                              authenticate(
-                                  profileId, OWAuthenticatorType.biometric);
-                            },
-                            child: Text('Biometrics'),
-                          ),
-                        ],
-                      ),
-                    ])
-              : SizedBox.shrink();
-        });
+                    ElevatedButton(
+                      onPressed: () {
+                        authenticate(profileId, OWAuthenticatorType.pin);
+                      },
+                      child: Text('Pin'),
+                    ),
+                    SizedBox(height: 10, width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        authenticate(profileId, OWAuthenticatorType.biometric);
+                      },
+                      child: Text('Biometrics'),
+                    ),
+                  ],
+                ),
+              ])
+        : SizedBox.shrink();
   }
 
   DropdownButton _buildSelectUserProfile(List<OWUserProfile> profiles) {
