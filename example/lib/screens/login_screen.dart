@@ -181,136 +181,135 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       body: isLoading
           ? Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      cancelRegistration();
-                    },
-                    child: Text('Cancel'),
-                  ),
-                ],
-              ),
+              child: _buildCancelRegistrationWidget(),
             )
           : Center(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    height: 20,
-                  ),
-                  FutureBuilder<List<OWUserProfile>>(
-                      //userProfiles
-                      future: getUserProfiles(),
-                      builder: (context, snapshot) {
-                        final userProfileData = snapshot.data;
-                        return (userProfileData != null &&
-                                userProfileData.length > 0)
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                    Text(
-                                      "──── Login ────",
-                                      style: TextStyle(fontSize: 30),
-                                      textAlign: TextAlign.center,
-                                    ),
-                                    _buildImplicitUserData(
-                                        userProfileData.first.profileId),
-                                    ElevatedButton(
-                                      onPressed: () {
-                                        authenticate(
-                                            userProfileData.first.profileId,
-                                            null);
-                                      },
-                                      child: Text('Preferred authenticator'),
-                                    ),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            authenticate(
-                                                userProfileData.first.profileId,
-                                                OWAuthenticatorType.pin);
-                                          },
-                                          child: Text('Pin'),
-                                        ),
-                                        SizedBox(height: 10, width: 10),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            authenticate(
-                                                userProfileData.first.profileId,
-                                                OWAuthenticatorType.biometric);
-                                          },
-                                          child: Text('Biometrics'),
-                                        ),
-                                      ],
-                                    ),
-                                  ])
-                            : SizedBox.shrink();
-                      }),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  Text(
-                    "──── Register ────",
-                    style: TextStyle(fontSize: 30),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  ElevatedButton(
-                    onPressed: () {
-                      openWeb();
-                    },
-                    child: Text('Run WEB'),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  FutureBuilder<List<OWIdentityProvider>>(
-                    future: Onegini.instance.userClient.getIdentityProviders(),
-                    builder: (BuildContext context, snapshot) {
-                      final identityProviders = snapshot.data;
-                      return identityProviders != null
-                          ? PopupMenuButton<String>(
-                              child: Container(
-                                padding: EdgeInsets.all(20),
-                                color: Colors.blue,
-                                child: Text(
-                                  "Run with providers",
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w700),
-                                ),
-                              ),
-                              onSelected: (value) {
-                                registrationWithIdentityProvider(value);
-                              },
-                              itemBuilder: (context) {
-                                return identityProviders
-                                    .map((e) => PopupMenuItem<String>(
-                                          child: Text(e.name),
-                                          value: e.id,
-                                        ))
-                                    .toList();
-                              })
-                          : SizedBox.shrink();
-                    },
-                  ),
+                  SizedBox(height: 20),
+                  _buildLoginWidget(),
+                  SizedBox(height: 20),
+                  _buildRegisterWidget(),
                 ],
               ),
             ),
+    );
+  }
+
+  FutureBuilder<List<OWUserProfile>> _buildLoginWidget() {
+    return FutureBuilder<List<OWUserProfile>>(
+        //userProfiles
+        future: getUserProfiles(),
+        builder: (context, snapshot) {
+          final userProfileData = snapshot.data;
+          return (userProfileData != null && userProfileData.length > 0)
+              ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                      Text(
+                        "──── Login ────",
+                        style: TextStyle(fontSize: 30),
+                        textAlign: TextAlign.center,
+                      ),
+                      _buildImplicitUserData(userProfileData.first.profileId),
+                      ElevatedButton(
+                        onPressed: () {
+                          authenticate(userProfileData.first.profileId, null);
+                        },
+                        child: Text('Preferred authenticator'),
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              authenticate(userProfileData.first.profileId,
+                                  OWAuthenticatorType.pin);
+                            },
+                            child: Text('Pin'),
+                          ),
+                          SizedBox(height: 10, width: 10),
+                          ElevatedButton(
+                            onPressed: () {
+                              authenticate(userProfileData.first.profileId,
+                                  OWAuthenticatorType.biometric);
+                            },
+                            child: Text('Biometrics'),
+                          ),
+                        ],
+                      ),
+                    ])
+              : SizedBox.shrink();
+        });
+  }
+
+  Column _buildRegisterWidget() {
+    return Column(
+      children: [
+        Text(
+          "──── Register ────",
+          style: TextStyle(fontSize: 30),
+        ),
+        SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {
+            openWeb();
+          },
+          child: Text('Run WEB'),
+        ),
+        SizedBox(height: 20),
+        FutureBuilder<List<OWIdentityProvider>>(
+          future: Onegini.instance.userClient.getIdentityProviders(),
+          builder: (BuildContext context, snapshot) {
+            final identityProviders = snapshot.data;
+            return identityProviders != null
+                ? PopupMenuButton<String>(
+                    child: Container(
+                      padding: EdgeInsets.all(20),
+                      color: Colors.blue,
+                      child: Text(
+                        "Run with providers",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    onSelected: (value) {
+                      registrationWithIdentityProvider(value);
+                    },
+                    itemBuilder: (context) {
+                      return identityProviders
+                          .map((e) => PopupMenuItem<String>(
+                                child: Text(e.name),
+                                value: e.id,
+                              ))
+                          .toList();
+                    })
+                : SizedBox.shrink();
+          },
+        ),
+      ],
+    );
+  }
+
+  Column _buildCancelRegistrationWidget() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        CircularProgressIndicator(),
+        SizedBox(height: 20),
+        ElevatedButton(
+          onPressed: () {
+            cancelRegistration();
+          },
+          child: Text('Cancel'),
+        ),
+      ],
     );
   }
 }
