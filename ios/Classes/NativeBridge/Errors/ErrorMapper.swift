@@ -1,6 +1,7 @@
 // swiftlint:disable cyclomatic_complexity
 import OneginiSDKiOS
 
+// When editing these errors, make sure to also update the errors in lib/errors/error_codes.dart
 enum OneWelcomeWrapperError {
     case genericError
     case notAuthenticatedUser
