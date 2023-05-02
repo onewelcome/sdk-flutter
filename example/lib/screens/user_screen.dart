@@ -17,7 +17,7 @@ import 'package:onegini/onegini.gen.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import '../main.dart';
 // ignore: import_of_legacy_library_into_null_safe
-import 'login_screen.dart';
+import 'auth_screen.dart';
 
 class UserScreen extends StatefulWidget {
   final String userProfileId;
@@ -112,7 +112,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     });
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => LoginScreen()),
+      MaterialPageRoute(builder: (_) => AuthScreen()),
     );
   }
 
@@ -126,7 +126,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     });
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => LoginScreen()),
+      MaterialPageRoute(builder: (_) => AuthScreen()),
     );
   }
 
@@ -144,7 +144,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
             error.code == "10012") {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => LoginScreen()),
+            MaterialPageRoute(builder: (_) => AuthScreen()),
           );
         }
       }
