@@ -84,8 +84,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
         _biometricAuthenticator = biometricAuthenticator;
       });
     } on PlatformException catch (err) {
-      if (err.code !=
-          WrapperErrorCodes.biometricAuthenticationNotAvailable.code) {
+      if (err.code != WrapperErrorCodes.biometricAuthenticationNotAvailable) {
         showFlutterToast(err.message);
       }
     }
