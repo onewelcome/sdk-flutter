@@ -76,7 +76,7 @@ private extension ResourcesHandler {
     }
 
     func generateResourceRequest(_ details: OWRequestDetails) -> ResourceRequest {
-        Logger.log("generateONGResourceRequest", sender: self)
+        Logger.log("generateResourceRequest", sender: self)
 
         return ResourceRequestFactory.makeResourceRequest(path: details.path,
                                   method: details.method.toHTTPMethod(),
