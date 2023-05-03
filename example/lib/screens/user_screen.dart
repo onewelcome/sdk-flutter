@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -233,6 +232,11 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
             DrawerHeader(
               child: Container(),
             ),
+            ListTile(
+              title: Text("ProfileId: ${profileId}"),
+              leading: Icon(Icons.person),
+            ),
+            Divider(),
             ListTile(
               title: Text("Authenticators"),
               leading: Icon(Icons.lock_rounded),
