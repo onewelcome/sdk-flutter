@@ -13,6 +13,7 @@ protocol FetchResourcesHandlerProtocol: AnyObject {
 class ResourcesHandler: FetchResourcesHandlerProtocol {
 
     func authenticateDevice(_ scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        Logger.log("authenticateDevice", sender: self)
         SharedDeviceClient.instance.authenticateDevice(with: scopes) { error in
             if let error = error {
                 let mappedError = FlutterError(ErrorMapper().mapError(error))
@@ -24,6 +25,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     }
 
     func authenticateUserImplicitly(_ profile: UserProfile, scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        Logger.log("authenticateUserImplicitly", sender: self)
         SharedUserClient.instance.implicitlyAuthenticate(user: profile, with: scopes) { error in
             if let error = error {
                 let mappedError = FlutterError(ErrorMapper().mapError(error))
@@ -36,7 +38,6 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 
     func requestResource(_ requestType: ResourceRequestType, _ details: OWRequestDetails, completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) {
         Logger.log("requestResource", sender: self)
-
         // Additional check for valid url
         let resourceUrl = ONGClient.sharedInstance().configModel.resourceBaseURL ?? ""
         if isValidUrl(details.path) == false && isValidUrl(resourceUrl + details.path) == false {
