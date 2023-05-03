@@ -6,7 +6,7 @@ in pubspec.yaml add this:
 
 dependencies:
 
-    onegini: 2.0.1
+    onegini: 3.0.0
 
 `flutter clean`
 
