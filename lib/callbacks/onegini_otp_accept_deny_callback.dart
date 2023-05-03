@@ -1,4 +1,4 @@
-import 'package:onegini/pigeon.dart';
+import 'package:onegini/onegini.gen.dart';
 
 /// A callback for mobile authentication with OTP
 class OneginiOtpAcceptDenyCallback {

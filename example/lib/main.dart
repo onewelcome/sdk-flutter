@@ -1,7 +1,7 @@
-// @dart = 2.10
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:onegini/onegini.dart';
-import 'package:onegini/pigeon.dart';
+import 'package:onegini/onegini.gen.dart';
 import 'package:onegini_example/components/display_toast.dart';
 import 'package:onegini_example/screens/login_screen.dart';
 
@@ -59,11 +59,14 @@ class _BodyWidgetState extends State<BodyWidget> {
               "com.onegini.mobile.onegini_example.OneginiConfigModel",
           customIdentityProviderConfigs: [
             OWCustomIdentityProvider(
-                providerId: "2-way-otp-api", isTwoStep: true)
+                providerId: "2-way-otp-api", isTwoStep: true),
+            OWCustomIdentityProvider(
+                providerId: "qr_registration", isTwoStep: false)
           ],
           connectionTimeout: 5,
-          readTimeout: 25);
-    } catch (error) {
+          readTimeout: 25,
+          additionalResourceUrls: []);
+    } on PlatformException catch (error) {
       showFlutterToast(error.message);
     }
 

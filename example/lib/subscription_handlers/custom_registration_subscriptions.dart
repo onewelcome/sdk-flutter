@@ -25,7 +25,7 @@ StreamSubscription<OWEvent> _getInitCustomRegistrationSub() {
     if (event.providerId == "2-way-otp-api") {
       // a 2-way-otp does not require data for the initialization request
       OneginiCustomRegistrationCallback()
-          .submitSuccessAction(event.providerId, null)
+          .submitSuccessAction(null)
           .catchError((error) => {
                 if (error is PlatformException)
                   {
@@ -47,9 +47,14 @@ StreamSubscription<OWEvent> _getFinishCustomRegistrationSub(
         context,
         MaterialPageRoute(
             builder: (context) => OtpScreen(
-                password: event.customInfo?.data,
+                password: event.customInfo?.data ?? "",
                 providerId: event.providerId)),
       );
+    }
+    if (event.providerId == "qr_registration") {
+      // This identity provider is set up to accept a body with 'Onegini'
+      // Normally this would contain some single use token.
+      OneginiCustomRegistrationCallback().submitSuccessAction('Onegini');
     }
   });
 }

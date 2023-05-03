@@ -44,7 +44,7 @@ class GetBiometricAuthenticatorUseCaseTests {
     fun `When userProfile does not exist, Then should reject with USER_PROFILE_DOES_NOT_EXIST`() {
         val result = getBiometricAuthenticatorUseCase(profileId)
 
-        SdkErrorAssert.assertEquals(USER_PROFILE_DOES_NOT_EXIST, result.exceptionOrNull())
+        SdkErrorAssert.assertEquals(NOT_FOUND_USER_PROFILE, result.exceptionOrNull())
     }
 
     @Test

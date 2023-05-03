@@ -3,11 +3,12 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:onegini/callbacks/onegini_custom_registration_callback.dart';
 import 'package:onegini/callbacks/onegini_registration_callback.dart';
 import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/model/request_details.dart';
 import 'package:onegini/onegini.dart';
-import 'package:onegini/pigeon.dart';
+import 'package:onegini/onegini.gen.dart';
 import 'package:onegini_example/ow_broadcast_helper.dart';
 import 'package:onegini_example/screens/user_screen.dart';
 
@@ -52,14 +53,13 @@ class _LoginScreenState extends State<LoginScreen> {
         ["read"],
       );
 
-      if (registrationResponse.userProfile.profileId != null)
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => UserScreen(
-                      userProfileId: registrationResponse.userProfile.profileId,
-                    )),
-            (Route<dynamic> route) => false);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => UserScreen(
+                    userProfileId: registrationResponse.userProfile.profileId,
+                  )),
+          (Route<dynamic> route) => false);
     } catch (error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
@@ -76,14 +76,13 @@ class _LoginScreenState extends State<LoginScreen> {
         ["read"],
       );
 
-      if (registrationResponse.userProfile.profileId != null)
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => UserScreen(
-                      userProfileId: registrationResponse.userProfile.profileId,
-                    )),
-            (Route<dynamic> route) => false);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => UserScreen(
+                    userProfileId: registrationResponse.userProfile.profileId,
+                  )),
+          (Route<dynamic> route) => false);
     } catch (error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
@@ -112,14 +111,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   cancelRegistration() async {
     setState(() => isLoading = false);
-
-    await OneginiRegistrationCallback()
-        .cancelBrowserRegistration()
-        .catchError((error) {
-      if (error is PlatformException) {
-        showFlutterToast(error.message);
-      }
-    });
+    try {
+      await Future.any([
+        OneginiRegistrationCallback().cancelBrowserRegistration(),
+        OneginiCustomRegistrationCallback().submitErrorAction('Canceled')
+      ]);
+    } on PlatformException catch (error) {
+      showFlutterToast(error.message);
+    }
   }
 
   Future<List<OWUserProfile>> getUserProfiles() async {

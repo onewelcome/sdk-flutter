@@ -35,17 +35,12 @@ class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
     }
 
     func setPreferredAuthenticator(_ userProfile: UserProfile, _ authenticatorType: AuthenticatorType, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        guard let authenticator = SharedUserClient.instance.authenticators(.all, for: userProfile).first(where: { $0.type == authenticatorType }) else {
-            completion(.failure(FlutterError(.authenticatorNotFound)))
+        guard let authenticator = SharedUserClient.instance.authenticators(.all, for: userProfile).first(where: { $0.type == authenticatorType && $0.isRegistered}) else {
+            completion(.failure(FlutterError(.notFoundAuthenticator)))
             return
         }
 
-        // FIXME: Doesnt the sdk give us an error by itself?
-        if !authenticator.isRegistered {
-            completion(.failure(FlutterError(.authenticatorNotRegistered)))
-            return
-        }
-        SharedUserClient.instance.setPreferred(authenticator: authenticator)
+        SharedUserClient.instance.setPreferredAuthenticator(authenticator)
         completion(.success)
     }
 
@@ -59,7 +54,7 @@ class AuthenticatorsHandler: BridgeToAuthenticatorsHandlerProtocol {
 
     func getPreferredAuthenticator(_ userProfile: UserProfile, completion: @escaping (Result<OWAuthenticator, Error>) -> Void) {
         guard let authenticator = SharedUserClient.instance.authenticators(.all, for: userProfile).first(where: { $0.isPreferred }) else {
-            completion(.failure(FlutterError(.authenticatorNotFound)))
+            completion(.failure(FlutterError(.notFoundAuthenticator)))
             return
         }
         if authenticator.type == .biometric {
@@ -99,12 +94,8 @@ class AuthenticatorRegistrationDelegateImpl: AuthenticatorRegistrationDelegate {
 
     func userClient(_ userClient: UserClient, didFailToRegister authenticator: Authenticator, for userProfile: UserProfile, error: Error) {
         Logger.log("[AUTH] userClient didFailToRegister ONGAuthenticator", sender: self)
-        if error.code == ONGGenericError.actionCancelled.rawValue {
-            completion(.failure(FlutterError(.authenticatorRegistrationCancelled)))
-        } else {
-            let mappedError = ErrorMapper().mapError(error)
-            completion(.failure(FlutterError(mappedError)))
-        }
+        let mappedError = ErrorMapper().mapError(error)
+        completion(.failure(FlutterError(mappedError)))
     }
 
     func userClient(_ userClient: UserClient, didRegister authenticator: Authenticator, for userProfile: UserProfile, info customAuthInfo: CustomInfo?) {
@@ -132,12 +123,8 @@ class AuthenticatorDeregistrationDelegateImpl: AuthenticatorDeregistrationDelega
 
     func userClient(_ userClient: UserClient, didFailToDeregister authenticator: Authenticator, forUser userProfile: UserProfile, error: Error) {
         Logger.log("[AUTH] userClient didFailToDeregister ONGAuthenticator", sender: self)
-        if error.code == ONGGenericError.actionCancelled.rawValue {
-            completion(.failure(FlutterError(.authenticatorDeregistrationCancelled)))
-        } else {
-            let mappedError = ErrorMapper().mapError(error)
-            completion(.failure(FlutterError(mappedError)))
-        }
+        let mappedError = ErrorMapper().mapError(error)
+        completion(.failure(FlutterError(mappedError)))
     }
 
     func userClient(_ userClient: UserClient, didReceiveCustomAuthDeregistrationChallenge challenge: CustomAuthDeregistrationChallenge) {

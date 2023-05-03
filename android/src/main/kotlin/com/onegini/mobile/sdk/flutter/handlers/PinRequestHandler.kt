@@ -4,7 +4,7 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiPinValidationError
 import com.onegini.mobile.sdk.android.handlers.request.OneginiCreatePinRequestHandler
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallback
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.PIN_CREATION_NOT_IN_PROGRESS
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_IN_PROGRESS_PIN_CREATION
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWOneginiError
@@ -39,13 +39,13 @@ class PinRequestHandler @Inject constructor(private val nativeApi: NativeCallFlu
     return callback?.let {
       it.acceptAuthenticationRequest(pin)
       Result.success(Unit)
-    } ?: Result.failure(SdkError(PIN_CREATION_NOT_IN_PROGRESS).pigeonError())
+    } ?: Result.failure(SdkError(NOT_IN_PROGRESS_PIN_CREATION).pigeonError())
   }
 
   fun cancelPin(): Result<Unit> {
     return callback?.let {
       it.denyAuthenticationRequest()
       Result.success(Unit)
-    } ?: Result.failure(SdkError(PIN_CREATION_NOT_IN_PROGRESS).pigeonError())
+    } ?: Result.failure(SdkError(NOT_IN_PROGRESS_PIN_CREATION).pigeonError())
   }
 }

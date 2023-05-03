@@ -21,12 +21,6 @@ class OWUserProfile {
   OWUserProfile({required this.profileId});
 }
 
-class OWRemovedUserProfile {
-  String profileId;
-
-  OWRemovedUserProfile(this.profileId);
-}
-
 class OWCustomInfo {
   int status;
   String? data;
@@ -133,12 +127,12 @@ class OWCustomIdentityProvider {
 abstract class UserClientApi {
   @async
   void startApplication(
-    String? securityControllerClassName,
-    String? configModelClassName,
-    List<OWCustomIdentityProvider>? customIdentityProviderConfigs,
-    int? connectionTimeout,
-    int? readTimeout,
-  );
+      String? securityControllerClassName,
+      String? configModelClassName,
+      List<OWCustomIdentityProvider>? customIdentityProviderConfigs,
+      int? connectionTimeout,
+      int? readTimeout,
+      List<String>? additionalResourceUrls);
 
   @async
   OWRegistrationResponse registerUser(
@@ -216,10 +210,10 @@ abstract class UserClientApi {
 
   /// Custom Registration Callbacks
   @async
-  void submitCustomRegistrationAction(String identityProviderId, String? data);
+  void submitCustomRegistrationAction(String? data);
 
   @async
-  void cancelCustomRegistrationAction(String identityProviderId, String error);
+  void cancelCustomRegistrationAction(String error);
 
   /// Fingerprint Callbacks
   @async

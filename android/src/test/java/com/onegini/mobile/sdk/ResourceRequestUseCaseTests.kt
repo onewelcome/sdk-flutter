@@ -1,19 +1,22 @@
 package com.onegini.mobile.sdk
 
 import com.onegini.mobile.sdk.android.client.UserClient
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ERROR_CODE_HTTP_REQUEST
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.UNEXPECTED_ERROR_TYPE
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.INVALID_URL
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.GET
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestDetails
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceRequestType
-import com.onegini.mobile.sdk.flutter.useCases.ResourceRequestUseCase
 import okhttp3.Callback
 import okhttp3.Headers
+import org.mockito.kotlin.any
+import com.onegini.mobile.sdk.flutter.SdkErrorAssert
+import com.onegini.mobile.sdk.flutter.useCases.ResourceRequestUseCase
 import okhttp3.OkHttpClient
 import okhttp3.Response
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR_CODE
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Test
@@ -21,7 +24,6 @@ import org.junit.runner.RunWith
 import org.mockito.Answers
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
-import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
@@ -40,6 +42,9 @@ class ResourceRequestUseCaseTests {
 
   @Mock
   lateinit var okhttp3CallMock: okhttp3.Call
+
+  @Mock
+  lateinit var owRequestDetails: OWRequestDetails
 
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   lateinit var responseMock: Response
@@ -62,10 +67,24 @@ class ResourceRequestUseCaseTests {
   }
 
   @Test
+  fun `When an invalid url is given, Then the function should resolve with an error`() {
+    whenever(oneginiSdk.oneginiClient.configModel.resourceBaseUrl).thenReturn("https://token-mobile.test.onegini.com/resources/")
+    whenever(owRequestDetails.path).thenReturn("https://^%%&^%*^/user-id-decorated")
+    resourceRequestUseCase(ResourceRequestType.IMPLICIT, owRequestDetails, callbackMock)
+
+    argumentCaptor<Result<OWRequestResponse>>().apply {
+      verify(callbackMock).invoke(capture())
+
+      val expected = FlutterError(INVALID_URL.code.toString(), INVALID_URL.message)
+      SdkErrorAssert.assertEquals(expected, firstValue.exceptionOrNull())
+    }
+  }
+
+  @Test
   fun `When a successful http response is send, Then the call should resolve with an OWRequestResponse containing correct information`() {
     setupSuccessFullResponseMock()
     whenever(resourceOkHttpClientMock.newCall(any())).thenReturn(okhttp3CallMock)
-    argumentCaptor<Callback> {
+    argumentCaptor<Callback>().apply {
       whenever(
         okhttp3CallMock.enqueue(capture())
       ).thenAnswer {
@@ -87,7 +106,7 @@ class ResourceRequestUseCaseTests {
   fun `When a successful http response is send but with an error http code, Then the call should resolve with an flutter error`() {
     setupErrorFullResponseMock()
     whenever(resourceOkHttpClientMock.newCall(any())).thenReturn(okhttp3CallMock)
-    argumentCaptor<Callback> {
+    argumentCaptor<Callback>().apply {
       whenever(
         okhttp3CallMock.enqueue(capture())
       ).thenAnswer {
@@ -102,8 +121,8 @@ class ResourceRequestUseCaseTests {
 
       when (val error = firstValue.exceptionOrNull()) {
         is FlutterError -> {
-          Assert.assertEquals(error.code.toInt(), ERROR_CODE_HTTP_REQUEST.code)
-          Assert.assertEquals(error.message, ERROR_CODE_HTTP_REQUEST.message)
+          Assert.assertEquals(error.code.toInt(), HTTP_REQUEST_ERROR_CODE.code)
+          Assert.assertEquals(error.message, HTTP_REQUEST_ERROR_CODE.message)
           Assert.assertEquals(((error.details as Map<*, *>).toMap()["response"] as Map<*, *>)["statusCode"], "400")
         }
         else -> Assert.fail(UNEXPECTED_ERROR_TYPE.message)

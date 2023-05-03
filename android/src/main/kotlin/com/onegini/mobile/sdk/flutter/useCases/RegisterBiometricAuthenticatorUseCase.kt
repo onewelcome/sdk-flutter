@@ -5,7 +5,7 @@ import com.onegini.mobile.sdk.android.handlers.error.OneginiAuthenticatorRegistr
 import com.onegini.mobile.sdk.android.model.OneginiAuthenticator
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NO_USER_PROFILE_IS_AUTHENTICATED
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_AUTHENTICATED_USER
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import javax.inject.Inject
@@ -13,7 +13,7 @@ import javax.inject.Inject
 class RegisterBiometricAuthenticatorUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
     operator fun invoke(callback: (Result<Unit>) -> Unit) {
         val authenticatedUserProfile = oneginiSDK.oneginiClient.userClient.authenticatedUserProfile
-            ?: return callback(Result.failure(SdkError(NO_USER_PROFILE_IS_AUTHENTICATED).pigeonError()))
+            ?: return callback(Result.failure(SdkError(NOT_AUTHENTICATED_USER).pigeonError()))
 
         val biometricAuthenticator = oneginiSDK.oneginiClient.userClient
             .getAllAuthenticators(authenticatedUserProfile).find { it.type ==  OneginiAuthenticator.FINGERPRINT }

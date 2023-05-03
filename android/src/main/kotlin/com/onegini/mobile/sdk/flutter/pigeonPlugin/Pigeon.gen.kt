@@ -432,7 +432,7 @@ private object UserClientApiCodec : StandardMessageCodec() {
  * Generated interface from Pigeon that represents a handler of messages from Flutter.
  */
 interface UserClientApi {
-  fun startApplication(securityControllerClassName: String?, configModelClassName: String?, customIdentityProviderConfigs: List<OWCustomIdentityProvider>?, connectionTimeout: Long?, readTimeout: Long?, callback: (Result<Unit>) -> Unit)
+  fun startApplication(securityControllerClassName: String?, configModelClassName: String?, customIdentityProviderConfigs: List<OWCustomIdentityProvider>?, connectionTimeout: Long?, readTimeout: Long?, additionalResourceUrls: List<String>?, callback: (Result<Unit>) -> Unit)
   fun registerUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit)
   fun handleRegisteredUserUrl(url: String, signInType: Long, callback: (Result<Unit>) -> Unit)
   fun getIdentityProviders(callback: (Result<List<OWIdentityProvider>>) -> Unit)
@@ -457,8 +457,8 @@ interface UserClientApi {
   fun authenticateDevice(scopes: List<String>?, callback: (Result<Unit>) -> Unit)
   fun authenticateUserImplicitly(profileId: String, scopes: List<String>?, callback: (Result<Unit>) -> Unit)
   /** Custom Registration Callbacks */
-  fun submitCustomRegistrationAction(identityProviderId: String, data: String?, callback: (Result<Unit>) -> Unit)
-  fun cancelCustomRegistrationAction(identityProviderId: String, error: String, callback: (Result<Unit>) -> Unit)
+  fun submitCustomRegistrationAction(data: String?, callback: (Result<Unit>) -> Unit)
+  fun cancelCustomRegistrationAction(error: String, callback: (Result<Unit>) -> Unit)
   /** Fingerprint Callbacks */
   fun fingerprintFallbackToPin(callback: (Result<Unit>) -> Unit)
   fun fingerprintDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit)
@@ -493,7 +493,8 @@ interface UserClientApi {
             val customIdentityProviderConfigsArg = args[2] as List<OWCustomIdentityProvider>?
             val connectionTimeoutArg = args[3].let { if (it is Int) it.toLong() else it as Long? }
             val readTimeoutArg = args[4].let { if (it is Int) it.toLong() else it as Long? }
-            api.startApplication(securityControllerClassNameArg, configModelClassNameArg, customIdentityProviderConfigsArg, connectionTimeoutArg, readTimeoutArg) { result: Result<Unit> ->
+            val additionalResourceUrlsArg = args[5] as List<String>?
+            api.startApplication(securityControllerClassNameArg, configModelClassNameArg, customIdentityProviderConfigsArg, connectionTimeoutArg, readTimeoutArg, additionalResourceUrlsArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -943,9 +944,8 @@ interface UserClientApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val identityProviderIdArg = args[0] as String
-            val dataArg = args[1] as String?
-            api.submitCustomRegistrationAction(identityProviderIdArg, dataArg) { result: Result<Unit> ->
+            val dataArg = args[0] as String?
+            api.submitCustomRegistrationAction(dataArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -963,9 +963,8 @@ interface UserClientApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val identityProviderIdArg = args[0] as String
-            val errorArg = args[1] as String
-            api.cancelCustomRegistrationAction(identityProviderIdArg, errorArg) { result: Result<Unit> ->
+            val errorArg = args[0] as String
+            api.cancelCustomRegistrationAction(errorArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -1284,60 +1283,42 @@ class NativeCallFlutterApi(private val binaryMessenger: BinaryMessenger) {
       callback()
     }
   }
-  /**
-   * Called to open pin creation screen.
-   * changed  n2fOpenPinRequestScreen into n2fOpenPinCreation
-   */
+  /** Called to open pin creation screen. */
   fun n2fOpenPinCreation(callback: () -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinCreation", codec)
     channel.send(null) {
       callback()
     }
   }
-  /**
-   * Called to close pin registration screen.
-   * changed  n2fClosePin  into n2fClosePinCreation
-   */
+  /** Called to close pin registration screen. */
   fun n2fClosePinCreation(callback: () -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePinCreation", codec)
     channel.send(null) {
       callback()
     }
   }
-  /**
-   * Called to indicate that the given pin is not allowed for pin creation
-   * changed n2fEventPinNotAllowed into n2fPinNotAllowed
-   */
+  /** Called to indicate that the given pin is not allowed for pin creation */
   fun n2fPinNotAllowed(errorArg: OWOneginiError, callback: () -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fPinNotAllowed", codec)
     channel.send(listOf(errorArg)) {
       callback()
     }
   }
-  /**
-   * Called to open pin authentication screen.
-   * changed  n2fOpenPinScreenAuth into n2fOpenPinAuthentication
-   */
+  /** Called to open pin authentication screen. */
   fun n2fOpenPinAuthentication(callback: () -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fOpenPinAuthentication", codec)
     channel.send(null) {
       callback()
     }
   }
-  /**
-   * Called to close pin authentication screen.
-   * changed n2fClosePinAuth into n2fClosePinAuthentication    
-   */
+  /** Called to close pin authentication screen. */
   fun n2fClosePinAuthentication(callback: () -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fClosePinAuthentication", codec)
     channel.send(null) {
       callback()
     }
   }
-  /**
-   * Called to attempt next pin authentication.
-   * changed n2fNextAuthenticationAttempt into n2fNextPinAuthenticationAttempt
-   */
+  /** Called to attempt next pin authentication. */
   fun n2fNextPinAuthenticationAttempt(authenticationAttemptArg: OWAuthenticationAttempt, callback: () -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fNextPinAuthenticationAttempt", codec)
     channel.send(listOf(authenticationAttemptArg)) {

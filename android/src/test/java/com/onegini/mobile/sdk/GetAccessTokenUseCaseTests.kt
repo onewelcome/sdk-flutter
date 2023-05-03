@@ -30,7 +30,7 @@ class GetAccessTokenUseCaseTests {
     whenever(oneginiSdk.oneginiClient.userClient.accessToken).thenReturn(null)
 
     val result = getAccessTokenUseCase().exceptionOrNull()
-    SdkErrorAssert.assertEquals(NO_USER_PROFILE_IS_AUTHENTICATED, result)
+    SdkErrorAssert.assertEquals(NOT_AUTHENTICATED_USER, result)
   }
 
   @Test

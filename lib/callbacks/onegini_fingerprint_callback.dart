@@ -1,11 +1,12 @@
 import 'dart:async';
-import 'package:onegini/pigeon.dart';
+import 'package:onegini/onegini.gen.dart';
 
 /// A callback of fingerprint authentication.
 ///
 /// Use this callback when user want authenticate by fingerprint.
 class OneginiFingerprintCallback {
   final api = UserClientApi();
+
   /// Changes the authentication method from fingerprint to PIN.
   Future<void> fallbackToPin() async {
     await api.fingerprintFallbackToPin();

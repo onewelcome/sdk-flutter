@@ -4,7 +4,7 @@ import com.onegini.mobile.sdk.android.handlers.request.OneginiPinAuthenticationR
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallback
 import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.AUTHENTICATION_NOT_IN_PROGRESS
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_IN_PROGRESS_AUTHENTICATION
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticationAttempt
@@ -43,13 +43,13 @@ class PinAuthenticationRequestHandler @Inject constructor(private val nativeApi:
     return callback?.let {
       it.acceptAuthenticationRequest(pin)
       Result.success(Unit)
-    } ?: Result.failure(SdkError(AUTHENTICATION_NOT_IN_PROGRESS).pigeonError())
+    } ?: Result.failure(SdkError(NOT_IN_PROGRESS_AUTHENTICATION).pigeonError())
   }
 
   fun denyAuthenticationRequest(): Result<Unit> {
     return callback?.let {
       it.denyAuthenticationRequest()
       Result.success(Unit)
-    } ?: Result.failure(SdkError(AUTHENTICATION_NOT_IN_PROGRESS).pigeonError())
+    } ?: Result.failure(SdkError(NOT_IN_PROGRESS_AUTHENTICATION).pigeonError())
   }
 }

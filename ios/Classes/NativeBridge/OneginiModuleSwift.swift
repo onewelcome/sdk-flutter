@@ -17,8 +17,9 @@ public class OneginiModuleSwift: NSObject {
         self.customRegIdentifiers = list
     }
 
-    func startOneginiModule(httpConnectionTimeout: Int64?, callback: @escaping (Result<Void, FlutterError>) -> Void) {
+    func startOneginiModule(httpConnectionTimeout: Int64?, additionalResourceUrls: [String]?, callback: @escaping (Result<Void, FlutterError>) -> Void) {
         ONGClientBuilder().setHttpRequestTimeout(TimeInterval(Double(httpConnectionTimeout ?? 5)))
+        ONGClientBuilder().setAdditionalResourceUrls(additionalResourceUrls ?? [])
         ONGClientBuilder().build()
         ONGClient.sharedInstance().start { result, error in
             if let error = error {

@@ -1,4 +1,3 @@
-// @dart = 2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/callbacks/onegini_otp_accept_deny_callback.dart';
@@ -7,7 +6,7 @@ import '../components/display_toast.dart';
 class AuthOtpScreen extends StatefulWidget {
   final String message;
 
-  const AuthOtpScreen({Key key, this.message}) : super(key: key);
+  const AuthOtpScreen({Key? key, required this.message}) : super(key: key);
 
   @override
   _AuthOtpScreenState createState() => _AuthOtpScreenState();

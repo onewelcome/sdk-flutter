@@ -3,7 +3,7 @@ package com.onegini.mobile.sdk.flutter.handlers
 import com.onegini.mobile.sdk.android.handlers.request.OneginiFingerprintAuthenticationRequestHandler
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiFingerprintCallback
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.FINGERPRINT_AUTHENTICATION_NOT_IN_PROGRESS
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_IN_PROGRESS_FINGERPRINT_AUTHENTICATION
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 import javax.inject.Inject
@@ -35,20 +35,20 @@ class FingerprintAuthenticationRequestHandler @Inject constructor(private val na
     return fingerprintCallback?.let {
       it.acceptAuthenticationRequest()
       Result.success(Unit)
-    } ?: Result.failure(SdkError(FINGERPRINT_AUTHENTICATION_NOT_IN_PROGRESS).pigeonError())
+    } ?: Result.failure(SdkError(NOT_IN_PROGRESS_FINGERPRINT_AUTHENTICATION).pigeonError())
   }
 
   fun denyAuthenticationRequest(): Result<Unit> {
     return fingerprintCallback?.let {
       it.denyAuthenticationRequest()
       Result.success(Unit)
-    } ?: Result.failure(SdkError(FINGERPRINT_AUTHENTICATION_NOT_IN_PROGRESS).pigeonError())
+    } ?: Result.failure(SdkError(NOT_IN_PROGRESS_FINGERPRINT_AUTHENTICATION).pigeonError())
   }
 
   fun fallbackToPin(): Result<Unit> {
     return fingerprintCallback?.let {
       it.fallbackToPin()
       Result.success(Unit)
-    } ?: Result.failure(SdkError(FINGERPRINT_AUTHENTICATION_NOT_IN_PROGRESS).pigeonError())
+    } ?: Result.failure(SdkError(NOT_IN_PROGRESS_FINGERPRINT_AUTHENTICATION).pigeonError())
   }
 }

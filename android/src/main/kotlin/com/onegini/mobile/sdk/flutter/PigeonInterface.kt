@@ -169,6 +169,7 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
     customIdentityProviderConfigs: List<OWCustomIdentityProvider>?,
     connectionTimeout: Long?,
     readTimeout: Long?,
+    additionalResourceUrls: List<String>?, // iOS only
     callback: (Result<Unit>) -> Unit
   ) {
     startAppUseCase(
@@ -279,12 +280,12 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   }
 
   // Callback functions
-  override fun submitCustomRegistrationAction(identityProviderId: String, data: String?, callback: (Result<Unit>) -> Unit) {
-    callback(submitCustomRegistrationActionUseCase(identityProviderId, data))
+  override fun submitCustomRegistrationAction(data: String?, callback: (Result<Unit>) -> Unit) {
+    callback(submitCustomRegistrationActionUseCase(data))
   }
 
-  override fun cancelCustomRegistrationAction(identityProviderId: String, error: String, callback: (Result<Unit>) -> Unit) {
-    callback(cancelCustomRegistrationActionUseCase(identityProviderId, error))
+  override fun cancelCustomRegistrationAction(error: String, callback: (Result<Unit>) -> Unit) {
+    callback(cancelCustomRegistrationActionUseCase(error))
   }
 
   override fun fingerprintFallbackToPin(callback: (Result<Unit>) -> Unit) {

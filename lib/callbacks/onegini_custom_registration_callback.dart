@@ -1,13 +1,13 @@
-import 'package:onegini/pigeon.dart';
+import 'package:onegini/onegini.gen.dart';
 
 class OneginiCustomRegistrationCallback {
   final api = UserClientApi();
 
-  Future<void> submitSuccessAction(String identityProviderId, String? data) async {
-    await api.submitCustomRegistrationAction(identityProviderId, data);
+  Future<void> submitSuccessAction(String? data) async {
+    await api.submitCustomRegistrationAction(data);
   }
 
-  Future<void> submitErrorAction(String identityProviderId, String error) async {
-    await api.cancelCustomRegistrationAction(identityProviderId, error);
+  Future<void> submitErrorAction(String error) async {
+    await api.cancelCustomRegistrationAction(error);
   }
 }

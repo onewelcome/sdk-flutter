@@ -1,7 +1,10 @@
 package com.onegini.mobile.sdk.flutter.useCases
 
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.ERROR_CODE_HTTP_REQUEST
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR
+import android.util.Patterns
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.INVALID_URL
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR_CODE
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.HTTP_REQUEST_ERROR_INTERNAL
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_AUTHENTICATED_IMPLICIT
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.HttpRequestMethod.DELETE
@@ -25,10 +28,48 @@ import javax.inject.Singleton
 @Singleton
 class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
   operator fun invoke(type: ResourceRequestType, details: OWRequestDetails, callback: (Result<OWRequestResponse>) -> Unit) {
-    val resourceClient = getOkHttpClient(type)
-    val request = buildRequest(details)
+    // Align with iOS behavior
+    if (type == ResourceRequestType.IMPLICIT && oneginiSDK.oneginiClient.userClient.implicitlyAuthenticatedUserProfile == null) {
+      callback(
+        Result.failure(
+          SdkError(
+            wrapperError = NOT_AUTHENTICATED_IMPLICIT
+          ).pigeonError()
+        )
+      )
+      return
+    }
 
-    performCall(resourceClient, request, callback)
+    val pathResult = getCompleteResourceUrl(details.path)
+
+    // Additional check for valid url
+    pathResult.onSuccess {
+      val resourceClient = getOkHttpClient(type)
+      val request = buildRequest(details, it)
+
+      performCall(resourceClient, request, callback)
+    }
+
+    pathResult.onFailure {
+      callback(Result.failure(it))
+    }
+  }
+
+  private fun getCompleteResourceUrl(path: String): Result<String> {
+    val resourceBaseUrl = oneginiSDK.oneginiClient.configModel.resourceBaseUrl
+    return when {
+      isValidUrl(path) -> Result.success(path)
+      isValidUrl(resourceBaseUrl + path) -> Result.success(resourceBaseUrl + path)
+      else -> Result.failure(
+        SdkError(
+          wrapperError = INVALID_URL
+        ).pigeonError()
+      )
+    }
+  }
+
+  private fun isValidUrl(path: String): Boolean {
+    return Patterns.WEB_URL.matcher(path).matches()
   }
 
   private fun getOkHttpClient(type: ResourceRequestType): OkHttpClient {
@@ -40,22 +81,12 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
     }
   }
 
-  private fun buildRequest(details: OWRequestDetails): Request {
+  private fun buildRequest(details: OWRequestDetails, path: String): Request {
     return Request.Builder()
-      .url(getCompleteResourceUrl(details.path))
+      .url(path)
       .headers(getHeaders(details.headers))
       .setMethod(details)
       .build()
-  }
-
-  private fun getCompleteResourceUrl(path: String): String {
-    // TODO Add support for multiple base resource urls; https://onewelcome.atlassian.net/browse/FP-38
-    val resourceBaseUrl = oneginiSDK.oneginiClient.configModel.resourceBaseUrl
-
-    return when (path.startsWith(resourceBaseUrl)) {
-      true -> path
-      else -> resourceBaseUrl + path
-    }
   }
 
   private fun getHeaders(headers: Map<String?, String?>?): Headers {
@@ -94,7 +125,7 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
         callback(
           Result.failure(
             SdkError(
-              code = HTTP_REQUEST_ERROR.code,
+              code = HTTP_REQUEST_ERROR_INTERNAL.code,
               message = e.message.toString()
             ).pigeonError()
           )
@@ -107,7 +138,7 @@ class ResourceRequestUseCase @Inject constructor(private val oneginiSDK: Onegini
           callback(
             Result.failure(
               SdkError(
-                wrapperError = ERROR_CODE_HTTP_REQUEST,
+                wrapperError = HTTP_REQUEST_ERROR_CODE,
                 httpResponse = response
               ).pigeonError()
             )

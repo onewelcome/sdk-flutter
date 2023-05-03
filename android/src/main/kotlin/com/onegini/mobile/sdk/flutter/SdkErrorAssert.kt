@@ -1,6 +1,7 @@
 package com.onegini.mobile.sdk.flutter
 
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.UNEXPECTED_ERROR_TYPE
 import org.junit.Assert
 import javax.inject.Singleton
 
@@ -13,7 +14,7 @@ class SdkErrorAssert : Assert() {
           assertEquals(expected.code, actual.code.toInt())
           assertEquals(expected.message, actual.message)
         }
-        else -> fail(OneWelcomeWrapperErrors.UNEXPECTED_ERROR_TYPE.message)
+        else -> fail(UNEXPECTED_ERROR_TYPE.message)
       }
     }
 
@@ -23,7 +24,7 @@ class SdkErrorAssert : Assert() {
           assertEquals(expected.code, actual.code)
           assertEquals(expected.message, actual.message)
         }
-        else -> fail(OneWelcomeWrapperErrors.UNEXPECTED_ERROR_TYPE.message)
+        else -> fail(UNEXPECTED_ERROR_TYPE.message)
       }
     }
   }
