@@ -40,7 +40,7 @@ class SdkError: Error {
     }
 
     // Error codes with httResponse information
-    init(code: Int, errorDescription: String, response: ONGResourceResponse?, iosCode: Int? = nil, iosMessage: String? = nil) {
+    init(code: Int, errorDescription: String, response: ResourceResponse?, iosCode: Int? = nil, iosMessage: String? = nil) {
         self.code = code
         self.errorDescription = errorDescription
 
@@ -48,7 +48,7 @@ class SdkError: Error {
         setResponseDetails(response, iosCode, iosMessage)
     }
 
-    init(_ wrapperError: OneWelcomeWrapperError, response: ONGResourceResponse?, iosCode: Int? = nil, iosMessage: String? = nil) {
+    init(_ wrapperError: OneWelcomeWrapperError, response: ResourceResponse?, iosCode: Int? = nil, iosMessage: String? = nil) {
         self.code = wrapperError.code()
         self.errorDescription = wrapperError.message()
 
@@ -82,7 +82,7 @@ private extension SdkError {
         }
     }
 
-    func setResponseDetails(_ response: ONGResourceResponse?, _ iosCode: Int?, _ iosMessage: String?) {
+    func setResponseDetails(_ response: ResourceResponse?, _ iosCode: Int?, _ iosMessage: String?) {
         if response == nil {
             details["response"] = [String: Any?]()
         } else {
@@ -100,11 +100,11 @@ private extension SdkError {
     }
 }
 
-private extension ONGResourceResponse {
+private extension ResourceResponse {
     func toJSON() -> [String: Any?] {
         return ["statusCode": statusCode,
                 "headers": allHeaderFields,
-                "url": rawResponse.url?.absoluteString,
+                "url": response.url,
                 "body": data != nil ? String(data: data!, encoding: .utf8) : nil
         ]
     }

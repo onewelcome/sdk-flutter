@@ -5,7 +5,7 @@ typealias FlutterDataCallback = (Any?, SdkError?) -> Void
 
 protocol FetchResourcesHandlerProtocol: AnyObject {
     func authenticateDevice(_ scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void)
-    func authenticateUserImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void)
+    func authenticateUserImplicitly(_ profile: UserProfile, scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void)
     func requestResource(_ type: ResourceRequestType, _ details: OWRequestDetails, completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void)
 }
 
@@ -14,7 +14,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
 
     func authenticateDevice(_ scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void) {
         Logger.log("authenticateDevice", sender: self)
-        ONGDeviceClient.sharedInstance().authenticateDevice(scopes) { _, error in
+        SharedDeviceClient.instance.authenticateDevice(with: scopes) { error in
             if let error = error {
                 let mappedError = FlutterError(ErrorMapper().mapError(error))
                 completion(.failure(mappedError))
@@ -24,22 +24,20 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
         }
     }
 
-    func authenticateUserImplicitly(_ profile: ONGUserProfile, scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        Logger.log("authenticateImplicitly", sender: self)
-        ONGUserClient.sharedInstance().implicitlyAuthenticateUser(profile, scopes: scopes) { success, error in
-            if success {
-                completion(.success)
-            } else {
-                // This error construction is obviously not good, but it will work for now till we refactor this later
-                let mappedError = FlutterError(error.flatMap { ErrorMapper().mapError($0) } ?? SdkError(.genericError))
+    func authenticateUserImplicitly(_ profile: UserProfile, scopes: [String]?, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        Logger.log("authenticateUserImplicitly", sender: self)
+        SharedUserClient.instance.implicitlyAuthenticate(user: profile, with: scopes) { error in
+            if let error = error {
+                let mappedError = FlutterError(ErrorMapper().mapError(error))
                 completion(.failure(mappedError))
+            } else {
+                completion(.success)
             }
         }
     }
 
     func requestResource(_ requestType: ResourceRequestType, _ details: OWRequestDetails, completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) {
         Logger.log("requestResource", sender: self)
-
         // Additional check for valid url
         let resourceUrl = ONGClient.sharedInstance().configModel.resourceBaseURL ?? ""
         if isValidUrl(details.path) == false && isValidUrl(resourceUrl + details.path) == false {
@@ -47,24 +45,23 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
             return
         }
 
-        let request = generateONGResourceRequest(details)
+        let request = generateResourceRequest(details)
         let requestCompletion = getRequestCompletion(completion)
 
         switch requestType {
         case ResourceRequestType.implicit:
             // For consistency with Android we perform this step
-            if ONGUserClient.sharedInstance().implicitlyAuthenticatedUserProfile() == nil {
+            if SharedUserClient.instance.implicitlyAuthenticatedUserProfile == nil {
                 completion(.failure(FlutterError(SdkError(.notAuthenticatedImplicit))))
                 return
             }
-
-            ONGUserClient.sharedInstance().fetchImplicitResource(request, completion: requestCompletion)
+            SharedUserClient.instance.sendImplicitRequest(request, completion: requestCompletion)
         case ResourceRequestType.anonymous:
-            ONGDeviceClient.sharedInstance().fetchResource(request, completion: requestCompletion)
+            SharedDeviceClient.instance.sendRequest(request, completion: requestCompletion)
         case ResourceRequestType.authenticated:
-            ONGUserClient.sharedInstance().fetchResource(request, completion: requestCompletion)
+            SharedUserClient.instance.sendAuthenticatedRequest(request, completion: requestCompletion)
         case ResourceRequestType.unauthenticated:
-            ONGDeviceClient.sharedInstance().fetchUnauthenticatedResource(request, completion: requestCompletion)
+            SharedDeviceClient.instance.sendUnauthenticatedRequest(request, completion: requestCompletion)
         }
     }
 }
@@ -78,11 +75,11 @@ private extension ResourcesHandler {
         return false
     }
 
-    func generateONGResourceRequest(_ details: OWRequestDetails) -> ONGResourceRequest {
-        Logger.log("generateONGResourceRequest", sender: self)
+    func generateResourceRequest(_ details: OWRequestDetails) -> ResourceRequest {
+        Logger.log("generateResourceRequest", sender: self)
 
-        return ONGResourceRequest(path: details.path,
-                                  method: details.method.stringValue,
+        return ResourceRequestFactory.makeResourceRequest(path: details.path,
+                                  method: details.method.toHTTPMethod(),
                                   body: details.body?.data(using: .utf8),
                                   headers: getRequestHeaders(details.headers)
                                  )
@@ -96,9 +93,9 @@ private extension ResourcesHandler {
         return headers.filter { $0.key != nil && $0.value != nil } as? [String: String]
     }
 
-    func getRequestCompletion(_ completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) -> ((ONGResourceResponse?, Error?) -> Void)? {
+    func getRequestCompletion(_ completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) -> ((ResourceResponse?, Error?) -> Void) {
         Logger.log("getCompletionRequest", sender: self)
-        let completionRequest: ((ONGResourceResponse?, Error?) -> Void)? = { response, error in
+        let completionRequest: ((ResourceResponse?, Error?) -> Void) = { response, error in
             if let error = error {
                 if response != nil {
                     let flutterError = FlutterError(SdkError(.httpRequestErrorCode, response: response, iosCode: error.code, iosMessage: error.localizedDescription))
@@ -121,12 +118,12 @@ private extension ResourcesHandler {
 }
 
 private extension HttpRequestMethod {
-    var stringValue: String {
+    func toHTTPMethod() -> HTTPMethod {
         switch self {
-        case .get: return "GET"
-        case .post: return "POST"
-        case .delete: return "DELETE"
-        case .put: return "PUT"
+        case .get: return .get
+        case .post: return .post
+        case .delete: return .delete
+        case .put: return .put
         }
     }
 }
