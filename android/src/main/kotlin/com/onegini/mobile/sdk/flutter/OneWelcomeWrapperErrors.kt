@@ -1,5 +1,6 @@
 package com.onegini.mobile.sdk.flutter
 
+// When editing these errors, make sure to also update the errors in lib/errors/error_codes.dart
 enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
   GENERIC_ERROR(8000, "Something went wrong"),
   NOT_AUTHENTICATED_USER(8040, "There is currently no User Profile authenticated"),

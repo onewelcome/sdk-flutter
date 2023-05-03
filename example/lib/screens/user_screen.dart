@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:onegini/errors/error_codes.dart';
 import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/model/request_details.dart';
 import 'package:onegini/onegini.dart';
@@ -83,7 +84,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
         _biometricAuthenticator = biometricAuthenticator;
       });
     } on PlatformException catch (err) {
-      if (err.code != "8060") {
+      if (err.code != WrapperErrorCodes.biometricAuthenticationNotAvailable) {
         showFlutterToast(err.message);
       }
     }
@@ -136,12 +137,11 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     Onegini.instance.userClient.changePin().catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);
-        // FIXME: this should be extracted into a seperate method and should also use constants (dont exist yet)
-        if (error.code == "8002" ||
-            error.code == "9002" ||
-            error.code == "9003" ||
-            error.code == "9010" ||
-            error.code == "10012") {
+        // FIXME: this should be extracted into a seperate method
+        if (error.code == WrapperErrorCodes.notAuthenticatedUser ||
+            error.code == PlatformErrorCodes.deviceDeregistered ||
+            error.code == PlatformErrorCodes.userDeregistered ||
+            error.code == PlatformErrorCodes.userNotAuthenticated) {
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(builder: (_) => LoginScreen()),
