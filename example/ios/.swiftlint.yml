@@ -14,7 +14,7 @@ excluded: # paths to ignore during linting. Takes precedence over `included`.
   - .swiftlint.yml
   - OneginiTests
   - OneginiUITests
-  - .symlinks/plugins/onegini/ios/Classes/Pigeon.swift
+  - .symlinks/plugins/onegini/ios/Classes/Pigeon.gen.swift
 
 # If true, SwiftLint will not fail if no lintable files are found.
 allow_zero_lintable_files: false
