@@ -1,3 +1,45 @@
+## 3.0.0, May 3, 2023
+You can find the full changelog [here](https://developer.onewelcome.com/flutter/plugin/v2-x) and an overview containing the upgrade instructions [here](https://developer.onewelcome.com/flutter/plugin/v2-0).
+
+[iOS] Wrapper SDK now uses the latest OneWelcome iOS native SDK 12.2.2
+
+* Events are now propagated using Streams and have been renamed to more accurately describe their purpose.
+* Removed the following events
+  - eventOther
+  - openPinAuthenticator
+  - eventError
+* startApplication now no longer requires a OneginiListener parameter.
+* All BuildContext requirements from functions have been removed.
+* Resource requests now allow absolute paths.
+* Allow for Resource Requests to other resource servers than the one in the tokenserver config file, this is only possible if the server has a correct certificate.
+* Updated several parameters and return types of functions.
+* Functions are now fully typesafe and nullsafe due to the use of [Pigeon](https://pub.dev/packages/pigeon) internally. 
+* Updates several functions to no longer return a boolean status but instead resolve/reject.
+  - setPreferredAuthenticator
+  - deregisterBiometricAuthenticator
+  - logout
+  - authenticateDevice
+  - validatePinWithPolicy
+  - authenticateUserImplicitly
+  - deregisterUser
+* submitSuccessAction and submitErrorAction for custom registration no longer require an identity provider id.
+* getAppToWebSingleSignOn now returns the actual error code instead of a general error when failing.
+* OneginiPinRegistrationCallback.acceptAuthenticationRequest No longer takes a map as a second argument.
+* Renamed several resourceRequest functions and added a generic requestResource which takes a type as extra argument.
+* Reworked error codes and added constants for all errors(wrapper and native) in lib/errors/error_codes.dart
+* Reworked mobileAuthWithOtp.
+* Reworked authentication
+  - Removed getRegisteredAuthenticators
+  - Removed getAllAuthenticators
+  - Removed registerAuthenticator
+  - Added deregisterBiometricAuthenticator
+  - Added registerBiometricAuthenticator
+  - Added getBiometricAuthenticator
+  - Added getPreferredAuthenticator
+  - Changed setPreferredAuthenticator
+  - Changed authenticateUser
+* Allow sdk <4.0.0
+
 ## 2.0.1, March 2, 2023
 Updated the README
 

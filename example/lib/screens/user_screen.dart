@@ -227,16 +227,14 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
       ),
       body: _children[_currentIndex],
       drawer: Drawer(
-        child: Column(
+        child: ListView(
           children: [
             DrawerHeader(
-              child: Container(),
+              child: ListTile(
+                title: Text("ProfileId: ${profileId}"),
+                leading: Icon(Icons.person),
+              ),
             ),
-            ListTile(
-              title: Text("ProfileId: ${profileId}"),
-              leading: Icon(Icons.person),
-            ),
-            Divider(),
             ListTile(
               title: Text("Authenticators"),
               leading: Icon(Icons.lock_rounded),

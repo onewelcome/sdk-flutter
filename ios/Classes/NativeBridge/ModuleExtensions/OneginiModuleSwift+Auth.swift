@@ -38,7 +38,7 @@ extension OneginiModuleSwift {
             completion(.failure(SdkError(.notFoundUserProfile).flutterError()))
             return
         }
-        let authenticator = SharedUserClient.instance.authenticators(.all, for: profile).first(where: { $0.type == authenticatorType })
+        let authenticator = SharedUserClient.instance.authenticators(.registered, for: profile).first(where: { $0.type == authenticatorType })
 
         bridgeConnector.toLoginHandler.authenticateUser(profile, authenticator: authenticator) { result in
             completion(result)
