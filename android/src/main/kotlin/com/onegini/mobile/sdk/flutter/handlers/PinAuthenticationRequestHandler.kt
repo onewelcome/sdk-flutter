@@ -1,33 +1,55 @@
 package com.onegini.mobile.sdk.flutter.handlers
 
-import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.handlers.request.OneginiPinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiPinCallback
 import com.onegini.mobile.sdk.android.model.entity.AuthenticationAttemptCounter
 import com.onegini.mobile.sdk.android.model.entity.UserProfile
-import com.onegini.mobile.sdk.flutter.constants.Constants
-import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
-import com.onegini.mobile.sdk.flutter.models.OneginiEvent
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_IN_PROGRESS_AUTHENTICATION
+import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticationAttempt
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class PinAuthenticationRequestHandler @Inject constructor(): OneginiPinAuthenticationRequestHandler {
-    companion object {
-        var CALLBACK: OneginiPinCallback? = null
-    }
+class PinAuthenticationRequestHandler @Inject constructor(private val nativeApi: NativeCallFlutterApi) :
+  OneginiPinAuthenticationRequestHandler {
+  private var callback: OneginiPinCallback? = null
 
-    override fun startAuthentication(userProfile: UserProfile, oneginiPinCallback: OneginiPinCallback, attemptCounter: AuthenticationAttemptCounter) {
-        CALLBACK = oneginiPinCallback
-        OneginiEventsSender.events?.success(Constants.EVENT_OPEN_PIN_AUTH)
-    }
+  override fun startAuthentication(
+    userProfile: UserProfile,
+    oneginiPinCallback: OneginiPinCallback,
+    attemptCounter: AuthenticationAttemptCounter
+  ) {
+    callback = oneginiPinCallback
+    nativeApi.n2fOpenPinAuthentication { }
+  }
 
-    override fun onNextAuthenticationAttempt(attemptCounter: AuthenticationAttemptCounter) {
-        val attemptCounterJson = Gson().toJson(mapOf("maxAttempts" to attemptCounter.maxAttempts, "failedAttempts" to attemptCounter.failedAttempts, "remainingAttempts" to attemptCounter.remainingAttempts))
-        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_NEXT_AUTHENTICATION_ATTEMPT, attemptCounterJson)))
-    }
+  override fun onNextAuthenticationAttempt(attemptCounter: AuthenticationAttemptCounter) {
+    val authenticationAttempt = OWAuthenticationAttempt(
+      attemptCounter.failedAttempts.toLong(),
+      attemptCounter.maxAttempts.toLong(),
+      attemptCounter.remainingAttempts.toLong()
+    )
+    nativeApi.n2fNextPinAuthenticationAttempt(authenticationAttempt) {}
+  }
 
-    override fun finishAuthentication() {
-        OneginiEventsSender.events?.success(Constants.EVENT_CLOSE_PIN_AUTH)
-    }
+  override fun finishAuthentication() {
+    nativeApi.n2fClosePinAuthentication { }
+    callback = null
+  }
+
+  fun acceptAuthenticationRequest(pin: CharArray): Result<Unit> {
+    return callback?.let {
+      it.acceptAuthenticationRequest(pin)
+      Result.success(Unit)
+    } ?: Result.failure(SdkError(NOT_IN_PROGRESS_AUTHENTICATION).pigeonError())
+  }
+
+  fun denyAuthenticationRequest(): Result<Unit> {
+    return callback?.let {
+      it.denyAuthenticationRequest()
+      Result.success(Unit)
+    } ?: Result.failure(SdkError(NOT_IN_PROGRESS_AUTHENTICATION).pigeonError())
+  }
 }

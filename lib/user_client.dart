@@ -1,359 +1,142 @@
-import 'dart:convert';
+import 'dart:async';
 
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:onegini/model/registration_response.dart';
-
-import 'constants/constants.dart';
-import 'model/oneginiAppToWebSingleSignOn.dart';
-import 'model/onegini_list_response.dart';
-import 'onegini.dart';
+import 'package:onegini/onegini.gen.dart';
 
 ///Сlass with basic methods available to the developer.
 class UserClient {
+  final UserClientApi api;
+  UserClient(this.api);
+
   ///Start registration flow.
   ///
   /// If [identityProviderId] is null, starts standard browser registration.
   /// Use your [scopes] for registration. By default it is "read".
-  Future<RegistrationResponse> registerUser(
-    BuildContext? context,
+  Future<OWRegistrationResponse> registerUser(
     String? identityProviderId,
     List<String>? scopes,
   ) async {
-    Onegini.instance.setEventContext(context);
-    try {
-      var response = await Onegini.instance.channel
-          .invokeMethod(Constants.registerUser, <String, dynamic>{
-        'scopes': scopes,
-        'identityProviderId': identityProviderId,
-      });
-      return registrationResponseFromJson(response);
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+    return await api.registerUser(identityProviderId, scopes);
   }
 
   /// Start browser Registration logic
-  Future<void> handleRegisteredUserUrl(BuildContext? context, String? url,
+  Future<void> handleRegisteredUserUrl(String url,
       {WebSignInType signInType = WebSignInType.insideApp}) async {
-    Onegini.instance.setEventContext(context);
-    await Onegini.instance.channel
-        .invokeMethod(Constants.handleRegisteredUserUrl, <String, Object?>{
-      'url': url,
-      'type': signInType.value,
-    });
+    await api.handleRegisteredUserUrl(url, signInType.value);
   }
 
   /// Returns a list of available identity providers.
-  Future<List<OneginiListResponse>> getIdentityProviders(
-      BuildContext? context) async {
-    Onegini.instance.setEventContext(context);
-    try {
-      var providers = await Onegini.instance.channel
-          .invokeMethod(Constants.getIdentityProvidersMethod);
-      return responseFromJson(providers);
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+  Future<List<OWIdentityProvider>> getIdentityProviders() async {
+    final providers = await api.getIdentityProviders();
+    return providers.whereType<OWIdentityProvider>().toList();
   }
 
   /// Deletes the user.
-  Future<bool> deregisterUser(String profileId) async {
-    try {
-      var isSuccess = await Onegini.instance.channel
-          .invokeMethod(Constants.deregisterUserMethod, <String, String>{
-        'profileId': profileId,
-      });
-      return isSuccess ?? false;
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+  Future<void> deregisterUser(String profileId) async {
+    await api.deregisterUser(profileId);
   }
 
-  /// Returns a list of authenticators registered and available to the user.
-  Future<List<OneginiListResponse>> getRegisteredAuthenticators(
-      BuildContext? context, String profileId) async {
-    Onegini.instance.setEventContext(context);
-    try {
-      var authenticators = await Onegini.instance.channel
-          .invokeMethod(Constants.getRegisteredAuthenticators, <String, String>{
-        'profileId': profileId,
-      });
-      return responseFromJson(authenticators);
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
-  }
-
-  Future<List<OneginiListResponse>> getAllAuthenticators(
-      BuildContext? context, String profileId) async {
-    Onegini.instance.setEventContext(context);
-    try {
-      var authenticators = await Onegini.instance.channel
-          .invokeMethod(Constants.getAllAuthenticators, <String, String>{
-        'profileId': profileId,
-      });
-      return responseFromJson(authenticators);
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
-  }
-
-  Future<UserProfile> getAuthenticatedUserProfile() async {
-    try {
-      var userProfile = await Onegini.instance.channel
-          .invokeMethod(Constants.getAuthenticatedUserProfile);
-      return userProfileFromJson(userProfile);
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+  Future<OWUserProfile> getAuthenticatedUserProfile() async {
+    return await api.getAuthenticatedUserProfile();
   }
 
   /// Starts authentication flow.
   ///
   /// If [registeredAuthenticatorId] is null, starts authentication by default authenticator.
   /// Usually it is Pin authenticator.
-  Future<RegistrationResponse> authenticateUser(
-    BuildContext? context,
+  Future<OWRegistrationResponse> authenticateUser(
     String profileId,
-    String? registeredAuthenticatorId,
+    OWAuthenticatorType? authenticatorType,
   ) async {
-    Onegini.instance.setEventContext(context);
-    try {
-      var response = await Onegini.instance.channel
-          .invokeMethod(Constants.authenticateUser, <String, String?>{
-        'registeredAuthenticatorId': registeredAuthenticatorId,
-        'profileId': profileId,
-      });
-      return registrationResponseFromJson(response);
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
-  }
-
-  /// Returns a list of authenticators available to the user, but not yet registered.
-  Future<List<OneginiListResponse>> getNotRegisteredAuthenticators(
-      BuildContext? context, String profileId) async {
-    try {
-      var authenticators = await Onegini.instance.channel.invokeMethod(
-          Constants.getAllNotRegisteredAuthenticators, <String, String>{
-        'profileId': profileId,
-      });
-      return responseFromJson(authenticators);
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
+    if (authenticatorType != null) {
+      return await api.authenticateUser(profileId, authenticatorType);
+    } else {
+      return await api.authenticateUserPreferred(profileId);
     }
   }
 
   /// Starts change pin flow.
-  Future<void> changePin(
-    BuildContext? context,
-  ) async {
-    Onegini.instance.setEventContext(context);
-    await Onegini.instance.channel.invokeMethod(Constants.changePin);
-  }
-
-  /// Registers authenticator from [getNotRegisteredAuthenticators] list.
-  Future<void> registerAuthenticator(
-      BuildContext? context, String authenticatorId) async {
-    Onegini.instance.setEventContext(context);
-    await Onegini.instance.channel
-        .invokeMethod(Constants.registerAuthenticator, <String, String>{
-      'authenticatorId': authenticatorId,
-    });
+  Future<void> changePin() async {
+    await api.changePin();
   }
 
   ///Set preferred authenticator
-  Future<bool> setPreferredAuthenticator(
-      BuildContext? context, String authenticatorId) async {
-    Onegini.instance.setEventContext(context);
-    try {
-      var data = await Onegini.instance.channel
-          .invokeMethod(Constants.setPreferredAuthenticator, <String, String>{
-        'authenticatorId': authenticatorId,
-      });
-      return data;
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+  /// todo removed boolean return update docu
+  Future<void> setPreferredAuthenticator(
+      OWAuthenticatorType authenticatorType) async {
+    await api.setPreferredAuthenticator(authenticatorType);
   }
 
-  Future<bool> deregisterAuthenticator(
-      BuildContext? context, String authenticatorId) async {
-    Onegini.instance.setEventContext(context);
-    try {
-      var success = await Onegini.instance.channel
-          .invokeMethod(Constants.deregisterAuthenticator, <String, String>{
-        'authenticatorId': authenticatorId,
-      });
-      return success ?? false;
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+  // Gets the preferred authenticator for the given profile
+  Future<OWAuthenticator> getPreferredAuthenticator(String profileId) async {
+    return await api.getPreferredAuthenticator(profileId);
   }
 
-  ///Method for log out
-  Future<bool> logout() async {
-    try {
-      var isSuccess =
-          await Onegini.instance.channel.invokeMethod(Constants.logout);
-      return isSuccess ?? false;
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+  Future<void> deregisterBiometricAuthenticator() async {
+    await api.deregisterBiometricAuthenticator();
   }
 
-  /// Starts mobile authentication on web by OTP.
-  Future<String?> mobileAuthWithOtp(String data) async {
-    try {
-      var isSuccess = await Onegini.instance.channel
-          .invokeMethod(Constants.handleMobileAuthWithOtp, <String, dynamic>{
-        'data': data,
-      });
-      return isSuccess;
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+  Future<void> registerBiometricAuthenticator() async {
+    await api.registerBiometricAuthenticator();
+  }
+
+  Future<OWAuthenticator> getBiometricAuthenticator(String profileId) async {
+    return await api.getBiometricAuthenticator(profileId);
+  }
+
+  /// Method for log out
+  Future<void> logout() async {
+    await api.logout();
+  }
+
+  /// Enroll for MobileAuthentication (enable OTP)
+  Future<void> enrollMobileAuthentication() async {
+    await api.enrollMobileAuthentication();
+  }
+
+  /// Respond to mobile authentication with OTP
+  Future<void> handleMobileAuthWithOtp(String data) async {
+    await api.handleMobileAuthWithOtp(data);
   }
 
   /// Single sign on the user web page.
-  Future<OneginiAppToWebSingleSignOn> getAppToWebSingleSignOn(
-      String url) async {
-    try {
-      var oneginiAppToWebSingleSignOn = await Onegini.instance.channel
-          .invokeMethod(Constants.getAppToWebSingleSignOn, <String, String>{
-        'url': url,
-      });
-      return oneginiAppToWebSingleSignOnFromJson(oneginiAppToWebSingleSignOn);
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+  Future<OWAppToWebSingleSignOn> getAppToWebSingleSignOn(String url) async {
+    return await api.getAppToWebSingleSignOn(url);
   }
 
   // Get Access Token
   Future<String> getAccessToken() async {
-    try {
-      return await Onegini.instance.channel
-          .invokeMethod(Constants.getAccessToken);
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+    return await api.getAccessToken();
   }
 
   // Redirect url
   Future<String> getRedirectUrl() async {
-    try {
-      return await Onegini.instance.channel
-          .invokeMethod(Constants.getRedirectUrl);
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+    return await api.getRedirectUrl();
   }
 
   /// User profiles
-  Future<List<UserProfile>> getUserProfiles() async {
-    try {
-      var profiles = await Onegini.instance.channel
-          .invokeMethod(Constants.getUserProfiles);
-      return List<UserProfile>.from(json
-          .decode(profiles)
-          .map((profile) => UserProfile.fromJson(profile)));
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+  Future<List<OWUserProfile>> getUserProfiles() async {
+    final userProfiles = await api.getUserProfiles();
+    return userProfiles.whereType<OWUserProfile>().toList();
   }
 
-  Future<bool> validatePinWithPolicy(String pin) async {
-    try {
-      var success = await Onegini.instance.channel.invokeMethod(
-          Constants.validatePinWithPolicy, <String, String?>{'pin': pin});
-      return success ?? false;
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+  /// todo removed boolean return update docu
+  Future<void> validatePinWithPolicy(String pin) async {
+    await api.validatePinWithPolicy(pin);
   }
 
-  Future<bool> authenticateDevice(List<String>? scopes) async {
-    try {
-      var success = await Onegini.instance.channel.invokeMethod(
-          Constants.authenticateDevice, <String, dynamic>{'scope': scopes});
-
-      return success ?? false;
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+  /// todo removed boolean return update docu
+  Future<void> authenticateDevice(List<String>? scopes) async {
+    await api.authenticateDevice(scopes);
   }
 
-  Future<String> authenticateUserImplicitly(
+  /// todo removed string return update docu
+  Future<void> authenticateUserImplicitly(
       String profileId, List<String>? scopes) async {
-    try {
-      var userProfileId = await Onegini.instance.channel.invokeMethod(
-          Constants.authenticateUserImplicitly,
-          <String, dynamic>{'profileId': profileId, 'scopes': scopes});
-      return userProfileId;
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+    await api.authenticateUserImplicitly(profileId, scopes);
   }
 }
 
+// TODO We could also get rid of this but leave this for now.
 enum WebSignInType {
   insideApp,
   safari,

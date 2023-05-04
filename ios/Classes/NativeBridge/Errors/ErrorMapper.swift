@@ -1,115 +1,114 @@
+// swiftlint:disable cyclomatic_complexity
 import OneginiSDKiOS
 
-enum OneWelcomeWrapperError: Int {
-    // iOS and Android
-    case genericError = 8000
-    case userProfileDoesNotExist = 8001
-    case noUserProfileIsAuthenticated = 8002
-    case authenticatorNotFound = 8004
-    case httpRequestError = 8011
-    case errorCodeHttpRequest = 8013
-    case unauthenticatedImplicitly = 8035
-    case methodArgumentNotFound = 8036
-    
-    // iOS only
-    case providedUrlIncorrect = 8014
-    case loginCanceled = 8015
-    case enrollmentFailed = 8016
-    case authenticationCancelled = 8017
-    case changingPinCancelled = 8018
-    case registrationCancelled = 8020
-    case cantHandleOTP = 8021
-    case incorrectResourcesAccess = 8022
-    case authenticatorNotRegistered = 8023
-    case authenticatorDeregistrationCancelled = 8024
-    case failedToParseData = 8025
-    case responseIsNull = 8026
-    case authenticatorIdIsNull = 8027
-    case emptyInputValue = 8028
-    case unsupportedPinAction = 8029
-    case unsupportedCustomRegistrationAction = 8030
-    case authenticatorRegistrationCancelled = 8031
+// When editing these errors, make sure to also update the errors in lib/errors/error_codes.dart
+enum OneWelcomeWrapperError {
+    case genericError
+    case notAuthenticatedUser
+    case notAuthenticatedImplicit
+    case notFoundUserProfile
+    case notFoundAuthenticator
+    case notFoundIdentityProvider
+    case httpRequestErrorInternal
+    case httpRequestErrorCode
+    case httpRequestErrorNoResponse // ios only
+    case invalidUrl
+    case notInProgressAuthentication
+    case notInProgressOtpAuthentication
+    case notInProgressPinCreation
+    case notInProgressCustomRegistration
+    case alreadyInProgressMobileAuth // ios only
+    case actionNotAllowedCustomRegistrationCancel
+    case actionNotAllowedBrowserRegistrationCancel
+    case biometricAuthenticationNotAvailable
 
-    func message() -> String {
-        var message = ""
-        
+    func code() -> Int {
         switch self {
         case .genericError:
-            message = "Something went wrong."
-        case .userProfileDoesNotExist:
-            message = "The requested User profile does not exist."
-        case .noUserProfileIsAuthenticated:
-            message = "There is currently no User Profile authenticated."
-        case .authenticatorNotFound:
-            message = "The requested authenticator is not found."
-        case .providedUrlIncorrect:
-            message = "Provided url is incorrect."
-        case .enrollmentFailed:
-            message = "Enrollment failed. Please try again or contact maintainer."
-        case .loginCanceled:
-            message = "Login cancelled."
-        case .authenticationCancelled:
-            message = "Authentication cancelled."
-        case .authenticatorDeregistrationCancelled:
-            message = "Authenticator deregistration cancelled."
-        case .changingPinCancelled:
-            message = "Changing pin cancelled."
-        case .registrationCancelled:
-            message = "Registration cancelled."
-        case .cantHandleOTP:
-            message = "Can't handle otp authentication request."
-        case .incorrectResourcesAccess:
-            message = "Incorrect access to resources."
-        case .authenticatorNotRegistered:
-            message = "This authenticator is not registered."
-        case .failedToParseData:
-            message = "Failed to parse data."
-        case .responseIsNull:
-            message = "Response doesn't contain data."
-        case .authenticatorIdIsNull:
-            message = "Authenticator ID is empty."
-        case .emptyInputValue:
-            message = "Empty input value."
-        case .errorCodeHttpRequest:
-            message = "OneWelcome: HTTP Request failed. Check Response for more info."
-        case .httpRequestError:
-            message = "OneWelcome: HTTP Request failed. Check iosCode and iosMessage for more info."
-        case .unsupportedPinAction:
-            message = "Unsupported pin action. Contact SDK maintainer."
-        case .unsupportedCustomRegistrationAction:
-            message = "Unsupported custom registration action. Contact SDK maintainer."
-        case .authenticatorRegistrationCancelled:
-            message = "The authenticator-registration was cancelled."
-        case .unauthenticatedImplicitly:
-            message = "The requested action requires you to be authenticated implicitly"
-        case .methodArgumentNotFound:
-            message = "The passed argument from Flutter could not be found"
-        default:
-            message = "Something went wrong."
+            return 8000
+        case .notAuthenticatedUser:
+            return 8040
+        case .notAuthenticatedImplicit:
+            return 8041
+        case .notFoundUserProfile:
+            return 8042
+        case .notFoundAuthenticator:
+            return 8043
+        case .notFoundIdentityProvider:
+            return 8044
+        case .httpRequestErrorInternal:
+            return 8046
+        case .httpRequestErrorCode:
+            return 8047
+        case .httpRequestErrorNoResponse:
+            return 8048
+        case .invalidUrl:
+            return 8050
+        case .notInProgressCustomRegistration:
+            return 8051
+        case .notInProgressAuthentication:
+            return 8052
+        case .notInProgressOtpAuthentication:
+            return 8053
+        case .notInProgressPinCreation:
+            return 8054
+        case .alreadyInProgressMobileAuth:
+            return 8056
+        case .actionNotAllowedCustomRegistrationCancel:
+            return 8057
+        case .actionNotAllowedBrowserRegistrationCancel:
+            return 8058
+        case .biometricAuthenticationNotAvailable:
+            return 8060
         }
-        
-        return message
+    }
+
+    func message() -> String {
+        switch self {
+        case .genericError:
+            return "Something went wrong."
+        case .notFoundUserProfile:
+            return "The requested User profile does not exist."
+        case .notAuthenticatedUser:
+            return "There is currently no User Profile authenticated."
+        case .notAuthenticatedImplicit:
+            return "The requested action requires you to be authenticated implicitly."
+        case .notFoundAuthenticator:
+            return "The requested authenticator is not found."
+        case .notFoundIdentityProvider:
+            return "The requested identity provider is not found"
+        case .invalidUrl:
+            return "Provided url is incorrect."
+        case .httpRequestErrorNoResponse:
+            return "The resource Request failed. The HTTP response doesn't contain data."
+        case .httpRequestErrorCode:
+            return "The resource Request returned an http error code. Check Response for more info."
+        case .httpRequestErrorInternal:
+            return "The resource Request failed internally. Check iosCode and iosMessage for more info."
+        case .notInProgressAuthentication:
+            return "Authentication is currently not in progress."
+        case .notInProgressOtpAuthentication:
+            return "OTP Authentication is currently not in progress."
+        case .notInProgressPinCreation:
+            return "Pin Creation is currently not in progress"
+        case .alreadyInProgressMobileAuth:
+            return "Mobile Authentication is already in progress and can not be performed concurrently."
+        case .notInProgressCustomRegistration:
+            return "Submitting the Custom registration right now is not allowed. Registration is not in progress or pin creation has already started."
+        case .actionNotAllowedCustomRegistrationCancel:
+            return "Canceling the Custom registration right now is not allowed. Registration is not in progress or pin creation has already started."
+        case .actionNotAllowedBrowserRegistrationCancel:
+            return "Canceling the Browser registration right now is not allowed. Registration is not in progress or pin creation has already started."
+        case .biometricAuthenticationNotAvailable:
+            return "Biometric authentication is not supported on this device."
+        }
     }
 }
 
 class ErrorMapper {
-    func mapError(_ error: Error, pinChallenge: ONGPinChallenge? = nil, customInfo: ONGCustomInfo? = nil) -> SdkError {
+    func mapError(_ error: Error) -> SdkError {
         Logger.log("Error domain: \(error.domain)")
-        
+
         return SdkError(code: error.code, errorDescription: error.localizedDescription)
     }
-    
-    func mapErrorFromPinChallenge(_ challenge: ONGPinChallenge?) -> SdkError? {
-        if let error = challenge?.error, error.code != ONGAuthenticationError.touchIDAuthenticatorFailure.rawValue {
-            guard let maxAttempts = challenge?.maxFailureCount,
-                  let previousCount = challenge?.previousFailureCount,
-                  maxAttempts != previousCount else {
-                return ErrorMapper().mapError(error, pinChallenge: challenge)
-            }
-            return SdkError(code: error.code, errorDescription: "Failed attempts", info: ["failedAttempts": previousCount, "maxAttempts": maxAttempts])
-        } else {
-            return nil
-        }
-    }
 }
-

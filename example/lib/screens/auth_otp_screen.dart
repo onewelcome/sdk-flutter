@@ -1,14 +1,12 @@
-// @dart = 2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/callbacks/onegini_otp_accept_deny_callback.dart';
-import 'package:onegini/onegini.dart';
 import '../components/display_toast.dart';
 
 class AuthOtpScreen extends StatefulWidget {
   final String message;
 
-  const AuthOtpScreen({Key key, this.message}) : super(key: key);
+  const AuthOtpScreen({Key? key, required this.message}) : super(key: key);
 
   @override
   _AuthOtpScreenState createState() => _AuthOtpScreenState();
@@ -16,9 +14,8 @@ class AuthOtpScreen extends StatefulWidget {
 
 class _AuthOtpScreenState extends State<AuthOtpScreen> {
   accept(BuildContext context) async {
-    Onegini.instance.setEventContext(context);
     OneginiOtpAcceptDenyCallback()
-        .acceptAuthenticationRequest(context)
+        .acceptAuthenticationRequest()
         .catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);

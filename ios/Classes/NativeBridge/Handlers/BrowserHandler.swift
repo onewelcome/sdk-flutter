@@ -2,14 +2,15 @@ import AuthenticationServices
 import OneginiSDKiOS
 
 protocol BrowserHandlerProtocol {
-    func handleUrl(url: URL, webSignInType: WebSignInType)
+    func handleUrl(_ url: URL, webSignInType: WebSignInType)
 }
 
-protocol BrowserHandlerToRegisterHandlerProtocol: AnyObject {
-    func handleRedirectURL(url: URL?)
+protocol BrowserHandlerToRegisterHandlerProtocol {
+    func handleRedirectURL(url: URL)
+    func handleCancelFromBrowser()
 }
 
-//MARK: - BrowserHandlerProtocol
+// MARK: - BrowserHandlerProtocol
 @available(iOS 12.0, *)
 class BrowserViewController: NSObject, BrowserHandlerProtocol {
     var webAuthSession: ASWebAuthenticationSession?
@@ -20,7 +21,7 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
         self.registerHandler = registerHandlerProtocol
     }
 
-    func handleUrl(url: URL, webSignInType: WebSignInType) {
+    func handleUrl(_ url: URL, webSignInType: WebSignInType) {
         Logger.log("handleUrl url: \(url.absoluteString)", sender: self)
         switch webSignInType {
         case .safari:
@@ -29,9 +30,8 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
             openInternalBrowser(url: url)
         }
 
-        
     }
-    
+
     private func openExternalBrowser(url: URL) {
         guard UIApplication.shared.canOpenURL(url) else {
             Logger.log("can't open external browser url: \(url.absoluteString)", logType: .error)
@@ -42,7 +42,7 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
             Logger.log("opened external browser url: \(value)")
         }
     }
-    
+
     private func openInternalBrowser(url: URL) {
         let scheme = URL(string: ONGClient.sharedInstance().configModel.redirectURL)!.scheme
         webAuthSession = ASWebAuthenticationSession(url: url, callbackURLScheme: scheme, completionHandler: { callbackURL, error in
@@ -69,17 +69,17 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
 
     private func cancelButtonPressed() {
         Logger.log("cancelButtonPressed", sender: self)
-        registerHandler.handleRedirectURL(url: nil)
+        registerHandler.handleCancelFromBrowser()
     }
 
 }
 
-//MARK: - ASWebAuthenticationPresentationContextProviding
+// MARK: - ASWebAuthenticationPresentationContextProviding
 @available(iOS 12.0, *)
 extension BrowserViewController: ASWebAuthenticationPresentationContextProviding {
     func presentationAnchor(for session: ASWebAuthenticationSession) -> ASPresentationAnchor {
         Logger.log("presentationAnchor for session", sender: self)
-        
+
         let anchor: ASPresentationAnchor = UIApplication.shared.keyWindow ?? ASPresentationAnchor()
         return anchor
     }

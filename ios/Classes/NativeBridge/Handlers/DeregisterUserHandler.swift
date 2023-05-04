@@ -2,22 +2,21 @@ import UIKit
 import OneginiSDKiOS
 
 protocol DeregisterUserHandlerProtocol: AnyObject {
-    func deregister(profileId: String, completion: @escaping (SdkError?) -> Void)
+    func deregister(profileId: String, completion: @escaping (Result<Void, FlutterError>) -> Void)
 }
 
 class DeregisterUserHandler: DeregisterUserHandlerProtocol {
-    func deregister(profileId: String, completion: @escaping (SdkError?) -> Void) {
-        guard let profile = ONGUserClient.sharedInstance().userProfiles().first(where: { $0.profileId == profileId }) else {
-            completion(SdkError(.userProfileDoesNotExist))
+    func deregister(profileId: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        guard let profile = SharedUserClient.instance.userProfiles.first(where: { $0.profileId == profileId }) else {
+            completion(.failure(FlutterError(.notFoundUserProfile)))
             return
         }
-        
-        ONGUserClient.sharedInstance().deregisterUser(profile) { _, error in
+        SharedUserClient.instance.deregister(user: profile) { error in
             if let error = error {
                 let mappedError = ErrorMapper().mapError(error)
-                completion(mappedError)
+                completion(.failure(FlutterError(mappedError)))
             } else {
-                completion(nil)
+                completion(.success)
             }
         }
     }

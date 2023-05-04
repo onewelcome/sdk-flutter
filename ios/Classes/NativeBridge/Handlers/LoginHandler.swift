@@ -1,118 +1,97 @@
 import OneginiSDKiOS
 import Flutter
 
-//MARK: -
-protocol BridgeToLoginHandlerProtocol: LoginHandlerToPinHanlderProtocol {
-    func authenticateUser(_ profile: ONGUserProfile, authenticator: ONGAuthenticator?, completion: @escaping (ONGUserProfile?, SdkError?) -> Void)
-}
+class LoginHandler {
+    var pinChallenge: PinChallenge?
 
-protocol LoginHandlerToPinHanlderProtocol: class {
-    var pinHandler: PinConnectorToPinHandler? { get set }
-}
-
-//MARK: -
-class LoginHandler: NSObject, PinHandlerToReceiverProtocol {
-    var pinChallenge: ONGPinChallenge?
-    var customChallange: ONGCustomAuthFinishAuthenticationChallenge?
-    var loginCompletion: ((ONGUserProfile?, SdkError?) -> Void)?
-
-    unowned var pinHandler: PinConnectorToPinHandler?
-    
-    func handlePin(pin: String?) {
-        if let _pin = pin {
-            if let _cc = customChallange {
-                _cc.sender.respond(withData: _pin, challenge: _cc)
-            }
-            if let _pc = pinChallenge {
-                _pc.sender.respond(withPin: _pin, challenge: _pc)
-            }
-        } else {
-            if let _cc = customChallange {
-                _cc.sender.cancel(_cc, underlyingError: nil)
-            }
-            if let _pc = pinChallenge {
-                _pc.sender.cancel(_pc)
-            }
+    func handlePin(pin: String, completion: (Result<Void, FlutterError>) -> Void) {
+        guard let pinChallenge = pinChallenge else {
+            completion(.failure(FlutterError(.notInProgressAuthentication)))
+            return
         }
+        pinChallenge.sender.respond(with: pin, to: pinChallenge)
+        completion(.success)
     }
-    
-    fileprivate func mapErrorFromCustomAuthChallenge(_ challenge: ONGCustomAuthFinishAuthenticationChallenge) -> SdkError? {
-        if let error = challenge.error, error.code != ONGAuthenticationError.customAuthenticatorFailure.rawValue {
-            return ErrorMapper().mapError(error)
+
+    func cancelPinAuthentication(completion: (Result<Void, FlutterError>) -> Void) {
+        guard let pinChallenge = pinChallenge else {
+            completion(.failure(FlutterError(.notInProgressAuthentication)))
+            return
+        }
+        pinChallenge.sender.cancel(pinChallenge)
+        completion(.success)
+    }
+
+    private func mapErrorFromPinChallenge(_ challenge: PinChallenge) -> Error? {
+        if let error = challenge.error, error.code != ONGAuthenticationError.touchIDAuthenticatorFailure.rawValue {
+            return error
         } else {
             return nil
         }
     }
-}
 
-//MARK: -
-extension LoginHandler : BridgeToLoginHandlerProtocol {
-    func authenticateUser(_ profile: ONGUserProfile, authenticator: ONGAuthenticator?, completion: @escaping (ONGUserProfile?, SdkError?) -> Void) {
-        loginCompletion = completion
-        ONGUserClient.sharedInstance().authenticateUser(profile, authenticator: authenticator, delegate: self)
-    }
-}
-
-//MARK: -
-extension LoginHandler: ONGAuthenticationDelegate {
-    func userClient(_: ONGUserClient, didReceive challenge: ONGPinChallenge) {
+    func handleDidReceiveChallenge(_ challenge: PinChallenge) {
         pinChallenge = challenge
-        let pinError = ErrorMapper().mapErrorFromPinChallenge(challenge)
-
-        if let error = pinError, error.code == ONGAuthenticationError.invalidPin.rawValue    , challenge.previousFailureCount < challenge.maxFailureCount { // 9009
-            pinHandler?.handleFlowUpdate(PinFlow.nextAuthenticationAttempt, error, receiver: self)
+        guard mapErrorFromPinChallenge(challenge) == nil else {
+            let authAttempt = OWAuthenticationAttempt(
+                failedAttempts: Int64(challenge.previousFailureCount),
+                maxAttempts: Int64(challenge.maxFailureCount),
+                remainingAttempts: Int64(challenge.remainingFailureCount))
+            SwiftOneginiPlugin.flutterApi?.n2fNextPinAuthenticationAttempt(authenticationAttempt: authAttempt) {}
             return
         }
 
-        pinHandler?.handleFlowUpdate(PinFlow.authentication, pinError, receiver: self)
-
-        guard let _ = pinError else { return }
-        guard challenge.maxFailureCount == challenge.previousFailureCount else {
-            return
-        }
-
-        pinHandler?.closeFlow()
-        pinHandler?.onCancel()
-
-        loginCompletion?(nil, pinError)
+        SwiftOneginiPlugin.flutterApi?.n2fOpenPinAuthentication {}
     }
 
-    func userClient(_: ONGUserClient, didReceive challenge: ONGCustomAuthFinishAuthenticationChallenge) {
-        // TODO: Will need to check it in the future
-        
-        customChallange = challenge
-        
-        let customError = mapErrorFromCustomAuthChallenge(challenge)
-        pinHandler?.handleFlowUpdate(PinFlow.authentication, customError, receiver: self)
-        
-        guard let _ = customError else { return }
-        
-        pinHandler?.closeFlow()
-        pinHandler?.onCancel()
-    }
-    
-    func userClient(_ userClient: ONGUserClient, didAuthenticateUser userProfile: ONGUserProfile, authenticator: ONGAuthenticator, info customAuthInfo: ONGCustomInfo?) {
-        Logger.log("didAuthenticateUser", sender: self)
-        
+    func handleDidAuthenticateUser() {
         pinChallenge = nil
-        customChallange = nil
-        
-        loginCompletion?(userProfile, nil)
-        pinHandler?.closeFlow()
+        SwiftOneginiPlugin.flutterApi?.n2fClosePinAuthentication {}
     }
 
-    func userClient(_ userClient: ONGUserClient, didFailToAuthenticateUser userProfile: ONGUserProfile, authenticator: ONGAuthenticator, error: Error) {
-        Logger.log("didFailToAuthenticateUser", sender: self)
-        
+    func handleDidFailToAuthenticateUser() {
+        guard pinChallenge != nil else { return }
+        SwiftOneginiPlugin.flutterApi?.n2fClosePinAuthentication {}
         pinChallenge = nil
-        customChallange = nil
-        pinHandler?.closeFlow()
+    }
 
-        if error.code == ONGGenericError.actionCancelled.rawValue {
-            loginCompletion?(nil, SdkError(.loginCanceled))
-        } else {
-            let mappedError = ErrorMapper().mapError(error)
-            loginCompletion?(nil, mappedError)
-        }
+    func authenticateUser(_ profile: UserProfile, authenticator: Authenticator?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
+        let delegate = AuthenticationDelegateImpl(loginHandler: self, completion: completion)
+        SharedUserClient.instance.authenticateUserWith(profile: profile, authenticator: authenticator, delegate: delegate)
+    }
+}
+
+class AuthenticationDelegateImpl: AuthenticationDelegate {
+    private let completion: (Result<OWRegistrationResponse, FlutterError>) -> Void
+    private let loginHandler: LoginHandler
+
+    init(loginHandler: LoginHandler, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
+        self.completion = completion
+        self.loginHandler = loginHandler
+    }
+
+    func userClient(_ userClient: UserClient, didReceivePinChallenge challenge: PinChallenge) {
+        loginHandler.handleDidReceiveChallenge(challenge)
+    }
+
+    func userClient(_ userClient: UserClient, didStartAuthenticationForUser profile: UserProfile, authenticator: Authenticator) {
+        // unused
+    }
+
+    func userClient(_ userClient: UserClient, didReceiveCustomAuthFinishAuthenticationChallenge challenge: CustomAuthFinishAuthenticationChallenge) {
+        // We don't support custom authenticators in FlutterPlugin right now.
+    }
+
+    func userClient(_ userClient: UserClient, didAuthenticateUser profile: UserProfile, authenticator: Authenticator, info customAuthInfo: CustomInfo?) {
+        loginHandler.handleDidAuthenticateUser()
+        completion(.success(OWRegistrationResponse(userProfile: OWUserProfile(profile),
+                                                         customInfo: toOWCustomInfo(customAuthInfo))))
+    }
+
+    func userClient(_ userClient: UserClient, didFailToAuthenticateUser profile: UserProfile, authenticator: Authenticator, error: Error) {
+        loginHandler.handleDidFailToAuthenticateUser()
+
+        let mappedError = ErrorMapper().mapError(error)
+        completion(.failure(FlutterError(mappedError)))
     }
 }

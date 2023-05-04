@@ -1,24 +1,29 @@
-// @dart = 2.10
-import 'dart:convert';
+import 'dart:async';
 
-import "package:collection/collection.dart";
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:onegini/model/onegini_list_response.dart';
+import 'package:onegini/errors/error_codes.dart';
+import 'package:onegini/events/onewelcome_events.dart';
+import 'package:onegini/model/request_details.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini_example/components/display_toast.dart';
 import 'package:onegini_example/models/application_details.dart';
 import 'package:onegini_example/models/client_resource.dart';
+import 'package:onegini_example/ow_broadcast_helper.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'package:onegini_example/screens/qr_scan_screen.dart';
+import 'package:onegini_example/subscription_handlers/otp_subscriptions.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'package:onegini/onegini.gen.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import '../main.dart';
+// ignore: import_of_legacy_library_into_null_safe
 import 'login_screen.dart';
 
 class UserScreen extends StatefulWidget {
   final String userProfileId;
 
-  const UserScreen({Key key, this.userProfileId}) : super(key: key);
+  const UserScreen({Key? key, required this.userProfileId}) : super(key: key);
 
   @override
   _UserScreenState createState() => _UserScreenState();
@@ -26,11 +31,13 @@ class UserScreen extends StatefulWidget {
 
 class _UserScreenState extends State<UserScreen> with RouteAware {
   int _currentIndex = 0;
-  List<Widget> _children;
-  bool isContainNotRegisteredAuthenticators = true;
-  List<OneginiListResponse> registeredAuthenticators = [];
-  List<OneginiListResponse> notRegisteredAuthenticators = [];
+  late List<Widget> _children;
+  OWAuthenticator? _biometricAuthenticator = null;
+  OWAuthenticator? _preferredAuthenticator = null;
   String profileId = "";
+  late final List<StreamSubscription<OWEvent>>? registrationSubscriptions;
+  late final List<StreamSubscription<OWEvent>>? authenticationSubscriptions;
+  late final List<StreamSubscription<OWEvent>>? otpSubscriptions;
 
   void onTabTapped(int index) {
     setState(() {
@@ -48,18 +55,47 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     ];
     super.initState();
     this.profileId = widget.userProfileId;
+
+    // Init listeners for changePin, setPreferredAuthenticators
+    this.registrationSubscriptions =
+        OWBroadcastHelper.initRegistrationSubscriptions(context);
+    this.authenticationSubscriptions =
+        OWBroadcastHelper.initAuthenticationSubscriptions(context);
+    this.otpSubscriptions = initOtpSubscriptions(context);
+
     getAuthenticators();
   }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    routeObserver.subscribe(this, ModalRoute.of(context));
+  getAuthenticators() async {
+    try {
+      final preferredAuthenticator = await Onegini.instance.userClient
+          .getPreferredAuthenticator(profileId);
+      setState(() {
+        _preferredAuthenticator = preferredAuthenticator;
+      });
+    } on PlatformException catch (err) {
+      showFlutterToast(err.message);
+    }
+
+    try {
+      final biometricAuthenticator = await Onegini.instance.userClient
+          .getBiometricAuthenticator(profileId);
+      setState(() {
+        _biometricAuthenticator = biometricAuthenticator;
+      });
+    } on PlatformException catch (err) {
+      if (err.code != WrapperErrorCodes.biometricAuthenticationNotAvailable) {
+        showFlutterToast(err.message);
+      }
+    }
   }
 
   @override
   void dispose() {
     routeObserver.unsubscribe(this);
+    OWBroadcastHelper.stopListening(authenticationSubscriptions);
+    OWBroadcastHelper.stopListening(registrationSubscriptions);
+    OWBroadcastHelper.stopListening(otpSubscriptions);
     super.dispose();
   }
 
@@ -81,105 +117,98 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
     );
   }
 
-  Future<void> getAuthenticators() async {
-    notRegisteredAuthenticators = await Onegini.instance.userClient
-        .getNotRegisteredAuthenticators(context, this.profileId);
-
-    registeredAuthenticators = await Onegini.instance.userClient
-        .getRegisteredAuthenticators(context, this.profileId);
-  }
-
-  Future<List<OneginiListResponse>> getAllSortAuthenticators() async {
-    var allAuthenticators = await Onegini.instance.userClient
-        .getAllAuthenticators(context, this.profileId);
-    allAuthenticators.sort((a, b) {
-      return compareAsciiUpperCase(a.name, b.name);
-    });
-    return allAuthenticators;
-  }
-
-  Future<List<OneginiListResponse>> getNotRegisteredAuthenticators() async {
-    var authenticators = await Onegini.instance.userClient
-        .getNotRegisteredAuthenticators(context, this.profileId);
-    return authenticators;
-  }
-
-  registerAuthenticator(String authenticatorId) async {
-    await Onegini.instance.userClient
-        .registerAuthenticator(context, authenticatorId)
-        .catchError((error) {
-      if (error is PlatformException) {
-        showFlutterToast(error.message);
-      }
-    });
-    await getAuthenticators();
-    setState(() {});
-  }
-
-  bool isRegisteredAuthenticator(String authenticatorId) {
-    for (var authenticator in registeredAuthenticators) {
-      if (authenticator.id == authenticatorId) return true;
-    }
-    return false;
-  }
-
-  deregisterAuthenticator(String authenticatorId) async {
-    await Onegini.instance.userClient
-        .deregisterAuthenticator(context, authenticatorId)
-        .catchError((error) {
-      if (error is PlatformException) {
-        showFlutterToast(error.message);
-      }
-    });
-    await getAuthenticators();
-    setState(() {});
-  }
-
-  setPreferredAuthenticator(String authenticatorId) async {
-    await Onegini.instance.userClient
-        .setPreferredAuthenticator(context, authenticatorId)
-        .catchError((error) {
-      if (error is PlatformException) {
-        showFlutterToast(error.message);
-      }
-    });
-    Navigator.pop(context);
-  }
-
   deregister(BuildContext context) async {
-    Navigator.pop(context);
-    var profiles = await Onegini.instance.userClient.getUserProfiles();
-    var profileId = profiles.first?.profileId;
-    if (profileId == null) {
-      return;
-    }
-
-    var isLogOut = await Onegini.instance.userClient
+    await Onegini.instance.userClient
         .deregisterUser(profileId)
         .catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);
       }
     });
-    if (isLogOut != null && isLogOut) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => LoginScreen()),
-      );
-    }
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => LoginScreen()),
+    );
   }
 
   changePin(BuildContext context) {
     Navigator.pop(context);
-    Onegini.instance.userClient.changePin(context).catchError((error) {
+
+    Onegini.instance.userClient.changePin().catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);
+        // FIXME: this should be extracted into a seperate method
+        if (error.code == WrapperErrorCodes.notAuthenticatedUser ||
+            error.code == PlatformErrorCodes.deviceDeregistered ||
+            error.code == PlatformErrorCodes.userDeregistered ||
+            error.code == PlatformErrorCodes.userNotAuthenticated) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => LoginScreen()),
+          );
+        }
       }
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => LoginScreen()),
-      );
     });
+  }
+
+  Widget _buildBiometricAuthenticatorWidget() {
+    final authenticator = _biometricAuthenticator;
+    if (authenticator != null) {
+      return ListTile(
+        title: Text(authenticator.name),
+        leading: Switch(
+            value: authenticator.isRegistered,
+            onChanged: (newValue) => {
+                  if (newValue)
+                    {
+                      Onegini.instance.userClient
+                          .registerBiometricAuthenticator()
+                          .whenComplete(() => getAuthenticators())
+                    }
+                  else
+                    {
+                      Onegini.instance.userClient
+                          .deregisterBiometricAuthenticator()
+                          .whenComplete(() => getAuthenticators())
+                    }
+                }),
+      );
+    }
+    return SizedBox.shrink();
+  }
+
+  Widget _buildPreferredAuthenticatorWidget() {
+    final biometricAuthenticator = _biometricAuthenticator;
+    return Column(mainAxisSize: MainAxisSize.min, children: [
+      ListTile(
+        title:
+            Text("Preferred Authenticator: ${_preferredAuthenticator?.name} "),
+      ),
+      PopupMenuButton<OWAuthenticatorType>(
+          child: ListTile(
+            title: Text("set preferred authenticator"),
+            leading: Icon(Icons.add_to_home_screen),
+          ),
+          onSelected: (value) {
+            Onegini.instance.userClient
+                .setPreferredAuthenticator(value)
+                .whenComplete(() => getAuthenticators());
+          },
+          itemBuilder: (context) {
+            return [
+              PopupMenuItem<OWAuthenticatorType>(
+                child: Text("Pin"),
+                value: OWAuthenticatorType.pin,
+              ),
+              if (biometricAuthenticator != null &&
+                  biometricAuthenticator.isRegistered)
+                PopupMenuItem<OWAuthenticatorType>(
+                  child: Text(biometricAuthenticator.name),
+                  value: OWAuthenticatorType.biometric,
+                ),
+            ];
+          })
+    ]);
   }
 
   @override
@@ -198,63 +227,25 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
       ),
       body: _children[_currentIndex],
       drawer: Drawer(
-        child: Column(
+        child: ListView(
           children: [
             DrawerHeader(
-              child: Container(),
+              child: ListTile(
+                title: Text("ProfileId: ${profileId}"),
+                leading: Icon(Icons.person),
+              ),
             ),
-            FutureBuilder<List<OneginiListResponse>>(
-              future: getAllSortAuthenticators(),
-              builder: (BuildContext context, snapshot) {
-                return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: snapshot.hasData ? snapshot.data.length : 0,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        title: Text(
-                          snapshot.data[index].name,
-                        ),
-                        leading: Switch(
-                          value: snapshot.data[index].name == "PIN"
-                              ? true
-                              : isRegisteredAuthenticator(
-                                  snapshot.data[index].id),
-                          onChanged: snapshot.data[index].name == "PIN"
-                              ? null
-                              : (value) {
-                                  value
-                                      ? registerAuthenticator(
-                                          snapshot.data[index].id)
-                                      : deregisterAuthenticator(
-                                          snapshot.data[index].id);
-                                },
-                        ),
-                      );
-                    });
-              },
+            ListTile(
+              title: Text("Authenticators"),
+              leading: Icon(Icons.lock_rounded),
             ),
-            FutureBuilder<List<OneginiListResponse>>(
-              future: Onegini.instance.userClient
-                  .getRegisteredAuthenticators(context, this.profileId),
-              builder: (BuildContext context, snapshot) {
-                return PopupMenuButton<String>(
-                    child: ListTile(
-                      title: Text("set preferred authenticator"),
-                      leading: Icon(Icons.add_to_home_screen),
-                    ),
-                    onSelected: (value) {
-                      setPreferredAuthenticator(value);
-                    },
-                    itemBuilder: (context) {
-                      return snapshot.data
-                          .map((e) => PopupMenuItem<String>(
-                                child: Text(e.name ?? ""),
-                                value: e.id,
-                              ))
-                          .toList();
-                    });
-              },
+            ListTile(
+              title: Text("Pin"),
+              leading: Switch(value: true, onChanged: null),
             ),
+            _buildBiometricAuthenticatorWidget(),
+            _buildPreferredAuthenticatorWidget(),
+            Divider(),
             ListTile(
               title: Text("Change pin"),
               onTap: () => changePin(context),
@@ -268,7 +259,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
             ListTile(
               title: Text("Deregister"),
               onTap: () => deregister(context),
-              leading: Icon(Icons.app_registration),
+              leading: Icon(Icons.delete),
             )
           ],
         ),
@@ -286,39 +277,49 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
 }
 
 class Home extends StatelessWidget {
-  authWithOpt(BuildContext context) async {
-    Onegini.instance.setEventContext(context);
-    var data = await Navigator.push(
-      context,
-      MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
-    );
-    if (data != null) {
-      var isSuccess = await Onegini.instance.userClient
-          .mobileAuthWithOtp(data)
-          .catchError((error) {
-        if (error is PlatformException) {
-          showFlutterToast(error.message);
-        }
-      });
-      if (isSuccess != null && isSuccess.isNotEmpty)
-        showFlutterToast(isSuccess);
-    }
-  }
-
-  getAppToWebSingleSignOn(BuildContext context) async {
-    var oneginiAppToWebSingleSignOn = await Onegini.instance.userClient
-        .getAppToWebSingleSignOn(
-            "https://login-mobile.test.onegini.com/personal/dashboard")
+  enrollMobileAuthentication() async {
+    await Onegini.instance.userClient
+        .enrollMobileAuthentication()
+        .then((value) =>
+            showFlutterToast("Mobile Authentication enrollment success"))
         .catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);
       }
     });
-    if (oneginiAppToWebSingleSignOn != null) {
-      await launch(
-        oneginiAppToWebSingleSignOn.redirectUrl,
-        enableDomStorage: true,
-      );
+  }
+
+  authWithOpt(BuildContext context) async {
+    final data = await Navigator.push(
+      context,
+      MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
+    );
+
+    if (data != null) {
+      await Onegini.instance.userClient
+          .handleMobileAuthWithOtp(data)
+          .then(
+              (value) => showFlutterToast("OTP Authentication is successfull"))
+          .catchError((error) {
+        if (error is PlatformException) {
+          print(error.message);
+        }
+      });
+    }
+  }
+
+  getAppToWebSingleSignOn(BuildContext context) async {
+    try {
+      final oneginiAppToWebSingleSignOn = await Onegini.instance.userClient
+          .getAppToWebSingleSignOn(
+              "https://login-mobile.test.onegini.com/personal/dashboard");
+      if (!await launchUrl(Uri.parse(oneginiAppToWebSingleSignOn.redirectUrl),
+          mode: LaunchMode.externalApplication)) {
+        throw Exception(
+            'Could not launch ${oneginiAppToWebSingleSignOn.redirectUrl}');
+      }
+    } on PlatformException catch (error) {
+      showFlutterToast(error.message);
     }
   }
 
@@ -343,61 +344,69 @@ class Home extends StatelessWidget {
     showFlutterToast(accessToken);
   }
 
+  performUnauthenticatedRequest() async {
+    try {
+      final response = await Onegini.instance.resourcesMethods
+          .requestResourceUnauthenticated(RequestDetails(
+              path: "unauthenticated", method: HttpRequestMethod.get));
+      showFlutterToast("Response: ${response.body}");
+    } on PlatformException catch (error) {
+      print("An error occured ${error.message}");
+      showFlutterToast("An error occured ${error.message}");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
       child: Center(
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                getAppToWebSingleSignOn(context);
-              },
-              child: Text('Single Sign On'),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                authWithOpt(context);
-              },
-              child: Text('auth with opt'),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                userProfiles(context);
-              },
-              child: Text('User profiles'),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                showAuthenticatedUserProfile(context);
-              },
-              child: Text('Authenticated Userprofile'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                showAccessToken(context);
-              },
-              child: Text('Access Token'),
-            ),
-            SizedBox(
-              height: 20,
-            ),
-          ],
-        ),
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  getAppToWebSingleSignOn(context);
+                },
+                child: Text('Single Sign On'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  enrollMobileAuthentication();
+                },
+                child: Text('Enroll for Mobile Authentication'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  authWithOpt(context);
+                },
+                child: Text('Auth with opt'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  userProfiles(context);
+                },
+                child: Text('User profiles'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  showAuthenticatedUserProfile(context);
+                },
+                child: Text('Authenticated Userprofile'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  showAccessToken(context);
+                },
+                child: Text('Access Token'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  performUnauthenticatedRequest();
+                },
+                child: Text('Perform Unauthenticated Request'),
+              ),
+            ]),
       ),
     );
   }
@@ -406,47 +415,109 @@ class Home extends StatelessWidget {
 class Info extends StatefulWidget {
   final String userProfileId;
 
-  const Info({Key key, this.userProfileId}) : super(key: key);
+  const Info({Key? key, required this.userProfileId}) : super(key: key);
 
   @override
   _InfoState createState() => _InfoState();
 }
 
 class _InfoState extends State<Info> {
-  Future<ApplicationDetails> getApplicationDetails() async {
-    var response = "";
-    var success = await Onegini.instance.userClient
+  Future<ApplicationDetails> _getApplicationDetails() async {
+    await Onegini.instance.userClient
         .authenticateDevice(["read", "write", "application-details"]);
-    if (success != null && success) {
-      response = await Onegini.instance.resourcesMethods
-          .getResourceAnonymous("application-details");
-    }
-    var res = json.decode(response);
-    return applicationDetailsFromJson(res["body"]);
+    final response = await Onegini.instance.resourcesMethods.requestResource(
+        ResourceRequestType.anonymous,
+        RequestDetails(
+            path: "application-details", method: HttpRequestMethod.get));
+    return applicationDetailsFromJson(response.body);
   }
 
-  Future<ClientResource> getClientResource() async {
-    var response = await Onegini.instance.resourcesMethods
-        .getResource("devices")
-        .catchError((error) {
-      print('Caught error: $error');
-
-      showFlutterToast(error.message);
-    });
-
-    var res = json.decode(response);
-    return clientResourceFromJson(res["body"]);
+  Future<ClientResource> _getClientResource() async {
+    final response = await Onegini.instance.resourcesMethods
+        .requestResourceAuthenticated(
+            RequestDetails(path: "devices", method: HttpRequestMethod.get));
+    return clientResourceFromJson(response.body);
   }
 
-  Future<String> makeUnaunthenticatedRequest() async {
-    var headers = {'Declareren-Appversion': 'CZ.app'};
-    var response = await Onegini.instance.resourcesMethods
-        .getUnauthenticatedResource("devices", headers: headers, method: 'GET')
-        .catchError((onError) {
-      debugPrint(onError);
-    });
-    var res = json.decode(response);
-    return res["body"];
+  FutureBuilder<ClientResource> _buildDeviceInfoList() {
+    return FutureBuilder<ClientResource>(
+      future: _getClientResource(),
+      builder: (context, snapshot) {
+        final snapshotData = snapshot.data;
+        return snapshotData != null
+            ? ListView.builder(
+                itemCount: snapshotData.devices.length,
+                itemBuilder: (BuildContext context, int index) {
+                  return ExpansionTile(
+                    title: Text(snapshotData.devices[index].name),
+                    expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ListTile(
+                          title: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Id => ${snapshotData.devices[index].id}",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Application => ${snapshotData.devices[index].application}",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Mobile authentication enabled => ${snapshotData.devices[index].mobileAuthenticationEnabled.toString()}",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          SizedBox(height: 10),
+                          Text(
+                            "Platform => ${snapshotData.devices[index].platform}",
+                            style: TextStyle(fontSize: 15),
+                          ),
+                          SizedBox(),
+                        ],
+                      ))
+                    ],
+                  );
+                },
+              )
+            : Center(
+                child: SizedBox(
+                  child: CircularProgressIndicator(),
+                ),
+              );
+      },
+    );
+  }
+
+  FutureBuilder<ApplicationDetails> _buildApplicationDetails() {
+    return FutureBuilder<ApplicationDetails>(
+      future: _getApplicationDetails(),
+      builder: (context, snapshot) {
+        return snapshot.hasData
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "application identifier => ${snapshot.data?.applicationIdentifier}",
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "application platform => ${snapshot.data?.applicationPlatform}",
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    "application version => ${snapshot.data?.applicationVersion}",
+                    style: TextStyle(fontSize: 15),
+                  ),
+                ],
+              )
+            : CircularProgressIndicator();
+      },
+    );
   }
 
   @override
@@ -457,134 +528,11 @@ class _InfoState extends State<Info> {
           margin: EdgeInsets.all(20),
           child: Column(
             children: [
-              SizedBox(
-                height: 20,
-              ),
-              FutureBuilder<ApplicationDetails>(
-                future: getApplicationDetails(),
-                builder: (context, snapshot) {
-                  return snapshot.hasData
-                      ? Column(
-                          children: [
-                            Row(
-                              children: [
-                                Text(
-                                  "application identifier => ",
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                Text(
-                                  snapshot.data.applicationIdentifier ?? "",
-                                  style: TextStyle(fontSize: 18),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  "application platform => ",
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                Text(
-                                  snapshot.data.applicationPlatform ?? "",
-                                  style: TextStyle(fontSize: 18),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  "application version => ",
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                                Text(
-                                  snapshot.data.applicationVersion ?? "",
-                                  style: TextStyle(fontSize: 18),
-                                )
-                              ],
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                          ],
-                        )
-                      : Text("");
-                },
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              FutureBuilder<String>(
-                //implicit
-                future: makeUnaunthenticatedRequest(),
-                builder: (context, snapshot) {
-                  return snapshot.hasData
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              "UnaunthenticatedRequest - Users:",
-                              style: TextStyle(fontSize: 20),
-                            ),
-                            Text(snapshot.data, style: TextStyle(fontSize: 20)),
-                          ],
-                        )
-                      : SizedBox.shrink();
-                },
-              ),
+              SizedBox(height: 20),
+              _buildApplicationDetails(),
+              Divider(),
               Expanded(
-                child: FutureBuilder<ClientResource>(
-                  future: getClientResource(),
-                  builder: (context, snapshot) {
-                    return snapshot.hasData
-                        ? ListView.builder(
-                            itemCount: snapshot.data.devices.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ExpansionTile(
-                                title: Text(snapshot.data.devices[index].name),
-                                expandedCrossAxisAlignment:
-                                    CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Id => ${snapshot.data.devices[index].id}",
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    "Application => ${snapshot.data.devices[index].application}",
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    "Mobile authentication enabled => ${snapshot.data.devices[index].mobileAuthenticationEnabled.toString()}",
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text(
-                                    "Platform => ${snapshot.data.devices[index].platform}",
-                                    style: TextStyle(fontSize: 18),
-                                  ),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                ],
-                              );
-                            },
-                          )
-                        : SizedBox.shrink();
-                  },
-                ),
+                child: _buildDeviceInfoList(),
               ),
             ],
           ),

@@ -1,4 +1,3 @@
-// @dart = 2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/callbacks/onegini_fingerprint_callback.dart';
@@ -18,7 +17,7 @@ class _FingerprintScreenState extends State<FingerprintScreen> {
 
   activateFingerprint() async {
     await OneginiFingerprintCallback()
-        .acceptAuthenticationRequest(context)
+        .acceptAuthenticationRequest()
         .catchError((error) {
       if (error is PlatformException) {
         showFlutterToast(error.message);

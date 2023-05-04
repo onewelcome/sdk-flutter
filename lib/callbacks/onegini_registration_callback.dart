@@ -1,12 +1,11 @@
-import 'package:onegini/constants/constants.dart';
-
-import '../onegini.dart';
+import 'package:onegini/onegini.gen.dart';
 
 /// A callback for registration.
 class OneginiRegistrationCallback {
+  final api = UserClientApi();
+
   /// Cancels registration action.
   Future<void> cancelBrowserRegistration() async {
-    await Onegini.instance.channel
-        .invokeMethod(Constants.cancelRegistrationMethod);
+    await api.cancelBrowserRegistration();
   }
 }

@@ -1,73 +1,62 @@
 import 'dart:async';
-import 'dart:convert';
 
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:onegini/constants/constants.dart';
+import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/onegini_event_listener.dart';
 import 'package:onegini/resources_methods.dart';
 import 'package:onegini/user_client.dart';
-
-import 'model/onegini_removed_user_profile.dart';
+import 'package:onegini/onegini.gen.dart';
 
 /// The main class used to call methods.
 class Onegini {
-  Onegini._privateConstructor();
+  // UserClientApi is the flutter to native api created by the Pigeon package, see /pigeons/README.md
+  /// User client methods.
+  final UserClientApi api = UserClientApi();
 
-  /// Reference to the Onegini instance.
-  static final Onegini _instance = Onegini._privateConstructor();
+  late final UserClient userClient;
 
-  /// Public access to the Onegini instance.
-  static Onegini get instance => _instance;
+  // Stream over which OW events will be send
+  final StreamController<OWEvent> owEventStreamController =
+      StreamController<OWEvent>.broadcast();
+
+  // Close the stream when the instance gets stopped
+  static final Finalizer<StreamController<OWEvent>> _finalizer =
+      Finalizer((owEventStreamController) => owEventStreamController.close());
+
+  Onegini._internal() {
+    userClient = UserClient(api);
+  }
+
+  static final Onegini instance = Onegini._internal();
+
+  factory Onegini() {
+    _finalizer.attach(instance, instance.owEventStreamController,
+        detach: instance);
+    return instance;
+  }
 
   /// Communication channel between flutter and native side.
   final MethodChannel channel = const MethodChannel('onegini');
 
-  /// Reference to the event listener.
-  OneginiEventListener? _eventListener;
-
   /// Resource methods.
   ResourcesMethods resourcesMethods = ResourcesMethods();
 
-  /// User client methods.
-  UserClient userClient = UserClient();
-
-  /// Use this method when you want change [BuildContext] in your [OneginiEventListener]
-  setEventContext(BuildContext? context) {
-    _eventListener?.context = context;
-  }
-
   /// Initialize SDK and establish communication on [eventListener].
-  Future<List<RemovedUserProfile>> startApplication(
-    OneginiEventListener eventListener, {
+  Future<void> startApplication({
     String? securityControllerClassName,
     String? configModelClassName,
-    List<Map<String, Object>>? customIdentityProviderConfigs,
+    List<OWCustomIdentityProvider>? customIdentityProviderConfigs,
     int? connectionTimeout,
     int? readTimeout,
+    List<String>? additionalResourceUrls,
   }) async {
-    _eventListener = eventListener;
-    try {
-      var customIdentityProviderConfigsJson;
-      if (customIdentityProviderConfigs != null) {
-        customIdentityProviderConfigsJson = [for (var customIdentityProviderConfig in customIdentityProviderConfigs) json.encode(customIdentityProviderConfig)];
-      }
-
-      String removedUserProfiles = await channel
-          .invokeMethod(Constants.startAppMethod, <String, dynamic>{
-        'securityControllerClassName': securityControllerClassName,
-        'configModelClassName': configModelClassName,
-        'customIdentityProviderConfigs': customIdentityProviderConfigsJson,
-        'connectionTimeout': connectionTimeout,
-        'readTimeout': readTimeout
-      });
-      eventListener.listen();
-      return removedUserProfileListFromJson(removedUserProfiles);
-    } on TypeError catch (error) {
-      throw PlatformException(
-          code: Constants.wrapperTypeError.code.toString(),
-          message: Constants.wrapperTypeError.message,
-          stacktrace: error.stackTrace?.toString());
-    }
+    NativeCallFlutterApi.setup(OneginiEventListener(owEventStreamController));
+    await api.startApplication(
+        securityControllerClassName,
+        configModelClassName,
+        customIdentityProviderConfigs,
+        connectionTimeout,
+        readTimeout,
+        additionalResourceUrls);
   }
 }

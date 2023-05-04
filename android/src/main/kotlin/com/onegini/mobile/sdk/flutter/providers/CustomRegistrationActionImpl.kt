@@ -1,50 +1,46 @@
 package com.onegini.mobile.sdk.flutter.providers
 
-import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.handlers.action.OneginiCustomRegistrationAction
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiCustomRegistrationCallback
 import com.onegini.mobile.sdk.android.model.entity.CustomInfo
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.REGISTRATION_NOT_IN_PROGRESS
-import com.onegini.mobile.sdk.flutter.constants.Constants
-import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_IN_PROGRESS_CUSTOM_REGISTRATION
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
-import com.onegini.mobile.sdk.flutter.models.CustomRegistrationModel
-import com.onegini.mobile.sdk.flutter.models.OneginiEvent
-import io.flutter.plugin.common.MethodChannel
+import com.onegini.mobile.sdk.flutter.mapToOwCustomInfo
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 
-class CustomRegistrationActionImpl(private val providerId: String) : OneginiCustomRegistrationAction, CustomRegistrationAction {
-    var callback: OneginiCustomRegistrationCallback? = null
+class CustomRegistrationActionImpl(private val providerId: String, private val nativeApi: NativeCallFlutterApi) : OneginiCustomRegistrationAction, CustomRegistrationAction {
+  var callback: OneginiCustomRegistrationCallback? = null
 
-    override fun finishRegistration(callback: OneginiCustomRegistrationCallback, info: CustomInfo?) {
-        this.callback = callback
+  override fun isInProgress(): Boolean {
+    return callback != null
+  }
 
-        val data = Gson().toJson(CustomRegistrationModel(info?.data.orEmpty(), info?.status, providerId))
-        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_FINISH_CUSTOM_REGISTRATION, data)))
-    }
+  override fun finishRegistration(callback: OneginiCustomRegistrationCallback, info: CustomInfo?) {
+    this.callback = callback
+    nativeApi.n2fEventFinishCustomRegistration(info?.mapToOwCustomInfo(), providerId) {}
+  }
 
-    override fun getCustomRegistrationAction(): OneginiCustomRegistrationAction {
-        return this
-    }
+  override fun getCustomRegistrationAction(): OneginiCustomRegistrationAction {
+    return this
+  }
 
-    override fun getIdProvider(): String {
-        return providerId
-    }
+  override fun getIdProvider(): String {
+    return providerId
+  }
 
-    override fun returnSuccess(result: String?, resultChannel: MethodChannel.Result) {
-        when (callback) {
-            null -> SdkError(REGISTRATION_NOT_IN_PROGRESS).flutterError(resultChannel)
-            else -> this.callback?.returnSuccess(result)
-        }
+  override fun returnSuccess(result: String?): Result<Unit> {
+    return callback?.let { customRegistrationCallback ->
+      customRegistrationCallback.returnSuccess(result)
+      callback = null
+      Result.success(Unit)
+    } ?: Result.failure(SdkError(NOT_IN_PROGRESS_CUSTOM_REGISTRATION).pigeonError())
+  }
 
-        callback = null
-    }
-
-    override fun returnError(exception: Exception?, resultChannel: MethodChannel.Result) {
-        when (callback) {
-            null -> SdkError(REGISTRATION_NOT_IN_PROGRESS).flutterError(resultChannel)
-            else -> this.callback?.returnError(exception)
-        }
-
-        callback = null
-    }
+  override fun returnError(exception: Exception?): Result<Unit> {
+    return callback?.let { customRegistrationCallback ->
+      customRegistrationCallback.returnError(exception)
+      callback = null
+      Result.success(Unit)
+    } ?: Result.failure(SdkError(NOT_IN_PROGRESS_CUSTOM_REGISTRATION).pigeonError())
+  }
 }

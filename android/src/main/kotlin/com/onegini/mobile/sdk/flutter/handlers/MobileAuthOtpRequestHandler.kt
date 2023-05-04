@@ -1,36 +1,43 @@
 package com.onegini.mobile.sdk.flutter.handlers
 
-import com.google.gson.Gson
 import com.onegini.mobile.sdk.android.handlers.request.OneginiMobileAuthWithOtpRequestHandler
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiAcceptDenyCallback
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthenticationRequest
-import com.onegini.mobile.sdk.flutter.constants.Constants
-import com.onegini.mobile.sdk.flutter.helpers.OneginiEventsSender
-import com.onegini.mobile.sdk.flutter.models.OneginiEvent
+import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_IN_PROGRESS_OTP_AUTHENTICATION
+import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class MobileAuthOtpRequestHandler @Inject constructor(): OneginiMobileAuthWithOtpRequestHandler {
-    private var userProfileId: String? = null
-    private var message: String? = null
-    override fun startAuthentication(
-            oneginiMobileAuthenticationRequest: OneginiMobileAuthenticationRequest,
-            oneginiAcceptDenyCallback: OneginiAcceptDenyCallback
-    ) {
+class MobileAuthOtpRequestHandler @Inject constructor(private val nativeApi: NativeCallFlutterApi) :
+  OneginiMobileAuthWithOtpRequestHandler {
+  private var callback: OneginiAcceptDenyCallback? = null
 
-        CALLBACK = oneginiAcceptDenyCallback
-        userProfileId = oneginiMobileAuthenticationRequest.userProfile.profileId
-        message = oneginiMobileAuthenticationRequest.message
-        OneginiEventsSender.events?.success(Gson().toJson(OneginiEvent(Constants.EVENT_OPEN_AUTH_OTP, message
-                ?: "")))
-    }
+  override fun startAuthentication(
+    oneginiMobileAuthenticationRequest: OneginiMobileAuthenticationRequest,
+    oneginiAcceptDenyCallback: OneginiAcceptDenyCallback
+  ) {
+    callback = oneginiAcceptDenyCallback
+    nativeApi.n2fOpenAuthOtp(oneginiMobileAuthenticationRequest.message) {}
+  }
 
-    override fun finishAuthentication() {
-        OneginiEventsSender.events?.success(Constants.EVENT_CLOSE_AUTH_OTP)
-    }
+  override fun finishAuthentication() {
+    nativeApi.n2fCloseAuthOtp {}
+    callback = null
+  }
 
-    companion object {
-        var CALLBACK: OneginiAcceptDenyCallback? = null
-    }
+  fun acceptAuthenticationRequest(): Result<Unit> {
+    return callback?.let {
+      it.acceptAuthenticationRequest()
+      Result.success(Unit)
+    } ?: Result.failure(SdkError(NOT_IN_PROGRESS_OTP_AUTHENTICATION).pigeonError())
+  }
+
+  fun denyAuthenticationRequest(): Result<Unit> {
+    return callback?.let {
+      it.denyAuthenticationRequest()
+      Result.success(Unit)
+    } ?: Result.failure(SdkError(NOT_IN_PROGRESS_OTP_AUTHENTICATION).pigeonError())
+  }
 }

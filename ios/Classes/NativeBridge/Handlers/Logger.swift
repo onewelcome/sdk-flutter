@@ -1,3 +1,4 @@
+// swiftlint:disable identifier_name
 //
 //  Logger.swift
 //  onegini
@@ -8,24 +9,24 @@
 import Foundation
 
 class Logger {
-    
+
     enum LogType: String {
         case debug = "debug"
         case log = "log"
         case warning = "warning"
         case error = "error"
     }
-    
+
     static var enable = true
-    
+
     static func log(_ message: String, sender: Any? = nil, logType: LogType = .debug) {
-        
+
         if !enable {
             return
         }
-        
+
         var m: String = "[\(logType.rawValue)]"
-        
+
         if let s = sender {
             m = "\(m)[\(type(of: s))]"
         }
@@ -41,5 +42,5 @@ class Logger {
         }
 #endif
     }
-    
+
 }

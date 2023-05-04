@@ -5,7 +5,7 @@ import OneginiSDKiOS
 class SdkError: Error {
     var code: Int
     var errorDescription: String
-    var details: Dictionary<String, Any?> = [:]
+    var details: [String: Any?] = [:]
 
     // Only error codes
     init(code: Int, errorDescription: String) {
@@ -16,7 +16,7 @@ class SdkError: Error {
     }
 
     init(_ wrapperError: OneWelcomeWrapperError) {
-        self.code = wrapperError.rawValue
+        self.code = wrapperError.code()
         self.errorDescription = wrapperError.message()
 
         setGenericDetails()
@@ -32,7 +32,7 @@ class SdkError: Error {
     }
 
     init(_ wrapperError: OneWelcomeWrapperError, info: [String: Any?]?) {
-        self.code = wrapperError.rawValue
+        self.code = wrapperError.code()
         self.errorDescription = wrapperError.message()
 
         setGenericDetails()
@@ -40,7 +40,7 @@ class SdkError: Error {
     }
 
     // Error codes with httResponse information
-    init(code: Int, errorDescription: String, response: ONGResourceResponse?, iosCode: Int? = nil, iosMessage: String? = nil) {
+    init(code: Int, errorDescription: String, response: ResourceResponse?, iosCode: Int? = nil, iosMessage: String? = nil) {
         self.code = code
         self.errorDescription = errorDescription
 
@@ -48,30 +48,43 @@ class SdkError: Error {
         setResponseDetails(response, iosCode, iosMessage)
     }
 
-    init(_ wrapperError: OneWelcomeWrapperError, response: ONGResourceResponse?, iosCode: Int? = nil, iosMessage: String? = nil) {
-        self.code = wrapperError.rawValue
+    init(_ wrapperError: OneWelcomeWrapperError, response: ResourceResponse?, iosCode: Int? = nil, iosMessage: String? = nil) {
+        self.code = wrapperError.code()
         self.errorDescription = wrapperError.message()
 
         setGenericDetails()
         setResponseDetails(response, iosCode, iosMessage)
     }
 
-    private func setGenericDetails() {
+    func flutterError() -> FlutterError {
+        let error = FlutterError(code: "\(self.code)", message: self.errorDescription, details: details)
+
+        return error
+    }
+
+    static func convertToFlutter(_ error: SdkError?) -> FlutterError {
+        let error = error ?? SdkError(.genericError)
+        return error.flutterError()
+    }
+}
+
+private extension SdkError {
+    func setGenericDetails() {
         details["code"] = String(code)
         details["message"] = errorDescription
     }
 
-    private func setInfoDetails(_ info: [String: Any?]?) {
-        if (info == nil) {
+    func setInfoDetails(_ info: [String: Any?]?) {
+        if info == nil {
             details["userInfo"] = [:]
         } else {
             details["userInfo"] = info
         }
     }
 
-    private func setResponseDetails(_ response: ONGResourceResponse?, _ iosCode: Int?, _ iosMessage: String?) {
-        if (response == nil) {
-            details["response"] = Dictionary<String, Any?>()
+    func setResponseDetails(_ response: ResourceResponse?, _ iosCode: Int?, _ iosMessage: String?) {
+        if response == nil {
+            details["response"] = [String: Any?]()
         } else {
             details["response"] = response?.toJSON()
         }
@@ -85,15 +98,14 @@ class SdkError: Error {
             details["iosMessage"] = iosMessage
         }
     }
+}
 
-    func flutterError() -> FlutterError {
-        let _error = FlutterError(code: "\(self.code)", message: self.errorDescription, details: details)
-
-        return _error
-    }
-
-    static func convertToFlutter(_ error: SdkError?) -> FlutterError {
-        let _error = error ?? SdkError(.genericError)
-        return _error.flutterError()
+private extension ResourceResponse {
+    func toJSON() -> [String: Any?] {
+        return ["statusCode": statusCode,
+                "headers": allHeaderFields,
+                "url": response.url,
+                "body": data != nil ? String(data: data!, encoding: .utf8) : nil
+        ]
     }
 }

@@ -1,4 +1,3 @@
-// @dart = 2.10
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/callbacks/onegini_pin_authentication_callback.dart';
@@ -8,18 +7,18 @@ import '../components/display_toast.dart';
 class PinScreen extends StatefulWidget {
   final PinScreenController controller;
 
-  PinScreen({this.controller});
+  PinScreen({required this.controller});
 
   @override
   _PinScreenState createState() => _PinScreenState(controller);
 }
 
 class PinScreenController {
-  void Function() clearState;
+  void Function() clearState = () => {};
 }
 
 class _PinScreenState extends State<PinScreen> {
-  List<String> pinCode = List<String>.filled(5, null);
+  List<String> pinCode = List<String>.filled(5, "");
   var isLoading = false;
 
   _PinScreenState(PinScreenController _controller) {
@@ -29,13 +28,13 @@ class _PinScreenState extends State<PinScreen> {
   void clearState() {
     setState(() {
       isLoading = false;
-      pinCode = List<String>.filled(5, null);
+      pinCode = List<String>.filled(5, "");
     });
   }
 
   enterNum(String num) {
     for (var i = 0; i < pinCode.length; i++) {
-      if (pinCode[i] == null) {
+      if (pinCode[i] == "") {
         setState(() => pinCode[i] = num);
         // if last pin digit is provided
         if (i == pinCode.length - 1) {
@@ -48,12 +47,12 @@ class _PinScreenState extends State<PinScreen> {
 
   removeLast() {
     for (var i = 0; i < pinCode.length; i++) {
-      if (pinCode[i] == null && i != 0) {
-        setState(() => pinCode[i - 1] = null);
+      if (pinCode[i] == "" && i != 0) {
+        setState(() => pinCode[i - 1] = "");
         break;
       }
-      if (pinCode[i] != null && i == pinCode.length - 1) {
-        setState(() => pinCode[i] = null);
+      if (pinCode[i] != "" && i == pinCode.length - 1) {
+        setState(() => pinCode[i] = "");
         break;
       }
     }
@@ -66,7 +65,7 @@ class _PinScreenState extends State<PinScreen> {
       pin += element;
     });
     OneginiPinAuthenticationCallback()
-        .acceptAuthenticationRequest(context, pin: pin)
+        .acceptAuthenticationRequest(pin)
         .catchError((error) {
       if (error is PlatformException) {
         setState(() => {isLoading = false});
@@ -124,7 +123,7 @@ class _PinScreenState extends State<PinScreen> {
   }
 
   Widget pinItem(String item) {
-    return item == null
+    return item == ""
         ? Container(
             width: 10,
             height: 2,
@@ -141,7 +140,8 @@ class NumPad extends StatelessWidget {
   final Function(String) enterNum;
   final Function removeLast;
 
-  const NumPad({Key key, this.enterNum, this.removeLast}) : super(key: key);
+  const NumPad({Key? key, required this.enterNum, required this.removeLast})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -201,7 +201,7 @@ class NumPad extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.all(2),
         child: TextButton(
-          onPressed: onTap,
+          onPressed: () => onTap(),
           child: Text(
             text,
             style: TextStyle(fontSize: 20),

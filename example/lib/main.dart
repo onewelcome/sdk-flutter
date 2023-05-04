@@ -1,13 +1,9 @@
-// @dart = 2.10
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:onegini/onegini.dart';
+import 'package:onegini/onegini.gen.dart';
 import 'package:onegini_example/components/display_toast.dart';
 import 'package:onegini_example/screens/login_screen.dart';
-
-import 'onegini_listener.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
@@ -47,9 +43,6 @@ class BodyWidget extends StatefulWidget {
 }
 
 class _BodyWidgetState extends State<BodyWidget> {
-  var _appStarted = false;
-  var appError;
-
   @override
   void initState() {
     _startApplication();
@@ -58,29 +51,29 @@ class _BodyWidgetState extends State<BodyWidget> {
 
   void _startApplication() async {
     /// init Onegini sdk on native side
-    var removedUserProfiles = await Onegini.instance
-        .startApplication(OneginiListener(),
-            securityControllerClassName:
-                "com.onegini.mobile.onegini_example.SecurityController",
-            configModelClassName:
-                "com.onegini.mobile.onegini_example.OneginiConfigModel",
-            customIdentityProviderConfigs: [
-              {"providerId": "2-way-otp-api", "isTwoStep": true}
-            ],
-            connectionTimeout: 5,
-            readTimeout: 25)
-        .catchError((error) {
-      if (error is PlatformException) {
-        showFlutterToast(error.message);
-      }
-    });
-    _appStarted = removedUserProfiles != null;
-    if (_appStarted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => LoginScreen()),
-      );
+    try {
+      await Onegini.instance.startApplication(
+          securityControllerClassName:
+              "com.onegini.mobile.onegini_example.SecurityController",
+          configModelClassName:
+              "com.onegini.mobile.onegini_example.OneginiConfigModel",
+          customIdentityProviderConfigs: [
+            OWCustomIdentityProvider(
+                providerId: "2-way-otp-api", isTwoStep: true),
+            OWCustomIdentityProvider(
+                providerId: "qr_registration", isTwoStep: false)
+          ],
+          connectionTimeout: 5,
+          readTimeout: 25,
+          additionalResourceUrls: []);
+    } on PlatformException catch (error) {
+      showFlutterToast(error.message);
     }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => LoginScreen()),
+    );
   }
 
   @override

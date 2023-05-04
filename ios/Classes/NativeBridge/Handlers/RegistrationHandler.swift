@@ -1,239 +1,206 @@
 import OneginiSDKiOS
 
-protocol RegistrationConnectorToHandlerProtocol: RegistrationHandlerToPinHanlderProtocol {
-    func signUp(_ providerId: String?, scopes: [String]?, completion: @escaping (Bool, ONGUserProfile?, ONGCustomInfo?, SdkError?) -> Void)
-    func processRedirectURL(url: String, webSignInType: WebSignInType)
-    func cancelBrowserRegistration()
-    func logout(completion: @escaping (SdkError?) -> Void)
-    func deregister(profileId: String, completion: @escaping (SdkError?) -> Void)
-    func identityProviders() -> Array<ONGIdentityProvider>
-    func submitCustomRegistrationSuccess(_ data: String?)
-    func cancelCustomRegistration(_ error: String)
-    func currentChallenge() -> ONGCustomRegistrationChallenge?
+enum WebSignInType: Int {
+    case insideApp
+    case safari
+
+    init(rawValue: Int) {
+        switch rawValue {
+        case 1: self = .safari
+        default: self = .insideApp
+        }
+    }
 }
 
-protocol RegistrationHandlerToPinHanlderProtocol: class {
-    var pinHandler: PinConnectorToPinHandler? { get set }
-}
+class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
 
-protocol CustomRegistrationNotificationReceiverProtocol: class {
-    func sendCustomRegistrationNotification(_ event: CustomRegistrationNotification,_ data: Dictionary<String, Any?>?)
-}
-
-class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol, PinHandlerToReceiverProtocol, RegistrationHandlerToPinHanlderProtocol {
-    
-    var middleTwoStep: Bool? = nil
-    
-    var createPinChallenge: ONGCreatePinChallenge?
-    var browserRegistrationChallenge: ONGBrowserRegistrationChallenge?
-    var customRegistrationChallenge: ONGCustomRegistrationChallenge?
+    var createPinChallenge: CreatePinChallenge?
+    var browserRegistrationChallenge: BrowserRegistrationChallenge?
+    var customRegistrationChallenge: CustomRegistrationChallenge?
     var browserConntroller: BrowserHandlerProtocol?
-    
-    var logoutUserHandler = LogoutHandler()
-    var deregisterUserHandler = DeregisterUserHandler()
-    var signUpCompletion: ((Bool, ONGUserProfile?, ONGCustomInfo?, SdkError?) -> Void)?
-    
-    unowned var pinHandler: PinConnectorToPinHandler?
-    
-    unowned var customNotificationReceiver: CustomRegistrationNotificationReceiverProtocol?
-    
-    //MARK:-
-    func currentChallenge() -> ONGCustomRegistrationChallenge? {
-        return self.customRegistrationChallenge
-    }
-    
-    func identityProviders() -> Array<ONGIdentityProvider> {
-        var list = Array(ONGUserClient.sharedInstance().identityProviders())
-        
-        let listOutput: [String]? =  OneginiModuleSwift.sharedInstance.customRegIdentifiers.filter { (_id) -> Bool in
-            let element = list.first { (provider) -> Bool in
-                return provider.identifier == _id
-            }
-            
-            return element == nil
-        }
-        
-        listOutput?.forEach { (_providerId) in
-            let identityProvider = ONGIdentityProvider()
-            identityProvider.name = _providerId
-            identityProvider.identifier = _providerId
-            
-            list.append(identityProvider)
-        }
-        
-        return list
-    }
-    
+
     func presentBrowserUserRegistrationView(registrationUserURL: URL, webSignInType: WebSignInType) {
         guard let browserController = browserConntroller else {
             browserConntroller = BrowserViewController(registerHandlerProtocol: self)
-            browserConntroller?.handleUrl(url: registrationUserURL, webSignInType: webSignInType)
+            browserConntroller?.handleUrl(registrationUserURL, webSignInType: webSignInType)
             return
         }
-        
-        browserController.handleUrl(url: registrationUserURL, webSignInType: webSignInType)
+
+        browserController.handleUrl(registrationUserURL, webSignInType: webSignInType)
     }
 
-    func handleRedirectURL(url: URL?) {
-        Logger.log("handleRedirectURL url: \(url?.absoluteString ?? "nil")", sender: self)
-        guard let browserRegistrationChallenge = self.browserRegistrationChallenge else {
-            signUpCompletion?(false, nil, nil, SdkError(.genericError))
+    func handleRedirectURL(url: URL) {
+        Logger.log("handleRedirectURL url: \(url.absoluteString)", sender: self)
+        // FIXME: browserRegistrationChallenge is only set to nil when we finish or fail registration, so this will work but will need a refactor if the internal browser ever gets removed.
+        guard let browserRegistrationChallenge = browserRegistrationChallenge else {
             return
         }
-        
-        guard let url = url else {
-            browserRegistrationChallenge.sender.cancel(browserRegistrationChallenge)
-            return
-        }
-        
-        browserRegistrationChallenge.sender.respond(with: url, challenge: browserRegistrationChallenge)
+        browserRegistrationChallenge.sender.respond(with: url, to: browserRegistrationChallenge)
     }
 
-    func handlePin(pin: String?) {
-        guard let createPinChallenge = self.createPinChallenge else { return }
+    func handleCancelFromBrowser() {
+        // FIXME: browserRegistrationChallenge is only set to nil when we finish or fail registration, so this will work but will need a refactor if the internal browser ever gets removed.
+        guard let browserRegistrationChallenge = browserRegistrationChallenge else {
+            return
+        }
+        browserRegistrationChallenge.sender.cancel(browserRegistrationChallenge)
+    }
 
-        if let _pin = pin {
-            createPinChallenge.sender.respond(withCreatedPin: _pin, challenge: createPinChallenge)
+    func handlePin(pin: String, completion: (Result<Void, FlutterError>) -> Void) {
+        guard let createPinChallenge = createPinChallenge else {
+            completion(.failure(FlutterError(.notInProgressPinCreation)))
+            return
+        }
+        createPinChallenge.sender.respond(with: pin, to: createPinChallenge)
+        completion(.success)
+    }
 
+    func cancelPinRegistration(completion: (Result<Void, FlutterError>) -> Void) {
+        guard let createPinChallenge = self.createPinChallenge else {
+            completion(.failure(FlutterError(.notInProgressPinCreation)))
+            return
+        }
+        createPinChallenge.sender.cancel(createPinChallenge)
+        completion(.success)
+    }
+
+    func handleDidReceivePinRegistrationChallenge(_ challenge: CreatePinChallenge) {
+        createPinChallenge = challenge
+        if let pinError = mapErrorFromPinChallenge(challenge) {
+            SwiftOneginiPlugin.flutterApi?.n2fPinNotAllowed(error: OWOneginiError(code: Int64(pinError.code), message: pinError.errorDescription)) {}
         } else {
-            createPinChallenge.sender.cancel(createPinChallenge)
+            // FIXME: we should be sending the pin length here.
+            SwiftOneginiPlugin.flutterApi?.n2fOpenPinCreation {}
         }
     }
 
-    fileprivate func mapErrorFromPinChallenge(_ challenge: ONGCreatePinChallenge) -> SdkError? {
-        if let error = challenge.error {
-            return ErrorMapper().mapError(error)
-        } else {
-            return nil
+    func handleDidFailToRegister() {
+        if createPinChallenge == nil && customRegistrationChallenge == nil && browserRegistrationChallenge == nil {
+            return
         }
+        createPinChallenge = nil
+        customRegistrationChallenge = nil
+        browserRegistrationChallenge = nil
+        SwiftOneginiPlugin.flutterApi?.n2fClosePinCreation {}
     }
 
-    private func sendCustomRegistrationNotification(_ event: CustomRegistrationNotification,_ data: Dictionary<String, Any?>?) {
-        customNotificationReceiver?.sendCustomRegistrationNotification(event, data)
+    func handleDidRegisterUser() {
+        createPinChallenge = nil
+        customRegistrationChallenge = nil
+        browserRegistrationChallenge = nil
+        SwiftOneginiPlugin.flutterApi?.n2fClosePinCreation {}
     }
-}
 
-//MARK:-
-extension RegistrationHandler : RegistrationConnectorToHandlerProtocol {
-    func signUp(_ providerId: String?, scopes: [String]?, completion: @escaping (Bool, ONGUserProfile?, ONGCustomInfo?, SdkError?) -> Void) {
-        signUpCompletion = completion
+    func registerUser(_ providerId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
+        let identityProvider = SharedUserClient.instance.identityProviders.first(where: { $0.identifier == providerId})
 
-        var identityProvider = identityProviders().first(where: { $0.identifier == providerId})
-        if let _providerId = providerId, identityProvider == nil {
-            identityProvider = ONGIdentityProvider()
-            identityProvider?.name = _providerId
-            identityProvider?.identifier = _providerId
+        if providerId != nil && identityProvider == nil {
+            completion(.failure(SdkError(OneWelcomeWrapperError.notFoundIdentityProvider).flutterError()))
+            return
         }
-        
-        ONGUserClient.sharedInstance().registerUser(with: identityProvider, scopes: scopes, delegate: self)
-    }
-    
-    func logout(completion: @escaping (SdkError?) -> Void) {
-        logoutUserHandler.logout(completion: completion)
-    }
-    
-    func deregister(profileId: String, completion: @escaping (SdkError?) -> Void) {
-        deregisterUserHandler.deregister(profileId: profileId, completion: completion)
+
+        let delegate = RegistrationDelegateImpl(registrationHandler: self, completion: completion)
+        SharedUserClient.instance.registerUserWith(identityProvider: identityProvider, scopes: scopes, delegate: delegate)
     }
 
-    func processRedirectURL(url: String, webSignInType: WebSignInType) {
+    func processRedirectURL(url: String, webSignInType: Int) -> Result<Void, FlutterError> {
+        let webSignInType = WebSignInType(rawValue: webSignInType)
         guard let url = URL.init(string: url) else {
-            signUpCompletion?(false, nil, nil, SdkError(.providedUrlIncorrect))
-            return
+            return .failure(FlutterError(.invalidUrl))
         }
-        
+
         if webSignInType != .insideApp && !UIApplication.shared.canOpenURL(url) {
-            signUpCompletion?(false, nil, nil, SdkError(.providedUrlIncorrect))
-            return
+            return .failure(FlutterError(.invalidUrl))
         }
-        
+
         presentBrowserUserRegistrationView(registrationUserURL: url, webSignInType: webSignInType)
-    }
-    
-    func submitCustomRegistrationSuccess(_ data: String?) {
-        guard let customRegistrationChallenge = self.customRegistrationChallenge else { return }
-        customRegistrationChallenge.sender.respond(withData: data, challenge: customRegistrationChallenge)
-    }
-    
-    func cancelCustomRegistration(_ error: String) {
-        guard let customRegistrationChallenge = self.customRegistrationChallenge else { return }
-        customRegistrationChallenge.sender.cancel(customRegistrationChallenge)
+        return .success
     }
 
-    func cancelBrowserRegistration() {
-        handleRedirectURL(url: nil)
+    func submitCustomRegistrationSuccess(_ data: String?, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        guard let customRegistrationChallenge = self.customRegistrationChallenge else {
+            completion(.failure(SdkError(OneWelcomeWrapperError.notInProgressCustomRegistration).flutterError()))
+            return
+        }
+        customRegistrationChallenge.sender.respond(with: data, to: customRegistrationChallenge)
+        completion(.success)
+    }
+
+    func cancelCustomRegistration(_ error: String, _ completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        guard let customRegistrationChallenge = self.customRegistrationChallenge else {
+            completion(.failure(SdkError(OneWelcomeWrapperError.actionNotAllowedCustomRegistrationCancel).flutterError()))
+            return
+        }
+        customRegistrationChallenge.sender.cancel(customRegistrationChallenge)
+        completion(.success)
+    }
+
+    func cancelBrowserRegistration(_ completion: @escaping (Result<Void, FlutterError>) -> Void) {
+        guard let browserRegistrationChallenge = self.browserRegistrationChallenge else {
+            completion(.failure(FlutterError(.actionNotAllowedBrowserRegistrationCancel)))
+            return
+        }
+        browserRegistrationChallenge.sender.cancel(browserRegistrationChallenge)
     }
 }
 
-extension RegistrationHandler: ONGRegistrationDelegate {
-    func userClient(_: ONGUserClient, didReceive challenge: ONGBrowserRegistrationChallenge) {
-        Logger.log("didReceive ONGBrowserRegistrationChallenge", sender:  self)
-        browserRegistrationChallenge = challenge
+class RegistrationDelegateImpl: RegistrationDelegate {
+    private let completion: ((Result<OWRegistrationResponse, FlutterError>) -> Void)
+    private let registrationHandler: RegistrationHandler
+
+    init(registrationHandler: RegistrationHandler, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
+        self.completion = completion
+        self.registrationHandler = registrationHandler
+    }
+
+    func userClient(_ userClient: UserClient, didReceiveCreatePinChallenge challenge: CreatePinChallenge) {
+        Logger.log("didReceivePinRegistrationChallenge ONGCreatePinChallenge", sender: self)
+        registrationHandler.handleDidReceivePinRegistrationChallenge(challenge)
+    }
+
+    func userClient(_ userClient: UserClient, didReceiveBrowserRegistrationChallenge challenge: BrowserRegistrationChallenge) {
+        Logger.log("didReceive ONGBrowserRegistrationChallenge", sender: self)
+        registrationHandler.browserRegistrationChallenge = challenge
         debugPrint(challenge.url)
 
-        var result = Dictionary<String, Any?>()
-        result["eventValue"] = challenge.url.absoluteString
-        
-        sendCustomRegistrationNotification(CustomRegistrationNotification.eventHandleRegisteredUrl, result)
+        SwiftOneginiPlugin.flutterApi?.n2fHandleRegisteredUrl(url: challenge.url.absoluteString) {}
     }
 
-    func userClient(_: ONGUserClient, didReceivePinRegistrationChallenge challenge: ONGCreatePinChallenge) {
-        Logger.log("didReceivePinRegistrationChallenge ONGCreatePinChallenge", sender: self)
-        createPinChallenge = challenge
-        let pinError = mapErrorFromPinChallenge(challenge)
-        pinHandler?.handleFlowUpdate(.create, pinError, receiver: self)
-    }
-
-    func userClient(_ userClient: ONGUserClient, didRegisterUser userProfile: ONGUserProfile, identityProvider: ONGIdentityProvider, info: ONGCustomInfo?) {
-        Logger.log("didRegisterUser", sender: self)
-        createPinChallenge = nil
-        customRegistrationChallenge = nil
-        pinHandler?.closeFlow()
-        signUpCompletion?(true, userProfile, info, nil)
-    }
-
-    func userClient(_: ONGUserClient, didReceiveCustomRegistrationInitChallenge challenge: ONGCustomRegistrationChallenge) {
+    func userClient(_ userClient: UserClient, didReceiveCustomRegistrationInitChallenge challenge: CustomRegistrationChallenge) {
         Logger.log("didReceiveCustomRegistrationInitChallenge ONGCustomRegistrationChallenge", sender: self)
-        customRegistrationChallenge = challenge
-        
-        let result = makeCustomInfoResponse(challenge)
-        
-        sendCustomRegistrationNotification(CustomRegistrationNotification.initRegistration, result)
+        registrationHandler.customRegistrationChallenge = challenge
+        SwiftOneginiPlugin.flutterApi?.n2fEventInitCustomRegistration(customInfo: toOWCustomInfo(challenge.info), providerId: challenge.identityProvider.identifier) {}
     }
 
-    func userClient(_: ONGUserClient, didReceiveCustomRegistrationFinish challenge: ONGCustomRegistrationChallenge) {
+    func userClient(_ userClient: UserClient, didReceiveCustomRegistrationFinishChallenge challenge: CustomRegistrationChallenge) {
         Logger.log("didReceiveCustomRegistrationFinish ONGCustomRegistrationChallenge", sender: self)
-        customRegistrationChallenge = challenge
-
-        var result = makeCustomInfoResponse(challenge)
-
-        sendCustomRegistrationNotification(CustomRegistrationNotification.finishRegistration, result)
+        registrationHandler.customRegistrationChallenge = challenge
+        SwiftOneginiPlugin.flutterApi?.n2fEventFinishCustomRegistration(customInfo: toOWCustomInfo(challenge.info), providerId: challenge.identityProvider.identifier) {}
     }
 
-    func userClient(_ userClient: ONGUserClient, didFailToRegisterWith identityProvider: ONGIdentityProvider, error: Error) {
-        Logger.log("didFailToRegisterWithError", sender: self)
-        createPinChallenge = nil
-        customRegistrationChallenge = nil
-        pinHandler?.closeFlow()
-
-        if error.code == ONGGenericError.actionCancelled.rawValue {
-            signUpCompletion?(false, nil, nil, SdkError(.registrationCancelled))
-        } else {
-            let mappedError = ErrorMapper().mapError(error)
-            signUpCompletion?(false, nil, nil, mappedError)
-        }
+    func userClientDidStartRegistration(_ userClient: UserClient) {
+        // Unused
     }
-    
-    private func makeCustomInfoResponse(_ challenge: ONGCustomRegistrationChallenge) -> Dictionary<String, Any?> {
-        var result = Dictionary<String, Any?>()
-        var customInfo = Dictionary<String, Any?>()
-        customInfo["status"] = challenge.info?.status
-        customInfo["data"] = challenge.info?.data
-        customInfo["providerId"] = challenge.identityProvider.identifier
-        result["eventValue"] = String.stringify(json: customInfo)
 
-        return result
+    func userClient(_ userClient: UserClient, didRegisterUser profile: UserProfile, with identityProvider: IdentityProvider, info: CustomInfo?) {
+        registrationHandler.handleDidRegisterUser()
+        completion(.success(
+            OWRegistrationResponse(userProfile: OWUserProfile(profile),
+                                   customInfo: toOWCustomInfo(info))))
+    }
+
+    func userClient(_ userClient: UserClient, didFailToRegisterUserWith identityProvider: IdentityProvider, error: Error) {
+        registrationHandler.handleDidFailToRegister()
+
+        let mappedError = ErrorMapper().mapError(error)
+        completion(.failure(FlutterError(mappedError)))
     }
 }
-    
 
+private func mapErrorFromPinChallenge(_ challenge: CreatePinChallenge) -> SdkError? {
+    if let error = challenge.error {
+        return ErrorMapper().mapError(error)
+    } else {
+        return nil
+    }
+}
