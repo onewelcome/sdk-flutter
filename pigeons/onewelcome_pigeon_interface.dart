@@ -122,6 +122,17 @@ class OWCustomIdentityProvider {
   OWCustomIdentityProvider(this.providerId, this.isTwoStep);
 }
 
+class OWPendingMobileAuthRequest {
+  String transactionId;
+  String userProfileId;
+  int date;
+  int timeToLive;
+  String message;
+  //userinfo Fixme: add userinfo
+  OWPendingMobileAuthRequest(this.transactionId, this.userProfileId, this.date,
+      this.timeToLive, this.message);
+}
+
 /// Flutter calls native
 @HostApi()
 abstract class UserClientApi {
@@ -249,6 +260,26 @@ abstract class UserClientApi {
   /// Browser Registration Callbacks
   @async
   void cancelBrowserRegistration();
+
+  // Mobile authentication with Push
+
+  @async
+  void enrollUserForMobileAuthWithPush();
+
+  @async
+  void isUserEnrolledForMobileAuthWithPush();
+
+  @async
+  void handleMobileAuthWithPushRequest();
+
+  @async
+  List<OWPendingMobileAuthRequest> getPendingMobileAuthWithPushRequests();
+
+  @async
+  void denyMobileAuthWithPushRequest(String requestId);
+
+  @async
+  void acceptMobileAuthWithPushRequest(String requestId);
 }
 
 @HostApi()

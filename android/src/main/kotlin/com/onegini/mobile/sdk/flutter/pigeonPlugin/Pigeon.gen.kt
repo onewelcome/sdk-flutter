@@ -349,6 +349,37 @@ data class OWCustomIdentityProvider (
   }
 }
 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class OWPendingMobileAuthRequest (
+  val transactionId: String,
+  val userProfileId: String,
+  val date: Long,
+  val timeToLive: Long,
+  val message: String
+
+) {
+  companion object {
+    @Suppress("UNCHECKED_CAST")
+    fun fromList(list: List<Any?>): OWPendingMobileAuthRequest {
+      val transactionId = list[0] as String
+      val userProfileId = list[1] as String
+      val date = list[2].let { if (it is Int) it.toLong() else it as Long }
+      val timeToLive = list[3].let { if (it is Int) it.toLong() else it as Long }
+      val message = list[4] as String
+      return OWPendingMobileAuthRequest(transactionId, userProfileId, date, timeToLive, message)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf<Any?>(
+      transactionId,
+      userProfileId,
+      date,
+      timeToLive,
+      message,
+    )
+  }
+}
+
 @Suppress("UNCHECKED_CAST")
 private object UserClientApiCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
@@ -380,10 +411,15 @@ private object UserClientApiCodec : StandardMessageCodec() {
       }
       133.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          OWRegistrationResponse.fromList(it)
+          OWPendingMobileAuthRequest.fromList(it)
         }
       }
       134.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          OWRegistrationResponse.fromList(it)
+        }
+      }
+      135.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           OWUserProfile.fromList(it)
         }
@@ -413,12 +449,16 @@ private object UserClientApiCodec : StandardMessageCodec() {
         stream.write(132)
         writeValue(stream, value.toList())
       }
-      is OWRegistrationResponse -> {
+      is OWPendingMobileAuthRequest -> {
         stream.write(133)
         writeValue(stream, value.toList())
       }
-      is OWUserProfile -> {
+      is OWRegistrationResponse -> {
         stream.write(134)
+        writeValue(stream, value.toList())
+      }
+      is OWUserProfile -> {
+        stream.write(135)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -474,6 +514,12 @@ interface UserClientApi {
   fun pinAcceptRegistrationRequest(pin: String, callback: (Result<Unit>) -> Unit)
   /** Browser Registration Callbacks */
   fun cancelBrowserRegistration(callback: (Result<Unit>) -> Unit)
+  fun enrollUserForMobileAuthWithPush(callback: (Result<Unit>) -> Unit)
+  fun isUserEnrolledForMobileAuthWithPush(callback: (Result<Unit>) -> Unit)
+  fun handleMobileAuthWithPushRequest(callback: (Result<Unit>) -> Unit)
+  fun getPendingMobileAuthWithPushRequests(callback: (Result<List<OWPendingMobileAuthRequest>>) -> Unit)
+  fun denyMobileAuthWithPushRequest(requestId: String, callback: (Result<Unit>) -> Unit)
+  fun acceptMobileAuthWithPushRequest(requestId: String, callback: (Result<Unit>) -> Unit)
 
   companion object {
     /** The codec used by UserClientApi. */
@@ -1139,6 +1185,113 @@ interface UserClientApi {
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             api.cancelBrowserRegistration() { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.enrollUserForMobileAuthWithPush", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            api.enrollUserForMobileAuthWithPush() { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.isUserEnrolledForMobileAuthWithPush", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            api.isUserEnrolledForMobileAuthWithPush() { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.handleMobileAuthWithPushRequest", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            api.handleMobileAuthWithPushRequest() { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.getPendingMobileAuthWithPushRequests", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            api.getPendingMobileAuthWithPushRequests() { result: Result<List<OWPendingMobileAuthRequest>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.denyMobileAuthWithPushRequest", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val requestIdArg = args[0] as String
+            api.denyMobileAuthWithPushRequest(requestIdArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.acceptMobileAuthWithPushRequest", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val requestIdArg = args[0] as String
+            api.acceptMobileAuthWithPushRequest(requestIdArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

@@ -328,6 +328,40 @@ struct OWCustomIdentityProvider {
   }
 }
 
+/// Generated class from Pigeon that represents data sent in messages.
+struct OWPendingMobileAuthRequest {
+  var transactionId: String
+  var userProfileId: String
+  var date: Int64
+  var timeToLive: Int64
+  var message: String
+
+  static func fromList(_ list: [Any]) -> OWPendingMobileAuthRequest? {
+    let transactionId = list[0] as! String
+    let userProfileId = list[1] as! String
+    let date = list[2] is Int64 ? list[2] as! Int64 : Int64(list[2] as! Int32)
+    let timeToLive = list[3] is Int64 ? list[3] as! Int64 : Int64(list[3] as! Int32)
+    let message = list[4] as! String
+
+    return OWPendingMobileAuthRequest(
+      transactionId: transactionId,
+      userProfileId: userProfileId,
+      date: date,
+      timeToLive: timeToLive,
+      message: message
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      transactionId,
+      userProfileId,
+      date,
+      timeToLive,
+      message,
+    ]
+  }
+}
+
 private class UserClientApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
@@ -342,8 +376,10 @@ private class UserClientApiCodecReader: FlutterStandardReader {
       case 132:
         return OWIdentityProvider.fromList(self.readValue() as! [Any])
       case 133:
-        return OWRegistrationResponse.fromList(self.readValue() as! [Any])
+        return OWPendingMobileAuthRequest.fromList(self.readValue() as! [Any])
       case 134:
+        return OWRegistrationResponse.fromList(self.readValue() as! [Any])
+      case 135:
         return OWUserProfile.fromList(self.readValue() as! [Any])
       default:
         return super.readValue(ofType: type)
@@ -368,11 +404,14 @@ private class UserClientApiCodecWriter: FlutterStandardWriter {
     } else if let value = value as? OWIdentityProvider {
       super.writeByte(132)
       super.writeValue(value.toList())
-    } else if let value = value as? OWRegistrationResponse {
+    } else if let value = value as? OWPendingMobileAuthRequest {
       super.writeByte(133)
       super.writeValue(value.toList())
-    } else if let value = value as? OWUserProfile {
+    } else if let value = value as? OWRegistrationResponse {
       super.writeByte(134)
+      super.writeValue(value.toList())
+    } else if let value = value as? OWUserProfile {
+      super.writeByte(135)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -440,6 +479,12 @@ protocol UserClientApi {
   func pinAcceptRegistrationRequest(pin: String, completion: @escaping (Result<Void, Error>) -> Void)
   /// Browser Registration Callbacks
   func cancelBrowserRegistration(completion: @escaping (Result<Void, Error>) -> Void)
+  func enrollUserForMobileAuthWithPush(completion: @escaping (Result<Void, Error>) -> Void)
+  func isUserEnrolledForMobileAuthWithPush(completion: @escaping (Result<Void, Error>) -> Void)
+  func handleMobileAuthWithPushRequest(completion: @escaping (Result<Void, Error>) -> Void)
+  func getPendingMobileAuthWithPushRequests(completion: @escaping (Result<[OWPendingMobileAuthRequest], Error>) -> Void)
+  func denyMobileAuthWithPushRequest(requestId: String, completion: @escaping (Result<Void, Error>) -> Void)
+  func acceptMobileAuthWithPushRequest(requestId: String, completion: @escaping (Result<Void, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -1038,6 +1083,100 @@ class UserClientApiSetup {
       }
     } else {
       cancelBrowserRegistrationChannel.setMessageHandler(nil)
+    }
+    let enrollUserForMobileAuthWithPushChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.enrollUserForMobileAuthWithPush", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      enrollUserForMobileAuthWithPushChannel.setMessageHandler { _, reply in
+        api.enrollUserForMobileAuthWithPush() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      enrollUserForMobileAuthWithPushChannel.setMessageHandler(nil)
+    }
+    let isUserEnrolledForMobileAuthWithPushChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.isUserEnrolledForMobileAuthWithPush", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      isUserEnrolledForMobileAuthWithPushChannel.setMessageHandler { _, reply in
+        api.isUserEnrolledForMobileAuthWithPush() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      isUserEnrolledForMobileAuthWithPushChannel.setMessageHandler(nil)
+    }
+    let handleMobileAuthWithPushRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.handleMobileAuthWithPushRequest", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      handleMobileAuthWithPushRequestChannel.setMessageHandler { _, reply in
+        api.handleMobileAuthWithPushRequest() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      handleMobileAuthWithPushRequestChannel.setMessageHandler(nil)
+    }
+    let getPendingMobileAuthWithPushRequestsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.getPendingMobileAuthWithPushRequests", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getPendingMobileAuthWithPushRequestsChannel.setMessageHandler { _, reply in
+        api.getPendingMobileAuthWithPushRequests() { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      getPendingMobileAuthWithPushRequestsChannel.setMessageHandler(nil)
+    }
+    let denyMobileAuthWithPushRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.denyMobileAuthWithPushRequest", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      denyMobileAuthWithPushRequestChannel.setMessageHandler { message, reply in
+        let args = message as! [Any]
+        let requestIdArg = args[0] as! String
+        api.denyMobileAuthWithPushRequest(requestId: requestIdArg) { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      denyMobileAuthWithPushRequestChannel.setMessageHandler(nil)
+    }
+    let acceptMobileAuthWithPushRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.acceptMobileAuthWithPushRequest", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      acceptMobileAuthWithPushRequestChannel.setMessageHandler { message, reply in
+        let args = message as! [Any]
+        let requestIdArg = args[0] as! String
+        api.acceptMobileAuthWithPushRequest(requestId: requestIdArg) { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      acceptMobileAuthWithPushRequestChannel.setMessageHandler(nil)
     }
   }
 }
