@@ -1325,12 +1325,14 @@ class UserClientApi {
     }
   }
 
-  Future<void> enrollUserForMobileAuthWithPush() async {
+  Future<void> enrollUserForMobileAuthWithPush(
+      String arg_registrationId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.enrollUserForMobileAuthWithPush',
         codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_registrationId]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
@@ -1347,12 +1349,13 @@ class UserClientApi {
     }
   }
 
-  Future<void> isUserEnrolledForMobileAuthWithPush() async {
+  Future<void> isUserEnrolledForMobileAuthWithPush(String arg_profileId) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.isUserEnrolledForMobileAuthWithPush',
         codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_profileId]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',

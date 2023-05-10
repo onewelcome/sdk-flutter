@@ -514,8 +514,8 @@ interface UserClientApi {
   fun pinAcceptRegistrationRequest(pin: String, callback: (Result<Unit>) -> Unit)
   /** Browser Registration Callbacks */
   fun cancelBrowserRegistration(callback: (Result<Unit>) -> Unit)
-  fun enrollUserForMobileAuthWithPush(callback: (Result<Unit>) -> Unit)
-  fun isUserEnrolledForMobileAuthWithPush(callback: (Result<Unit>) -> Unit)
+  fun enrollUserForMobileAuthWithPush(registrationId: String, callback: (Result<Unit>) -> Unit)
+  fun isUserEnrolledForMobileAuthWithPush(profileId: String, callback: (Result<Unit>) -> Unit)
   fun handleMobileAuthWithPushRequest(callback: (Result<Unit>) -> Unit)
   fun getPendingMobileAuthWithPushRequests(callback: (Result<List<OWPendingMobileAuthRequest>>) -> Unit)
   fun denyMobileAuthWithPushRequest(requestId: String, callback: (Result<Unit>) -> Unit)
@@ -1200,8 +1200,10 @@ interface UserClientApi {
       run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.enrollUserForMobileAuthWithPush", codec)
         if (api != null) {
-          channel.setMessageHandler { _, reply ->
-            api.enrollUserForMobileAuthWithPush() { result: Result<Unit> ->
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val registrationIdArg = args[0] as String
+            api.enrollUserForMobileAuthWithPush(registrationIdArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -1217,8 +1219,10 @@ interface UserClientApi {
       run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.isUserEnrolledForMobileAuthWithPush", codec)
         if (api != null) {
-          channel.setMessageHandler { _, reply ->
-            api.isUserEnrolledForMobileAuthWithPush() { result: Result<Unit> ->
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val profileIdArg = args[0] as String
+            api.isUserEnrolledForMobileAuthWithPush(profileIdArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

@@ -479,8 +479,8 @@ protocol UserClientApi {
   func pinAcceptRegistrationRequest(pin: String, completion: @escaping (Result<Void, Error>) -> Void)
   /// Browser Registration Callbacks
   func cancelBrowserRegistration(completion: @escaping (Result<Void, Error>) -> Void)
-  func enrollUserForMobileAuthWithPush(completion: @escaping (Result<Void, Error>) -> Void)
-  func isUserEnrolledForMobileAuthWithPush(completion: @escaping (Result<Void, Error>) -> Void)
+  func enrollUserForMobileAuthWithPush(registrationId: String, completion: @escaping (Result<Void, Error>) -> Void)
+  func isUserEnrolledForMobileAuthWithPush(profileId: String, completion: @escaping (Result<Void, Error>) -> Void)
   func handleMobileAuthWithPushRequest(completion: @escaping (Result<Void, Error>) -> Void)
   func getPendingMobileAuthWithPushRequests(completion: @escaping (Result<[OWPendingMobileAuthRequest], Error>) -> Void)
   func denyMobileAuthWithPushRequest(requestId: String, completion: @escaping (Result<Void, Error>) -> Void)
@@ -1086,8 +1086,10 @@ class UserClientApiSetup {
     }
     let enrollUserForMobileAuthWithPushChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.enrollUserForMobileAuthWithPush", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      enrollUserForMobileAuthWithPushChannel.setMessageHandler { _, reply in
-        api.enrollUserForMobileAuthWithPush() { result in
+      enrollUserForMobileAuthWithPushChannel.setMessageHandler { message, reply in
+        let args = message as! [Any]
+        let registrationIdArg = args[0] as! String
+        api.enrollUserForMobileAuthWithPush(registrationId: registrationIdArg) { result in
           switch result {
             case .success:
               reply(wrapResult(nil))
@@ -1101,8 +1103,10 @@ class UserClientApiSetup {
     }
     let isUserEnrolledForMobileAuthWithPushChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.isUserEnrolledForMobileAuthWithPush", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      isUserEnrolledForMobileAuthWithPushChannel.setMessageHandler { _, reply in
-        api.isUserEnrolledForMobileAuthWithPush() { result in
+      isUserEnrolledForMobileAuthWithPushChannel.setMessageHandler { message, reply in
+        let args = message as! [Any]
+        let profileIdArg = args[0] as! String
+        api.isUserEnrolledForMobileAuthWithPush(profileId: profileIdArg) { result in
           switch result {
             case .success:
               reply(wrapResult(nil))

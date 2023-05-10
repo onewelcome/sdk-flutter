@@ -264,10 +264,10 @@ abstract class UserClientApi {
   // Mobile authentication with Push
 
   @async
-  void enrollUserForMobileAuthWithPush();
+  void enrollUserForMobileAuthWithPush(String registrationId);
 
   @async
-  void isUserEnrolledForMobileAuthWithPush();
+  void isUserEnrolledForMobileAuthWithPush(String profileId);
 
   @async
   void handleMobileAuthWithPushRequest();
