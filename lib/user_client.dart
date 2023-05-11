@@ -134,6 +134,32 @@ class UserClient {
       String profileId, List<String>? scopes) async {
     await api.authenticateUserImplicitly(profileId, scopes);
   }
+
+  Future<void> enrollUserForMobileAuthWithPush(String registrationId) async {
+    await api.enrollUserForMobileAuthWithPush(registrationId);
+  }
+
+  Future<void> isUserEnrolledForMobileAuthWithPush(String profileId) async {
+    await api.isUserEnrolledForMobileAuthWithPush(profileId);
+  }
+
+  Future<void> handleMobileAuthWithPushRequest() async {
+    await api.handleMobileAuthWithPushRequest();
+  }
+
+  Future<List<OWPendingMobileAuthRequest>>
+      getPendingMobileAuthWithPushRequests() async {
+    final pushes = await api.getPendingMobileAuthWithPushRequests();
+    return pushes.whereType<OWPendingMobileAuthRequest>().toList();
+  }
+
+  Future<void> denyMobileAuthWithPushRequest(String requestId) async {
+    await api.denyMobileAuthWithPushRequest(requestId);
+  }
+
+  Future<void> acceptMobileAuthWithPushRequest(String requestId) async {
+    await api.acceptMobileAuthWithPushRequest(requestId);
+  }
 }
 
 // TODO We could also get rid of this but leave this for now.
