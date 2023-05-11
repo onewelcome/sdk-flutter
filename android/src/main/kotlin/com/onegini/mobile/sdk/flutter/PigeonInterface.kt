@@ -38,6 +38,7 @@ import com.onegini.mobile.sdk.flutter.useCases.GetPreferredAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetRedirectUrlUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfilesUseCase
 import com.onegini.mobile.sdk.flutter.useCases.HandleMobileAuthWithOtpUseCase
+import com.onegini.mobile.sdk.flutter.useCases.HandleMobileAuthWithPushUseCase
 import com.onegini.mobile.sdk.flutter.useCases.HandleRegisteredUrlUseCase
 import com.onegini.mobile.sdk.flutter.useCases.IsUserEnrolledForMobileAuthWithPushUseCase
 import com.onegini.mobile.sdk.flutter.useCases.LogoutUseCase
@@ -83,6 +84,9 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
 
   @Inject
   lateinit var cancelBrowserRegistrationUseCase: CancelBrowserRegistrationUseCase
+
+  @Inject
+  lateinit var handleMobileAuthWithPushUseCase: HandleMobileAuthWithPushUseCase
 
   @Inject
   lateinit var getAppToWebSingleSignOnUseCase: GetAppToWebSingleSignOnUseCase
@@ -349,8 +353,8 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
     callback(isUserEnrolledForMobileAuthWithPushUseCase(profileId));
   }
 
-  override fun handleMobileAuthWithPushRequest(callback: (Result<Unit>) -> Unit) {
-    TODO("Not yet implemented")
+  override fun handleMobileAuthWithPushRequest(request: OWPendingMobileAuthRequest, callback: (Result<Unit>) -> Unit) {
+    handleMobileAuthWithPushUseCase(request, callback)
   }
 
   override fun getPendingMobileAuthWithPushRequests(callback: (Result<List<OWPendingMobileAuthRequest>>) -> Unit) {
