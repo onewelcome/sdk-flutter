@@ -1,5 +1,5 @@
 
--keep class com.onegini.mobile.onegini_example.SecurityController { *; }
+-keep class com.onegini.mobile.flutterExample.SecurityController { *; }
 -keep class io.flutter.app.* { *; }
 -keep class io.flutter.plugin.*  { *; }
 -keep class io.flutter.util.*  { *; }

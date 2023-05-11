@@ -1,4 +1,4 @@
-package com.onegini.mobile.onegini_example
+package com.onegini.mobile.flutterExample
 
 import android.content.Intent
 import com.onegini.mobile.sdk.flutter.handlers.BrowserRegistrationRequestHandler

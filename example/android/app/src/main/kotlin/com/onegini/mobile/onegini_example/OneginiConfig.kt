@@ -1,8 +1,7 @@
-package com.onegini.mobile.onegini_example
+package com.onegini.mobile.flutterExample
 
 import android.os.Build
 import com.onegini.mobile.sdk.android.model.OneginiClientConfigModel
-
 
 class OneginiConfigModel : OneginiClientConfigModel {
 

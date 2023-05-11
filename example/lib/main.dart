@@ -54,9 +54,9 @@ class _BodyWidgetState extends State<BodyWidget> {
     try {
       await Onegini.instance.startApplication(
           securityControllerClassName:
-              "com.onegini.mobile.onegini_example.SecurityController",
+              "com.onegini.mobile.flutterExample.SecurityController",
           configModelClassName:
-              "com.onegini.mobile.onegini_example.OneginiConfigModel",
+              "com.onegini.mobile.flutterExample.OneginiConfigModel",
           customIdentityProviderConfigs: [
             OWCustomIdentityProvider(
                 providerId: "2-way-otp-api", isTwoStep: true),

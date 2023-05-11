@@ -1,4 +1,4 @@
-package com.onegini.mobile.onegini_example
+package com.onegini.mobile.flutterExample
 
 object SecurityController {
     const val debugDetection = false
