@@ -362,6 +362,40 @@ struct OWMobileAuthWithPushRequest {
   }
 }
 
+/// Generated class from Pigeon that represents data sent in messages.
+struct OWMobileAuthRequest {
+  var message: String
+  var type: String
+  var userProfileId: String
+  var transactionId: String
+  var signingData: String? = nil
+
+  static func fromList(_ list: [Any]) -> OWMobileAuthRequest? {
+    let message = list[0] as! String
+    let type = list[1] as! String
+    let userProfileId = list[2] as! String
+    let transactionId = list[3] as! String
+    let signingData: String? = nilOrValue(list[4])
+
+    return OWMobileAuthRequest(
+      message: message,
+      type: type,
+      userProfileId: userProfileId,
+      transactionId: transactionId,
+      signingData: signingData
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      message,
+      type,
+      userProfileId,
+      transactionId,
+      signingData,
+    ]
+  }
+}
+
 private class UserClientApiCodecReader: FlutterStandardReader {
   override func readValue(ofType type: UInt8) -> Any? {
     switch type {
@@ -1266,6 +1300,8 @@ private class NativeCallFlutterApiCodecReader: FlutterStandardReader {
       case 129:
         return OWCustomInfo.fromList(self.readValue() as! [Any])
       case 130:
+        return OWMobileAuthRequest.fromList(self.readValue() as! [Any])
+      case 131:
         return OWOneginiError.fromList(self.readValue() as! [Any])
       default:
         return super.readValue(ofType: type)
@@ -1281,8 +1317,11 @@ private class NativeCallFlutterApiCodecWriter: FlutterStandardWriter {
     } else if let value = value as? OWCustomInfo {
       super.writeByte(129)
       super.writeValue(value.toList())
-    } else if let value = value as? OWOneginiError {
+    } else if let value = value as? OWMobileAuthRequest {
       super.writeByte(130)
+      super.writeValue(value.toList())
+    } else if let value = value as? OWOneginiError {
+      super.writeByte(131)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -1374,6 +1413,20 @@ class NativeCallFlutterApi {
   /// Called to close OTP authentication.
   func n2fCloseAuthOtp(completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fCloseAuthOtp", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Called when Mobile Authentication with Push has started
+  func n2fStartMobileAuthPush(request requestArg: OWMobileAuthRequest, completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fStartMobileAuthPush", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([requestArg] as [Any?]) { _ in
+      completion()
+    }
+  }
+  /// Called when Mobile Authentication with Push has finished, called on success or error
+  func n2fFinishMobileAuthPush(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fFinishMobileAuthPush", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage(nil) { _ in
       completion()
     }

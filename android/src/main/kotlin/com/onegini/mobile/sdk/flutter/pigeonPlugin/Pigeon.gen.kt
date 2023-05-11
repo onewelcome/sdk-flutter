@@ -380,6 +380,37 @@ data class OWMobileAuthWithPushRequest (
   }
 }
 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class OWMobileAuthRequest (
+  val message: String,
+  val type: String,
+  val userProfileId: String,
+  val transactionId: String,
+  val signingData: String? = null
+
+) {
+  companion object {
+    @Suppress("UNCHECKED_CAST")
+    fun fromList(list: List<Any?>): OWMobileAuthRequest {
+      val message = list[0] as String
+      val type = list[1] as String
+      val userProfileId = list[2] as String
+      val transactionId = list[3] as String
+      val signingData = list[4] as String?
+      return OWMobileAuthRequest(message, type, userProfileId, transactionId, signingData)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf<Any?>(
+      message,
+      type,
+      userProfileId,
+      transactionId,
+      signingData,
+    )
+  }
+}
+
 @Suppress("UNCHECKED_CAST")
 private object UserClientApiCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
@@ -1397,6 +1428,11 @@ private object NativeCallFlutterApiCodec : StandardMessageCodec() {
       }
       130.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
+          OWMobileAuthRequest.fromList(it)
+        }
+      }
+      131.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
           OWOneginiError.fromList(it)
         }
       }
@@ -1413,8 +1449,12 @@ private object NativeCallFlutterApiCodec : StandardMessageCodec() {
         stream.write(129)
         writeValue(stream, value.toList())
       }
-      is OWOneginiError -> {
+      is OWMobileAuthRequest -> {
         stream.write(130)
+        writeValue(stream, value.toList())
+      }
+      is OWOneginiError -> {
+        stream.write(131)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -1494,6 +1534,20 @@ class NativeCallFlutterApi(private val binaryMessenger: BinaryMessenger) {
   /** Called to close OTP authentication. */
   fun n2fCloseAuthOtp(callback: () -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fCloseAuthOtp", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /** Called when Mobile Authentication with Push has started */
+  fun n2fStartMobileAuthPush(requestArg: OWMobileAuthRequest, callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fStartMobileAuthPush", codec)
+    channel.send(listOf(requestArg)) {
+      callback()
+    }
+  }
+  /** Called when Mobile Authentication with Push has finished, called on success or error */
+  fun n2fFinishMobileAuthPush(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fFinishMobileAuthPush", codec)
     channel.send(null) {
       callback()
     }

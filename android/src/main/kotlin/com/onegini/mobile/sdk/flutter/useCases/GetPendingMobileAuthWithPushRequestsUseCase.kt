@@ -4,6 +4,7 @@ import com.onegini.mobile.sdk.android.handlers.OneginiPendingMobileAuthWithPushR
 import com.onegini.mobile.sdk.android.handlers.error.OneginiPendingMobileAuthWithPushRequestError
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
 import com.onegini.mobile.sdk.flutter.OneginiSDK
+import com.onegini.mobile.sdk.flutter.extensions.toFlutter
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWMobileAuthWithPushRequest
 import javax.inject.Inject
@@ -15,13 +16,7 @@ class GetPendingMobileAuthWithPushRequestsUseCase @Inject constructor(private va
       override fun onSuccess(mobileAuthWithPushRequests: MutableSet<OneginiMobileAuthWithPushRequest>) {
         callback(
           Result.success(mobileAuthWithPushRequests.map { item ->
-            OWMobileAuthWithPushRequest(
-              transactionId = item.transactionId,
-              userProfileId = item.userProfileId,
-              date = item.timestamp,
-              timeToLive = item.timeToLiveSeconds.toLong(),
-              message = item.message,
-            )
+            item.toFlutter()
           }.toList())
         )
       }

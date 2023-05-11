@@ -392,6 +392,47 @@ class OWMobileAuthWithPushRequest {
   }
 }
 
+class OWMobileAuthRequest {
+  OWMobileAuthRequest({
+    required this.message,
+    required this.type,
+    required this.userProfileId,
+    required this.transactionId,
+    this.signingData,
+  });
+
+  String message;
+
+  String type;
+
+  String userProfileId;
+
+  String transactionId;
+
+  String? signingData;
+
+  Object encode() {
+    return <Object?>[
+      message,
+      type,
+      userProfileId,
+      transactionId,
+      signingData,
+    ];
+  }
+
+  static OWMobileAuthRequest decode(Object result) {
+    result as List<Object?>;
+    return OWMobileAuthRequest(
+      message: result[0]! as String,
+      type: result[1]! as String,
+      userProfileId: result[2]! as String,
+      transactionId: result[3]! as String,
+      signingData: result[4] as String?,
+    );
+  }
+}
+
 class _UserClientApiCodec extends StandardMessageCodec {
   const _UserClientApiCodec();
   @override
@@ -1548,8 +1589,11 @@ class _NativeCallFlutterApiCodec extends StandardMessageCodec {
     } else if (value is OWCustomInfo) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is OWOneginiError) {
+    } else if (value is OWMobileAuthRequest) {
       buffer.putUint8(130);
+      writeValue(buffer, value.encode());
+    } else if (value is OWOneginiError) {
+      buffer.putUint8(131);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -1564,6 +1608,8 @@ class _NativeCallFlutterApiCodec extends StandardMessageCodec {
       case 129:
         return OWCustomInfo.decode(readValue(buffer)!);
       case 130:
+        return OWMobileAuthRequest.decode(readValue(buffer)!);
+      case 131:
         return OWOneginiError.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -1602,6 +1648,12 @@ abstract class NativeCallFlutterApi {
 
   /// Called to close OTP authentication.
   void n2fCloseAuthOtp();
+
+  /// Called when Mobile Authentication with Push has started
+  void n2fStartMobileAuthPush(OWMobileAuthRequest request);
+
+  /// Called when Mobile Authentication with Push has finished, called on success or error
+  void n2fFinishMobileAuthPush();
 
   /// Called to open fingerprint screen.
   void n2fOpenFingerprintScreen();
@@ -1770,6 +1822,42 @@ abstract class NativeCallFlutterApi {
         channel.setMessageHandler((Object? message) async {
           // ignore message
           api.n2fCloseAuthOtp();
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fStartMobileAuthPush',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          assert(message != null,
+              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fStartMobileAuthPush was null.');
+          final List<Object?> args = (message as List<Object?>?)!;
+          final OWMobileAuthRequest? arg_request =
+              (args[0] as OWMobileAuthRequest?);
+          assert(arg_request != null,
+              'Argument for dev.flutter.pigeon.NativeCallFlutterApi.n2fStartMobileAuthPush was null, expected non-null OWMobileAuthRequest.');
+          api.n2fStartMobileAuthPush(arg_request!);
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fFinishMobileAuthPush',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          api.n2fFinishMobileAuthPush();
           return;
         });
       }

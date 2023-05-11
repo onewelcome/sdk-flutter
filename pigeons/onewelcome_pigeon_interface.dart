@@ -133,6 +133,17 @@ class OWMobileAuthWithPushRequest {
       this.timeToLive, this.message);
 }
 
+class OWMobileAuthRequest {
+  String message;
+  String type;
+  String userProfileId;
+  String transactionId;
+  String? signingData;
+  //userinfo Fixme: add userinfo
+  OWMobileAuthRequest(this.message, this.type, this.userProfileId,
+      this.transactionId, this.signingData);
+}
+
 /// Flutter calls native
 @HostApi()
 abstract class UserClientApi {
@@ -323,6 +334,13 @@ abstract class NativeCallFlutterApi {
 
   /// Called to close OTP authentication.
   void n2fCloseAuthOtp();
+
+  // Push Mobile Authentication
+  /// Called when Mobile Authentication with Push has started
+  void n2fStartMobileAuthPush(OWMobileAuthRequest request);
+
+  /// Called when Mobile Authentication with Push has finished, called on success or error
+  void n2fFinishMobileAuthPush();
 
   // Fingerprint Authentication
   /// Called to open fingerprint screen.

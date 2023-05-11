@@ -12,6 +12,10 @@ enum OWAction {
   openAuthOtp, // Called to open OTP authentication screen
   closeAuthOtp, // Called to close OTP authentication screen
 
+  // Push Mobile Authentication
+  startPushAuth,
+  finishPushAuth,
+
   // Pin Creation
   openPinCreation, // Called to open pin registration screen.
   closePinCreation, // Called to open pin registration screen.
@@ -67,6 +71,11 @@ extension OWActionExtension on OWAction {
         return "openAuthOtp";
       case OWAction.closeAuthOtp:
         return "closeAuthOtp";
+      // Push Mobile Authentication
+      case OWAction.startPushAuth:
+        return "startPushAuth";
+      case OWAction.finishPushAuth:
+        return "finishPushAuth";
       // Custom Registration
       case OWAction.initCustomRegistration:
         return "initCustomRegistration";
