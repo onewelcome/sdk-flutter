@@ -350,7 +350,7 @@ data class OWCustomIdentityProvider (
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class OWPendingMobileAuthRequest (
+data class OWMobileAuthWithPushRequest (
   val transactionId: String,
   val userProfileId: String,
   val date: Long,
@@ -360,13 +360,13 @@ data class OWPendingMobileAuthRequest (
 ) {
   companion object {
     @Suppress("UNCHECKED_CAST")
-    fun fromList(list: List<Any?>): OWPendingMobileAuthRequest {
+    fun fromList(list: List<Any?>): OWMobileAuthWithPushRequest {
       val transactionId = list[0] as String
       val userProfileId = list[1] as String
       val date = list[2].let { if (it is Int) it.toLong() else it as Long }
       val timeToLive = list[3].let { if (it is Int) it.toLong() else it as Long }
       val message = list[4] as String
-      return OWPendingMobileAuthRequest(transactionId, userProfileId, date, timeToLive, message)
+      return OWMobileAuthWithPushRequest(transactionId, userProfileId, date, timeToLive, message)
     }
   }
   fun toList(): List<Any?> {
@@ -411,7 +411,7 @@ private object UserClientApiCodec : StandardMessageCodec() {
       }
       133.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          OWPendingMobileAuthRequest.fromList(it)
+          OWMobileAuthWithPushRequest.fromList(it)
         }
       }
       134.toByte() -> {
@@ -449,7 +449,7 @@ private object UserClientApiCodec : StandardMessageCodec() {
         stream.write(132)
         writeValue(stream, value.toList())
       }
-      is OWPendingMobileAuthRequest -> {
+      is OWMobileAuthWithPushRequest -> {
         stream.write(133)
         writeValue(stream, value.toList())
       }
@@ -516,8 +516,8 @@ interface UserClientApi {
   fun cancelBrowserRegistration(callback: (Result<Unit>) -> Unit)
   fun enrollUserForMobileAuthWithPush(registrationId: String, callback: (Result<Unit>) -> Unit)
   fun isUserEnrolledForMobileAuthWithPush(profileId: String, callback: (Result<Unit>) -> Unit)
-  fun handleMobileAuthWithPushRequest(request: OWPendingMobileAuthRequest, callback: (Result<Unit>) -> Unit)
-  fun getPendingMobileAuthWithPushRequests(callback: (Result<List<OWPendingMobileAuthRequest>>) -> Unit)
+  fun handleMobileAuthWithPushRequest(request: OWMobileAuthWithPushRequest, callback: (Result<Unit>) -> Unit)
+  fun getPendingMobileAuthWithPushRequests(callback: (Result<List<OWMobileAuthWithPushRequest>>) -> Unit)
   fun denyMobileAuthWithPushRequest(requestId: String, callback: (Result<Unit>) -> Unit)
   fun acceptMobileAuthWithPushRequest(requestId: String, callback: (Result<Unit>) -> Unit)
 
@@ -1240,7 +1240,7 @@ interface UserClientApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val requestArg = args[0] as OWPendingMobileAuthRequest
+            val requestArg = args[0] as OWMobileAuthWithPushRequest
             api.handleMobileAuthWithPushRequest(requestArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
@@ -1258,7 +1258,7 @@ interface UserClientApi {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.getPendingMobileAuthWithPushRequests", codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
-            api.getPendingMobileAuthWithPushRequests() { result: Result<List<OWPendingMobileAuthRequest>> ->
+            api.getPendingMobileAuthWithPushRequests() { result: Result<List<OWMobileAuthWithPushRequest>> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

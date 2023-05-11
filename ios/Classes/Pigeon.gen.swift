@@ -329,21 +329,21 @@ struct OWCustomIdentityProvider {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct OWPendingMobileAuthRequest {
+struct OWMobileAuthWithPushRequest {
   var transactionId: String
   var userProfileId: String
   var date: Int64
   var timeToLive: Int64
   var message: String
 
-  static func fromList(_ list: [Any]) -> OWPendingMobileAuthRequest? {
+  static func fromList(_ list: [Any]) -> OWMobileAuthWithPushRequest? {
     let transactionId = list[0] as! String
     let userProfileId = list[1] as! String
     let date = list[2] is Int64 ? list[2] as! Int64 : Int64(list[2] as! Int32)
     let timeToLive = list[3] is Int64 ? list[3] as! Int64 : Int64(list[3] as! Int32)
     let message = list[4] as! String
 
-    return OWPendingMobileAuthRequest(
+    return OWMobileAuthWithPushRequest(
       transactionId: transactionId,
       userProfileId: userProfileId,
       date: date,
@@ -376,7 +376,7 @@ private class UserClientApiCodecReader: FlutterStandardReader {
       case 132:
         return OWIdentityProvider.fromList(self.readValue() as! [Any])
       case 133:
-        return OWPendingMobileAuthRequest.fromList(self.readValue() as! [Any])
+        return OWMobileAuthWithPushRequest.fromList(self.readValue() as! [Any])
       case 134:
         return OWRegistrationResponse.fromList(self.readValue() as! [Any])
       case 135:
@@ -404,7 +404,7 @@ private class UserClientApiCodecWriter: FlutterStandardWriter {
     } else if let value = value as? OWIdentityProvider {
       super.writeByte(132)
       super.writeValue(value.toList())
-    } else if let value = value as? OWPendingMobileAuthRequest {
+    } else if let value = value as? OWMobileAuthWithPushRequest {
       super.writeByte(133)
       super.writeValue(value.toList())
     } else if let value = value as? OWRegistrationResponse {
@@ -481,8 +481,8 @@ protocol UserClientApi {
   func cancelBrowserRegistration(completion: @escaping (Result<Void, Error>) -> Void)
   func enrollUserForMobileAuthWithPush(registrationId: String, completion: @escaping (Result<Void, Error>) -> Void)
   func isUserEnrolledForMobileAuthWithPush(profileId: String, completion: @escaping (Result<Void, Error>) -> Void)
-  func handleMobileAuthWithPushRequest(request: OWPendingMobileAuthRequest, completion: @escaping (Result<Void, Error>) -> Void)
-  func getPendingMobileAuthWithPushRequests(completion: @escaping (Result<[OWPendingMobileAuthRequest], Error>) -> Void)
+  func handleMobileAuthWithPushRequest(request: OWMobileAuthWithPushRequest, completion: @escaping (Result<Void, Error>) -> Void)
+  func getPendingMobileAuthWithPushRequests(completion: @escaping (Result<[OWMobileAuthWithPushRequest], Error>) -> Void)
   func denyMobileAuthWithPushRequest(requestId: String, completion: @escaping (Result<Void, Error>) -> Void)
   func acceptMobileAuthWithPushRequest(requestId: String, completion: @escaping (Result<Void, Error>) -> Void)
 }
@@ -1122,7 +1122,7 @@ class UserClientApiSetup {
     if let api = api {
       handleMobileAuthWithPushRequestChannel.setMessageHandler { message, reply in
         let args = message as! [Any]
-        let requestArg = args[0] as! OWPendingMobileAuthRequest
+        let requestArg = args[0] as! OWMobileAuthWithPushRequest
         api.handleMobileAuthWithPushRequest(request: requestArg) { result in
           switch result {
             case .success:

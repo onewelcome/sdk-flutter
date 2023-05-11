@@ -7,7 +7,7 @@ import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticatorType
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomIdentityProvider
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWIdentityProvider
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWPendingMobileAuthRequest
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWMobileAuthWithPushRequest
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestDetails
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestResponse
@@ -353,11 +353,11 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
     callback(isUserEnrolledForMobileAuthWithPushUseCase(profileId));
   }
 
-  override fun handleMobileAuthWithPushRequest(request: OWPendingMobileAuthRequest, callback: (Result<Unit>) -> Unit) {
+  override fun handleMobileAuthWithPushRequest(request: OWMobileAuthWithPushRequest, callback: (Result<Unit>) -> Unit) {
     handleMobileAuthWithPushUseCase(request, callback)
   }
 
-  override fun getPendingMobileAuthWithPushRequests(callback: (Result<List<OWPendingMobileAuthRequest>>) -> Unit) {
+  override fun getPendingMobileAuthWithPushRequests(callback: (Result<List<OWMobileAuthWithPushRequest>>) -> Unit) {
     getPendingMobileAuthWithPushRequestsUseCase(callback)
   }
 

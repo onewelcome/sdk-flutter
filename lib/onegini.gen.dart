@@ -351,8 +351,8 @@ class OWCustomIdentityProvider {
   }
 }
 
-class OWPendingMobileAuthRequest {
-  OWPendingMobileAuthRequest({
+class OWMobileAuthWithPushRequest {
+  OWMobileAuthWithPushRequest({
     required this.transactionId,
     required this.userProfileId,
     required this.date,
@@ -380,9 +380,9 @@ class OWPendingMobileAuthRequest {
     ];
   }
 
-  static OWPendingMobileAuthRequest decode(Object result) {
+  static OWMobileAuthWithPushRequest decode(Object result) {
     result as List<Object?>;
-    return OWPendingMobileAuthRequest(
+    return OWMobileAuthWithPushRequest(
       transactionId: result[0]! as String,
       userProfileId: result[1]! as String,
       date: result[2]! as int,
@@ -411,7 +411,7 @@ class _UserClientApiCodec extends StandardMessageCodec {
     } else if (value is OWIdentityProvider) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is OWPendingMobileAuthRequest) {
+    } else if (value is OWMobileAuthWithPushRequest) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
     } else if (value is OWRegistrationResponse) {
@@ -439,7 +439,7 @@ class _UserClientApiCodec extends StandardMessageCodec {
       case 132:
         return OWIdentityProvider.decode(readValue(buffer)!);
       case 133:
-        return OWPendingMobileAuthRequest.decode(readValue(buffer)!);
+        return OWMobileAuthWithPushRequest.decode(readValue(buffer)!);
       case 134:
         return OWRegistrationResponse.decode(readValue(buffer)!);
       case 135:
@@ -1373,7 +1373,7 @@ class UserClientApi {
   }
 
   Future<void> handleMobileAuthWithPushRequest(
-      OWPendingMobileAuthRequest arg_request) async {
+      OWMobileAuthWithPushRequest arg_request) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.handleMobileAuthWithPushRequest',
         codec,
@@ -1396,7 +1396,7 @@ class UserClientApi {
     }
   }
 
-  Future<List<OWPendingMobileAuthRequest?>>
+  Future<List<OWMobileAuthWithPushRequest?>>
       getPendingMobileAuthWithPushRequests() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.getPendingMobileAuthWithPushRequests',
@@ -1421,7 +1421,7 @@ class UserClientApi {
       );
     } else {
       return (replyList[0] as List<Object?>?)!
-          .cast<OWPendingMobileAuthRequest?>();
+          .cast<OWMobileAuthWithPushRequest?>();
     }
   }
 

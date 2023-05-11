@@ -122,14 +122,14 @@ class OWCustomIdentityProvider {
   OWCustomIdentityProvider(this.providerId, this.isTwoStep);
 }
 
-class OWPendingMobileAuthRequest {
+class OWMobileAuthWithPushRequest {
   String transactionId;
   String userProfileId;
   int date;
   int timeToLive;
   String message;
   //userinfo Fixme: add userinfo
-  OWPendingMobileAuthRequest(this.transactionId, this.userProfileId, this.date,
+  OWMobileAuthWithPushRequest(this.transactionId, this.userProfileId, this.date,
       this.timeToLive, this.message);
 }
 
@@ -270,10 +270,10 @@ abstract class UserClientApi {
   void isUserEnrolledForMobileAuthWithPush(String profileId);
 
   @async
-  void handleMobileAuthWithPushRequest(OWPendingMobileAuthRequest request);
+  void handleMobileAuthWithPushRequest(OWMobileAuthWithPushRequest request);
 
   @async
-  List<OWPendingMobileAuthRequest> getPendingMobileAuthWithPushRequests();
+  List<OWMobileAuthWithPushRequest> getPendingMobileAuthWithPushRequests();
 
   @async
   void denyMobileAuthWithPushRequest(String requestId);

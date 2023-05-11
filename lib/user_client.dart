@@ -144,14 +144,14 @@ class UserClient {
   }
 
   Future<void> handleMobileAuthWithPushRequest(
-      OWPendingMobileAuthRequest request) async {
+      OWMobileAuthWithPushRequest request) async {
     await api.handleMobileAuthWithPushRequest(request);
   }
 
-  Future<List<OWPendingMobileAuthRequest>>
+  Future<List<OWMobileAuthWithPushRequest>>
       getPendingMobileAuthWithPushRequests() async {
     final pushes = await api.getPendingMobileAuthWithPushRequests();
-    return pushes.whereType<OWPendingMobileAuthRequest>().toList();
+    return pushes.whereType<OWMobileAuthWithPushRequest>().toList();
   }
 
   Future<void> denyMobileAuthWithPushRequest(String requestId) async {
