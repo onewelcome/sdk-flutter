@@ -516,7 +516,7 @@ interface UserClientApi {
   fun cancelBrowserRegistration(callback: (Result<Unit>) -> Unit)
   fun enrollUserForMobileAuthWithPush(registrationId: String, callback: (Result<Unit>) -> Unit)
   fun isUserEnrolledForMobileAuthWithPush(profileId: String, callback: (Result<Unit>) -> Unit)
-  fun handleMobileAuthWithPushRequest(callback: (Result<Unit>) -> Unit)
+  fun handleMobileAuthWithPushRequest(request: OWPendingMobileAuthRequest, callback: (Result<Unit>) -> Unit)
   fun getPendingMobileAuthWithPushRequests(callback: (Result<List<OWPendingMobileAuthRequest>>) -> Unit)
   fun denyMobileAuthWithPushRequest(requestId: String, callback: (Result<Unit>) -> Unit)
   fun acceptMobileAuthWithPushRequest(requestId: String, callback: (Result<Unit>) -> Unit)
@@ -1238,8 +1238,10 @@ interface UserClientApi {
       run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.handleMobileAuthWithPushRequest", codec)
         if (api != null) {
-          channel.setMessageHandler { _, reply ->
-            api.handleMobileAuthWithPushRequest() { result: Result<Unit> ->
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val requestArg = args[0] as OWPendingMobileAuthRequest
+            api.handleMobileAuthWithPushRequest(requestArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

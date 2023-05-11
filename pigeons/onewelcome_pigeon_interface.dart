@@ -270,7 +270,7 @@ abstract class UserClientApi {
   void isUserEnrolledForMobileAuthWithPush(String profileId);
 
   @async
-  void handleMobileAuthWithPushRequest();
+  void handleMobileAuthWithPushRequest(OWPendingMobileAuthRequest request);
 
   @async
   List<OWPendingMobileAuthRequest> getPendingMobileAuthWithPushRequests();

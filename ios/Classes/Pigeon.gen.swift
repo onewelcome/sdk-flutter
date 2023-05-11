@@ -481,7 +481,7 @@ protocol UserClientApi {
   func cancelBrowserRegistration(completion: @escaping (Result<Void, Error>) -> Void)
   func enrollUserForMobileAuthWithPush(registrationId: String, completion: @escaping (Result<Void, Error>) -> Void)
   func isUserEnrolledForMobileAuthWithPush(profileId: String, completion: @escaping (Result<Void, Error>) -> Void)
-  func handleMobileAuthWithPushRequest(completion: @escaping (Result<Void, Error>) -> Void)
+  func handleMobileAuthWithPushRequest(request: OWPendingMobileAuthRequest, completion: @escaping (Result<Void, Error>) -> Void)
   func getPendingMobileAuthWithPushRequests(completion: @escaping (Result<[OWPendingMobileAuthRequest], Error>) -> Void)
   func denyMobileAuthWithPushRequest(requestId: String, completion: @escaping (Result<Void, Error>) -> Void)
   func acceptMobileAuthWithPushRequest(requestId: String, completion: @escaping (Result<Void, Error>) -> Void)
@@ -1120,8 +1120,10 @@ class UserClientApiSetup {
     }
     let handleMobileAuthWithPushRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.handleMobileAuthWithPushRequest", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
-      handleMobileAuthWithPushRequestChannel.setMessageHandler { _, reply in
-        api.handleMobileAuthWithPushRequest() { result in
+      handleMobileAuthWithPushRequestChannel.setMessageHandler { message, reply in
+        let args = message as! [Any]
+        let requestArg = args[0] as! OWPendingMobileAuthRequest
+        api.handleMobileAuthWithPushRequest(request: requestArg) { result in
           switch result {
             case .success:
               reply(wrapResult(nil))

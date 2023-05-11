@@ -143,8 +143,9 @@ class UserClient {
     await api.isUserEnrolledForMobileAuthWithPush(profileId);
   }
 
-  Future<void> handleMobileAuthWithPushRequest() async {
-    await api.handleMobileAuthWithPushRequest();
+  Future<void> handleMobileAuthWithPushRequest(
+      OWPendingMobileAuthRequest request) async {
+    await api.handleMobileAuthWithPushRequest(request);
   }
 
   Future<List<OWPendingMobileAuthRequest>>

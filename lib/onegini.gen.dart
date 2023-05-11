@@ -1372,12 +1372,14 @@ class UserClientApi {
     }
   }
 
-  Future<void> handleMobileAuthWithPushRequest() async {
+  Future<void> handleMobileAuthWithPushRequest(
+      OWPendingMobileAuthRequest arg_request) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.handleMobileAuthWithPushRequest',
         codec,
         binaryMessenger: _binaryMessenger);
-    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_request]) as List<Object?>?;
     if (replyList == null) {
       throw PlatformException(
         code: 'channel-error',
