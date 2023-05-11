@@ -1,9 +1,12 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini/onegini.gen.dart';
 import 'package:onegini_example/components/display_toast.dart';
 import 'package:onegini_example/screens/login_screen.dart';
+
+import 'firebase_options.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
@@ -66,6 +69,9 @@ class _BodyWidgetState extends State<BodyWidget> {
           connectionTimeout: 5,
           readTimeout: 25,
           additionalResourceUrls: []);
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
     } on PlatformException catch (error) {
       showFlutterToast(error.message);
     }

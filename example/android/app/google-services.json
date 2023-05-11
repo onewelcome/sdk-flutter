@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "586427927998",
+    "firebase_url": "https://onegini-sdk-android-401.firebaseio.com",
+    "project_id": "onegini-sdk-android-401",
+    "storage_bucket": "onegini-sdk-android-401.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:586427927998:android:6a84dcf4c5045331bfbdef",
+        "android_client_info": {
+          "package_name": "com.onegini.mobile.flutterExample"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "586427927998-4fhoq79d7i08b2h8ecp4dt4ponbep5bi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAF8WFnHz1HSw7v1uULIEomBEw2-YP6Gq8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "586427927998-4fhoq79d7i08b2h8ecp4dt4ponbep5bi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "586427927998-b17ifvne3msid312qd9idmml9ae4k8vu.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.onegini.czpoc"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
