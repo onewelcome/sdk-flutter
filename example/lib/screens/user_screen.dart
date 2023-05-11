@@ -12,14 +12,11 @@ import 'package:onegini_example/models/application_details.dart';
 import 'package:onegini_example/models/client_resource.dart';
 import 'package:onegini_example/ow_broadcast_helper.dart';
 import 'package:onegini_example/screens/push_auth_screen.dart';
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:onegini_example/screens/qr_scan_screen.dart';
 import 'package:onegini_example/subscription_handlers/otp_subscriptions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:onegini/onegini.gen.dart';
-// ignore: import_of_legacy_library_into_null_safe
 import '../main.dart';
-// ignore: import_of_legacy_library_into_null_safe
 import 'login_screen.dart';
 
 class UserScreen extends StatefulWidget {

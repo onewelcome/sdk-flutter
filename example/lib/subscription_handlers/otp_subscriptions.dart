@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/events/otp_event.dart';
 import 'package:onegini_example/ow_broadcast_helper.dart';
-// ignore: import_of_legacy_library_into_null_safe
 import 'package:onegini_example/screens/auth_otp_screen.dart';
 
 // Event Subscriptions related to Custom Registration
