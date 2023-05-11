@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/errors/error_codes.dart';
@@ -10,6 +11,7 @@ import 'package:onegini_example/components/display_toast.dart';
 import 'package:onegini_example/models/application_details.dart';
 import 'package:onegini_example/models/client_resource.dart';
 import 'package:onegini_example/ow_broadcast_helper.dart';
+import 'package:onegini_example/screens/push_auth_screen.dart';
 // ignore: import_of_legacy_library_into_null_safe
 import 'package:onegini_example/screens/qr_scan_screen.dart';
 import 'package:onegini_example/subscription_handlers/otp_subscriptions.dart';
@@ -405,6 +407,36 @@ class Home extends StatelessWidget {
                   performUnauthenticatedRequest();
                 },
                 child: Text('Perform Unauthenticated Request'),
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  try {
+                    final fcmToken =
+                        await FirebaseMessaging.instance.getToken();
+                    if (fcmToken != null) {
+                      Onegini.instance.api
+                          .enrollUserForMobileAuthWithPush(fcmToken);
+                      showFlutterToast("enroll for push success");
+                    } else {
+                      showFlutterToast("FCMToken is null");
+                    }
+                  } on PlatformException catch (error) {
+                    showFlutterToast(error.message);
+                  } catch (error) {
+                    print(error.toString());
+                    showFlutterToast(error.toString());
+                  }
+                },
+                child: Text('Enroll for mobile authentication with push'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => PushAuthScreen()));
+                },
+                child: Text('Pending pushes'),
               ),
             ]),
       ),
