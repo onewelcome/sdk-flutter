@@ -1,8 +1,6 @@
 package com.onegini.mobile.sdk.flutter.extensions
 
 import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequest
-import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthenticationRequest
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWMobileAuthRequest
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWMobileAuthWithPushRequest
 
 fun OWMobileAuthWithPushRequest.toOnegini(): OneginiMobileAuthWithPushRequest {
@@ -19,12 +17,12 @@ fun OneginiMobileAuthWithPushRequest.toFlutter(): OWMobileAuthWithPushRequest {
   )
 }
 
-fun OneginiMobileAuthenticationRequest.toFlutter(): OWMobileAuthRequest {
-  return OWMobileAuthRequest(
-    message = this.message,
-    type = this.type,
-    userProfileId = this.userProfile.profileId,
-    transactionId = this.transactionId,
-    signingData = this.signingData,
-  )
-}
+//fun OneginiMobileAuthenticationRequest.toFlutter(): OWMobileAuthRequest {
+//  return OWMobileAuthRequest(
+//    message = this.message,
+//    type = this.type,
+//    userProfileId = this.userProfile.profileId,
+//    transactionId = this.transactionId,
+//    signingData = this.signingData,
+//  )
+//}

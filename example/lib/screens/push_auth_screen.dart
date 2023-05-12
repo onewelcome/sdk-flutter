@@ -2,9 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini/onegini.gen.dart';
 import '../components/display_toast.dart';
+import '../ow_broadcast_helper.dart';
 
 class _ClampingScrollBehavior extends ScrollBehavior {
   @override
@@ -21,12 +23,21 @@ class PushAuthScreen extends StatefulWidget {
 
 class _PushAuthScreenState extends State<PushAuthScreen> {
   List<OWMobileAuthWithPushRequest>? pendingPushes;
+  List<StreamSubscription<OWEvent>>? authenticationSubscriptions;
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
 
   void initState() {
     super.initState();
+    this.authenticationSubscriptions =
+        OWBroadcastHelper.initAuthenticationSubscriptions(context);
     _getPendingPushes();
+  }
+
+  @override
+  void dispose() {
+    OWBroadcastHelper.stopListening(authenticationSubscriptions);
+    super.dispose();
   }
 
   void _openMobileAuthModal(OWMobileAuthWithPushRequest request) {
