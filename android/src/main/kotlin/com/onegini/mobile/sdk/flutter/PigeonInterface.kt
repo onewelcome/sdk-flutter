@@ -38,7 +38,8 @@ import com.onegini.mobile.sdk.flutter.useCases.GetPreferredAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetRedirectUrlUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfilesUseCase
 import com.onegini.mobile.sdk.flutter.useCases.HandleMobileAuthWithOtpUseCase
-import com.onegini.mobile.sdk.flutter.useCases.HandleMobileAuthWithPushUseCase
+import com.onegini.mobile.sdk.flutter.useCases.AcceptMobileAuthWithPushRequestUseCase
+import com.onegini.mobile.sdk.flutter.useCases.DenyMobileAuthWithPushRequestUseCase
 import com.onegini.mobile.sdk.flutter.useCases.HandleRegisteredUrlUseCase
 import com.onegini.mobile.sdk.flutter.useCases.IsUserEnrolledForMobileAuthWithPushUseCase
 import com.onegini.mobile.sdk.flutter.useCases.LogoutUseCase
@@ -59,6 +60,9 @@ import javax.inject.Inject
 
 open class PigeonInterface : UserClientApi, ResourceMethodApi {
   @Inject
+  lateinit var acceptMobileAuthWithPushRequestUseCase: AcceptMobileAuthWithPushRequestUseCase
+
+  @Inject
   lateinit var authenticateDeviceUseCase: AuthenticateDeviceUseCase
 
   @Inject
@@ -74,6 +78,9 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   lateinit var deregisterBiometricAuthenticatorUseCase: DeregisterBiometricAuthenticatorUseCase
 
   @Inject
+  lateinit var denyMobileAuthWithPushRequestUseCase: DenyMobileAuthWithPushRequestUseCase
+
+  @Inject
   lateinit var deregisterUserUseCase: DeregisterUserUseCase
 
   @Inject
@@ -84,9 +91,6 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
 
   @Inject
   lateinit var cancelBrowserRegistrationUseCase: CancelBrowserRegistrationUseCase
-
-  @Inject
-  lateinit var handleMobileAuthWithPushUseCase: HandleMobileAuthWithPushUseCase
 
   @Inject
   lateinit var getAppToWebSingleSignOnUseCase: GetAppToWebSingleSignOnUseCase
@@ -353,20 +357,16 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
     callback(isUserEnrolledForMobileAuthWithPushUseCase(profileId));
   }
 
-  override fun handleMobileAuthWithPushRequest(request: OWMobileAuthWithPushRequest, callback: (Result<Unit>) -> Unit) {
-    handleMobileAuthWithPushUseCase(request, callback)
-  }
-
   override fun getPendingMobileAuthWithPushRequests(callback: (Result<List<OWMobileAuthWithPushRequest>>) -> Unit) {
     getPendingMobileAuthWithPushRequestsUseCase(callback)
   }
 
-  override fun denyMobileAuthWithPushRequest(requestId: String, callback: (Result<Unit>) -> Unit) {
-    TODO("Not yet implemented")
+  override fun denyMobileAuthWithPushRequest(request: OWMobileAuthWithPushRequest, callback: (Result<Unit>) -> Unit) {
+    denyMobileAuthWithPushRequestUseCase(request, callback)
   }
 
-  override fun acceptMobileAuthWithPushRequest(requestId: String, callback: (Result<Unit>) -> Unit) {
-    TODO("Not yet implemented")
+  override fun acceptMobileAuthWithPushRequest(request: OWMobileAuthWithPushRequest, callback: (Result<Unit>) -> Unit) {
+    acceptMobileAuthWithPushRequestUseCase(request, callback)
   }
 
   override fun requestResource(type: ResourceRequestType, details: OWRequestDetails, callback: (Result<OWRequestResponse>) -> Unit) {

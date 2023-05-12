@@ -11,7 +11,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class HandleMobileAuthWithPushUseCase @Inject constructor(
+class AcceptMobileAuthWithPushRequestUseCase @Inject constructor(
   private val oneginiSDK: OneginiSDK,
 ) {
   operator fun invoke(request: OWMobileAuthWithPushRequest, callback: (Result<Unit>) -> Unit) {

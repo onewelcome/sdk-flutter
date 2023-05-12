@@ -11,6 +11,7 @@ import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
 import com.onegini.mobile.sdk.flutter.handlers.BrowserRegistrationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
+import com.onegini.mobile.sdk.flutter.handlers.MobileAuthenticationWithPushRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
@@ -32,6 +33,7 @@ class OneginiSDK @Inject constructor(
   private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler,
   private val createPinRequestHandler: PinRequestHandler,
   private val mobileAuthWithOtpRequestHandler: MobileAuthOtpRequestHandler,
+  private val mobileAuthenticationWithPushRequestHandler: MobileAuthenticationWithPushRequestHandler,
   private val nativeApi: NativeCallFlutterApi,
 ) {
 
@@ -57,6 +59,7 @@ class OneginiSDK @Inject constructor(
       .setBrowserRegistrationRequestHandler(browserRegistrationRequestHandler)
       .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler)
       .setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
+      .setMobileAuthWithPushRequestHandler(mobileAuthenticationWithPushRequestHandler)
 
     initProviders(clientBuilder, customIdentityProviderConfigs)
 
