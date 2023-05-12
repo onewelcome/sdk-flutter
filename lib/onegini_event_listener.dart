@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:onegini/events/browser_event.dart';
 import 'package:onegini/events/custom_registration_event.dart';
 import 'package:onegini/events/fingerprint_event.dart';
-import 'package:onegini/events/mobile_auth_event.dart';
 import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/events/otp_event.dart';
 import 'package:onegini/events/pin_event.dart';
@@ -91,16 +90,6 @@ class OneginiEventListener implements NativeCallFlutterApi {
   @override
   void n2fOpenAuthOtp(String? message) {
     _broadcastEvent(OpenAuthOtpEvent(message ?? ""));
-  }
-
-  @override
-  void n2fStartMobileAuthPush(OWMobileAuthRequest request) {
-    _broadcastEvent(StartMobileAuthWithPushEvent(request));
-  }
-
-  @override
-  void n2fFinishMobileAuthPush() {
-    _broadcastEvent(FinishMobileAuthWithPushEvent());
   }
 
   @override

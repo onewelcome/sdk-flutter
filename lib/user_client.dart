@@ -143,23 +143,20 @@ class UserClient {
     await api.isUserEnrolledForMobileAuthWithPush(profileId);
   }
 
-  Future<void> handleMobileAuthWithPushRequest(
-      OWMobileAuthWithPushRequest request) async {
-    await api.handleMobileAuthWithPushRequest(request);
-  }
-
   Future<List<OWMobileAuthWithPushRequest>>
       getPendingMobileAuthWithPushRequests() async {
     final pushes = await api.getPendingMobileAuthWithPushRequests();
     return pushes.whereType<OWMobileAuthWithPushRequest>().toList();
   }
 
-  Future<void> denyMobileAuthWithPushRequest(String requestId) async {
-    await api.denyMobileAuthWithPushRequest(requestId);
+  Future<void> denyMobileAuthWithPushRequest(
+      OWMobileAuthWithPushRequest request) async {
+    await api.denyMobileAuthWithPushRequest(request);
   }
 
-  Future<void> acceptMobileAuthWithPushRequest(String requestId) async {
-    await api.acceptMobileAuthWithPushRequest(requestId);
+  Future<void> acceptMobileAuthWithPushRequest(
+      OWMobileAuthWithPushRequest request) async {
+    await api.acceptMobileAuthWithPushRequest(request);
   }
 }
 

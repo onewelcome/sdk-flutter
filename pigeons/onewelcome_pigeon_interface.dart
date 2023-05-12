@@ -281,16 +281,13 @@ abstract class UserClientApi {
   void isUserEnrolledForMobileAuthWithPush(String profileId);
 
   @async
-  void handleMobileAuthWithPushRequest(OWMobileAuthWithPushRequest request);
+  void denyMobileAuthWithPushRequest(OWMobileAuthWithPushRequest request);
+
+  @async
+  void acceptMobileAuthWithPushRequest(OWMobileAuthWithPushRequest request);
 
   @async
   List<OWMobileAuthWithPushRequest> getPendingMobileAuthWithPushRequests();
-
-  @async
-  void denyMobileAuthWithPushRequest(String requestId);
-
-  @async
-  void acceptMobileAuthWithPushRequest(String requestId);
 }
 
 @HostApi()
@@ -334,13 +331,6 @@ abstract class NativeCallFlutterApi {
 
   /// Called to close OTP authentication.
   void n2fCloseAuthOtp();
-
-  // Push Mobile Authentication
-  /// Called when Mobile Authentication with Push has started
-  void n2fStartMobileAuthPush(OWMobileAuthRequest request);
-
-  /// Called when Mobile Authentication with Push has finished, called on success or error
-  void n2fFinishMobileAuthPush();
 
   // Fingerprint Authentication
   /// Called to open fingerprint screen.

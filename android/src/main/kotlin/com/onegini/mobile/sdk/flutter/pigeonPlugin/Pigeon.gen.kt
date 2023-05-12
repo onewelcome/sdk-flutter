@@ -380,37 +380,6 @@ data class OWMobileAuthWithPushRequest (
   }
 }
 
-/** Generated class from Pigeon that represents data sent in messages. */
-data class OWMobileAuthRequest (
-  val message: String,
-  val type: String,
-  val userProfileId: String,
-  val transactionId: String,
-  val signingData: String? = null
-
-) {
-  companion object {
-    @Suppress("UNCHECKED_CAST")
-    fun fromList(list: List<Any?>): OWMobileAuthRequest {
-      val message = list[0] as String
-      val type = list[1] as String
-      val userProfileId = list[2] as String
-      val transactionId = list[3] as String
-      val signingData = list[4] as String?
-      return OWMobileAuthRequest(message, type, userProfileId, transactionId, signingData)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf<Any?>(
-      message,
-      type,
-      userProfileId,
-      transactionId,
-      signingData,
-    )
-  }
-}
-
 @Suppress("UNCHECKED_CAST")
 private object UserClientApiCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
@@ -547,10 +516,9 @@ interface UserClientApi {
   fun cancelBrowserRegistration(callback: (Result<Unit>) -> Unit)
   fun enrollUserForMobileAuthWithPush(registrationId: String, callback: (Result<Unit>) -> Unit)
   fun isUserEnrolledForMobileAuthWithPush(profileId: String, callback: (Result<Unit>) -> Unit)
-  fun handleMobileAuthWithPushRequest(request: OWMobileAuthWithPushRequest, callback: (Result<Unit>) -> Unit)
+  fun denyMobileAuthWithPushRequest(request: OWMobileAuthWithPushRequest, callback: (Result<Unit>) -> Unit)
+  fun acceptMobileAuthWithPushRequest(request: OWMobileAuthWithPushRequest, callback: (Result<Unit>) -> Unit)
   fun getPendingMobileAuthWithPushRequests(callback: (Result<List<OWMobileAuthWithPushRequest>>) -> Unit)
-  fun denyMobileAuthWithPushRequest(requestId: String, callback: (Result<Unit>) -> Unit)
-  fun acceptMobileAuthWithPushRequest(requestId: String, callback: (Result<Unit>) -> Unit)
 
   companion object {
     /** The codec used by UserClientApi. */
@@ -1267,12 +1235,31 @@ interface UserClientApi {
         }
       }
       run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.handleMobileAuthWithPushRequest", codec)
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.denyMobileAuthWithPushRequest", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
             val requestArg = args[0] as OWMobileAuthWithPushRequest
-            api.handleMobileAuthWithPushRequest(requestArg) { result: Result<Unit> ->
+            api.denyMobileAuthWithPushRequest(requestArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.acceptMobileAuthWithPushRequest", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val requestArg = args[0] as OWMobileAuthWithPushRequest
+            api.acceptMobileAuthWithPushRequest(requestArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
@@ -1296,44 +1283,6 @@ interface UserClientApi {
               } else {
                 val data = result.getOrNull()
                 reply.reply(wrapResult(data))
-              }
-            }
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.denyMobileAuthWithPushRequest", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val requestIdArg = args[0] as String
-            api.denyMobileAuthWithPushRequest(requestIdArg) { result: Result<Unit> ->
-              val error = result.exceptionOrNull()
-              if (error != null) {
-                reply.reply(wrapError(error))
-              } else {
-                reply.reply(wrapResult(null))
-              }
-            }
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.acceptMobileAuthWithPushRequest", codec)
-        if (api != null) {
-          channel.setMessageHandler { message, reply ->
-            val args = message as List<Any?>
-            val requestIdArg = args[0] as String
-            api.acceptMobileAuthWithPushRequest(requestIdArg) { result: Result<Unit> ->
-              val error = result.exceptionOrNull()
-              if (error != null) {
-                reply.reply(wrapError(error))
-              } else {
-                reply.reply(wrapResult(null))
               }
             }
           }
@@ -1428,11 +1377,6 @@ private object NativeCallFlutterApiCodec : StandardMessageCodec() {
       }
       130.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          OWMobileAuthRequest.fromList(it)
-        }
-      }
-      131.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
           OWOneginiError.fromList(it)
         }
       }
@@ -1449,12 +1393,8 @@ private object NativeCallFlutterApiCodec : StandardMessageCodec() {
         stream.write(129)
         writeValue(stream, value.toList())
       }
-      is OWMobileAuthRequest -> {
-        stream.write(130)
-        writeValue(stream, value.toList())
-      }
       is OWOneginiError -> {
-        stream.write(131)
+        stream.write(130)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -1534,20 +1474,6 @@ class NativeCallFlutterApi(private val binaryMessenger: BinaryMessenger) {
   /** Called to close OTP authentication. */
   fun n2fCloseAuthOtp(callback: () -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fCloseAuthOtp", codec)
-    channel.send(null) {
-      callback()
-    }
-  }
-  /** Called when Mobile Authentication with Push has started */
-  fun n2fStartMobileAuthPush(requestArg: OWMobileAuthRequest, callback: () -> Unit) {
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fStartMobileAuthPush", codec)
-    channel.send(listOf(requestArg)) {
-      callback()
-    }
-  }
-  /** Called when Mobile Authentication with Push has finished, called on success or error */
-  fun n2fFinishMobileAuthPush(callback: () -> Unit) {
-    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fFinishMobileAuthPush", codec)
     channel.send(null) {
       callback()
     }
