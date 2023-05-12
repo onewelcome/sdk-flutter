@@ -21,6 +21,8 @@ class PushAuthScreen extends StatefulWidget {
 
 class _PushAuthScreenState extends State<PushAuthScreen> {
   List<OWMobileAuthWithPushRequest>? pendingPushes;
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
 
   void initState() {
     super.initState();
@@ -48,7 +50,7 @@ class _PushAuthScreenState extends State<PushAuthScreen> {
                             await Onegini.instance.userClient
                                 .acceptMobileAuthWithPushRequest(request);
                             _removeRequestFromList(request);
-                            _getPendingPushes();
+                            _refreshIndicatorKey.currentState?.show();
                           } on PlatformException catch (error) {
                             showFlutterToast(error.message);
                           }
@@ -62,7 +64,7 @@ class _PushAuthScreenState extends State<PushAuthScreen> {
                             await Onegini.instance.userClient
                                 .denyMobileAuthWithPushRequest(request);
                             _removeRequestFromList(request);
-                            _getPendingPushes();
+                            _refreshIndicatorKey.currentState?.show();
                           } on PlatformException catch (error) {
                             showFlutterToast(error.message);
                           }
@@ -112,6 +114,7 @@ class _PushAuthScreenState extends State<PushAuthScreen> {
         ),
         body: LayoutBuilder(builder: ((_, constraints) {
           return RefreshIndicator(
+              key: _refreshIndicatorKey,
               onRefresh: () => _getPendingPushes(),
               child: ScrollConfiguration(
                 behavior: _ClampingScrollBehavior(),
