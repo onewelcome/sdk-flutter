@@ -473,6 +473,7 @@ class _InfoState extends State<Info> {
       future: _getClientResource(),
       builder: (context, snapshot) {
         final snapshotData = snapshot.data;
+        print(snapshotData?.devices[0].id);
         return snapshotData != null
             ? ListView.builder(
                 itemCount: snapshotData.devices.length,

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/onegini.dart';
@@ -18,11 +20,50 @@ class PushAuthScreen extends StatefulWidget {
 }
 
 class _PushAuthScreenState extends State<PushAuthScreen> {
-  List<OWPendingMobileAuthRequest>? pendingPushes;
+  List<OWMobileAuthWithPushRequest>? pendingPushes;
 
   void initState() {
     super.initState();
     _getPendingPushes();
+  }
+
+  void _openMobileAuthModal(OWMobileAuthWithPushRequest request) {
+    showModalBottomSheet<void>(
+        context: context,
+        builder: (BuildContext context) {
+          return Container(
+            height: 200,
+            color: Colors.amber,
+            child: Center(
+              child: Column(
+                children: [
+                  Text(request.message),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      ElevatedButton(
+                        child: const Text('Accept'),
+                        onPressed: () async {
+                          await Onegini.instance.userClient
+                              .acceptMobileAuthWithPushRequest(request);
+                          Navigator.pop(context);
+                        },
+                      ),
+                      ElevatedButton(
+                        child: const Text('Deny'),
+                        onPressed: () async {
+                          await Onegini.instance.userClient
+                              .denyMobileAuthWithPushRequest(request);
+                          Navigator.pop(context);
+                        },
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
   }
 
   Future<void> _getPendingPushes() async {
@@ -86,6 +127,9 @@ class _PushAuthScreenState extends State<PushAuthScreen> {
                       expandedCrossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         ListTile(
+                          onTap: () async {
+                            _openMobileAuthModal(pushes[index]);
+                          },
                           title: Text("${pushes[index].message}"),
                         )
                       ],
