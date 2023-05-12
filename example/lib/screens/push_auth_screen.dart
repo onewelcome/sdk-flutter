@@ -44,16 +44,28 @@ class _PushAuthScreenState extends State<PushAuthScreen> {
                       ElevatedButton(
                         child: const Text('Accept'),
                         onPressed: () async {
-                          await Onegini.instance.userClient
-                              .acceptMobileAuthWithPushRequest(request);
+                          try {
+                            await Onegini.instance.userClient
+                                .acceptMobileAuthWithPushRequest(request);
+                            _removeRequestFromList(request);
+                            _getPendingPushes();
+                          } on PlatformException catch (error) {
+                            showFlutterToast(error.message);
+                          }
                           Navigator.pop(context);
                         },
                       ),
                       ElevatedButton(
                         child: const Text('Deny'),
                         onPressed: () async {
-                          await Onegini.instance.userClient
-                              .denyMobileAuthWithPushRequest(request);
+                          try {
+                            await Onegini.instance.userClient
+                                .denyMobileAuthWithPushRequest(request);
+                            _removeRequestFromList(request);
+                            _getPendingPushes();
+                          } on PlatformException catch (error) {
+                            showFlutterToast(error.message);
+                          }
                           Navigator.pop(context);
                         },
                       ),
@@ -64,6 +76,12 @@ class _PushAuthScreenState extends State<PushAuthScreen> {
             ),
           );
         });
+  }
+
+  _removeRequestFromList(OWMobileAuthWithPushRequest request) {
+    setState(() {
+      pendingPushes?.remove(request);
+    });
   }
 
   Future<void> _getPendingPushes() async {
