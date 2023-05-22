@@ -21,6 +21,8 @@ enum OneWelcomeWrapperError {
     case actionNotAllowedCustomRegistrationCancel
     case actionNotAllowedBrowserRegistrationCancel
     case biometricAuthenticationNotAvailable
+    case notEnrolledForMobileAuthWithPush
+    case notFoundMobileAuthRequest
 
     func code() -> Int {
         switch self {
@@ -60,6 +62,10 @@ enum OneWelcomeWrapperError {
             return 8058
         case .biometricAuthenticationNotAvailable:
             return 8060
+        case .notEnrolledForMobileAuthWithPush:
+            return 8061
+        case .notFoundMobileAuthRequest:
+            return 8062
         }
     }
 
@@ -101,6 +107,10 @@ enum OneWelcomeWrapperError {
             return "Canceling the Browser registration right now is not allowed. Registration is not in progress or pin creation has already started."
         case .biometricAuthenticationNotAvailable:
             return "Biometric authentication is not supported on this device."
+        case .notEnrolledForMobileAuthWithPush:
+            return "The user is not enrolled for mobile auth with push."
+        case .notFoundMobileAuthRequest:
+            return "Mobile auth request not found, either the transactionId is incorrect or it has expired."
         }
     }
 }

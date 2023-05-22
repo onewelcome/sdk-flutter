@@ -62,6 +62,16 @@ extension OWAuthenticatorType {
     }
 }
 
+extension OWMobileAuthWithPushRequest {
+    init (_ request: PendingMobileAuthRequest) {
+        transactionId = request.transactionId
+        userProfileId = request.userProfile.profileId
+        date = Int64(request.date?.timeIntervalSince1970 ?? 0)
+        timeToLive = Int64(request.timeToLive ?? 0)
+        message = request.message ?? ""
+    }
+}
+
 extension Result where Success == Void {
     public static var success: Result { .success(()) }
 }
@@ -81,6 +91,36 @@ func toOWCustomInfo(_ info: ONGCustomInfo?) -> OWCustomInfo? {
 }
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, ResourceMethodApi {
+    func enrollUserForMobileAuthWithPush(registrationId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        OneginiModuleSwift.sharedInstance.enrollMobileAuthenticationWithPush(token: registrationId) { result in
+            completion(result.mapError { $0 })
+        }
+    }
+
+    func isUserEnrolledForMobileAuthWithPush(profileId: String, completion: @escaping (Result<Void, Error>) -> Void) {
+        OneginiModuleSwift.sharedInstance.isUserEnrolledForMobileAuthWithPush(profileId: profileId) { result in
+            completion(result.mapError { $0 })
+        }
+    }
+
+    func denyMobileAuthWithPushRequest(request: OWMobileAuthWithPushRequest, completion: @escaping (Result<Void, Error>) -> Void) {
+        OneginiModuleSwift.sharedInstance.denyMobileAuthWithPushRequest(request: request) { result in
+            completion(result.mapError { $0 })
+        }
+    }
+
+    func acceptMobileAuthWithPushRequest(request: OWMobileAuthWithPushRequest, completion: @escaping (Result<Void, Error>) -> Void) {
+        OneginiModuleSwift.sharedInstance.acceptMobileAuthWithPushRequest(request: request) { result in
+            completion(result.mapError { $0 })
+        }
+    }
+
+    func getPendingMobileAuthWithPushRequests(completion: @escaping (Result<[OWMobileAuthWithPushRequest], Error>) -> Void) {
+        OneginiModuleSwift.sharedInstance.getPendingMobileAuthWithPushRequests { result in
+            completion(result.mapError { $0 })
+        }
+    }
+
     func authenticateUser(profileId: String, authenticatorType: OWAuthenticatorType, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.authenticateUser(profileId: profileId, authenticatorType: authenticatorType.toOneginiType()) { result in
             completion(result.mapError { $0 })
