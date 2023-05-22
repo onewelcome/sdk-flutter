@@ -355,8 +355,8 @@ class OWMobileAuthWithPushRequest {
   OWMobileAuthWithPushRequest({
     required this.transactionId,
     required this.userProfileId,
-    required this.date,
-    required this.timeToLive,
+    this.date,
+    this.timeToLive,
     required this.message,
   });
 
@@ -364,9 +364,9 @@ class OWMobileAuthWithPushRequest {
 
   String userProfileId;
 
-  int date;
+  int? date;
 
-  int timeToLive;
+  int? timeToLive;
 
   String message;
 
@@ -385,8 +385,8 @@ class OWMobileAuthWithPushRequest {
     return OWMobileAuthWithPushRequest(
       transactionId: result[0]! as String,
       userProfileId: result[1]! as String,
-      date: result[2]! as int,
-      timeToLive: result[3]! as int,
+      date: result[2] as int?,
+      timeToLive: result[3] as int?,
       message: result[4]! as String,
     );
   }

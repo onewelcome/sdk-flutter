@@ -332,15 +332,15 @@ struct OWCustomIdentityProvider {
 struct OWMobileAuthWithPushRequest {
   var transactionId: String
   var userProfileId: String
-  var date: Int64
-  var timeToLive: Int64
+  var date: Int64? = nil
+  var timeToLive: Int64? = nil
   var message: String
 
   static func fromList(_ list: [Any]) -> OWMobileAuthWithPushRequest? {
     let transactionId = list[0] as! String
     let userProfileId = list[1] as! String
-    let date = list[2] is Int64 ? list[2] as! Int64 : Int64(list[2] as! Int32)
-    let timeToLive = list[3] is Int64 ? list[3] as! Int64 : Int64(list[3] as! Int32)
+    let date: Int64? = list[2] is NSNull ? nil : (list[2] is Int64? ? list[2] as! Int64? : Int64(list[2] as! Int32))
+    let timeToLive: Int64? = list[3] is NSNull ? nil : (list[3] is Int64? ? list[3] as! Int64? : Int64(list[3] as! Int32))
     let message = list[4] as! String
 
     return OWMobileAuthWithPushRequest(

@@ -125,8 +125,8 @@ class OWCustomIdentityProvider {
 class OWMobileAuthWithPushRequest {
   String transactionId;
   String userProfileId;
-  int date;
-  int timeToLive;
+  int? date;
+  int? timeToLive;
   String message;
   //userinfo Fixme: add userinfo
   OWMobileAuthWithPushRequest(this.transactionId, this.userProfileId, this.date,

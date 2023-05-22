@@ -353,8 +353,8 @@ data class OWCustomIdentityProvider (
 data class OWMobileAuthWithPushRequest (
   val transactionId: String,
   val userProfileId: String,
-  val date: Long,
-  val timeToLive: Long,
+  val date: Long? = null,
+  val timeToLive: Long? = null,
   val message: String
 
 ) {
@@ -363,8 +363,8 @@ data class OWMobileAuthWithPushRequest (
     fun fromList(list: List<Any?>): OWMobileAuthWithPushRequest {
       val transactionId = list[0] as String
       val userProfileId = list[1] as String
-      val date = list[2].let { if (it is Int) it.toLong() else it as Long }
-      val timeToLive = list[3].let { if (it is Int) it.toLong() else it as Long }
+      val date = list[2].let { if (it is Int) it.toLong() else it as Long? }
+      val timeToLive = list[3].let { if (it is Int) it.toLong() else it as Long? }
       val message = list[4] as String
       return OWMobileAuthWithPushRequest(transactionId, userProfileId, date, timeToLive, message)
     }

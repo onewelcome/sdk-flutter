@@ -4,7 +4,7 @@ import com.onegini.mobile.sdk.android.model.entity.OneginiMobileAuthWithPushRequ
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWMobileAuthWithPushRequest
 
 fun OWMobileAuthWithPushRequest.toOnegini(): OneginiMobileAuthWithPushRequest {
-  return OneginiMobileAuthWithPushRequest(this.transactionId, this.message, this.userProfileId, this.date, this.timeToLive.toInt())
+  return OneginiMobileAuthWithPushRequest(this.transactionId, this.message, this.userProfileId, this.date ?: 0, this.timeToLive?.toInt() ?: 0)
 }
 
 fun OneginiMobileAuthWithPushRequest.toFlutter(): OWMobileAuthWithPushRequest {
