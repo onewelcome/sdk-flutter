@@ -204,5 +204,6 @@ class MobileAuthWithPushDelegate: MobileAuthRequestDelegate {
 
     func userClient(_ userClient: OneginiSDKiOS.UserClient, didReceiveBiometricChallenge challenge: OneginiSDKiOS.BiometricChallenge, for request: OneginiSDKiOS.MobileAuthRequest) {
         // We actually don't have to handle this ourselves, the sdk will handle this with a native biometric popup.
+        challenge.sender.respond(with: "", to: challenge)
     }
 }
