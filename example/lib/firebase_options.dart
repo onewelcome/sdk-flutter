@@ -26,10 +26,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for macos - '
@@ -54,10 +51,21 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyAF8WFnHz1HSw7v1uULIEomBEw2-YP6Gq8',
-    appId: '1:586427927998:android:6a84dcf4c5045331bfbdef',
+    appId: '1:586427927998:android:f1f11af9897a98c9bfbdef',
     messagingSenderId: '586427927998',
     projectId: 'onegini-sdk-android-401',
     databaseURL: 'https://onegini-sdk-android-401.firebaseio.com',
     storageBucket: 'onegini-sdk-android-401.appspot.com',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyAGluW_cyQGdw9vEhXDZ1cuxskqCAF6l6A',
+    appId: '1:586427927998:ios:69a0c41bd06d0bf5bfbdef',
+    messagingSenderId: '586427927998',
+    projectId: 'onegini-sdk-android-401',
+    databaseURL: 'https://onegini-sdk-android-401.firebaseio.com',
+    storageBucket: 'onegini-sdk-android-401.appspot.com',
+    iosClientId: '586427927998-m8rhq7est4ons7v77skvucefj2scbcnj.apps.googleusercontent.com',
+    iosBundleId: 'com.onegini.mobile.flutterExample',
   );
 }

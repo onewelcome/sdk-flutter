@@ -60,6 +60,7 @@ class _PushAuthScreenState extends State<PushAuthScreen> {
                           try {
                             await Onegini.instance.userClient
                                 .acceptMobileAuthWithPushRequest(request);
+                            showFlutterToast('request successfully accepted');
                             _removeRequestFromList(request);
                             _refreshIndicatorKey.currentState?.show();
                           } on PlatformException catch (error) {
@@ -74,6 +75,7 @@ class _PushAuthScreenState extends State<PushAuthScreen> {
                           try {
                             await Onegini.instance.userClient
                                 .denyMobileAuthWithPushRequest(request);
+                            showFlutterToast('request successfully denied');
                             _removeRequestFromList(request);
                             _refreshIndicatorKey.currentState?.show();
                           } on PlatformException catch (error) {

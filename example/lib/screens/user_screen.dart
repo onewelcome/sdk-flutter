@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -408,14 +409,27 @@ class Home extends StatelessWidget {
               ElevatedButton(
                 onPressed: () async {
                   try {
-                    final fcmToken =
-                        await FirebaseMessaging.instance.getToken();
-                    if (fcmToken != null) {
-                      Onegini.instance.api
-                          .enrollUserForMobileAuthWithPush(fcmToken);
-                      showFlutterToast("enroll for push success");
-                    } else {
-                      showFlutterToast("FCMToken is null");
+                    if (Platform.isAndroid) {
+                      final fcmToken =
+                          await FirebaseMessaging.instance.getToken();
+                      if (fcmToken != null) {
+                        await Onegini.instance.api
+                            .enrollUserForMobileAuthWithPush(fcmToken);
+                        showFlutterToast("enroll for push success");
+                      } else {
+                        showFlutterToast("FCMToken is null");
+                      }
+                    }
+                    if (Platform.isIOS) {
+                      final iosToken =
+                          await FirebaseMessaging.instance.getAPNSToken();
+                      if (iosToken != null) {
+                        await Onegini.instance.api
+                            .enrollUserForMobileAuthWithPush(iosToken);
+                        showFlutterToast("enroll for push success");
+                      } else {
+                        showFlutterToast("APNS token is null");
+                      }
                     }
                   } on PlatformException catch (error) {
                     showFlutterToast(error.message);

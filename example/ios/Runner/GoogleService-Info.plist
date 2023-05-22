@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>586427927998-m8rhq7est4ons7v77skvucefj2scbcnj.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.586427927998-m8rhq7est4ons7v77skvucefj2scbcnj</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAGluW_cyQGdw9vEhXDZ1cuxskqCAF6l6A</string>
+	<key>GCM_SENDER_ID</key>
+	<string>586427927998</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.onegini.mobile.flutterExample</string>
+	<key>PROJECT_ID</key>
+	<string>onegini-sdk-android-401</string>
+	<key>STORAGE_BUCKET</key>
+	<string>onegini-sdk-android-401.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:586427927998:ios:69a0c41bd06d0bf5bfbdef</string>
+	<key>DATABASE_URL</key>
+	<string>https://onegini-sdk-android-401.firebaseio.com</string>
+</dict>
+</plist>

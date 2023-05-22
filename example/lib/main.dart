@@ -1,4 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/onegini.dart';
@@ -72,6 +76,41 @@ class _BodyWidgetState extends State<BodyWidget> {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
+      FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+      NotificationSettings settings = await messaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
+
+      FirebaseMessaging.onBackgroundMessage((message) async {
+        print('Got a message whilst in the background!');
+        print('Message data: ${message.data}');
+
+        if (message.notification != null) {
+          print(
+              'Message also contained a notification: ${message.notification}');
+        }
+      });
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+        print('Got a message whilst in the foreground!');
+        print('Message data: ${message.data}');
+        final jsonContent = jsonDecode(message.data['content']);
+        Onegini.instance.userClient.acceptMobileAuthWithPushRequest(
+            OWMobileAuthWithPushRequest(
+                transactionId: jsonContent['og_transaction_id'],
+                userProfileId: jsonContent['og_profile_id'],
+                message: jsonContent['og_message']));
+        if (message.notification != null) {
+          print(
+              'Message also contained a notification: ${message.notification}');
+        }
+      });
     } on PlatformException catch (error) {
       showFlutterToast(error.message);
     }
