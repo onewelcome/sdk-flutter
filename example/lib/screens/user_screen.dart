@@ -413,7 +413,7 @@ class Home extends StatelessWidget {
                       final fcmToken =
                           await FirebaseMessaging.instance.getToken();
                       if (fcmToken != null) {
-                        await Onegini.instance.api
+                        await Onegini.instance.userClient
                             .enrollUserForMobileAuthWithPush(fcmToken);
                         showFlutterToast("enroll for push success");
                       } else {
@@ -424,7 +424,7 @@ class Home extends StatelessWidget {
                       final iosToken =
                           await FirebaseMessaging.instance.getAPNSToken();
                       if (iosToken != null) {
-                        await Onegini.instance.api
+                        await Onegini.instance.userClient
                             .enrollUserForMobileAuthWithPush(iosToken);
                         showFlutterToast("enroll for push success");
                       } else {
