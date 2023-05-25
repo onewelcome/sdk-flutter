@@ -59,7 +59,7 @@ class _PinScreenState extends State<PinScreen> {
   }
 
   submit() {
-    setState(() => {isLoading = true});
+    setState(() => isLoading = true);
     String pin = "";
     pinCode.forEach((element) {
       pin += element;
@@ -68,7 +68,7 @@ class _PinScreenState extends State<PinScreen> {
         .acceptAuthenticationRequest(pin)
         .catchError((error) {
       if (error is PlatformException) {
-        setState(() => {isLoading = false});
+        setState(() => isLoading = false);
         showFlutterToast(error.message);
       }
     });
