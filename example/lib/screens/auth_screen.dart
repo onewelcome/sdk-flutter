@@ -42,7 +42,7 @@ class _AuthScreenState extends State<AuthScreen> {
     super.dispose();
   }
 
-  openWeb() async {
+  _openWeb() async {
     /// Start registration
     setState(() => isLoading = true);
 
@@ -67,7 +67,7 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
-  registrationWithIdentityProvider(String identityProviderId) async {
+  _registraterWithIdentityProvider(String identityProviderId) async {
     setState(() => isLoading = true);
     try {
       var registrationResponse = await Onegini.instance.userClient.registerUser(
@@ -90,7 +90,7 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
-  cancelRegistration() async {
+  _cancelRegistration() async {
     setState(() => isLoading = false);
     try {
       await Future.any([
@@ -145,7 +145,7 @@ class _AuthScreenState extends State<AuthScreen> {
         SizedBox(height: 20),
         ElevatedButton(
           onPressed: () {
-            openWeb();
+            _openWeb();
           },
           child: Text('Run WEB'),
         ),
@@ -168,7 +168,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       ),
                     ),
                     onSelected: (value) {
-                      registrationWithIdentityProvider(value);
+                      _registraterWithIdentityProvider(value);
                     },
                     itemBuilder: (context) {
                       return identityProviders
@@ -194,7 +194,7 @@ class _AuthScreenState extends State<AuthScreen> {
         SizedBox(height: 20),
         ElevatedButton(
           onPressed: () {
-            cancelRegistration();
+            _cancelRegistration();
           },
           child: Text('Cancel'),
         ),
@@ -215,7 +215,7 @@ class _LoginSectionState extends State<LoginSection> {
   @override
   initState() {
     super.initState();
-    fetchUserProfiles();
+    _fetchUserProfiles();
   }
 
   @override
@@ -235,7 +235,7 @@ class _LoginSectionState extends State<LoginSection> {
                 _buildImplicitUserData(_selectedProfileId),
                 ElevatedButton(
                   onPressed: () {
-                    authenticate(_selectedProfileId, null);
+                    _authenticate(_selectedProfileId, null);
                   },
                   child: Text('Preferred authenticator'),
                 ),
@@ -244,7 +244,7 @@ class _LoginSectionState extends State<LoginSection> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        authenticate(
+                        _authenticate(
                             _selectedProfileId, OWAuthenticatorType.pin);
                       },
                       child: Text('Pin'),
@@ -252,7 +252,7 @@ class _LoginSectionState extends State<LoginSection> {
                     SizedBox(height: 10, width: 10),
                     ElevatedButton(
                       onPressed: () {
-                        authenticate(
+                        _authenticate(
                             _selectedProfileId, OWAuthenticatorType.biometric);
                       },
                       child: Text('Biometrics'),
@@ -274,7 +274,7 @@ class _LoginSectionState extends State<LoginSection> {
             {setState(() => selectedProfileId = profileId)});
   }
 
-  Future<List<OWUserProfile>> fetchUserProfiles() async {
+  Future<List<OWUserProfile>> _fetchUserProfiles() async {
     try {
       final profiles = await Onegini.instance.userClient.getUserProfiles();
       setState(() {
@@ -291,7 +291,7 @@ class _LoginSectionState extends State<LoginSection> {
 
   Widget _buildImplicitUserData(final String profileId) {
     return FutureBuilder<String>(
-        future: getImplicitUserDetails(profileId),
+        future: _getImplicitUserDetails(profileId),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done &&
               snapshot.hasData) {
@@ -303,7 +303,7 @@ class _LoginSectionState extends State<LoginSection> {
         });
   }
 
-  Future<String> getImplicitUserDetails(final String profileId) async {
+  Future<String> _getImplicitUserDetails(final String profileId) async {
     try {
       await Onegini.instance.userClient
           .authenticateUserImplicitly(profileId, ["read"]);
@@ -321,7 +321,7 @@ class _LoginSectionState extends State<LoginSection> {
     }
   }
 
-  authenticate(
+  _authenticate(
       final String profileId, OWAuthenticatorType? authenticatorType) async {
     try {
       var registrationResponse = await Onegini.instance.userClient
