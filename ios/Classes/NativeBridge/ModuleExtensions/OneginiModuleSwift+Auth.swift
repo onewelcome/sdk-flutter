@@ -15,8 +15,8 @@ extension OneginiModuleSwift {
 
     public func authenticateUserImplicitly(_ profileId: String, _ scopes: [String]?,
                                            completion: @escaping (Result<Void, FlutterError>) -> Void) {
-        guard let profile = ONGClient.sharedInstance().userClient.userProfiles().first(where: { $0.profileId == profileId }) else {
-            completion(.failure(FlutterError(.notAuthenticatedUser)))
+        guard let profile = SharedUserClient.instance.userProfiles.first(where: { $0.profileId == profileId }) else {
+            completion(.failure(SdkError(.notFoundUserProfile).flutterError()))
             return
         }
 
@@ -38,7 +38,7 @@ extension OneginiModuleSwift {
             completion(.failure(SdkError(.notFoundUserProfile).flutterError()))
             return
         }
-        let authenticator = SharedUserClient.instance.authenticators(.all, for: profile).first(where: { $0.type == authenticatorType })
+        let authenticator = SharedUserClient.instance.authenticators(.registered, for: profile).first(where: { $0.type == authenticatorType })
 
         bridgeConnector.toLoginHandler.authenticateUser(profile, authenticator: authenticator) { result in
             completion(result)

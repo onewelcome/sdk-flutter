@@ -44,7 +44,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
   openWeb() async {
     /// Start registration
-    setState(() => {isLoading = true});
+    setState(() => isLoading = true);
 
     try {
       var registrationResponse = await Onegini.instance.userClient.registerUser(
@@ -68,7 +68,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   registrationWithIdentityProvider(String identityProviderId) async {
-    setState(() => {isLoading = true});
+    setState(() => isLoading = true);
     try {
       var registrationResponse = await Onegini.instance.userClient.registerUser(
         identityProviderId,
@@ -270,9 +270,8 @@ class _LoginSectionState extends State<LoginSection> {
             .map((e) =>
                 DropdownMenuItem(value: e.profileId, child: Text(e.profileId)))
             .toList(),
-        onChanged: (profileId) => {
-              setState(() => {selectedProfileId = profileId})
-            });
+        onChanged: (profileId) =>
+            {setState(() => selectedProfileId = profileId)});
   }
 
   Future<List<OWUserProfile>> fetchUserProfiles() async {

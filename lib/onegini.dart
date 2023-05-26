@@ -11,7 +11,7 @@ import 'package:onegini/onegini.gen.dart';
 class Onegini {
   // UserClientApi is the flutter to native api created by the Pigeon package, see /pigeons/README.md
   /// User client methods.
-  final UserClientApi api = UserClientApi();
+  final UserClientApi _api = UserClientApi();
 
   late final UserClient userClient;
 
@@ -24,7 +24,7 @@ class Onegini {
       Finalizer((owEventStreamController) => owEventStreamController.close());
 
   Onegini._internal() {
-    userClient = UserClient(api);
+    userClient = UserClient(_api);
   }
 
   static final Onegini instance = Onegini._internal();
@@ -51,7 +51,7 @@ class Onegini {
     List<String>? additionalResourceUrls,
   }) async {
     NativeCallFlutterApi.setup(OneginiEventListener(owEventStreamController));
-    await api.startApplication(
+    await _api.startApplication(
         securityControllerClassName,
         configModelClassName,
         customIdentityProviderConfigs,

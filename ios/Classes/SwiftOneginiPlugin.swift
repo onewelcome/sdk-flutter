@@ -43,7 +43,7 @@ extension OWIdentityProvider {
 }
 
 extension OWRequestResponse {
-    init(_ response: ONGResourceResponse) {
+    init(_ response: ResourceResponse) {
         headers = toOWRequestHeaders(response.allHeaderFields)
         body = String(data: response.data ?? Data(), encoding: .utf8) ?? ""
         status = Int64(response.statusCode)
