@@ -15,17 +15,15 @@ import 'package:collection/collection.dart';
 
 import '../components/display_toast.dart';
 
-class LoginScreen extends StatefulWidget {
+class AuthScreen extends StatefulWidget {
   @override
-  _LoginScreenState createState() => _LoginScreenState();
+  _AuthScreenState createState() => _AuthScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _AuthScreenState extends State<AuthScreen> {
   bool isLoading = false;
   List<StreamSubscription<OWEvent>>? registrationSubscriptions;
   List<StreamSubscription<OWEvent>>? authenticationSubscriptions;
-  List<OWUserProfile> userProfiles = [];
-  String? selectedProfileId;
 
   @override
   initState() {
@@ -35,18 +33,16 @@ class _LoginScreenState extends State<LoginScreen> {
     this.authenticationSubscriptions =
         OWBroadcastHelper.initAuthenticationSubscriptions(context);
     super.initState();
-    getUserProfiles();
   }
 
   @override
   void dispose() {
     OWBroadcastHelper.stopListening(registrationSubscriptions);
     OWBroadcastHelper.stopListening(authenticationSubscriptions);
-
     super.dispose();
   }
 
-  openWeb() async {
+  _openWeb() async {
     /// Start registration
     setState(() => isLoading = true);
 
@@ -71,7 +67,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  registrationWithIdentityProvider(String identityProviderId) async {
+  _registraterWithIdentityProvider(String identityProviderId) async {
     setState(() => isLoading = true);
     try {
       var registrationResponse = await Onegini.instance.userClient.registerUser(
@@ -94,25 +90,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  authenticate(String profileId, OWAuthenticatorType? authenticatorType) async {
-    try {
-      var registrationResponse = await Onegini.instance.userClient
-          .authenticateUser(profileId, authenticatorType);
-      Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(
-              builder: (context) => UserScreen(
-                    userProfileId: registrationResponse.userProfile.profileId,
-                  )),
-          (Route<dynamic> route) => false);
-    } catch (error) {
-      if (error is PlatformException) {
-        showFlutterToast(error.message);
-      }
-    }
-  }
-
-  cancelRegistration() async {
+  _cancelRegistration() async {
     setState(() => isLoading = false);
     try {
       await Future.any([
@@ -122,53 +100,6 @@ class _LoginScreenState extends State<LoginScreen> {
     } on PlatformException catch (error) {
       showFlutterToast(error.message);
     }
-  }
-
-  Future<List<OWUserProfile>> getUserProfiles() async {
-    try {
-      final profiles = await Onegini.instance.userClient.getUserProfiles();
-      setState(() {
-        userProfiles = profiles;
-        if (selectedProfileId == null) {
-          selectedProfileId = profiles.firstOrNull?.profileId;
-        }
-      });
-      return profiles;
-    } catch (err) {
-      print("caught error in getUserProfiles: $err");
-      return [];
-    }
-  }
-
-  Future<String> getImplicitUserDetails(String profileId) async {
-    try {
-      await Onegini.instance.userClient
-          .authenticateUserImplicitly(profileId, ["read"]);
-      var response = await Onegini.instance.resourcesMethods.requestResource(
-          ResourceRequestType.implicit,
-          RequestDetails(
-              path: "user-id-decorated", method: HttpRequestMethod.get));
-
-      var res = json.decode(response.body);
-
-      return res["decorated_user_id"];
-    } catch (err) {
-      print("Caught error: $err");
-      return "Error occured check logs";
-    }
-  }
-
-  Widget _buildImplicitUserData(String profileId) {
-    return FutureBuilder<String>(
-        future: getImplicitUserDetails(profileId),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return Text("${snapshot.data}");
-          } else if (snapshot.hasError) {
-            return Text("Error getting implicit details.");
-          }
-          return CircularProgressIndicator();
-        });
   }
 
   @override
@@ -195,66 +126,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   SizedBox(height: 20),
-                  _buildLoginWidget(),
+                  LoginSection(),
                   SizedBox(height: 20),
                   _buildRegisterWidget(),
                 ],
               ),
             ),
     );
-  }
-
-  Widget _buildLoginWidget() {
-    final profileId = selectedProfileId;
-    return (userProfiles.length > 0 && profileId != null)
-        ? Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-                Text(
-                  "──── Login ────",
-                  style: TextStyle(fontSize: 30),
-                  textAlign: TextAlign.center,
-                ),
-                _buildSelectUserProfile(userProfiles),
-                _buildImplicitUserData(profileId),
-                ElevatedButton(
-                  onPressed: () {
-                    authenticate(profileId, null);
-                  },
-                  child: Text('Preferred authenticator'),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        authenticate(profileId, OWAuthenticatorType.pin);
-                      },
-                      child: Text('Pin'),
-                    ),
-                    SizedBox(height: 10, width: 10),
-                    ElevatedButton(
-                      onPressed: () {
-                        authenticate(profileId, OWAuthenticatorType.biometric);
-                      },
-                      child: Text('Biometrics'),
-                    ),
-                  ],
-                ),
-              ])
-        : SizedBox.shrink();
-  }
-
-  DropdownButton _buildSelectUserProfile(List<OWUserProfile> profiles) {
-    return DropdownButton(
-        value: selectedProfileId,
-        items: profiles
-            .map((e) =>
-                DropdownMenuItem(value: e.profileId, child: Text(e.profileId)))
-            .toList(),
-        onChanged: (profileId) =>
-            {setState(() => selectedProfileId = profileId)});
   }
 
   Column _buildRegisterWidget() {
@@ -267,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
         SizedBox(height: 20),
         ElevatedButton(
           onPressed: () {
-            openWeb();
+            _openWeb();
           },
           child: Text('Run WEB'),
         ),
@@ -290,7 +168,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ),
                     onSelected: (value) {
-                      registrationWithIdentityProvider(value);
+                      _registraterWithIdentityProvider(value);
                     },
                     itemBuilder: (context) {
                       return identityProviders
@@ -316,11 +194,149 @@ class _LoginScreenState extends State<LoginScreen> {
         SizedBox(height: 20),
         ElevatedButton(
           onPressed: () {
-            cancelRegistration();
+            _cancelRegistration();
           },
           child: Text('Cancel'),
         ),
       ],
     );
+  }
+}
+
+class LoginSection extends StatefulWidget {
+  @override
+  _LoginSectionState createState() => _LoginSectionState();
+}
+
+class _LoginSectionState extends State<LoginSection> {
+  List<OWUserProfile> userProfiles = [];
+  String? selectedProfileId;
+
+  @override
+  initState() {
+    super.initState();
+    _fetchUserProfiles();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final _selectedProfileId = selectedProfileId;
+    return (userProfiles.length > 0 && _selectedProfileId != null)
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+                Text(
+                  "──── Login ────",
+                  style: TextStyle(fontSize: 30),
+                  textAlign: TextAlign.center,
+                ),
+                _buildSelectUserProfile(userProfiles),
+                _buildImplicitUserData(_selectedProfileId),
+                ElevatedButton(
+                  onPressed: () {
+                    _authenticate(_selectedProfileId, null);
+                  },
+                  child: Text('Preferred authenticator'),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        _authenticate(
+                            _selectedProfileId, OWAuthenticatorType.pin);
+                      },
+                      child: Text('Pin'),
+                    ),
+                    SizedBox(height: 10, width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        _authenticate(
+                            _selectedProfileId, OWAuthenticatorType.biometric);
+                      },
+                      child: Text('Biometrics'),
+                    ),
+                  ],
+                ),
+              ])
+        : SizedBox.shrink();
+  }
+
+  DropdownButton _buildSelectUserProfile(List<OWUserProfile> profiles) {
+    return DropdownButton(
+        value: selectedProfileId,
+        items: profiles
+            .map((e) =>
+                DropdownMenuItem(value: e.profileId, child: Text(e.profileId)))
+            .toList(),
+        onChanged: (profileId) =>
+            {setState(() => selectedProfileId = profileId)});
+  }
+
+  Future<List<OWUserProfile>> _fetchUserProfiles() async {
+    try {
+      final profiles = await Onegini.instance.userClient.getUserProfiles();
+      setState(() {
+        userProfiles = profiles;
+        selectedProfileId =
+            selectedProfileId ?? profiles.firstOrNull?.profileId;
+      });
+      return profiles;
+    } catch (err) {
+      print("caught error in getUserProfiles: $err");
+      return [];
+    }
+  }
+
+  Widget _buildImplicitUserData(final String profileId) {
+    return FutureBuilder<String>(
+        future: _getImplicitUserDetails(profileId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done &&
+              snapshot.hasData) {
+            return Text("${snapshot.data}");
+          } else if (snapshot.hasError) {
+            return Text("Error getting implicit details.");
+          }
+          return CircularProgressIndicator();
+        });
+  }
+
+  Future<String> _getImplicitUserDetails(final String profileId) async {
+    try {
+      await Onegini.instance.userClient
+          .authenticateUserImplicitly(profileId, ["read"]);
+      var response = await Onegini.instance.resourcesMethods.requestResource(
+          ResourceRequestType.implicit,
+          RequestDetails(
+              path: "user-id-decorated", method: HttpRequestMethod.get));
+
+      var res = json.decode(response.body);
+
+      return res["decorated_user_id"];
+    } catch (err) {
+      print("Caught error: $err");
+      return "Error occured check logs";
+    }
+  }
+
+  _authenticate(
+      final String profileId, OWAuthenticatorType? authenticatorType) async {
+    try {
+      var registrationResponse = await Onegini.instance.userClient
+          .authenticateUser(profileId, authenticatorType);
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => UserScreen(
+                    userProfileId: registrationResponse.userProfile.profileId,
+                  )),
+          (Route<dynamic> route) => false);
+    } catch (error) {
+      if (error is PlatformException) {
+        showFlutterToast(error.message);
+      }
+    }
   }
 }
