@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:onegini/onegini.dart';
 import 'package:onegini/onegini.gen.dart';
 import 'package:onegini_example/components/display_toast.dart';
-import 'package:onegini_example/screens/login_screen.dart';
+import 'package:onegini_example/screens/auth_screen.dart';
 
 final RouteObserver<PageRoute> routeObserver = RouteObserver<PageRoute>();
 
@@ -72,7 +72,7 @@ class _BodyWidgetState extends State<BodyWidget> {
 
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
+      MaterialPageRoute(builder: (context) => AuthScreen()),
     );
   }
 

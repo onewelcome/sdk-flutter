@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:onegini/callbacks/onegini_custom_registration_callback.dart';
 import 'package:onegini_example/components/display_toast.dart';
 
-import 'login_screen.dart';
+import 'auth_screen.dart';
 
 class OtpScreen extends StatefulWidget {
   final String password;
@@ -42,7 +42,7 @@ class _OtpScreenState extends State<OtpScreen> {
     });
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => LoginScreen()),
+      MaterialPageRoute(builder: (context) => AuthScreen()),
     );
   }
 
