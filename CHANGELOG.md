@@ -1,3 +1,6 @@
+## 3.0.1, May 30, 2023
+* Changed access modifier of a native api in order to hide it from the sdk user.
+
 ## 3.0.0, May 3, 2023
 You can find the full changelog [here](https://developer.onewelcome.com/flutter/plugin/v2-x) and an overview containing the upgrade instructions [here](https://developer.onewelcome.com/flutter/plugin/v2-0).
 
