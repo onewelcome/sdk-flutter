@@ -1,0 +1,159 @@
+---
+format_version: '11'
+default_step_lib_source: https://github.com/bitrise-io/bitrise-steplib.git
+project_type: flutter
+workflows:
+  Android:
+    description: |
+      Builds project and runs tests.
+
+      Next steps:
+      - Check out [Getting started with Flutter apps](https://devcenter.bitrise.io/en/getting-started/getting-started-with-flutter-apps.html).
+    steps:
+    - git-clone@7: {}
+    - flutter-installer@0: {}
+    - script@1:
+        title: Script - flutter pub get
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            # fail if any commands fails
+            set -e
+            # make pipelines' return status equal the last command to exit with a non-zero status, or zero if all commands exit successfully
+            set -o pipefail
+            # debug log
+            set -x
+
+            # write your script here
+            cd $BITRISE_FLUTTER_PROJECT_LOCATION
+            flutter pub get
+    - install-missing-android-tools@3:
+        inputs:
+        - gradlew_path: "./example/android/gradlew"
+    - android-unit-test@1:
+        inputs:
+        - module: "$MODULE"
+        - project_location: "$BITRISE_SOURCE_DIR/example/android"
+    - script@1:
+        inputs:
+        - content: |-
+            #!/bin/env bash
+            set -ex
+
+            # Deleting any old test results from BITRISE_TEST_RESULT_DIR
+            rm -rf "$BITRISE_TEST_RESULT_DIR/"*
+
+            # Creating the sub-directory for the test run within the BITRISE_TEST_RESULT_DIR:
+            test_run_dir="$BITRISE_TEST_RESULT_DIR/unit_test_results"
+            mkdir "$test_run_dir"
+
+
+            # Exporting the JUnit XML test report:
+            cp $BITRISE_SOURCE_DIR/example/build/$MODULE/test-results/testDebugUnitTest/*.xml $test_run_dir/
+
+            # Creating the test-info.json file with the name of the test run defined:
+            echo '{"test-name":"Unit tests"}' >> "$test_run_dir/test-info.json"
+        is_always_run: true
+    - deploy-to-bitrise-io@2: {}
+  iOS:
+    description: |
+      Builds project and runs tests.
+
+      Next steps:
+      - Check out [Getting started with Flutter apps](https://devcenter.bitrise.io/en/getting-started/getting-started-with-flutter-apps.html).
+    steps:
+    - git-clone@7: {}
+    - flutter-installer@0: {}
+    - cache-pull@2: {}
+    - script@1:
+        inputs:
+        - content: |-
+            #!/usr/bin/env bash
+            # fail if any commands fails
+            set -e
+            # make pipelines' return status equal the last command to exit with a non-zero status, or zero if all commands exit successfully
+            set -o pipefail
+            # debug log
+            set -x
+
+            # write your script here
+            cd $BITRISE_FLUTTER_PROJECT_LOCATION
+            flutter pub get
+            flutter precache --ios
+        title: Script - flutter pub get
+    - script@1:
+        inputs:
+        - content: |
+            #!/usr/bin/env bash
+            # fail if any commands fails
+            set -e
+            # debug log
+            set -x
+
+            gem install cocoapods-art -v 1.0.1
+            > /Users/vagrant/.netrc
+            echo "machine repo.onewelcome.com" > /Users/vagrant/.netrc
+            echo "login $ARTIFACTORY_USER" >> /Users/vagrant/.netrc
+            echo "password $ARTIFACTORY_PASSWORD" >> /Users/vagrant/.netrc
+            chmod 600 /Users/vagrant/.netrc
+            pod repo-art add onegini https://repo.onewelcome.com/artifactory/api/pods/cocoapods-public
+        title: Script - setup artifactory credentials
+    - cocoapods-install@2:
+        inputs:
+        - source_root_path: "$BITRISE_SOURCE_DIR/example/ios"
+    - xcodebuild@0:
+        inputs:
+        - xcodebuild_actions: build
+        - xcodebuild_output_formatter: tee
+    - cache-push@2: {}
+    - deploy-to-bitrise-io@2: {}
+    envs:
+    - opts:
+        is_expand: false
+      SIMULATOR_DEVICE: iPhone 14
+    - opts:
+        is_expand: false
+      SIMULATOR_OS_VERSION: latest
+    - opts:
+        is_expand: false
+      BITRISE_PROJECT_PATH: example/ios/Runner.xcworkspace
+    - opts:
+        is_expand: false
+      BITRISE_SCHEME: Runner
+  primary:
+    description: |
+      Builds project and runs tests.
+
+      Next steps:
+      - Check out [Getting started with Flutter apps](https://devcenter.bitrise.io/en/getting-started/getting-started-with-flutter-apps.html).
+    steps:
+    - build-router-start@0:
+        inputs:
+        - access_token: "$BITRISE_API_TOKEN"
+        - workflows: iOS
+        title: Bitrise Start iOS
+    - build-router-start@0:
+        title: Bitrise Start Android
+        inputs:
+        - access_token: "$BITRISE_API_TOKEN"
+        - workflows: Android
+    - git-clone@7: {}
+    - flutter-installer@0: {}
+    - deploy-to-bitrise-io@2: {}
+    - build-router-wait@0:
+        inputs:
+        - access_token: "$BITRISE_API_TOKEN"
+meta:
+  bitrise.io:
+    stack: osx-xcode-14.2.x-ventura
+app:
+  envs:
+  - opts:
+      is_expand: false
+    BITRISE_FLUTTER_PROJECT_LOCATION: example
+  - opts:
+      is_expand: false
+    MODULE: onegini
+trigger_map:
+- pull_request_source_branch: "*"
+  workflow: primary
