@@ -104,7 +104,7 @@ private extension ResourceResponse {
     func toJSON() -> [String: Any?] {
         return ["statusCode": statusCode,
                 "headers": allHeaderFields,
-                "url": response.url,
+                "url": response.url?.absoluteString,
                 "body": data != nil ? String(data: data!, encoding: .utf8) : nil
         ]
     }
