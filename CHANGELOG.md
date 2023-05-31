@@ -1,3 +1,6 @@
+## 3.0.2, May 31, 2023
+* [iOS] Fix a crash on iOS on failing resource requests.
+
 ## 3.0.1, May 30, 2023
 * Changed access modifier of a native api in order to hide it from the sdk user.
 
