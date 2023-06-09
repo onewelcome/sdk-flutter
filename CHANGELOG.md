@@ -1,3 +1,6 @@
+## 3.0.3, June 9, 2023
+* [iOS] Fixed a bug where `ClosePinAuthenticationEvent` wouldn't be emitted, when user cancelled biometric authenticator registration.
+
 ## 3.0.2, May 31, 2023
 * [iOS] Fix a crash on iOS on failing resource requests.
 
