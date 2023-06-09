@@ -94,6 +94,7 @@ class AuthenticatorRegistrationDelegateImpl: AuthenticatorRegistrationDelegate {
 
     func userClient(_ userClient: UserClient, didFailToRegister authenticator: Authenticator, for userProfile: UserProfile, error: Error) {
         Logger.log("[AUTH] userClient didFailToRegister ONGAuthenticator", sender: self)
+        loginHandler.handleDidFailToAuthenticateUser()
         let mappedError = ErrorMapper().mapError(error)
         completion(.failure(FlutterError(mappedError)))
     }
