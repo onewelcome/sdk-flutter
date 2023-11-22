@@ -64,6 +64,12 @@ class OWRegistrationResponse {
   OWRegistrationResponse({required this.userProfile, this.customInfo});
 }
 
+class OWStatelessRegistrationResponse {
+  OWCustomInfo? customInfo;
+
+  OWStatelessRegistrationResponse({this.customInfo});
+}
+
 enum HttpRequestMethod {
   get,
   post,
@@ -136,6 +142,10 @@ abstract class UserClientApi {
 
   @async
   OWRegistrationResponse registerUser(
+      String? identityProviderId, List<String>? scopes);
+
+  @async
+  OWStatelessRegistrationResponse registerStatelessUser(
       String? identityProviderId, List<String>? scopes);
 
   @async

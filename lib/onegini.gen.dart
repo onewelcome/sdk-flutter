@@ -196,6 +196,29 @@ class OWRegistrationResponse {
   }
 }
 
+class OWStatelessRegistrationResponse {
+  OWStatelessRegistrationResponse({
+    this.customInfo,
+  });
+
+  OWCustomInfo? customInfo;
+
+  Object encode() {
+    return <Object?>[
+      customInfo?.encode(),
+    ];
+  }
+
+  static OWStatelessRegistrationResponse decode(Object result) {
+    result as List<Object?>;
+    return OWStatelessRegistrationResponse(
+      customInfo: result[0] != null
+          ? OWCustomInfo.decode(result[0]! as List<Object?>)
+          : null,
+    );
+  }
+}
+
 class OWRequestDetails {
   OWRequestDetails({
     required this.path,
@@ -373,8 +396,11 @@ class _UserClientApiCodec extends StandardMessageCodec {
     } else if (value is OWRegistrationResponse) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is OWUserProfile) {
+    } else if (value is OWStatelessRegistrationResponse) {
       buffer.putUint8(134);
+      writeValue(buffer, value.encode());
+    } else if (value is OWUserProfile) {
+      buffer.putUint8(135);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -397,6 +423,8 @@ class _UserClientApiCodec extends StandardMessageCodec {
       case 133:
         return OWRegistrationResponse.decode(readValue(buffer)!);
       case 134:
+        return OWStatelessRegistrationResponse.decode(readValue(buffer)!);
+      case 135:
         return OWUserProfile.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -474,6 +502,34 @@ class UserClientApi {
       );
     } else {
       return (replyList[0] as OWRegistrationResponse?)!;
+    }
+  }
+
+  Future<OWStatelessRegistrationResponse> registerStatelessUser(
+      String? arg_identityProviderId, List<String?>? arg_scopes) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.UserClientApi.registerStatelessUser', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+        .send(<Object?>[arg_identityProviderId, arg_scopes]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else if (replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (replyList[0] as OWStatelessRegistrationResponse?)!;
     }
   }
 

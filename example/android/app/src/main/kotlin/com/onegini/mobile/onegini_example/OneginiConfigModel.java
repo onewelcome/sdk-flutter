@@ -18,6 +18,10 @@ public class OneginiConfigModel implements OneginiClientConfigModel {
   private final int maxPinFailures = 3;
   private final String serverPublicKey = "17DDB4086A1D3FA37950CBDDC6F1173A0C5902A3B71DAD261290CEFEE13CC9CA";
 
+  private final String serverType = "access";
+
+  private final String serverVersion = "78d06f2";
+
   public String getAppIdentifier() {
     return appIdentifier;
   }
@@ -56,6 +60,14 @@ public class OneginiConfigModel implements OneginiClientConfigModel {
 
   public String getServerPublicKey() {
     return serverPublicKey;
+  }
+
+  public String getServerType() {
+    return serverType;
+  }
+
+  public String getServerVersion() {
+    return serverVersion;
   }
 
   /**

@@ -199,6 +199,27 @@ struct OWRegistrationResponse {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
+struct OWStatelessRegistrationResponse {
+  var customInfo: OWCustomInfo? = nil
+
+  static func fromList(_ list: [Any]) -> OWStatelessRegistrationResponse? {
+    var customInfo: OWCustomInfo? = nil
+    if let customInfoList = list[0] as! [Any]? {
+      customInfo = OWCustomInfo.fromList(customInfoList)
+    }
+
+    return OWStatelessRegistrationResponse(
+      customInfo: customInfo
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      customInfo?.toList(),
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
 struct OWRequestDetails {
   var path: String
   var method: HttpRequestMethod
@@ -344,6 +365,8 @@ private class UserClientApiCodecReader: FlutterStandardReader {
       case 133:
         return OWRegistrationResponse.fromList(self.readValue() as! [Any])
       case 134:
+        return OWStatelessRegistrationResponse.fromList(self.readValue() as! [Any])
+      case 135:
         return OWUserProfile.fromList(self.readValue() as! [Any])
       default:
         return super.readValue(ofType: type)
@@ -371,8 +394,11 @@ private class UserClientApiCodecWriter: FlutterStandardWriter {
     } else if let value = value as? OWRegistrationResponse {
       super.writeByte(133)
       super.writeValue(value.toList())
-    } else if let value = value as? OWUserProfile {
+    } else if let value = value as? OWStatelessRegistrationResponse {
       super.writeByte(134)
+      super.writeValue(value.toList())
+    } else if let value = value as? OWUserProfile {
+      super.writeByte(135)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -400,6 +426,7 @@ class UserClientApiCodec: FlutterStandardMessageCodec {
 protocol UserClientApi {
   func startApplication(securityControllerClassName: String?, configModelClassName: String?, customIdentityProviderConfigs: [OWCustomIdentityProvider]?, connectionTimeout: Int64?, readTimeout: Int64?, additionalResourceUrls: [String]?, completion: @escaping (Result<Void, Error>) -> Void)
   func registerUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void)
+  func registerStatelessUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWStatelessRegistrationResponse, Error>) -> Void)
   func handleRegisteredUserUrl(url: String, signInType: Int64, completion: @escaping (Result<Void, Error>) -> Void)
   func getIdentityProviders(completion: @escaping (Result<[OWIdentityProvider], Error>) -> Void)
   func deregisterUser(profileId: String, completion: @escaping (Result<Void, Error>) -> Void)
@@ -487,6 +514,24 @@ class UserClientApiSetup {
       }
     } else {
       registerUserChannel.setMessageHandler(nil)
+    }
+    let registerStatelessUserChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.registerStatelessUser", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      registerStatelessUserChannel.setMessageHandler { message, reply in
+        let args = message as! [Any]
+        let identityProviderIdArg: String? = nilOrValue(args[0])
+        let scopesArg: [String]? = nilOrValue(args[1])
+        api.registerStatelessUser(identityProviderId: identityProviderIdArg, scopes: scopesArg) { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      registerStatelessUserChannel.setMessageHandler(nil)
     }
     let handleRegisteredUserUrlChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.handleRegisteredUserUrl", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
