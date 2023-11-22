@@ -34,6 +34,18 @@ StreamSubscription<OWEvent> _getInitCustomRegistrationSub() {
                   }
               });
     }
+    if (event.providerId == "New2step") {
+      // a New2step requires data for the initialization request
+      OneginiCustomRegistrationCallback()
+          .submitSuccessAction("12345")
+          .catchError((error) => {
+                if (error is PlatformException)
+                  {
+                    showFlutterToast(error.message ??
+                        "An error occuring while answering init custom registration")
+                  }
+              });
+    }
   });
 }
 
@@ -41,7 +53,7 @@ StreamSubscription<OWEvent> _getFinishCustomRegistrationSub(
     BuildContext context) {
   return OWBroadcastHelper.createStream<FinishCustomRegistrationEvent>()
       .listen((event) {
-    if (event.providerId == "2-way-otp-api") {
+    if (event.providerId == "2-way-otp-api" || event.providerId == "New2step") {
       // a 2-way-otp does not require data for the initialization request
       Navigator.push(
         context,
@@ -55,6 +67,9 @@ StreamSubscription<OWEvent> _getFinishCustomRegistrationSub(
       // This identity provider is set up to accept a body with 'Onegini'
       // Normally this would contain some single use token.
       OneginiCustomRegistrationCallback().submitSuccessAction('Onegini');
+    }
+    if (event.providerId == "stateless-test") {
+      OneginiCustomRegistrationCallback().submitSuccessAction('success');
     }
   });
 }
