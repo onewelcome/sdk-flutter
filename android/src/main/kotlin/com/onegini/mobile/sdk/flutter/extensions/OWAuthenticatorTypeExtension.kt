@@ -6,6 +6,6 @@ import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWAuthenticatorType
 fun OWAuthenticatorType.toOneginiInt(): Int {
     return when (this) {
         OWAuthenticatorType.PIN -> OneginiAuthenticator.PIN
-        OWAuthenticatorType.BIOMETRIC -> OneginiAuthenticator.FINGERPRINT
+        OWAuthenticatorType.BIOMETRIC -> OneginiAuthenticator.BIOMETRIC
     }
 }

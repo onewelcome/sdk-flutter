@@ -16,7 +16,7 @@ class GetBiometricAuthenticatorUseCase @Inject constructor(private val oneginiSD
             return Result.failure(error.pigeonError())
         }
         val authenticators = oneginiSDK.oneginiClient.userClient.getAllAuthenticators(userProfile)
-        val authenticator = authenticators.find { it.type ==  OneginiAuthenticator.FINGERPRINT }
+        val authenticator = authenticators.find { it.type ==  OneginiAuthenticator.BIOMETRIC }
             ?: return Result.failure(SdkError(BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE).pigeonError())
 
         return Result.success(OWAuthenticator(authenticator.id, authenticator.name, authenticator.isRegistered, authenticator.isPreferred, OWAuthenticatorType.BIOMETRIC))
