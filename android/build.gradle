@@ -37,7 +37,7 @@ unMock {
 }
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -88,6 +88,8 @@ dependencies {
     // Optional -- Mockito framework
     testImplementation "org.mockito.kotlin:mockito-kotlin:3.1.0"
     testImplementation 'org.mockito:mockito-inline:2.13.0'
+    testImplementation 'org.mockito:mockito-core:5.7.0'
+    testImplementation "org.robolectric:robolectric:3.6.1"
 
     implementation "com.google.truth:truth:1.1.3"
 

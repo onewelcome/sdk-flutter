@@ -21,6 +21,7 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.robolectric.util.ReflectionHelpers
 
 @RunWith(MockitoJUnitRunner::class)
 class DeregisterUserUseCaseTests {
@@ -75,7 +76,7 @@ class DeregisterUserUseCaseTests {
     whenever(oneginiSdk.oneginiClient.userClient.deregisterUser(eq(UserProfile("QWERTY")), any())).thenAnswer {
       it.getArgument<OneginiDeregisterUserProfileHandler>(1).onError(oneginiDeregistrationErrorMock)
     }
-    whenever(oneginiDeregistrationErrorMock.errorType).thenReturn(OneginiDeregistrationError.GENERAL_ERROR)
+    ReflectionHelpers.setField(oneginiDeregistrationErrorMock, "errorType", OneginiDeregistrationError.GENERAL_ERROR);
     whenever(oneginiDeregistrationErrorMock.message).thenReturn("General error")
 
     deregisterUserUseCase("QWERTY", callbackMock)

@@ -18,6 +18,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.robolectric.util.ReflectionHelpers
 
 @RunWith(MockitoJUnitRunner::class)
 class EnrollMobileAuthenticationUseCaseTest {
@@ -35,7 +36,7 @@ class EnrollMobileAuthenticationUseCaseTest {
   @Before
   fun attach() {
     enrollMobileAuthenticationUseCase = EnrollMobileAuthenticationUseCase(oneginiSdk)
-    whenever(enrollErrorMock.errorType).thenReturn(OneginiMobileAuthEnrollmentError.GENERAL_ERROR)
+    ReflectionHelpers.setField(enrollErrorMock, "errorType", OneginiMobileAuthEnrollmentError.GENERAL_ERROR);
     whenever(enrollErrorMock.message).thenReturn("General error")
   }
 

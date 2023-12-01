@@ -28,6 +28,7 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.robolectric.util.ReflectionHelpers
 
 @RunWith(MockitoJUnitRunner::class)
 class AuthenticateUserUseCaseTests {
@@ -115,7 +116,7 @@ class AuthenticateUserUseCaseTests {
   @Test
   fun `When authenticateUser return error, Then it should call result error`() {
     whenUserProfileExists()
-    whenever(oneginiAuthenticationErrorMock.errorType).thenReturn(OneginiAuthenticationError.GENERAL_ERROR)
+    ReflectionHelpers.setField(oneginiAuthenticationErrorMock, "errorType", OneginiAuthenticationError.GENERAL_ERROR);
     whenever(oneginiAuthenticationErrorMock.message).thenReturn("General error")
     whenever(oneginiSdk.oneginiClient.userClient.authenticateUser(eq(UserProfile(profileId)), any())).thenAnswer {
       it.getArgument<OneginiAuthenticationHandler>(1).onError(oneginiAuthenticationErrorMock)
@@ -136,7 +137,7 @@ class AuthenticateUserUseCaseTests {
   }
 
   private fun whenFingerprintIsRegistered() {
-    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.FINGERPRINT)
+    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.BIOMETRIC)
     whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile(profileId)))).thenReturn(
       setOf(
         oneginiAuthenticatorMock

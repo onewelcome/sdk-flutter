@@ -72,7 +72,7 @@ class GetBiometricAuthenticatorUseCaseTests {
     }
 
     private fun whenBiometricAuthenticatorAvailable() {
-        whenever(oneginiAuthenticator.type).thenReturn(OneginiAuthenticator.FINGERPRINT)
+        whenever(oneginiAuthenticator.type).thenReturn(OneginiAuthenticator.BIOMETRIC)
         whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(any())).thenReturn(setOf(oneginiAuthenticator))
     }
 

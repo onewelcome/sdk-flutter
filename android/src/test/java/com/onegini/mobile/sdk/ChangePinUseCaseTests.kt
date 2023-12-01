@@ -17,6 +17,7 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
+import org.robolectric.util.ReflectionHelpers
 
 @RunWith(MockitoJUnitRunner::class)
 class ChangePinUseCaseTests {
@@ -68,6 +69,6 @@ class ChangePinUseCaseTests {
 
     private fun setupErrorMock() {
         whenever(oneginiChangePinError.message).thenReturn("message")
-        whenever(oneginiChangePinError.errorType).thenReturn(1000)
+        ReflectionHelpers.setField(oneginiChangePinError, "errorType", 1000);
     }
 }
