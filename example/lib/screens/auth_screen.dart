@@ -60,6 +60,7 @@ class _AuthScreenState extends State<AuthScreen> {
             MaterialPageRoute(
                 builder: (context) => UserScreen(
                       userProfileId: "",
+                      isStateless: true,
                     )),
             (Route<dynamic> route) => false);
       } else {
@@ -73,8 +74,8 @@ class _AuthScreenState extends State<AuthScreen> {
             context,
             MaterialPageRoute(
                 builder: (context) => UserScreen(
-                      userProfileId: registrationResponse.userProfile.profileId,
-                    )),
+                    userProfileId: registrationResponse.userProfile.profileId,
+                    isStateless: false)),
             (Route<dynamic> route) => false);
       }
     } catch (error) {
@@ -100,6 +101,7 @@ class _AuthScreenState extends State<AuthScreen> {
             MaterialPageRoute(
                 builder: (context) => UserScreen(
                       userProfileId: "",
+                      isStateless: true,
                     )),
             (Route<dynamic> route) => false);
       } else {
@@ -114,6 +116,7 @@ class _AuthScreenState extends State<AuthScreen> {
             MaterialPageRoute(
                 builder: (context) => UserScreen(
                       userProfileId: registrationResponse.userProfile.profileId,
+                      isStateless: false,
                     )),
             (Route<dynamic> route) => false);
       }
@@ -384,6 +387,7 @@ class _LoginSectionState extends State<LoginSection> {
           MaterialPageRoute(
               builder: (context) => UserScreen(
                     userProfileId: registrationResponse.userProfile.profileId,
+                    isStateless: false,
                   )),
           (Route<dynamic> route) => false);
     } catch (error) {
