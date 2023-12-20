@@ -199,27 +199,6 @@ struct OWRegistrationResponse {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
-struct OWStatelessRegistrationResponse {
-  var customInfo: OWCustomInfo? = nil
-
-  static func fromList(_ list: [Any]) -> OWStatelessRegistrationResponse? {
-    var customInfo: OWCustomInfo? = nil
-    if let customInfoList = list[0] as! [Any]? {
-      customInfo = OWCustomInfo.fromList(customInfoList)
-    }
-
-    return OWStatelessRegistrationResponse(
-      customInfo: customInfo
-    )
-  }
-  func toList() -> [Any?] {
-    return [
-      customInfo?.toList(),
-    ]
-  }
-}
-
-/// Generated class from Pigeon that represents data sent in messages.
 struct OWRequestDetails {
   var path: String
   var method: HttpRequestMethod
@@ -365,8 +344,6 @@ private class UserClientApiCodecReader: FlutterStandardReader {
       case 133:
         return OWRegistrationResponse.fromList(self.readValue() as! [Any])
       case 134:
-        return OWStatelessRegistrationResponse.fromList(self.readValue() as! [Any])
-      case 135:
         return OWUserProfile.fromList(self.readValue() as! [Any])
       default:
         return super.readValue(ofType: type)
@@ -394,11 +371,8 @@ private class UserClientApiCodecWriter: FlutterStandardWriter {
     } else if let value = value as? OWRegistrationResponse {
       super.writeByte(133)
       super.writeValue(value.toList())
-    } else if let value = value as? OWStatelessRegistrationResponse {
-      super.writeByte(134)
-      super.writeValue(value.toList())
     } else if let value = value as? OWUserProfile {
-      super.writeByte(135)
+      super.writeByte(134)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -426,7 +400,7 @@ class UserClientApiCodec: FlutterStandardMessageCodec {
 protocol UserClientApi {
   func startApplication(securityControllerClassName: String?, configModelClassName: String?, customIdentityProviderConfigs: [OWCustomIdentityProvider]?, connectionTimeout: Int64?, readTimeout: Int64?, additionalResourceUrls: [String]?, completion: @escaping (Result<Void, Error>) -> Void)
   func registerUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void)
-  func registerStatelessUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWStatelessRegistrationResponse, Error>) -> Void)
+  func registerStatelessUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void)
   func handleRegisteredUserUrl(url: String, signInType: Int64, completion: @escaping (Result<Void, Error>) -> Void)
   func getIdentityProviders(completion: @escaping (Result<[OWIdentityProvider], Error>) -> Void)
   func deregisterUser(profileId: String, completion: @escaping (Result<Void, Error>) -> Void)

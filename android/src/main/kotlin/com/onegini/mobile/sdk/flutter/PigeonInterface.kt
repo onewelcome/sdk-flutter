@@ -8,7 +8,6 @@ import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomIdentityProvider
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWIdentityProvider
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWStatelessRegistrationResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestDetails
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWUserProfile
@@ -191,7 +190,7 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
     registrationUseCase(identityProviderId, scopes, callback)
   }
 
-  override fun registerStatelessUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWStatelessRegistrationResponse>) -> Unit) {
+  override fun registerStatelessUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit) {
     statelessRegistrationUseCase(identityProviderId, scopes, callback)
   }
 

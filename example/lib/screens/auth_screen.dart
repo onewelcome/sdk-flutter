@@ -47,37 +47,28 @@ class _AuthScreenState extends State<AuthScreen> {
     /// Start registration
     setState(() => isLoading = true);
 
+    var registrationResponse;
+
     try {
       if (isStatelessChecked) {
-        var statelessRegistrationResponse =
+        registrationResponse =
             await Onegini.instance.userClient.registerStatelessUser(
           null,
           ["read"],
         );
-
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => UserScreen(
-                      userProfileId: "",
-                      isStateless: true,
-                    )),
-            (Route<dynamic> route) => false);
       } else {
-        var registrationResponse =
-            await Onegini.instance.userClient.registerUser(
+        registrationResponse = await Onegini.instance.userClient.registerUser(
           null,
           ["read"],
         );
-
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => UserScreen(
-                    userProfileId: registrationResponse.userProfile.profileId,
-                    isStateless: false)),
-            (Route<dynamic> route) => false);
       }
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => UserScreen(
+                    userProfileId: registrationResponse.userProfile.profileId,
+                  )),
+          (Route<dynamic> route) => false);
     } catch (error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
@@ -88,38 +79,27 @@ class _AuthScreenState extends State<AuthScreen> {
 
   _registerWithIdentityProvider(String identityProviderId) async {
     setState(() => isLoading = true);
+    var registrationResponse;
     try {
       if (isStatelessChecked) {
-        var statelessRegistrationResponse =
+        registrationResponse =
             await Onegini.instance.userClient.registerStatelessUser(
           identityProviderId,
           ["read"],
         );
-
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => UserScreen(
-                      userProfileId: "",
-                      isStateless: true,
-                    )),
-            (Route<dynamic> route) => false);
       } else {
-        var registrationResponse =
-            await Onegini.instance.userClient.registerUser(
+        registrationResponse = await Onegini.instance.userClient.registerUser(
           identityProviderId,
           ["read"],
         );
-
-        Navigator.pushAndRemoveUntil(
-            context,
-            MaterialPageRoute(
-                builder: (context) => UserScreen(
-                      userProfileId: registrationResponse.userProfile.profileId,
-                      isStateless: false,
-                    )),
-            (Route<dynamic> route) => false);
       }
+      Navigator.pushAndRemoveUntil(
+          context,
+          MaterialPageRoute(
+              builder: (context) => UserScreen(
+                    userProfileId: registrationResponse.userProfile.profileId,
+                  )),
+          (Route<dynamic> route) => false);
     } catch (error) {
       setState(() => isLoading = false);
       if (error is PlatformException) {
@@ -387,7 +367,6 @@ class _LoginSectionState extends State<LoginSection> {
           MaterialPageRoute(
               builder: (context) => UserScreen(
                     userProfileId: registrationResponse.userProfile.profileId,
-                    isStateless: false,
                   )),
           (Route<dynamic> route) => false);
     } catch (error) {

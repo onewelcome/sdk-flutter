@@ -19,7 +19,7 @@ class UserClient {
   }
 
   // Starts registration flow for stateless user
-  Future<OWStatelessRegistrationResponse> registerStatelessUser(
+  Future<OWRegistrationResponse> registerStatelessUser(
     String? identityProviderId,
     List<String>? scopes,
   ) async {

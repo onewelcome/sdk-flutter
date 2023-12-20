@@ -8,13 +8,14 @@ import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_FOUND_IDENTITY
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import com.onegini.mobile.sdk.flutter.mapToOwCustomInfo
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWStatelessRegistrationResponse
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWUserProfile
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class StatelessRegistrationUseCase @Inject constructor(private val oneginiSDK: OneginiSDK) {
-  operator fun invoke(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWStatelessRegistrationResponse>) -> Unit) {
+  operator fun invoke(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit) {
     val identityProvider = oneginiSDK.oneginiClient.userClient.identityProviders.find { it.id == identityProviderId }
 
     if (identityProviderId != null && identityProvider == null) {
@@ -30,15 +31,16 @@ class StatelessRegistrationUseCase @Inject constructor(private val oneginiSDK: O
   private fun registerStateless(
     identityProvider: OneginiIdentityProvider?,
     scopes: Array<String>?,
-    callback: (Result<OWStatelessRegistrationResponse>) -> Unit
+    callback: (Result<OWRegistrationResponse>) -> Unit
   ) {
     oneginiSDK.oneginiClient.userClient.registerStatelessUser(identityProvider, scopes, object : OneginiStatelessRegistrationHandler {
       override fun onSuccess(customInfo: CustomInfo?) {
+        val user = OWUserProfile("stateless")
 
         when (customInfo) {
-          null -> callback(Result.success(OWStatelessRegistrationResponse(null)))
+          null -> callback(Result.success(OWRegistrationResponse(user)))
           else -> {
-            callback(Result.success(OWStatelessRegistrationResponse(customInfo.mapToOwCustomInfo())))
+            callback(Result.success(OWRegistrationResponse(user, customInfo.mapToOwCustomInfo())))
           }
         }
       }

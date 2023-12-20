@@ -225,27 +225,6 @@ data class OWRegistrationResponse (
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
-data class OWStatelessRegistrationResponse (
-  val customInfo: OWCustomInfo? = null
-
-) {
-  companion object {
-    @Suppress("UNCHECKED_CAST")
-    fun fromList(list: List<Any?>): OWStatelessRegistrationResponse {
-      val customInfo: OWCustomInfo? = (list[0] as List<Any?>?)?.let {
-        OWCustomInfo.fromList(it)
-      }
-      return OWStatelessRegistrationResponse(customInfo)
-    }
-  }
-  fun toList(): List<Any?> {
-    return listOf<Any?>(
-      customInfo?.toList(),
-    )
-  }
-}
-
-/** Generated class from Pigeon that represents data sent in messages. */
 data class OWRequestDetails (
   val path: String,
   val method: HttpRequestMethod,
@@ -406,11 +385,6 @@ private object UserClientApiCodec : StandardMessageCodec() {
       }
       134.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          OWStatelessRegistrationResponse.fromList(it)
-        }
-      }
-      135.toByte() -> {
-        return (readValue(buffer) as? List<Any?>)?.let {
           OWUserProfile.fromList(it)
         }
       }
@@ -443,12 +417,8 @@ private object UserClientApiCodec : StandardMessageCodec() {
         stream.write(133)
         writeValue(stream, value.toList())
       }
-      is OWStatelessRegistrationResponse -> {
-        stream.write(134)
-        writeValue(stream, value.toList())
-      }
       is OWUserProfile -> {
-        stream.write(135)
+        stream.write(134)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -464,7 +434,7 @@ private object UserClientApiCodec : StandardMessageCodec() {
 interface UserClientApi {
   fun startApplication(securityControllerClassName: String?, configModelClassName: String?, customIdentityProviderConfigs: List<OWCustomIdentityProvider>?, connectionTimeout: Long?, readTimeout: Long?, additionalResourceUrls: List<String>?, callback: (Result<Unit>) -> Unit)
   fun registerUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit)
-  fun registerStatelessUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWStatelessRegistrationResponse>) -> Unit)
+  fun registerStatelessUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit)
   fun handleRegisteredUserUrl(url: String, signInType: Long, callback: (Result<Unit>) -> Unit)
   fun getIdentityProviders(callback: (Result<List<OWIdentityProvider>>) -> Unit)
   fun deregisterUser(profileId: String, callback: (Result<Unit>) -> Unit)
@@ -566,7 +536,7 @@ interface UserClientApi {
             val args = message as List<Any?>
             val identityProviderIdArg = args[0] as String?
             val scopesArg = args[1] as List<String>?
-            api.registerStatelessUser(identityProviderIdArg, scopesArg) { result: Result<OWStatelessRegistrationResponse> ->
+            api.registerStatelessUser(identityProviderIdArg, scopesArg) { result: Result<OWRegistrationResponse> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

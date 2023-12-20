@@ -196,29 +196,6 @@ class OWRegistrationResponse {
   }
 }
 
-class OWStatelessRegistrationResponse {
-  OWStatelessRegistrationResponse({
-    this.customInfo,
-  });
-
-  OWCustomInfo? customInfo;
-
-  Object encode() {
-    return <Object?>[
-      customInfo?.encode(),
-    ];
-  }
-
-  static OWStatelessRegistrationResponse decode(Object result) {
-    result as List<Object?>;
-    return OWStatelessRegistrationResponse(
-      customInfo: result[0] != null
-          ? OWCustomInfo.decode(result[0]! as List<Object?>)
-          : null,
-    );
-  }
-}
-
 class OWRequestDetails {
   OWRequestDetails({
     required this.path,
@@ -396,11 +373,8 @@ class _UserClientApiCodec extends StandardMessageCodec {
     } else if (value is OWRegistrationResponse) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is OWStatelessRegistrationResponse) {
-      buffer.putUint8(134);
-      writeValue(buffer, value.encode());
     } else if (value is OWUserProfile) {
-      buffer.putUint8(135);
+      buffer.putUint8(134);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -423,8 +397,6 @@ class _UserClientApiCodec extends StandardMessageCodec {
       case 133:
         return OWRegistrationResponse.decode(readValue(buffer)!);
       case 134:
-        return OWStatelessRegistrationResponse.decode(readValue(buffer)!);
-      case 135:
         return OWUserProfile.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -505,7 +477,7 @@ class UserClientApi {
     }
   }
 
-  Future<OWStatelessRegistrationResponse> registerStatelessUser(
+  Future<OWRegistrationResponse> registerStatelessUser(
       String? arg_identityProviderId, List<String?>? arg_scopes) async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
         'dev.flutter.pigeon.UserClientApi.registerStatelessUser', codec,
@@ -529,7 +501,7 @@ class UserClientApi {
         message: 'Host platform returned null value for non-null return value.',
       );
     } else {
-      return (replyList[0] as OWStatelessRegistrationResponse?)!;
+      return (replyList[0] as OWRegistrationResponse?)!;
     }
   }
 

@@ -23,11 +23,8 @@ import 'auth_screen.dart';
 
 class UserScreen extends StatefulWidget {
   final String userProfileId;
-  final bool isStateless;
 
-  const UserScreen(
-      {Key? key, required this.userProfileId, required this.isStateless})
-      : super(key: key);
+  const UserScreen({Key? key, required this.userProfileId}) : super(key: key);
 
   @override
   _UserScreenState createState() => _UserScreenState();
@@ -67,7 +64,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
         OWBroadcastHelper.initAuthenticationSubscriptions(context);
     this.otpSubscriptions = initOtpSubscriptions(context);
 
-    if (!widget.isStateless) {
+    if (profileId != "stateless") {
       getAuthenticators();
     }
   }
@@ -266,7 +263,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
               title: Text("Deregister"),
               onTap: () => deregister(context),
               leading: Icon(Icons.delete),
-              enabled: !widget.isStateless,
+              enabled: (profileId != "stateless"),
             )
           ],
         ),
