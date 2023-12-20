@@ -103,6 +103,18 @@ class RegistrationHandler: NSObject, BrowserHandlerToRegisterHandlerProtocol {
         SharedUserClient.instance.registerUserWith(identityProvider: identityProvider, scopes: scopes, delegate: delegate)
     }
 
+    func registerStatelessUser(_ providerId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
+        let identityProvider = SharedUserClient.instance.identityProviders.first(where: { $0.identifier == providerId})
+
+        if providerId != nil && identityProvider == nil {
+            completion(.failure(SdkError(OneWelcomeWrapperError.notFoundIdentityProvider).flutterError()))
+            return
+        }
+
+        let delegate = RegistrationDelegateImpl(registrationHandler: self, completion: completion)
+        SharedUserClient.instance.registerStatelessUserWith(identityProvider: identityProvider, scopes: scopes, delegate: delegate)
+    }
+
     func processRedirectURL(url: String, webSignInType: Int) -> Result<Void, FlutterError> {
         let webSignInType = WebSignInType(rawValue: webSignInType)
         guard let url = URL.init(string: url) else {

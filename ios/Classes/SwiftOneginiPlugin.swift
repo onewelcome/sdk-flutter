@@ -81,6 +81,7 @@ func toOWCustomInfo(_ info: ONGCustomInfo?) -> OWCustomInfo? {
 }
 
 public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, ResourceMethodApi {
+
     func authenticateUser(profileId: String, authenticatorType: OWAuthenticatorType, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.authenticateUser(profileId: profileId, authenticatorType: authenticatorType.toOneginiType()) { result in
             completion(result.mapError { $0 })
@@ -227,6 +228,12 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
 
     func registerUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.registerUser(identityProviderId, scopes: scopes) { result in
+            completion(result.mapError { $0 })
+        }
+    }
+
+    func registerStatelessUser(identityProviderId: String?, scopes: [String]?, completion: @escaping (Result<OWRegistrationResponse, Error>) -> Void) {
+        OneginiModuleSwift.sharedInstance.registerStatelessUser(identityProviderId, scopes: scopes) { result in
             completion(result.mapError { $0 })
         }
     }
