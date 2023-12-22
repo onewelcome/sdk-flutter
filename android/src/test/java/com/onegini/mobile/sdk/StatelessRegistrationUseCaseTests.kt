@@ -9,7 +9,8 @@ import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.*
 import com.onegini.mobile.sdk.flutter.OneginiSDK
 import com.onegini.mobile.sdk.flutter.SdkErrorAssert
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWCustomInfo
-import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWStatelessRegistrationResponse
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWUserProfile
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
 import com.onegini.mobile.sdk.flutter.useCases.StatelessRegistrationUseCase
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.FlutterError
 import org.junit.Assert
@@ -29,7 +30,7 @@ class StatelessRegistrationUseCaseTests {
   lateinit var oneginiSdk: OneginiSDK
 
   @Mock
-  lateinit var callbackMock: (Result<OWStatelessRegistrationResponse>) -> Unit
+  lateinit var callbackMock: (Result<OWRegistrationResponse>) -> Unit
 
   @Mock
   lateinit var oneginiIdentityProviderMock: OneginiIdentityProvider
@@ -68,7 +69,7 @@ class StatelessRegistrationUseCaseTests {
 
     statelessRegistrationUseCase("testid2", listOf("read"), callbackMock)
 
-    argumentCaptor<Result<OWStatelessRegistrationResponse>>().apply {
+    argumentCaptor<Result<OWRegistrationResponse>>().apply {
       verify(callbackMock).invoke(capture())
       SdkErrorAssert.assertEquals(NOT_FOUND_IDENTITY_PROVIDER, firstValue.exceptionOrNull())
     }
@@ -84,10 +85,11 @@ class StatelessRegistrationUseCaseTests {
 
     statelessRegistrationUseCase("testid", listOf("read"), callbackMock)
 
-    argumentCaptor<Result<OWStatelessRegistrationResponse>>().apply {
+    argumentCaptor<Result<OWRegistrationResponse>>().apply {
       verify(callbackMock).invoke(capture())
+      val testProfile = OWUserProfile("stateless")
       val testInfo = OWCustomInfo(0, "")
-      Assert.assertEquals(firstValue.getOrNull(), OWStatelessRegistrationResponse(testInfo))
+      Assert.assertEquals(firstValue.getOrNull(), OWRegistrationResponse(testProfile, testInfo))
     }
   }
 
@@ -130,7 +132,7 @@ class StatelessRegistrationUseCaseTests {
 
     statelessRegistrationUseCase(null, listOf("read"), callbackMock)
 
-    argumentCaptor<Result<OWStatelessRegistrationResponse>>().apply {
+    argumentCaptor<Result<OWRegistrationResponse>>().apply {
       verify(callbackMock).invoke(capture())
 
       val expected = FlutterError(oneginiRegistrationErrorMock.errorType.toString(), oneginiRegistrationErrorMock.message)
