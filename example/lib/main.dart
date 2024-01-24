@@ -17,6 +17,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Onegini test app',
       navigatorObservers: [routeObserver],
+      theme: ThemeData(
+        useMaterial3: false,
+      ),
       home: Scaffold(
         appBar: AppBar(
           title: Padding(
