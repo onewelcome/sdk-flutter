@@ -22,7 +22,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.*
-import org.robolectric.util.ReflectionHelpers
 
 @RunWith(MockitoJUnitRunner::class)
 class StatelessRegistrationUseCaseTests {
@@ -123,7 +122,7 @@ class StatelessRegistrationUseCaseTests {
 
   @Test
   fun `When registerStatelessUser method return an error, Then the wrapper function should return error`() {
-    ReflectionHelpers.setField(oneginiRegistrationErrorMock, "errorType", OneginiRegistrationError.STATELESS_REGISTRATION_ERROR);
+    whenever(oneginiRegistrationErrorMock.errorType).thenReturn(OneginiRegistrationError.STATELESS_REGISTRATION_ERROR)
     whenever(oneginiRegistrationErrorMock.message).thenReturn("Stateless registration error")
 
     whenever(oneginiSdk.oneginiClient.userClient.registerStatelessUser(isNull(), eq(arrayOf("read")), any())).thenAnswer {

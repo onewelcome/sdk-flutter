@@ -22,7 +22,6 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.robolectric.util.ReflectionHelpers
 
 @RunWith(MockitoJUnitRunner::class)
 class RegisterBiometricAuthenticatorUseCaseTests {
@@ -94,7 +93,7 @@ class RegisterBiometricAuthenticatorUseCaseTests {
     whenever(oneginiSdk.oneginiClient.userClient.authenticatedUserProfile).thenReturn(UserProfile("QWERTY"))
     whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(setOf(oneginiAuthenticatorMock))
     whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.BIOMETRIC)
-    ReflectionHelpers.setField(oneginiAuthenticatorRegistrationErrorMock, "errorType", OneginiAuthenticatorRegistrationError.GENERAL_ERROR);
+    whenever(oneginiAuthenticatorRegistrationErrorMock.errorType).thenReturn(OneginiAuthenticatorRegistrationError.GENERAL_ERROR)
     whenever(oneginiAuthenticatorRegistrationErrorMock.message).thenReturn("General error")
     whenever(oneginiSdk.oneginiClient.userClient.registerAuthenticator(eq(oneginiAuthenticatorMock), any())).thenAnswer {
       it.getArgument<OneginiAuthenticatorRegistrationHandler>(1).onError(oneginiAuthenticatorRegistrationErrorMock)

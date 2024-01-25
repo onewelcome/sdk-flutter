@@ -24,7 +24,6 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.robolectric.util.ReflectionHelpers
 
 @RunWith(MockitoJUnitRunner::class)
 class AuthenticateUserImplicitlyUseCaseTests {
@@ -50,7 +49,7 @@ class AuthenticateUserImplicitlyUseCaseTests {
   fun `should return error when the sdk returns authentication error`() {
     whenever(oneginiSdk.oneginiClient.userClient.userProfiles).thenReturn(setOf(UserProfile("QWERTY")))
 
-    ReflectionHelpers.setField(oneginiImplicitTokenRequestErrorMock, "errorType", GENERIC_ERROR.code);
+    whenever(oneginiImplicitTokenRequestErrorMock.errorType).thenReturn(GENERIC_ERROR.code)
     whenever(oneginiImplicitTokenRequestErrorMock.message).thenReturn(GENERIC_ERROR.message)
     whenever(oneginiSdk.oneginiClient.userClient.authenticateUserImplicitly(eq(UserProfile("QWERTY")), isNull(), any())).thenAnswer {
       it.getArgument<OneginiImplicitAuthenticationHandler>(2).onError(oneginiImplicitTokenRequestErrorMock)

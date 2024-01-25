@@ -18,7 +18,7 @@ allprojects {
         if (artifactoryUser?.trim() && artifactoryPassword?.trim()) {
             maven {
                 // Change the url to https://repo.onewelcome.com/artifactory/onegini-sdk before release
-                url "https://repo.onewelcome.com/artifactory/public"
+                url "https://repo.onewelcome.com/artifactory/onegini-sdk"
                 credentials {
                     username artifactoryUser.trim()
                     password artifactoryPassword.trim()

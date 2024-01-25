@@ -17,7 +17,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.robolectric.util.ReflectionHelpers
 
 @RunWith(MockitoJUnitRunner::class)
 class LogoutUseCaseTests {
@@ -53,7 +52,7 @@ class LogoutUseCaseTests {
 
   @Test
   fun `When the SDK returns an error, Then it should return the same error`() {
-    ReflectionHelpers.setField(oneginiLogoutError, "errorType", OneginiLogoutError.GENERAL_ERROR);
+    whenever(oneginiLogoutError.errorType).thenReturn(OneginiLogoutError.GENERAL_ERROR)
     whenever(oneginiLogoutError.message).thenReturn("General error")
     whenever(oneginiSdk.oneginiClient.userClient.logout(any())).thenAnswer {
       it.getArgument<OneginiLogoutHandler>(0).onError(oneginiLogoutError)

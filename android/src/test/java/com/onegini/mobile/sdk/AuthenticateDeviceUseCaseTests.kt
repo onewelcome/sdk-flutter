@@ -21,7 +21,6 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.isNull
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.robolectric.util.ReflectionHelpers
 
 @RunWith(MockitoJUnitRunner::class)
 class AuthenticateDeviceUseCaseTests {
@@ -44,7 +43,7 @@ class AuthenticateDeviceUseCaseTests {
 
   @Test
   fun `When the sdk returns an Authentication error, Then it should resolve with an error`() {
-    ReflectionHelpers.setField(oneginiDeviceAuthenticationErrorMock, "errorType", OneginiDeviceAuthenticationError.GENERAL_ERROR);
+    whenever(oneginiDeviceAuthenticationErrorMock.errorType).thenReturn(OneginiDeviceAuthenticationError.GENERAL_ERROR)
     whenever(oneginiDeviceAuthenticationErrorMock.message).thenReturn("General error")
     whenever(oneginiSdk.oneginiClient.deviceClient.authenticateDevice(isNull(), any())).thenAnswer {
       it.getArgument<OneginiDeviceAuthenticationHandler>(1).onError(oneginiDeviceAuthenticationErrorMock)

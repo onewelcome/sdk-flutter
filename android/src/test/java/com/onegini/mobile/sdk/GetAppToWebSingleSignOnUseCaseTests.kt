@@ -21,7 +21,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.robolectric.util.ReflectionHelpers
 
 @RunWith(MockitoJUnitRunner::class)
 class GetAppToWebSingleSignOnUseCaseTests {
@@ -92,7 +91,7 @@ class GetAppToWebSingleSignOnUseCaseTests {
   }
 
   private fun whenSSOReturnsError() {
-    ReflectionHelpers.setField(oneginiAppToWebSingleSignOnError, "errorType", 1000);
+    whenever(oneginiAppToWebSingleSignOnError.errorType).thenReturn(1000)
     whenever(oneginiAppToWebSingleSignOnError.message).thenReturn("message")
     whenever(oneginiSdk.oneginiClient.userClient.getAppToWebSingleSignOn(any(), any())).thenAnswer {
       it.getArgument<OneginiAppToWebSingleSignOnHandler>(1).onError(oneginiAppToWebSingleSignOnError)

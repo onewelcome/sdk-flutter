@@ -15,7 +15,6 @@ import org.mockito.Answers
 import org.mockito.Mock
 import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.*
-import org.robolectric.util.ReflectionHelpers
 
 @RunWith(MockitoJUnitRunner::class)
 class StartAppUseCaseTests {
@@ -101,7 +100,7 @@ class StartAppUseCaseTests {
     whenever(oneginiSdk.oneginiClient.start(any())).thenAnswer {
       it.getArgument<OneginiInitializationHandler>(0).onError(oneginiInitializationError)
     }
-    ReflectionHelpers.setField(oneginiInitializationError, "errorType", errorCode);
+    whenever(oneginiInitializationError.errorType).thenReturn(errorCode)
     whenever(oneginiInitializationError.message).thenReturn(errorMessage)
   }
 

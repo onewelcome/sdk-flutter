@@ -19,7 +19,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.robolectric.util.ReflectionHelpers
 
 @RunWith(MockitoJUnitRunner::class)
 class HandleMobileAuthWithOtpUseCaseTest {
@@ -37,7 +36,7 @@ class HandleMobileAuthWithOtpUseCaseTest {
   @Before
   fun attach() {
     handleMobileAuthWithOtpUseCase = HandleMobileAuthWithOtpUseCase(oneginiSdk)
-    ReflectionHelpers.setField(otpErrorMock, "errorType", OneginiMobileAuthWithOtpError.GENERAL_ERROR);
+    whenever(otpErrorMock.errorType).thenReturn(OneginiMobileAuthWithOtpError.GENERAL_ERROR)
     whenever(otpErrorMock.message).thenReturn("General error")
   }
 

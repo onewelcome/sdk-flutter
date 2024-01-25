@@ -18,7 +18,6 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.robolectric.util.ReflectionHelpers
 
 @RunWith(MockitoJUnitRunner::class)
 class ValidatePinWithPolicyUseCaseTests {
@@ -75,7 +74,7 @@ class ValidatePinWithPolicyUseCaseTests {
   private fun whenPinValidationReturnedError() {
     val errorCode = 111
     val errorMessage = "message"
-    ReflectionHelpers.setField(oneginiPinValidationErrorMock, "errorType", errorCode);
+    whenever(oneginiPinValidationErrorMock.errorType).thenReturn(errorCode)
     whenever(oneginiPinValidationErrorMock.message).thenReturn(errorMessage)
     whenever(oneginiSdk.oneginiClient.userClient.validatePinWithPolicy(any(), any())).thenAnswer {
       it.getArgument<OneginiPinValidationHandler>(1).onError(oneginiPinValidationErrorMock)

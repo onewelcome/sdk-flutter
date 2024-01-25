@@ -21,7 +21,6 @@ import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.robolectric.util.ReflectionHelpers
 
 @RunWith(MockitoJUnitRunner::class)
 class DeregisterBiometricAuthenticatorUseCaseTests {
@@ -111,7 +110,7 @@ class DeregisterBiometricAuthenticatorUseCaseTests {
       setOf(oneginiAuthenticatorMock)
     )
     whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.BIOMETRIC)
-    ReflectionHelpers.setField(oneginiAuthenticatorDeregistrationErrorMock, "errorType", OneginiAuthenticatorDeregistrationError.GENERAL_ERROR);
+    whenever(oneginiAuthenticatorDeregistrationErrorMock.errorType).thenReturn(OneginiAuthenticatorDeregistrationError.GENERAL_ERROR)
     whenever(oneginiAuthenticatorDeregistrationErrorMock.message).thenReturn("General error")
     whenever(oneginiSdk.oneginiClient.userClient.deregisterAuthenticator(eq(oneginiAuthenticatorMock), any())).thenAnswer {
       it.getArgument<OneginiAuthenticatorDeregistrationHandler>(1).onError(oneginiAuthenticatorDeregistrationErrorMock)
