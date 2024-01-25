@@ -139,15 +139,17 @@ class _AuthScreenState extends State<AuthScreen> {
               child: _buildCancelRegistrationWidget(),
             )
           : Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(height: 20),
-                  LoginSection(),
-                  SizedBox(height: 20),
-                  _buildRegisterWidget(),
-                ],
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 20),
+                    LoginSection(),
+                    SizedBox(height: 20),
+                    _buildRegisterWidget(),
+                  ],
+                ),
               ),
             ),
     );
