@@ -16,7 +16,7 @@ class RegisterBiometricAuthenticatorUseCase @Inject constructor(private val oneg
             ?: return callback(Result.failure(SdkError(NOT_AUTHENTICATED_USER).pigeonError()))
 
         val biometricAuthenticator = oneginiSDK.oneginiClient.userClient
-            .getAllAuthenticators(authenticatedUserProfile).find { it.type ==  OneginiAuthenticator.FINGERPRINT }
+            .getAllAuthenticators(authenticatedUserProfile).find { it.type ==  OneginiAuthenticator.BIOMETRIC }
             ?: return callback(Result.failure(SdkError(BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE).pigeonError()))
 
         oneginiSDK.oneginiClient.userClient.registerAuthenticator(biometricAuthenticator, object : OneginiAuthenticatorRegistrationHandler {

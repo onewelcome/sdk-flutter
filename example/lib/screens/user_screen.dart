@@ -6,6 +6,7 @@ import 'package:onegini/errors/error_codes.dart';
 import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/model/request_details.dart';
 import 'package:onegini/onegini.dart';
+import 'package:onegini/onegini.gen.dart';
 import 'package:onegini_example/components/display_toast.dart';
 import 'package:onegini_example/models/application_details.dart';
 import 'package:onegini_example/models/client_resource.dart';
@@ -14,7 +15,7 @@ import 'package:onegini_example/ow_broadcast_helper.dart';
 import 'package:onegini_example/screens/qr_scan_screen.dart';
 import 'package:onegini_example/subscription_handlers/otp_subscriptions.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:onegini/onegini.gen.dart';
+
 // ignore: import_of_legacy_library_into_null_safe
 import '../main.dart';
 // ignore: import_of_legacy_library_into_null_safe
@@ -63,7 +64,9 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
         OWBroadcastHelper.initAuthenticationSubscriptions(context);
     this.otpSubscriptions = initOtpSubscriptions(context);
 
-    getAuthenticators();
+    if (profileId != "stateless") {
+      getAuthenticators();
+    }
   }
 
   getAuthenticators() async {
@@ -260,6 +263,7 @@ class _UserScreenState extends State<UserScreen> with RouteAware {
               title: Text("Deregister"),
               onTap: () => deregister(context),
               leading: Icon(Icons.delete),
+              enabled: (profileId != "stateless"),
             )
           ],
         ),
@@ -289,7 +293,7 @@ class Home extends StatelessWidget {
     });
   }
 
-  authWithOpt(BuildContext context) async {
+  authWithOtp(BuildContext context) async {
     final data = await Navigator.push(
       context,
       MaterialPageRoute<String>(builder: (_) => QrScanScreen()),
@@ -324,19 +328,27 @@ class Home extends StatelessWidget {
   }
 
   userProfiles(BuildContext context) async {
-    var data = await Onegini.instance.userClient.getUserProfiles();
-    var msg = "";
-    data.forEach((element) {
-      msg = msg + element.profileId + ", ";
-    });
-    msg = msg.substring(0, msg.length - 2);
-    showFlutterToast(msg);
+    try {
+      var data = await Onegini.instance.userClient.getUserProfiles();
+      var msg = "";
+      data.forEach((element) {
+        msg = msg + element.profileId + ", ";
+      });
+      msg = msg.substring(0, msg.length - 2);
+      showFlutterToast(msg);
+    } catch (error) {
+      showFlutterToast("No User profiles");
+    }
   }
 
   showAuthenticatedUserProfile(BuildContext context) async {
-    var profile =
-        await Onegini.instance.userClient.getAuthenticatedUserProfile();
-    showFlutterToast('Authenticated Userprofile: ${profile.profileId}');
+    try {
+      var profile =
+          await Onegini.instance.userClient.getAuthenticatedUserProfile();
+      showFlutterToast('Authenticated Userprofile: ${profile.profileId}');
+    } on PlatformException catch (error) {
+      showFlutterToast(error.message);
+    }
   }
 
   showAccessToken(BuildContext context) async {
@@ -378,9 +390,9 @@ class Home extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
-                  authWithOpt(context);
+                  authWithOtp(context);
                 },
-                child: Text('Auth with opt'),
+                child: Text('Auth with OTP'),
               ),
               ElevatedButton(
                 onPressed: () {

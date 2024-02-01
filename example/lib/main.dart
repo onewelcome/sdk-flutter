@@ -17,6 +17,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Onegini test app',
       navigatorObservers: [routeObserver],
+      theme: ThemeData(
+        useMaterial3: false,
+      ),
       home: Scaffold(
         appBar: AppBar(
           title: Padding(
@@ -61,7 +64,10 @@ class _BodyWidgetState extends State<BodyWidget> {
             OWCustomIdentityProvider(
                 providerId: "2-way-otp-api", isTwoStep: true),
             OWCustomIdentityProvider(
-                providerId: "qr_registration", isTwoStep: false)
+                providerId: "qr_registration", isTwoStep: false),
+            OWCustomIdentityProvider(
+                providerId: "stateless-test", isTwoStep: false),
+            OWCustomIdentityProvider(providerId: "New2step", isTwoStep: true),
           ],
           connectionTimeout: 5,
           readTimeout: 25,

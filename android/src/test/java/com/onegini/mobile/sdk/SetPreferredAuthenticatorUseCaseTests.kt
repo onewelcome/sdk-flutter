@@ -60,7 +60,7 @@ class SetPreferredAuthenticatorUseCaseTests {
         oneginiAuthenticatorMock
       )
     )
-    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.FINGERPRINT)
+    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.BIOMETRIC)
 
     val result = setPreferredAuthenticatorUseCase(OWAuthenticatorType.BIOMETRIC)
 

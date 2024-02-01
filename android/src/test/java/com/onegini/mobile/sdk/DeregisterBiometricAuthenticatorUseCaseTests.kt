@@ -77,7 +77,7 @@ class DeregisterBiometricAuthenticatorUseCaseTests {
     whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(
       setOf(oneginiAuthenticatorMock)
     )
-    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.FINGERPRINT)
+    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.BIOMETRIC)
 
     deregisterBiometricAuthenticatorUseCase(callbackMock)
 
@@ -90,7 +90,7 @@ class DeregisterBiometricAuthenticatorUseCaseTests {
     whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(
       setOf(oneginiAuthenticatorMock)
     )
-    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.FINGERPRINT)
+    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.BIOMETRIC)
     whenever(oneginiSdk.oneginiClient.userClient.deregisterAuthenticator(eq(oneginiAuthenticatorMock), any())).thenAnswer {
       it.getArgument<OneginiAuthenticatorDeregistrationHandler>(1).onSuccess()
     }
@@ -109,7 +109,7 @@ class DeregisterBiometricAuthenticatorUseCaseTests {
     whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(eq(UserProfile("QWERTY")))).thenReturn(
       setOf(oneginiAuthenticatorMock)
     )
-    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.FINGERPRINT)
+    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.BIOMETRIC)
     whenever(oneginiAuthenticatorDeregistrationErrorMock.errorType).thenReturn(OneginiAuthenticatorDeregistrationError.GENERAL_ERROR)
     whenever(oneginiAuthenticatorDeregistrationErrorMock.message).thenReturn("General error")
     whenever(oneginiSdk.oneginiClient.userClient.deregisterAuthenticator(eq(oneginiAuthenticatorMock), any())).thenAnswer {

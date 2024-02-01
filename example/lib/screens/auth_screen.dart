@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:onegini/callbacks/onegini_custom_registration_callback.dart';
@@ -11,7 +12,6 @@ import 'package:onegini/onegini.dart';
 import 'package:onegini/onegini.gen.dart';
 import 'package:onegini_example/ow_broadcast_helper.dart';
 import 'package:onegini_example/screens/user_screen.dart';
-import 'package:collection/collection.dart';
 
 import '../components/display_toast.dart';
 
@@ -22,6 +22,7 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   bool isLoading = false;
+  bool isStatelessChecked = false;
   List<StreamSubscription<OWEvent>>? registrationSubscriptions;
   List<StreamSubscription<OWEvent>>? authenticationSubscriptions;
 
@@ -46,12 +47,21 @@ class _AuthScreenState extends State<AuthScreen> {
     /// Start registration
     setState(() => isLoading = true);
 
-    try {
-      var registrationResponse = await Onegini.instance.userClient.registerUser(
-        null,
-        ["read"],
-      );
+    var registrationResponse;
 
+    try {
+      if (isStatelessChecked) {
+        registrationResponse =
+            await Onegini.instance.userClient.registerStatelessUser(
+          null,
+          ["read"],
+        );
+      } else {
+        registrationResponse = await Onegini.instance.userClient.registerUser(
+          null,
+          ["read"],
+        );
+      }
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -67,14 +77,22 @@ class _AuthScreenState extends State<AuthScreen> {
     }
   }
 
-  _registraterWithIdentityProvider(String identityProviderId) async {
+  _registerWithIdentityProvider(String identityProviderId) async {
     setState(() => isLoading = true);
+    var registrationResponse;
     try {
-      var registrationResponse = await Onegini.instance.userClient.registerUser(
-        identityProviderId,
-        ["read"],
-      );
-
+      if (isStatelessChecked) {
+        registrationResponse =
+            await Onegini.instance.userClient.registerStatelessUser(
+          identityProviderId,
+          ["read"],
+        );
+      } else {
+        registrationResponse = await Onegini.instance.userClient.registerUser(
+          identityProviderId,
+          ["read"],
+        );
+      }
       Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(
@@ -121,15 +139,17 @@ class _AuthScreenState extends State<AuthScreen> {
               child: _buildCancelRegistrationWidget(),
             )
           : Center(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(height: 20),
-                  LoginSection(),
-                  SizedBox(height: 20),
-                  _buildRegisterWidget(),
-                ],
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SizedBox(height: 20),
+                    LoginSection(),
+                    SizedBox(height: 20),
+                    _buildRegisterWidget(),
+                  ],
+                ),
               ),
             ),
     );
@@ -168,7 +188,7 @@ class _AuthScreenState extends State<AuthScreen> {
                       ),
                     ),
                     onSelected: (value) {
-                      _registraterWithIdentityProvider(value);
+                      _registerWithIdentityProvider(value);
                     },
                     itemBuilder: (context) {
                       return identityProviders
@@ -180,6 +200,24 @@ class _AuthScreenState extends State<AuthScreen> {
                     })
                 : SizedBox.shrink();
           },
+        ),
+        SizedBox(height: 10),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              "Stateless registration",
+              style: TextStyle(fontSize: 16),
+            ),
+            Switch(
+              value: isStatelessChecked,
+              onChanged: (value) {
+                setState(() {
+                  isStatelessChecked = value;
+                });
+              },
+            ),
+          ],
         ),
       ],
     );

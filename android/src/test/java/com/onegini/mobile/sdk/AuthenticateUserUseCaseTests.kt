@@ -136,7 +136,7 @@ class AuthenticateUserUseCaseTests {
   }
 
   private fun whenFingerprintIsRegistered() {
-    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.FINGERPRINT)
+    whenever(oneginiAuthenticatorMock.type).thenReturn(OneginiAuthenticator.BIOMETRIC)
     whenever(oneginiSdk.oneginiClient.userClient.getRegisteredAuthenticators(eq(UserProfile(profileId)))).thenReturn(
       setOf(
         oneginiAuthenticatorMock
