@@ -1,3 +1,11 @@
+## 3.1.0, Feb 5, 2024
+[Android] Wrapper SDK now uses the latest Android Native SDK 12.0.0
+
+[iOS] Wrapper SDK now uses the latest iOS native SDK 12.3.4
+
+[iOS & Android] Support for stateless registration feature
+* Added `registerStatelessUser` method.
+
 ## 3.0.3, June 9, 2023
 * [iOS] Fixed a bug where `ClosePinAuthenticationEvent` wouldn't be emitted, when user cancelled biometric authenticator registration.
 
