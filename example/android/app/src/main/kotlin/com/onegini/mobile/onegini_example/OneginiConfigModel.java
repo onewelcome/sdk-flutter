@@ -10,14 +10,14 @@ public class OneginiConfigModel implements OneginiClientConfigModel {
   private final String appIdentifier = "FlutterExampleApp";
   private final String appPlatform = "android";
   private final String redirectionUri = "oneginiexample://loginsuccess";
-  private final String appVersion = "1.0.2";
+  private final String appVersion = "1.1.0";
   private final String baseURL = "https://mobile-security-proxy.test.onegini.com";
   private final String resourceBaseURL = "https://mobile-security-proxy.test.onegini.com/resources/";
-  private final String keystoreHash = "ebea379eb6b02801a359c40d4a39e86dd75637cc296bceb40eafbb2a79a73d0d";
+  private final String keystoreHash = "b416223e7d1779f156bc81113fa748ca109e58492e09006d72fc34ecd4a0187b";
   private final int maxPinFailures = 3;
-  private final String serverPublicKey = "17DDB4086A1D3FA37950CBDDC6F1173A0C5902A3B71DAD261290CEFEE13CC9CA";
+  private final String serverPublicKey = "7890DAAA329A2443B757B48A0DEFE6D5C5EAEE87C23209AA0C1F51B87C963406";
   private final String serverType = "access";
-  private final String serverVersion = "62fbd4e";
+  private final String serverVersion = "0809c19";
 
   public String getAppIdentifier() {
     return appIdentifier;
