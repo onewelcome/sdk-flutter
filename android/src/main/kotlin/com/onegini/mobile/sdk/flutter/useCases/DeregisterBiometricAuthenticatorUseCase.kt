@@ -14,7 +14,7 @@ class DeregisterBiometricAuthenticatorUseCase @Inject constructor(private val on
         val userProfile = oneginiSDK.oneginiClient.userClient.authenticatedUserProfile
             ?: return callback(Result.failure(SdkError(NOT_AUTHENTICATED_USER).pigeonError()))
         val authenticators = oneginiSDK.oneginiClient.userClient.getAllAuthenticators(userProfile)
-        val biometricAuthenticator = authenticators.find { it.type == OneginiAuthenticator.FINGERPRINT }
+        val biometricAuthenticator = authenticators.find { it.type == OneginiAuthenticator.BIOMETRIC }
             ?: return callback(Result.failure(SdkError(BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE).pigeonError()))
 
         oneginiSDK.oneginiClient.userClient.deregisterAuthenticator(biometricAuthenticator, object : OneginiAuthenticatorDeregistrationHandler {

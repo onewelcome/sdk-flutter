@@ -12,6 +12,10 @@ extension OneginiModuleSwift {
         bridgeConnector.toRegistrationHandler.registerUser(identityProviderId, scopes: scopes, completion: completion)
     }
 
+    func registerStatelessUser(_ identityProviderId: String? = nil, scopes: [String]? = nil, completion: @escaping (Result<OWRegistrationResponse, FlutterError>) -> Void) {
+        bridgeConnector.toRegistrationHandler.registerStatelessUser(identityProviderId, scopes: scopes, completion: completion)
+    }
+
     func handleRegisteredProcessUrl(_ url: String, webSignInType: Int) -> Result<Void, FlutterError> {
         return bridgeConnector.toRegistrationHandler.processRedirectURL(url: url, webSignInType: webSignInType)
     }

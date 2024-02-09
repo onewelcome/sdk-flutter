@@ -42,7 +42,7 @@ Onegini class - main class for comunication between flutter and Native platforms
     
     
     minSdkVersion 23
-    compileSdkVersion 33
+    compileSdkVersion 34
     multiDexEnabled true
     
 

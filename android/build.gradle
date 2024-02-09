@@ -11,7 +11,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:4.1.3'
+        classpath 'com.android.tools.build:gradle:7.2.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath 'com.github.bjoernq:unmockplugin:0.7.9'
         classpath 'org.jlleitschuh.gradle:ktlint-gradle:10.0.0'
@@ -37,7 +37,7 @@ unMock {
 }
 
 android {
-    compileSdkVersion 33
+    compileSdkVersion 34
 
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
@@ -65,7 +65,7 @@ android {
 }
 
 dependencies {
-    api('com.onegini.mobile.sdk.android:onegini-sdk:11.9.0@aar') {
+    api('com.onegini.mobile.sdk.android:onegini-sdk:12.0.0@aar') {
         transitive = true
     }
     // Rest Client
@@ -88,6 +88,7 @@ dependencies {
     // Optional -- Mockito framework
     testImplementation "org.mockito.kotlin:mockito-kotlin:3.1.0"
     testImplementation 'org.mockito:mockito-inline:2.13.0'
+    testImplementation 'org.mockito:mockito-core:5.7.0'
 
     implementation "com.google.truth:truth:1.1.3"
 

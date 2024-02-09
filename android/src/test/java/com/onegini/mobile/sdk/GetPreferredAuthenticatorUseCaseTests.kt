@@ -97,7 +97,7 @@ class GetPreferredAuthenticatorUseCaseTests {
 
     private fun whenPreferedAuthenticatorIsBiometric() {
         whenever(oneginiAuthenticator.isPreferred).thenReturn(true)
-        whenever(oneginiAuthenticator.type).thenReturn(OneginiAuthenticator.FINGERPRINT)
+        whenever(oneginiAuthenticator.type).thenReturn(OneginiAuthenticator.BIOMETRIC)
         whenever(oneginiSdk.oneginiClient.userClient.getAllAuthenticators(any())).thenReturn(setOf(oneginiAuthenticator))
     }
 

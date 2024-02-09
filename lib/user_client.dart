@@ -18,6 +18,14 @@ class UserClient {
     return await api.registerUser(identityProviderId, scopes);
   }
 
+  // Starts registration flow for stateless user
+  Future<OWRegistrationResponse> registerStatelessUser(
+    String? identityProviderId,
+    List<String>? scopes,
+  ) async {
+    return await api.registerStatelessUser(identityProviderId, scopes);
+  }
+
   /// Start browser Registration logic
   Future<void> handleRegisteredUserUrl(String url,
       {WebSignInType signInType = WebSignInType.insideApp}) async {

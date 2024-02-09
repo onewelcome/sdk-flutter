@@ -45,6 +45,7 @@ import com.onegini.mobile.sdk.flutter.useCases.PinRegistrationRequestAcceptUseCa
 import com.onegini.mobile.sdk.flutter.useCases.PinRegistrationRequestDenyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.RegisterBiometricAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.RegistrationUseCase
+import com.onegini.mobile.sdk.flutter.useCases.StatelessRegistrationUseCase
 import com.onegini.mobile.sdk.flutter.useCases.ResourceRequestUseCase
 import com.onegini.mobile.sdk.flutter.useCases.SetPreferredAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.StartAppUseCase
@@ -106,6 +107,9 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
 
   @Inject
   lateinit var registrationUseCase: RegistrationUseCase
+
+  @Inject
+  lateinit var statelessRegistrationUseCase: StatelessRegistrationUseCase
 
   @Inject
   lateinit var setPreferredAuthenticatorUseCase: SetPreferredAuthenticatorUseCase
@@ -184,6 +188,10 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
 
   override fun registerUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit) {
     registrationUseCase(identityProviderId, scopes, callback)
+  }
+
+  override fun registerStatelessUser(identityProviderId: String?, scopes: List<String>?, callback: (Result<OWRegistrationResponse>) -> Unit) {
+    statelessRegistrationUseCase(identityProviderId, scopes, callback)
   }
 
   override fun handleRegisteredUserUrl(url: String, signInType: Long, callback: (Result<Unit>) -> Unit) {

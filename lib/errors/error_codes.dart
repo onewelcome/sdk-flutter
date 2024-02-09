@@ -91,6 +91,8 @@ class PlatformErrorCodes {
   /// Android only
   static const String invalidDatetime = "9031";
 
+  static const String statelessRegistrationError = "9034";
+
   static const String generalError = "10000";
   static const String configurationError = "10001";
   static const String invalidState = "10002";

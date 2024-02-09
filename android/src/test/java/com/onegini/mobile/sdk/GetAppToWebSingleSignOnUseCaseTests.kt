@@ -78,7 +78,6 @@ class GetAppToWebSingleSignOnUseCaseTests {
 
     getAppToWebSingleSignOnUseCase(correctUri, callbackMock)
 
-
     argumentCaptor<Result<OWAppToWebSingleSignOn>>().apply {
       verify(callbackMock).invoke(capture())
       val expected = FlutterError(oneginiAppToWebSingleSignOnError.errorType.toString(), oneginiAppToWebSingleSignOnError.message)
