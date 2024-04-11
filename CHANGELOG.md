@@ -1,3 +1,6 @@
+## 3.1.1, Apr 15, 2024
+[iOS] Wrapper SDK now uses the latest iOS native SDK 12.3.6
+
 ## 3.1.0, Feb 9, 2024
 [Android] Wrapper SDK now uses the latest Android Native SDK 12.0.0
 
