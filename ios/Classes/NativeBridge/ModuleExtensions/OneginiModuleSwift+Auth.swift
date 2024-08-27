@@ -5,8 +5,8 @@ import Flutter
 extension OneginiModuleSwift {
 
     func getIdentityProviders() -> Result<[OWIdentityProvider], FlutterError> {
-        let providers = ONGClient.sharedInstance().userClient.identityProviders()
-        return .success(providers.compactMap { OWIdentityProvider($0) })
+        let providers = SharedClient.instance.userClient.identityProviders
+        return .success(providers.compactMap { OWIdentityProvider(id: $0.identifier, name: $0.name) })
     }
 
     func logOut(callback: @escaping (Result<Void, FlutterError>) -> Void) {
@@ -86,14 +86,14 @@ extension OneginiModuleSwift {
     }
 
     func getAuthenticatedUserProfile() -> Result<OWUserProfile, FlutterError> {
-        guard let profile = ONGUserClient.sharedInstance().authenticatedUserProfile() else {
+        guard let profile = SharedUserClient.instance.authenticatedUserProfile else {
             return .failure(FlutterError(.notAuthenticatedUser))
         }
         return .success(OWUserProfile(profile))
     }
 
     func getAccessToken() -> Result<String, FlutterError> {
-        guard let accessToken = ONGUserClient.sharedInstance().accessToken else {
+        guard let accessToken = SharedUserClient.instance.accessToken else {
             return .failure(FlutterError(.notAuthenticatedUser))
         }
         return .success(accessToken)

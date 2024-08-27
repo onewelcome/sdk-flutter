@@ -18,26 +18,22 @@ public class OneginiModuleSwift: NSObject {
     }
 
     func startOneginiModule(httpConnectionTimeout: Int64?, additionalResourceUrls: [String]?, callback: @escaping (Result<Void, FlutterError>) -> Void) {
-        ONGClientBuilder().setHttpRequestTimeout(TimeInterval(Double(httpConnectionTimeout ?? 5)))
-        ONGClientBuilder().setAdditionalResourceUrls(additionalResourceUrls ?? [])
-        ONGClientBuilder().build()
-        ONGClient.sharedInstance().start { result, error in
-            if let error = error {
-                let mappedError = ErrorMapper().mapError(error)
-                callback(.failure(mappedError.flutterError()))
-                return
+        _ = ClientBuilder().setHttpRequestTimeout(TimeInterval(Double(httpConnectionTimeout ?? 5)))
+        _ = ClientBuilder().setAdditionalResourceUrls(additionalResourceUrls ?? [])
+        ClientBuilder().buildAndWaitForProtectedData { client in
+            client.start { error in
+                if let error = error {
+                    let mappedError = ErrorMapper().mapError(error)
+                    callback(.failure(mappedError.flutterError()))
+                    return
+                }
+                callback(.success)
             }
-
-            if !result {
-                callback(.failure(SdkError(.genericError).flutterError()))
-                return
-            }
-            callback(.success)
         }
     }
 
     func getUserProfiles() -> Result<[OWUserProfile], FlutterError> {
-        let profiles = ONGUserClient.sharedInstance().userProfiles()
+        let profiles = SharedUserClient.instance.userProfiles
         return .success(profiles.compactMap { OWUserProfile($0) })
     }
 }

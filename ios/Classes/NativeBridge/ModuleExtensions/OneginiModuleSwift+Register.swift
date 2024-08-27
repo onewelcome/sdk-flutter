@@ -21,7 +21,7 @@ extension OneginiModuleSwift {
     }
 
     public func handleDeepLinkCallbackUrl(_ url: URL) -> Bool {
-        guard let schemeLibrary = URL.init(string: ONGClient.sharedInstance().configModel.redirectURL)?.scheme else {
+        guard let schemeLibrary = URL.init(string: SharedClient.instance.configModel.redirectURL)?.scheme else {
             // FIXME: We should propagate an error here to the caller, not through events.
             return false
         }
@@ -50,6 +50,6 @@ extension OneginiModuleSwift {
     }
 
     func getRedirectUrl() -> Result<String, FlutterError> {
-        return .success(ONGClient.sharedInstance().configModel.redirectURL)
+        return .success(SharedClient.instance.configModel.redirectURL)
     }
 }
