@@ -18,11 +18,12 @@ public class OneginiModuleSwift: NSObject {
     }
 
     func startOneginiModule(httpConnectionTimeout: Int64?, additionalResourceUrls: [String]?, callback: @escaping (Result<Void, FlutterError>) -> Void) {
-        _ = ClientBuilder().setHttpRequestTimeout(TimeInterval(Double(httpConnectionTimeout ?? 5)))
-        _ = ClientBuilder().setAdditionalResourceUrls(additionalResourceUrls ?? [])
-        ClientBuilder().buildAndWaitForProtectedData { client in
+        let builder = ClientBuilder()
+        builder.setHttpRequestTimeout(TimeInterval(Double(httpConnectionTimeout ?? 5)))
+        builder.setAdditionalResourceUrls(additionalResourceUrls ?? [])
+        builder.buildAndWaitForProtectedData { client in
             client.start { error in
-                if let error = error {
+                if let error {
                     let mappedError = ErrorMapper().mapError(error)
                     callback(.failure(mappedError.flutterError()))
                     return
