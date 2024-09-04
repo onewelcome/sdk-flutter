@@ -44,7 +44,7 @@ class BrowserViewController: NSObject, BrowserHandlerProtocol {
     }
 
     private func openInternalBrowser(url: URL) {
-        let scheme = URL(string: ONGClient.sharedInstance().configModel.redirectURL)!.scheme
+        let scheme = URL(string: SharedClient.instance.configModel.redirectURL)!.scheme
         webAuthSession = ASWebAuthenticationSession(url: url, callbackURLScheme: scheme, completionHandler: { callbackURL, error in
             Logger.log("webAuthSession completionHandler", sender: self)
             guard error == nil, let successURL = callbackURL else {

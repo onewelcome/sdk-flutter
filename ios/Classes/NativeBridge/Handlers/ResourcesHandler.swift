@@ -39,7 +39,7 @@ class ResourcesHandler: FetchResourcesHandlerProtocol {
     func requestResource(_ requestType: ResourceRequestType, _ details: OWRequestDetails, completion: @escaping (Result<OWRequestResponse, FlutterError>) -> Void) {
         Logger.log("requestResource", sender: self)
         // Additional check for valid url
-        let resourceUrl = ONGClient.sharedInstance().configModel.resourceBaseURL ?? ""
+        let resourceUrl = SharedClient.instance.configModel.resourceBaseURL
         if isValidUrl(details.path) == false && isValidUrl(resourceUrl + details.path) == false {
             completion(.failure(FlutterError(SdkError(.invalidUrl))))
             return

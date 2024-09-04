@@ -26,7 +26,8 @@ extension OneginiModuleSwift {
 
     func validatePinWithPolicy(_ pin: String, completion: @escaping (Result<Void, FlutterError>) -> Void) {
         // FIXME: Move this out of this file
-        ONGUserClient.sharedInstance().validatePin(withPolicy: pin) { (_, error) in
+        let userClient = SharedUserClient.instance
+        userClient.validatePolicyCompliance(for: pin) { error in
             guard let error = error else {
                 completion(.success)
                 return

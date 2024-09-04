@@ -435,8 +435,7 @@ class Info extends StatefulWidget {
 
 class _InfoState extends State<Info> {
   Future<ApplicationDetails> _getApplicationDetails() async {
-    await Onegini.instance.userClient
-        .authenticateDevice(["read", "write", "application-details"]);
+    await Onegini.instance.userClient.authenticateDevice(["application-details"]);
     final response = await Onegini.instance.resourcesMethods.requestResource(
         ResourceRequestType.anonymous,
         RequestDetails(
