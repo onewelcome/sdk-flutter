@@ -1,3 +1,6 @@
+## 3.1.2, Sep 4, 2024
+[iOS] Replaced deprecated methods on ClientBuilder and deprecated ONGClient with SharedClient.
+
 ## 3.1.1, Apr 15, 2024
 [iOS] Wrapper SDK now uses the latest iOS native SDK 12.3.6
 
