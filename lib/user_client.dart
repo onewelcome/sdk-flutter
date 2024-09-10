@@ -142,6 +142,11 @@ class UserClient {
       String profileId, List<String>? scopes) async {
     await api.authenticateUserImplicitly(profileId, scopes);
   }
+
+  // Get ID Token
+  Future<String> getIdToken() async {
+    return await api.getIdToken();
+  }
 }
 
 // TODO We could also get rid of this but leave this for now.

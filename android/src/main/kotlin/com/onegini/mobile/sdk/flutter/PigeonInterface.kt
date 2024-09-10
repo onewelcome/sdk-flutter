@@ -31,6 +31,7 @@ import com.onegini.mobile.sdk.flutter.useCases.GetAppToWebSingleSignOnUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAuthenticatedUserProfileUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetBiometricAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetIdentityProvidersUseCase
+import com.onegini.mobile.sdk.flutter.useCases.GetIdTokenUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetPreferredAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetRedirectUrlUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfilesUseCase
@@ -164,6 +165,9 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
 
   @Inject
   lateinit var otpAcceptAuthenticationRequestUseCase: OtpAcceptAuthenticationRequestUseCase
+
+  @Inject
+  lateinit var getIdTokenUseCase: GetIdTokenUseCase
 
   @Inject
   lateinit var oneginiSDK: OneginiSDK
@@ -338,6 +342,10 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
 
   override fun requestResource(type: ResourceRequestType, details: OWRequestDetails, callback: (Result<OWRequestResponse>) -> Unit) {
     resourceRequestUseCase(type, details, callback)
+  }
+
+  override fun getIdToken(callback: (Result<String>) -> Unit) {
+    callback(getIdTokenUseCase())
   }
 }
 
