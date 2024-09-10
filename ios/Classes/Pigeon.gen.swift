@@ -441,6 +441,7 @@ protocol UserClientApi {
   func pinAcceptRegistrationRequest(pin: String, completion: @escaping (Result<Void, Error>) -> Void)
   /// Browser Registration Callbacks
   func cancelBrowserRegistration(completion: @escaping (Result<Void, Error>) -> Void)
+  func getIdToken(completion: @escaping (Result<String, Error>) -> Void)
 }
 
 /// Generated setup class from Pigeon to handle messages through the `binaryMessenger`.
@@ -1057,6 +1058,21 @@ class UserClientApiSetup {
       }
     } else {
       cancelBrowserRegistrationChannel.setMessageHandler(nil)
+    }
+    let getIdTokenChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.getIdToken", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getIdTokenChannel.setMessageHandler { _, reply in
+        api.getIdToken() { result in
+          switch result {
+            case .success(let res):
+              reply(wrapResult(res))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      getIdTokenChannel.setMessageHandler(nil)
     }
   }
 }
