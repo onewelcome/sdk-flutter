@@ -98,4 +98,11 @@ extension OneginiModuleSwift {
         }
         return .success(accessToken)
     }
+
+    func getIdToken() -> Result<String, FlutterError> {
+        guard let idToken = SharedUserClient.instance.idToken else {
+            return .failure(FlutterError(.idTokenNotAvailable))
+        }
+        return .success(idToken)
+    }
 }

@@ -278,6 +278,10 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
         completion(OneginiModuleSwift.sharedInstance.getAccessToken().mapError { $0 })
     }
 
+    func getIdToken(completion: @escaping (Result<String, Error>) -> Void) {
+        completion(OneginiModuleSwift.sharedInstance.getIdToken().mapError { $0 })
+    }
+
     func getRedirectUrl(completion: @escaping (Result<String, Error>) -> Void) {
         completion(OneginiModuleSwift.sharedInstance.getRedirectUrl().mapError { $0 })
     }
