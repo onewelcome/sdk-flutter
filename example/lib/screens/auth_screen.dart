@@ -21,6 +21,7 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
+  final List<String> DEFAULT_SCOPES = ["read", "openid", "profile", "phone", "email"];
   bool isLoading = false;
   bool isStatelessChecked = false;
   List<StreamSubscription<OWEvent>>? registrationSubscriptions;
@@ -54,12 +55,12 @@ class _AuthScreenState extends State<AuthScreen> {
         registrationResponse =
             await Onegini.instance.userClient.registerStatelessUser(
           null,
-          ["read"],
+          DEFAULT_SCOPES,
         );
       } else {
         registrationResponse = await Onegini.instance.userClient.registerUser(
           null,
-          ["read"],
+          DEFAULT_SCOPES,
         );
       }
       Navigator.pushAndRemoveUntil(
@@ -82,15 +83,14 @@ class _AuthScreenState extends State<AuthScreen> {
     var registrationResponse;
     try {
       if (isStatelessChecked) {
-        registrationResponse =
-            await Onegini.instance.userClient.registerStatelessUser(
+        registrationResponse = await Onegini.instance.userClient.registerStatelessUser(
           identityProviderId,
-          ["read"],
+          DEFAULT_SCOPES,
         );
       } else {
         registrationResponse = await Onegini.instance.userClient.registerUser(
           identityProviderId,
-          ["read"],
+          DEFAULT_SCOPES,
         );
       }
       Navigator.pushAndRemoveUntil(
