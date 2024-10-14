@@ -229,6 +229,19 @@ abstract class UserClientApi {
   @async
   void fingerprintAcceptAuthenticationRequest();
 
+  /// Biometric Callbacks
+  @async
+  void showBiometricPrompt(String title, String subTitle, String negativeButtonText);
+
+  @async
+  void closeBiometricPrompt();
+
+  @async
+  void biometricFallbackToPin();
+
+  @async
+  void biometricDenyAuthenticationRequest();
+
   /// OTP Callbacks
   @async
   void otpDenyAuthenticationRequest();
@@ -309,6 +322,12 @@ abstract class NativeCallFlutterApi {
 
   /// Called when fingerprint was received.
   void n2fNextFingerprintAuthenticationAttempt();
+
+  /// Called when new biometric authentication request is made.
+  void n2fStartBiometricAuthentication();
+
+  /// Called when biometric authentication finishes.
+  void n2fFinishBiometricAuthentication();
 
   // Custom Registration
   /// Called when the InitCustomRegistration event occurs and a response should be given (only for two-step)

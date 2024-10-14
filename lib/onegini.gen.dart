@@ -1152,6 +1152,95 @@ class UserClientApi {
     }
   }
 
+  /// Biometric Callbacks
+  Future<void> showBiometricPrompt(String arg_title, String arg_subTitle,
+      String arg_negativeButtonText) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.UserClientApi.showBiometricPrompt', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel
+            .send(<Object?>[arg_title, arg_subTitle, arg_negativeButtonText])
+        as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> closeBiometricPrompt() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.UserClientApi.closeBiometricPrompt', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> biometricFallbackToPin() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.UserClientApi.biometricFallbackToPin', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> biometricDenyAuthenticationRequest() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.UserClientApi.biometricDenyAuthenticationRequest',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
   /// OTP Callbacks
   Future<void> otpDenyAuthenticationRequest() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -1452,6 +1541,12 @@ abstract class NativeCallFlutterApi {
   /// Called when fingerprint was received.
   void n2fNextFingerprintAuthenticationAttempt();
 
+  /// Called when new biometric authentication request is made.
+  void n2fStartBiometricAuthentication();
+
+  /// Called when biometric authentication finishes.
+  void n2fFinishBiometricAuthentication();
+
   /// Called when the InitCustomRegistration event occurs and a response should be given (only for two-step)
   void n2fEventInitCustomRegistration(
       OWCustomInfo? customInfo, String providerId);
@@ -1667,6 +1762,36 @@ abstract class NativeCallFlutterApi {
         channel.setMessageHandler((Object? message) async {
           // ignore message
           api.n2fNextFingerprintAuthenticationAttempt();
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fStartBiometricAuthentication',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          api.n2fStartBiometricAuthentication();
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fFinishBiometricAuthentication',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          api.n2fFinishBiometricAuthentication();
           return;
         });
       }

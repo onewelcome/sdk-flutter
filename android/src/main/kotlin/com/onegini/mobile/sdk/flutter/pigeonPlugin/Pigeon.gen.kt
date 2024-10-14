@@ -464,6 +464,11 @@ interface UserClientApi {
   fun fingerprintFallbackToPin(callback: (Result<Unit>) -> Unit)
   fun fingerprintDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit)
   fun fingerprintAcceptAuthenticationRequest(callback: (Result<Unit>) -> Unit)
+  /** Biometric Callbacks */
+  fun showBiometricPrompt(title: String, subTitle: String, negativeButtonText: String, callback: (Result<Unit>) -> Unit)
+  fun closeBiometricPrompt(callback: (Result<Unit>) -> Unit)
+  fun biometricFallbackToPin(callback: (Result<Unit>) -> Unit)
+  fun biometricDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit)
   /** OTP Callbacks */
   fun otpDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit)
   fun otpAcceptAuthenticationRequest(callback: (Result<Unit>) -> Unit)
@@ -1051,6 +1056,78 @@ interface UserClientApi {
         }
       }
       run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.showBiometricPrompt", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val titleArg = args[0] as String
+            val subTitleArg = args[1] as String
+            val negativeButtonTextArg = args[2] as String
+            api.showBiometricPrompt(titleArg, subTitleArg, negativeButtonTextArg) { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.closeBiometricPrompt", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            api.closeBiometricPrompt() { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.biometricFallbackToPin", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            api.biometricFallbackToPin() { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.biometricDenyAuthenticationRequest", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            api.biometricDenyAuthenticationRequest() { result: Result<Unit> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.otpDenyAuthenticationRequest", codec)
         if (api != null) {
           channel.setMessageHandler { _, reply ->
@@ -1385,6 +1462,20 @@ class NativeCallFlutterApi(private val binaryMessenger: BinaryMessenger) {
   /** Called when fingerprint was received. */
   fun n2fNextFingerprintAuthenticationAttempt(callback: () -> Unit) {
     val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fNextFingerprintAuthenticationAttempt", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /** Called when new biometric authentication request is made. */
+  fun n2fStartBiometricAuthentication(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fStartBiometricAuthentication", codec)
+    channel.send(null) {
+      callback()
+    }
+  }
+  /** Called when biometric authentication finishes. */
+  fun n2fFinishBiometricAuthentication(callback: () -> Unit) {
+    val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.NativeCallFlutterApi.n2fFinishBiometricAuthentication", codec)
     channel.send(null) {
       callback()
     }

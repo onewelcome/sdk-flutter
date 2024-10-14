@@ -430,6 +430,11 @@ protocol UserClientApi {
   func fingerprintFallbackToPin(completion: @escaping (Result<Void, Error>) -> Void)
   func fingerprintDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void)
   func fingerprintAcceptAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void)
+  /// Biometric Callbacks
+  func showBiometricPrompt(title: String, subTitle: String, negativeButtonText: String, completion: @escaping (Result<Void, Error>) -> Void)
+  func closeBiometricPrompt(completion: @escaping (Result<Void, Error>) -> Void)
+  func biometricFallbackToPin(completion: @escaping (Result<Void, Error>) -> Void)
+  func biometricDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void)
   /// OTP Callbacks
   func otpDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void)
   func otpAcceptAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void)
@@ -945,6 +950,71 @@ class UserClientApiSetup {
     } else {
       fingerprintAcceptAuthenticationRequestChannel.setMessageHandler(nil)
     }
+    /// Biometric Callbacks
+    let showBiometricPromptChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.showBiometricPrompt", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      showBiometricPromptChannel.setMessageHandler { message, reply in
+        let args = message as! [Any]
+        let titleArg = args[0] as! String
+        let subTitleArg = args[1] as! String
+        let negativeButtonTextArg = args[2] as! String
+        api.showBiometricPrompt(title: titleArg, subTitle: subTitleArg, negativeButtonText: negativeButtonTextArg) { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      showBiometricPromptChannel.setMessageHandler(nil)
+    }
+    let closeBiometricPromptChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.closeBiometricPrompt", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      closeBiometricPromptChannel.setMessageHandler { _, reply in
+        api.closeBiometricPrompt() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      closeBiometricPromptChannel.setMessageHandler(nil)
+    }
+    let biometricFallbackToPinChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.biometricFallbackToPin", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      biometricFallbackToPinChannel.setMessageHandler { _, reply in
+        api.biometricFallbackToPin() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      biometricFallbackToPinChannel.setMessageHandler(nil)
+    }
+    let biometricDenyAuthenticationRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.biometricDenyAuthenticationRequest", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      biometricDenyAuthenticationRequestChannel.setMessageHandler { _, reply in
+        api.biometricDenyAuthenticationRequest() { result in
+          switch result {
+            case .success:
+              reply(wrapResult(nil))
+            case .failure(let error):
+              reply(wrapError(error))
+          }
+        }
+      }
+    } else {
+      biometricDenyAuthenticationRequestChannel.setMessageHandler(nil)
+    }
     /// OTP Callbacks
     let otpDenyAuthenticationRequestChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.otpDenyAuthenticationRequest", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
@@ -1276,6 +1346,20 @@ class NativeCallFlutterApi {
   /// Called when fingerprint was received.
   func n2fNextFingerprintAuthenticationAttempt(completion: @escaping () -> Void) {
     let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fNextFingerprintAuthenticationAttempt", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Called when new biometric authentication request is made.
+  func n2fStartBiometricAuthentication(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fStartBiometricAuthentication", binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage(nil) { _ in
+      completion()
+    }
+  }
+  /// Called when biometric authentication finishes.
+  func n2fFinishBiometricAuthentication(completion: @escaping () -> Void) {
+    let channel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.NativeCallFlutterApi.n2fFinishBiometricAuthentication", binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage(nil) { _ in
       completion()
     }

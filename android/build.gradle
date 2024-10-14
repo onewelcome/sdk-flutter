@@ -65,7 +65,7 @@ android {
 }
 
 dependencies {
-    api('com.onegini.mobile.sdk.android:onegini-sdk:12.0.0@aar') {
+    api('com.onegini.mobile.sdk.android:onegini-sdk:12.1.1@aar') {
         transitive = true
     }
     // Rest Client
@@ -77,6 +77,9 @@ dependencies {
 
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.2'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
+
+    //Biometric
+    implementation "androidx.biometric:biometric:1.1.0"
 
     // Required -- JUnit 4 framework
     testImplementation 'junit:junit:4.13'
