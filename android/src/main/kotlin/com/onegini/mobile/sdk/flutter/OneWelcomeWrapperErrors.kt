@@ -31,6 +31,8 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
   CONFIG_ERROR(8059, "Something went wrong while setting the configuration"), // Android only
   BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE(8060, "Biometric authentication is not supported on this device"),
 
+  NOT_IN_PROGRESS_BIOMETRIC_AUTHENTICATION(8062, "Biometric Authentication is currently not in progress"), // Android only
+
   // Only used for internal testing
   UNEXPECTED_ERROR_TYPE(8999, "An unexpected error type was returned"), // Android only
 }

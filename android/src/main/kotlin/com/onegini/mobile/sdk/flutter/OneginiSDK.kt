@@ -10,6 +10,7 @@ import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_FOUND_SECURITY
 import com.onegini.mobile.sdk.flutter.errors.FlutterPluginException
 import com.onegini.mobile.sdk.flutter.handlers.BrowserRegistrationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.FingerprintAuthenticationRequestHandler
+import com.onegini.mobile.sdk.flutter.handlers.BiometricAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.MobileAuthOtpRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.handlers.PinRequestHandler
@@ -29,6 +30,7 @@ class OneginiSDK @Inject constructor(
   private val applicationContext: Context,
   private val browserRegistrationRequestHandler: BrowserRegistrationRequestHandler,
   private val fingerprintRequestHandler: FingerprintAuthenticationRequestHandler,
+  private val biometricRequestHandler: BiometricAuthenticationRequestHandler,
   private val pinAuthenticationRequestHandler: PinAuthenticationRequestHandler,
   private val createPinRequestHandler: PinRequestHandler,
   private val mobileAuthWithOtpRequestHandler: MobileAuthOtpRequestHandler,
@@ -55,9 +57,9 @@ class OneginiSDK @Inject constructor(
       pinAuthenticationRequestHandler
     ) // handlers for optional functionalities
       .setBrowserRegistrationRequestHandler(browserRegistrationRequestHandler)
-      .setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler)
+      //.setFingerprintAuthenticationRequestHandler(fingerprintRequestHandler)
+      .setBiometricAuthenticationRequestHandler(biometricRequestHandler)
       .setMobileAuthWithOtpRequestHandler(mobileAuthWithOtpRequestHandler)
-
     initProviders(clientBuilder, customIdentityProviderConfigs)
 
     if (connectionTimeout != null) {

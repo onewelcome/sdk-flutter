@@ -17,6 +17,9 @@ import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateDeviceUseCase
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserImplicitlyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserUseCase
+import com.onegini.mobile.sdk.flutter.useCases.BiometricPromptUseCase
+import com.onegini.mobile.sdk.flutter.useCases.BiometricFallbackToPinUseCase
+import com.onegini.mobile.sdk.flutter.useCases.BiometricAuthenticationRequestDenyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.CancelBrowserRegistrationUseCase
 import com.onegini.mobile.sdk.flutter.useCases.CancelCustomRegistrationActionUseCase
 import com.onegini.mobile.sdk.flutter.useCases.ChangePinUseCase
@@ -164,6 +167,15 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
 
   @Inject
   lateinit var otpAcceptAuthenticationRequestUseCase: OtpAcceptAuthenticationRequestUseCase
+
+  @Inject
+  lateinit var biometricPromptUseCase: BiometricPromptUseCase
+
+  @Inject
+  lateinit var biometricAuthenticationRequestDenyUseCase: BiometricAuthenticationRequestDenyUseCase
+
+  @Inject
+  lateinit var biometricFallbackToPinUseCase: BiometricFallbackToPinUseCase
 
   @Inject
   lateinit var oneginiSDK: OneginiSDK
@@ -338,6 +350,22 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
 
   override fun requestResource(type: ResourceRequestType, details: OWRequestDetails, callback: (Result<OWRequestResponse>) -> Unit) {
     resourceRequestUseCase(type, details, callback)
+  }
+
+  override fun showBiometricPrompt(title: String, subTitle: String, negativeButtonText: String, callback: (Result<Unit>) -> Unit) {
+    biometricPromptUseCase(true, title, subTitle, negativeButtonText, callback)
+  }
+
+  override fun closeBiometricPrompt(callback: (Result<Unit>) -> Unit) {
+    biometricPromptUseCase(false, "", "", "", callback)
+  }
+
+  override fun biometricFallbackToPin(callback: (Result<Unit>) -> Unit) {
+    callback(biometricFallbackToPinUseCase())
+  }
+
+  override fun biometricDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
+    callback(biometricAuthenticationRequestDenyUseCase())
   }
 }
 
