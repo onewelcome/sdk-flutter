@@ -349,6 +349,34 @@ data class OWCustomIdentityProvider (
   }
 }
 
+/** Generated class from Pigeon that represents data sent in messages. */
+data class OWBiometricMessages (
+  val title: String,
+  val subTitle: String,
+  val negativeButtonText: String,
+  val description: String? = null
+
+) {
+  companion object {
+    @Suppress("UNCHECKED_CAST")
+    fun fromList(list: List<Any?>): OWBiometricMessages {
+      val title = list[0] as String
+      val subTitle = list[1] as String
+      val negativeButtonText = list[2] as String
+      val description = list[3] as String?
+      return OWBiometricMessages(title, subTitle, negativeButtonText, description)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf<Any?>(
+      title,
+      subTitle,
+      negativeButtonText,
+      description,
+    )
+  }
+}
+
 @Suppress("UNCHECKED_CAST")
 private object UserClientApiCodec : StandardMessageCodec() {
   override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
@@ -365,25 +393,30 @@ private object UserClientApiCodec : StandardMessageCodec() {
       }
       130.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          OWCustomIdentityProvider.fromList(it)
+          OWBiometricMessages.fromList(it)
         }
       }
       131.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          OWCustomInfo.fromList(it)
+          OWCustomIdentityProvider.fromList(it)
         }
       }
       132.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          OWIdentityProvider.fromList(it)
+          OWCustomInfo.fromList(it)
         }
       }
       133.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          OWRegistrationResponse.fromList(it)
+          OWIdentityProvider.fromList(it)
         }
       }
       134.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          OWRegistrationResponse.fromList(it)
+        }
+      }
+      135.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           OWUserProfile.fromList(it)
         }
@@ -401,24 +434,28 @@ private object UserClientApiCodec : StandardMessageCodec() {
         stream.write(129)
         writeValue(stream, value.toList())
       }
-      is OWCustomIdentityProvider -> {
+      is OWBiometricMessages -> {
         stream.write(130)
         writeValue(stream, value.toList())
       }
-      is OWCustomInfo -> {
+      is OWCustomIdentityProvider -> {
         stream.write(131)
         writeValue(stream, value.toList())
       }
-      is OWIdentityProvider -> {
+      is OWCustomInfo -> {
         stream.write(132)
         writeValue(stream, value.toList())
       }
-      is OWRegistrationResponse -> {
+      is OWIdentityProvider -> {
         stream.write(133)
         writeValue(stream, value.toList())
       }
-      is OWUserProfile -> {
+      is OWRegistrationResponse -> {
         stream.write(134)
+        writeValue(stream, value.toList())
+      }
+      is OWUserProfile -> {
+        stream.write(135)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -465,7 +502,7 @@ interface UserClientApi {
   fun fingerprintDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit)
   fun fingerprintAcceptAuthenticationRequest(callback: (Result<Unit>) -> Unit)
   /** Biometric Callbacks */
-  fun showBiometricPrompt(title: String, subTitle: String, negativeButtonText: String, callback: (Result<Unit>) -> Unit)
+  fun showBiometricPrompt(messages: OWBiometricMessages, callback: (Result<Unit>) -> Unit)
   fun closeBiometricPrompt(callback: (Result<Unit>) -> Unit)
   fun biometricFallbackToPin(callback: (Result<Unit>) -> Unit)
   fun biometricDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit)
@@ -1060,10 +1097,8 @@ interface UserClientApi {
         if (api != null) {
           channel.setMessageHandler { message, reply ->
             val args = message as List<Any?>
-            val titleArg = args[0] as String
-            val subTitleArg = args[1] as String
-            val negativeButtonTextArg = args[2] as String
-            api.showBiometricPrompt(titleArg, subTitleArg, negativeButtonTextArg) { result: Result<Unit> ->
+            val messagesArg = args[0] as OWBiometricMessages
+            api.showBiometricPrompt(messagesArg) { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

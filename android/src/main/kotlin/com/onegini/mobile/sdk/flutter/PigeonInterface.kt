@@ -11,6 +11,7 @@ import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRegistrationResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestDetails
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWRequestResponse
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWUserProfile
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWBiometricMessages
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceMethodApi
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.ResourceRequestType
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
@@ -352,12 +353,12 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
     resourceRequestUseCase(type, details, callback)
   }
 
-  override fun showBiometricPrompt(title: String, subTitle: String, negativeButtonText: String, callback: (Result<Unit>) -> Unit) {
-    biometricPromptUseCase(true, title, subTitle, negativeButtonText, callback)
+  override fun showBiometricPrompt(messages: OWBiometricMessages, callback: (Result<Unit>) -> Unit) {
+    biometricPromptUseCase(true, messages, callback)
   }
 
   override fun closeBiometricPrompt(callback: (Result<Unit>) -> Unit) {
-    biometricPromptUseCase(false, "", "", "", callback)
+    biometricPromptUseCase(false, OWBiometricMessages("", "", ""), callback)
   }
 
   override fun biometricFallbackToPin(callback: (Result<Unit>) -> Unit) {

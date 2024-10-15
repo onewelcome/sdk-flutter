@@ -122,6 +122,15 @@ class OWCustomIdentityProvider {
   OWCustomIdentityProvider(this.providerId, this.isTwoStep);
 }
 
+class OWBiometricMessages {
+  String title;
+  String subTitle;
+  String negativeButtonText;
+  String? description;
+
+  OWBiometricMessages({required this.title, required this.subTitle, required this.negativeButtonText, this.description});
+}
+
 /// Flutter calls native
 @HostApi()
 abstract class UserClientApi {
@@ -231,7 +240,7 @@ abstract class UserClientApi {
 
   /// Biometric Callbacks
   @async
-  void showBiometricPrompt(String title, String subTitle, String negativeButtonText);
+  void showBiometricPrompt(OWBiometricMessages messages);
 
   @async
   void closeBiometricPrompt();

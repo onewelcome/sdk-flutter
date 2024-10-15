@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_IN_PROGRESS_BIOMETRIC_AUTHENTICATION
 import com.onegini.mobile.sdk.flutter.handlers.BiometricAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWBiometricMessages
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -15,22 +16,18 @@ class BiometricPromptUseCase @Inject constructor(private val activity: Activity,
                                                  private val biometricAuthRequestHandler: BiometricAuthenticationRequestHandler) {
   private lateinit var fragmentActivity: FragmentActivity
   private lateinit var biometricRequestHandler: BiometricAuthenticationRequestHandler
-  private lateinit var title: String
-  private lateinit var subTitle: String
-  private lateinit var negativeButtonText: String
   private lateinit var biometricPrompt: BiometricPrompt
+  private lateinit var biometricMessages: OWBiometricMessages
 
-  operator fun invoke(showPrompt: Boolean, title: String, subTitle: String, negativeButtonText: String, callback: (Result<Unit>) -> Unit) {
+  operator fun invoke(showPrompt: Boolean, messages: OWBiometricMessages, callback: (Result<Unit>) -> Unit) {
     biometricRequestHandler = biometricAuthRequestHandler
-    this.title = title
-    this.subTitle = subTitle
-    this.negativeButtonText = negativeButtonText
 
     if (showPrompt) {
       if (biometricRequestHandler.CALLBACK == null) {
         return callback(Result.failure(SdkError(NOT_IN_PROGRESS_BIOMETRIC_AUTHENTICATION).pigeonError()))
       }
       fragmentActivity = activity as FragmentActivity
+      this.biometricMessages = messages
       showPrompt()
     } else {
       if (::biometricPrompt.isInitialized) {
@@ -57,9 +54,10 @@ class BiometricPromptUseCase @Inject constructor(private val activity: Activity,
     })
 
     val promptInfo: BiometricPrompt.PromptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle(title)
-            .setSubtitle(subTitle)
-            .setNegativeButtonText(negativeButtonText)
+            .setTitle(biometricMessages.title)
+            .setSubtitle(biometricMessages.subTitle)
+            .setNegativeButtonText(biometricMessages.negativeButtonText)
+            .setDescription(biometricMessages.description)
             .build()
     biometricPrompt.authenticate(promptInfo, biometricRequestHandler.CRYPTO_OBJECT!!)
   }

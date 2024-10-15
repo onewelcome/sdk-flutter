@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:onegini/events/biometric_event.dart';
 import 'package:onegini/events/onewelcome_events.dart';
+import 'package:onegini/onegini.gen.dart';
 import 'package:onegini_example/ow_broadcast_helper.dart';
 import 'package:onegini/callbacks/onegini_biometric_callback.dart';
 
@@ -17,7 +18,8 @@ List<StreamSubscription<OWEvent>> initBiometricSubscriptions(
 
 StreamSubscription<OWEvent> _getOpenBiometricSub(BuildContext context) {
   return OWBroadcastHelper.createStream<StartBiometricAuthEvent>().listen((event) {
-    OneginiBiometricCallback().showBiometricPrompt("Biometric Authentication", "Authenticate user", "Use PIN");
+    OneginiBiometricCallback().showBiometricPrompt(
+        OWBiometricMessages(title: "Biometric Authentication", subTitle: "Authenticate user", negativeButtonText: "Use PIN"));
   });
 }
 
