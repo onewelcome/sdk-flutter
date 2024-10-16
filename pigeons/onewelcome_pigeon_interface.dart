@@ -243,9 +243,6 @@ abstract class UserClientApi {
   void showBiometricPrompt(OWBiometricMessages messages);
 
   @async
-  void closeBiometricPrompt();
-
-  @async
   void biometricFallbackToPin();
 
   @async

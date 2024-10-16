@@ -29,18 +29,4 @@ class BiometricAuthenticationRequestHandler @Inject constructor(private val nati
     CRYPTO_OBJECT = null
     nativeApi.n2fFinishBiometricAuthentication { }
   }
-
-  fun denyAuthenticationRequest(): Result<Unit> {
-    return CALLBACK?.let {
-      it.denyAuthenticationRequest()
-      Result.success(Unit)
-    } ?: Result.failure(SdkError(NOT_IN_PROGRESS_BIOMETRIC_AUTHENTICATION).pigeonError())
-  }
-
-  fun fallbackToPin(): Result<Unit> {
-    return CALLBACK?.let {
-      it.fallbackToPin()
-      Result.success(Unit)
-    } ?: Result.failure(SdkError(NOT_IN_PROGRESS_BIOMETRIC_AUTHENTICATION).pigeonError())
-  }
 }

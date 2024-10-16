@@ -467,7 +467,6 @@ protocol UserClientApi {
   func fingerprintAcceptAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void)
   /// Biometric Callbacks
   func showBiometricPrompt(messages: OWBiometricMessages, completion: @escaping (Result<Void, Error>) -> Void)
-  func closeBiometricPrompt(completion: @escaping (Result<Void, Error>) -> Void)
   func biometricFallbackToPin(completion: @escaping (Result<Void, Error>) -> Void)
   func biometricDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void)
   /// OTP Callbacks
@@ -1002,21 +1001,6 @@ class UserClientApiSetup {
       }
     } else {
       showBiometricPromptChannel.setMessageHandler(nil)
-    }
-    let closeBiometricPromptChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.closeBiometricPrompt", binaryMessenger: binaryMessenger, codec: codec)
-    if let api = api {
-      closeBiometricPromptChannel.setMessageHandler { _, reply in
-        api.closeBiometricPrompt() { result in
-          switch result {
-            case .success:
-              reply(wrapResult(nil))
-            case .failure(let error):
-              reply(wrapError(error))
-          }
-        }
-      }
-    } else {
-      closeBiometricPromptChannel.setMessageHandler(nil)
     }
     let biometricFallbackToPinChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.UserClientApi.biometricFallbackToPin", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {

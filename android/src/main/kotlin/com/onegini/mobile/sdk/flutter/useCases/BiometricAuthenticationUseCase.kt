@@ -7,33 +7,40 @@ import androidx.core.content.ContextCompat
 import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_IN_PROGRESS_BIOMETRIC_AUTHENTICATION
 import com.onegini.mobile.sdk.flutter.handlers.BiometricAuthenticationRequestHandler
 import com.onegini.mobile.sdk.flutter.helpers.SdkError
+import com.onegini.mobile.sdk.flutter.helpers.BiometricAuthRequestType
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWBiometricMessages
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class BiometricPromptUseCase @Inject constructor(private val activity: Activity,
-                                                 private val biometricAuthRequestHandler: BiometricAuthenticationRequestHandler) {
+class BiometricAuthenticationUseCase @Inject constructor(private val activity: Activity,
+                                                         private val biometricAuthRequestHandler: BiometricAuthenticationRequestHandler) {
   private lateinit var fragmentActivity: FragmentActivity
   private lateinit var biometricRequestHandler: BiometricAuthenticationRequestHandler
   private lateinit var biometricPrompt: BiometricPrompt
   private lateinit var biometricMessages: OWBiometricMessages
 
-  operator fun invoke(showPrompt: Boolean, messages: OWBiometricMessages, callback: (Result<Unit>) -> Unit) {
+  operator fun invoke(requestType: BiometricAuthRequestType, messages: OWBiometricMessages, callback: (Result<Unit>) -> Unit) {
     biometricRequestHandler = biometricAuthRequestHandler
 
-    if (showPrompt) {
-      if (biometricRequestHandler.CALLBACK == null) {
-        return callback(Result.failure(SdkError(NOT_IN_PROGRESS_BIOMETRIC_AUTHENTICATION).pigeonError()))
+    if (biometricRequestHandler.CALLBACK == null) {
+      return callback(Result.failure(SdkError(NOT_IN_PROGRESS_BIOMETRIC_AUTHENTICATION).pigeonError()))
+    }
+
+    when (requestType) {
+      BiometricAuthRequestType.showprompt -> {
+        fragmentActivity = activity as FragmentActivity
+        this.biometricMessages = messages
+        showPrompt()
       }
-      fragmentActivity = activity as FragmentActivity
-      this.biometricMessages = messages
-      showPrompt()
-    } else {
-      if (::biometricPrompt.isInitialized) {
+      BiometricAuthRequestType.fallbacktopin -> {
+        biometricRequestHandler.CALLBACK!!.fallbackToPin()
         biometricPrompt.cancelAuthentication()
-      } else {
-        return callback(Result.failure(SdkError(NOT_IN_PROGRESS_BIOMETRIC_AUTHENTICATION).pigeonError()))
+      }
+
+      BiometricAuthRequestType.denyauthrequest -> {
+        biometricRequestHandler.CALLBACK!!.denyAuthenticationRequest()
+        biometricPrompt.cancelAuthentication()
       }
     }
     return callback(Result.success(Unit));

@@ -12,11 +12,6 @@ class OneginiBiometricCallback {
     await api.showBiometricPrompt(messages);
   }
 
-  /// Close biometric prompt.
-  Future<void> closeBiometricPrompt() async {
-    await api.closeBiometricPrompt();
-  }
-
   /// Changes the authentication method from Biometric to PIN.
   Future<void> fallbackToPin() async {
     await api.biometricFallbackToPin();

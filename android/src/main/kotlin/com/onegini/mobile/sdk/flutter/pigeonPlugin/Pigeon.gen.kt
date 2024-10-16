@@ -503,7 +503,6 @@ interface UserClientApi {
   fun fingerprintAcceptAuthenticationRequest(callback: (Result<Unit>) -> Unit)
   /** Biometric Callbacks */
   fun showBiometricPrompt(messages: OWBiometricMessages, callback: (Result<Unit>) -> Unit)
-  fun closeBiometricPrompt(callback: (Result<Unit>) -> Unit)
   fun biometricFallbackToPin(callback: (Result<Unit>) -> Unit)
   fun biometricDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit)
   /** OTP Callbacks */
@@ -1099,23 +1098,6 @@ interface UserClientApi {
             val args = message as List<Any?>
             val messagesArg = args[0] as OWBiometricMessages
             api.showBiometricPrompt(messagesArg) { result: Result<Unit> ->
-              val error = result.exceptionOrNull()
-              if (error != null) {
-                reply.reply(wrapError(error))
-              } else {
-                reply.reply(wrapResult(null))
-              }
-            }
-          }
-        } else {
-          channel.setMessageHandler(null)
-        }
-      }
-      run {
-        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.closeBiometricPrompt", codec)
-        if (api != null) {
-          channel.setMessageHandler { _, reply ->
-            api.closeBiometricPrompt() { result: Result<Unit> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))
