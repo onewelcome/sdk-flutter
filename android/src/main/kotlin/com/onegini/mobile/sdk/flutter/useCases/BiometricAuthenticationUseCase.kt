@@ -34,12 +34,12 @@ class BiometricAuthenticationUseCase @Inject constructor(private val activity: A
         showPrompt()
       }
       BiometricAuthRequestType.fallbacktopin -> {
-        biometricRequestHandler.CALLBACK!!.fallbackToPin()
+        biometricRequestHandler.CALLBACK?.fallbackToPin()
         biometricPrompt.cancelAuthentication()
       }
 
       BiometricAuthRequestType.denyauthrequest -> {
-        biometricRequestHandler.CALLBACK!!.denyAuthenticationRequest()
+        biometricRequestHandler.CALLBACK?.denyAuthenticationRequest()
         biometricPrompt.cancelAuthentication()
       }
     }
