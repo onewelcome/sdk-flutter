@@ -18,7 +18,9 @@ import com.onegini.mobile.sdk.flutter.pigeonPlugin.UserClientApi
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateDeviceUseCase
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserImplicitlyUseCase
 import com.onegini.mobile.sdk.flutter.useCases.AuthenticateUserUseCase
-import com.onegini.mobile.sdk.flutter.useCases.BiometricAuthenticationUseCase
+import com.onegini.mobile.sdk.flutter.useCases.BiometricShowPromptUseCase
+import com.onegini.mobile.sdk.flutter.useCases.BiometricFallbackToPinUseCase
+import com.onegini.mobile.sdk.flutter.useCases.BiometricDenyAuthenticationRequestUseCase
 import com.onegini.mobile.sdk.flutter.useCases.CancelBrowserRegistrationUseCase
 import com.onegini.mobile.sdk.flutter.useCases.CancelCustomRegistrationActionUseCase
 import com.onegini.mobile.sdk.flutter.useCases.ChangePinUseCase
@@ -53,7 +55,6 @@ import com.onegini.mobile.sdk.flutter.useCases.SetPreferredAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.StartAppUseCase
 import com.onegini.mobile.sdk.flutter.useCases.SubmitCustomRegistrationActionUseCase
 import com.onegini.mobile.sdk.flutter.useCases.ValidatePinWithPolicyUseCase
-import com.onegini.mobile.sdk.flutter.helpers.BiometricAuthRequestType
 import javax.inject.Inject
 
 open class PigeonInterface : UserClientApi, ResourceMethodApi {
@@ -169,7 +170,13 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   lateinit var otpAcceptAuthenticationRequestUseCase: OtpAcceptAuthenticationRequestUseCase
 
   @Inject
-  lateinit var biometricAuthUseCase: BiometricAuthenticationUseCase
+  lateinit var biometricShowPromptUseCase: BiometricShowPromptUseCase
+
+  @Inject
+  lateinit var biometricFallbackToPinUseCase: BiometricFallbackToPinUseCase
+
+  @Inject
+  lateinit var biometricDenyAuthRequestUseCase: BiometricDenyAuthenticationRequestUseCase
 
   @Inject
   lateinit var oneginiSDK: OneginiSDK
@@ -347,15 +354,15 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
   }
 
   override fun showBiometricPrompt(messages: OWBiometricMessages, callback: (Result<Unit>) -> Unit) {
-    biometricAuthUseCase(BiometricAuthRequestType.showprompt, messages, callback)
+    biometricShowPromptUseCase(messages, callback)
   }
 
   override fun biometricFallbackToPin(callback: (Result<Unit>) -> Unit) {
-    biometricAuthUseCase(BiometricAuthRequestType.fallbacktopin, OWBiometricMessages("", "", ""), callback)
+    biometricFallbackToPinUseCase(callback)
   }
 
   override fun biometricDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    biometricAuthUseCase(BiometricAuthRequestType.denyauthrequest, OWBiometricMessages("", "", ""), callback)
+    biometricDenyAuthRequestUseCase(callback)
   }
 }
 

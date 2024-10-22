@@ -3,10 +3,7 @@ package com.onegini.mobile.sdk.flutter.handlers
 import androidx.biometric.BiometricPrompt
 import com.onegini.mobile.sdk.android.handlers.request.OneginiBiometricAuthenticationRequestHandler
 import com.onegini.mobile.sdk.android.handlers.request.callback.OneginiBiometricCallback
-import com.onegini.mobile.sdk.android.model.entity.UserProfile
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.NativeCallFlutterApi
-import com.onegini.mobile.sdk.flutter.OneWelcomeWrapperErrors.NOT_IN_PROGRESS_BIOMETRIC_AUTHENTICATION
-import com.onegini.mobile.sdk.flutter.helpers.SdkError
 import javax.inject.Inject
 import javax.inject.Singleton
 
