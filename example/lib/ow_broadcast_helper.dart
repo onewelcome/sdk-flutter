@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/onegini.dart';
+import 'package:onegini_example/subscription_handlers/biometric_subscriptions.dart';
 import 'package:onegini_example/subscription_handlers/browser_registration_subscriptions.dart';
 import 'package:onegini_example/subscription_handlers/create_pin_subscriptions.dart';
 import 'package:onegini_example/subscription_handlers/custom_registration_subscriptions.dart';
@@ -29,8 +30,9 @@ class OWBroadcastHelper {
       BuildContext context) {
     var pinAuthSubs = initPinAuthenticationSubscriptions(context);
     var fingerprintSubs = initFingerprintSubscriptions(context);
+    var biometricSubs = initBiometricSubscriptions(context);
 
-    return pinAuthSubs + fingerprintSubs;
+    return pinAuthSubs + fingerprintSubs + biometricSubs;
   }
 
   static void stopListening(List<StreamSubscription<OWEvent>>? subscriptions) {

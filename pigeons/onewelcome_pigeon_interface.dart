@@ -122,6 +122,15 @@ class OWCustomIdentityProvider {
   OWCustomIdentityProvider(this.providerId, this.isTwoStep);
 }
 
+class OWBiometricMessages {
+  String title;
+  String subTitle;
+  String negativeButtonText;
+  String? description;
+
+  OWBiometricMessages({required this.title, required this.subTitle, required this.negativeButtonText, this.description});
+}
+
 /// Flutter calls native
 @HostApi()
 abstract class UserClientApi {
@@ -229,6 +238,16 @@ abstract class UserClientApi {
   @async
   void fingerprintAcceptAuthenticationRequest();
 
+  /// Biometric Callbacks
+  @async
+  void showBiometricPrompt(OWBiometricMessages messages);
+
+  @async
+  void biometricFallbackToPin();
+
+  @async
+  void biometricDenyAuthenticationRequest();
+
   /// OTP Callbacks
   @async
   void otpDenyAuthenticationRequest();
@@ -312,6 +331,12 @@ abstract class NativeCallFlutterApi {
 
   /// Called when fingerprint was received.
   void n2fNextFingerprintAuthenticationAttempt();
+
+  /// Called when new biometric authentication request is made.
+  void n2fStartBiometricAuthentication();
+
+  /// Called when biometric authentication finishes.
+  void n2fFinishBiometricAuthentication();
 
   // Custom Registration
   /// Called when the InitCustomRegistration event occurs and a response should be given (only for two-step)

@@ -351,6 +351,42 @@ class OWCustomIdentityProvider {
   }
 }
 
+class OWBiometricMessages {
+  OWBiometricMessages({
+    required this.title,
+    required this.subTitle,
+    required this.negativeButtonText,
+    this.description,
+  });
+
+  String title;
+
+  String subTitle;
+
+  String negativeButtonText;
+
+  String? description;
+
+  Object encode() {
+    return <Object?>[
+      title,
+      subTitle,
+      negativeButtonText,
+      description,
+    ];
+  }
+
+  static OWBiometricMessages decode(Object result) {
+    result as List<Object?>;
+    return OWBiometricMessages(
+      title: result[0]! as String,
+      subTitle: result[1]! as String,
+      negativeButtonText: result[2]! as String,
+      description: result[3] as String?,
+    );
+  }
+}
+
 class _UserClientApiCodec extends StandardMessageCodec {
   const _UserClientApiCodec();
   @override
@@ -361,20 +397,23 @@ class _UserClientApiCodec extends StandardMessageCodec {
     } else if (value is OWAuthenticator) {
       buffer.putUint8(129);
       writeValue(buffer, value.encode());
-    } else if (value is OWCustomIdentityProvider) {
+    } else if (value is OWBiometricMessages) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is OWCustomInfo) {
+    } else if (value is OWCustomIdentityProvider) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is OWIdentityProvider) {
+    } else if (value is OWCustomInfo) {
       buffer.putUint8(132);
       writeValue(buffer, value.encode());
-    } else if (value is OWRegistrationResponse) {
+    } else if (value is OWIdentityProvider) {
       buffer.putUint8(133);
       writeValue(buffer, value.encode());
-    } else if (value is OWUserProfile) {
+    } else if (value is OWRegistrationResponse) {
       buffer.putUint8(134);
+      writeValue(buffer, value.encode());
+    } else if (value is OWUserProfile) {
+      buffer.putUint8(135);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -389,14 +428,16 @@ class _UserClientApiCodec extends StandardMessageCodec {
       case 129:
         return OWAuthenticator.decode(readValue(buffer)!);
       case 130:
-        return OWCustomIdentityProvider.decode(readValue(buffer)!);
+        return OWBiometricMessages.decode(readValue(buffer)!);
       case 131:
-        return OWCustomInfo.decode(readValue(buffer)!);
+        return OWCustomIdentityProvider.decode(readValue(buffer)!);
       case 132:
-        return OWIdentityProvider.decode(readValue(buffer)!);
+        return OWCustomInfo.decode(readValue(buffer)!);
       case 133:
-        return OWRegistrationResponse.decode(readValue(buffer)!);
+        return OWIdentityProvider.decode(readValue(buffer)!);
       case 134:
+        return OWRegistrationResponse.decode(readValue(buffer)!);
+      case 135:
         return OWUserProfile.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -1152,6 +1193,72 @@ class UserClientApi {
     }
   }
 
+  /// Biometric Callbacks
+  Future<void> showBiometricPrompt(OWBiometricMessages arg_messages) async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.UserClientApi.showBiometricPrompt', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList =
+        await channel.send(<Object?>[arg_messages]) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> biometricFallbackToPin() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.UserClientApi.biometricFallbackToPin', codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
+  Future<void> biometricDenyAuthenticationRequest() async {
+    final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+        'dev.flutter.pigeon.UserClientApi.biometricDenyAuthenticationRequest',
+        codec,
+        binaryMessenger: _binaryMessenger);
+    final List<Object?>? replyList = await channel.send(null) as List<Object?>?;
+    if (replyList == null) {
+      throw PlatformException(
+        code: 'channel-error',
+        message: 'Unable to establish connection on channel.',
+      );
+    } else if (replyList.length > 1) {
+      throw PlatformException(
+        code: replyList[0]! as String,
+        message: replyList[1] as String?,
+        details: replyList[2],
+      );
+    } else {
+      return;
+    }
+  }
+
   /// OTP Callbacks
   Future<void> otpDenyAuthenticationRequest() async {
     final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
@@ -1478,6 +1585,12 @@ abstract class NativeCallFlutterApi {
   /// Called when fingerprint was received.
   void n2fNextFingerprintAuthenticationAttempt();
 
+  /// Called when new biometric authentication request is made.
+  void n2fStartBiometricAuthentication();
+
+  /// Called when biometric authentication finishes.
+  void n2fFinishBiometricAuthentication();
+
   /// Called when the InitCustomRegistration event occurs and a response should be given (only for two-step)
   void n2fEventInitCustomRegistration(
       OWCustomInfo? customInfo, String providerId);
@@ -1693,6 +1806,36 @@ abstract class NativeCallFlutterApi {
         channel.setMessageHandler((Object? message) async {
           // ignore message
           api.n2fNextFingerprintAuthenticationAttempt();
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fStartBiometricAuthentication',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          api.n2fStartBiometricAuthentication();
+          return;
+        });
+      }
+    }
+    {
+      final BasicMessageChannel<Object?> channel = BasicMessageChannel<Object?>(
+          'dev.flutter.pigeon.NativeCallFlutterApi.n2fFinishBiometricAuthentication',
+          codec,
+          binaryMessenger: binaryMessenger);
+      if (api == null) {
+        channel.setMessageHandler(null);
+      } else {
+        channel.setMessageHandler((Object? message) async {
+          // ignore message
+          api.n2fFinishBiometricAuthentication();
           return;
         });
       }

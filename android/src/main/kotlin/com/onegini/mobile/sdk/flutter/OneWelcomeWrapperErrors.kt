@@ -32,6 +32,8 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
   BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE(8060, "Biometric authentication is not supported on this device"),
   ID_TOKEN_NOT_AVAILABLE(8061, "Id Token not available"),
 
+  BIOMETRIC_AUTHENTICATION_NOT_IN_PROGRESS(8062, "Biometric Authentication is currently not in progress"), // Android only
+
   // Only used for internal testing
   UNEXPECTED_ERROR_TYPE(8999, "An unexpected error type was returned"), // Android only
 }

@@ -28,6 +28,10 @@ enum OWAction {
   showScanningFingerprint, // Called to scan fingerprint.
   nextFingerprintAuthenticationAttempt, // Called when fingerprint was received but was incorrect.
 
+  // Biometric Authentication
+  startBiometric, // Called when new biometric auth request is made and to show biometric prompt.
+  finishBiometric, // Called when biometric authentication finishes.
+
   // CustomRegistration
   initCustomRegistration, // Called when customRegistration is initialized and a response should be given (only for two-step)
   finishCustomRegistration, // Called when customRegistration finishes and a final response should be given
@@ -62,6 +66,11 @@ extension OWActionExtension on OWAction {
         return "showScanningFingerprint";
       case OWAction.nextFingerprintAuthenticationAttempt:
         return "nextFingerprintAuthenticationAttempt";
+      // Biometric authentication
+      case OWAction.startBiometric:
+        return "startBiometric";
+      case OWAction.finishBiometric:
+        return "finishBiometric";
       // OTP Mobile authentication
       case OWAction.openAuthOtp:
         return "openAuthOtp";
