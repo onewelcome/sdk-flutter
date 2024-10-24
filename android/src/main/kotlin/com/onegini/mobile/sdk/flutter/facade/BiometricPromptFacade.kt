@@ -5,6 +5,6 @@ import com.onegini.mobile.sdk.flutter.handlers.BiometricAuthenticationRequestHan
 import com.onegini.mobile.sdk.flutter.pigeonPlugin.OWBiometricMessages
 
 interface BiometricPromptFacade {
-  fun showPrompt(messages: OWBiometricMessages, activity: Activity, biometricAuthRequestHandler: BiometricAuthenticationRequestHandler)
+  fun showPrompt(biometricMessages: OWBiometricMessages, activity: Activity, biometricRequestHandler: BiometricAuthenticationRequestHandler)
   fun closePrompt()
 }

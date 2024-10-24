@@ -35,7 +35,10 @@ class BiometricPromptFacadeImpl @Inject constructor() : BiometricPromptFacade {
       .setNegativeButtonText(biometricMessages.negativeButtonText)
       .setDescription(biometricMessages.description)
       .build()
-    biometricPrompt.authenticate(promptInfo, biometricRequestHandler.CRYPTO_OBJECT!!)
+
+    biometricRequestHandler.CRYPTO_OBJECT?.let {
+      biometricPrompt.authenticate(promptInfo, it)
+    }
   }
 
   override fun closePrompt() {
