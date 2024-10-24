@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:onegini/errors/error_codes.dart';
 import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/model/request_details.dart';
@@ -356,6 +358,21 @@ class Home extends StatelessWidget {
     showFlutterToast(accessToken);
   }
 
+  showIdToken(BuildContext context) async {
+    try {
+      var idToken = await Onegini.instance.userClient.getIdToken();
+      showFlutterToast(getFormattedUserInfo(idToken));
+    } on PlatformException catch (error) {
+      showFlutterToast(error.message);
+    }
+  }
+
+  getFormattedUserInfo(String idToken) {
+    Map<String, dynamic> decodedToken = JwtDecoder.decode(idToken);
+    JsonEncoder encoder = new JsonEncoder.withIndent('  ');
+    return(encoder.convert(decodedToken));
+  }
+
   performUnauthenticatedRequest() async {
     try {
       final response = await Onegini.instance.resourcesMethods
@@ -411,6 +428,12 @@ class Home extends StatelessWidget {
                   showAccessToken(context);
                 },
                 child: Text('Access Token'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  showIdToken(context);
+                },
+                child: Text('ID Token'),
               ),
               ElevatedButton(
                 onPressed: () {

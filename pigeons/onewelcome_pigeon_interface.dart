@@ -272,6 +272,9 @@ abstract class UserClientApi {
   /// Browser Registration Callbacks
   @async
   void cancelBrowserRegistration();
+
+  @async
+  String getIdToken();
 }
 
 @HostApi()

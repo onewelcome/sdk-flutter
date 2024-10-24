@@ -35,6 +35,7 @@ import com.onegini.mobile.sdk.flutter.useCases.GetAppToWebSingleSignOnUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAuthenticatedUserProfileUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetBiometricAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetIdentityProvidersUseCase
+import com.onegini.mobile.sdk.flutter.useCases.GetIdTokenUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetPreferredAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetRedirectUrlUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetUserProfilesUseCase
@@ -177,6 +178,9 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
 
   @Inject
   lateinit var biometricDenyAuthRequestUseCase: BiometricDenyAuthenticationRequestUseCase
+
+  @Inject
+  lateinit var getIdTokenUseCase: GetIdTokenUseCase
 
   @Inject
   lateinit var oneginiSDK: OneginiSDK
@@ -363,6 +367,10 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
 
   override fun biometricDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
     biometricDenyAuthRequestUseCase(callback)
+  }
+  
+  override fun getIdToken(callback: (Result<String>) -> Unit) {
+    callback(getIdTokenUseCase())
   }
 }
 

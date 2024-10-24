@@ -21,6 +21,7 @@ enum OneWelcomeWrapperError {
     case actionNotAllowedCustomRegistrationCancel
     case actionNotAllowedBrowserRegistrationCancel
     case biometricAuthenticationNotAvailable
+    case idTokenNotAvailable
 
     func code() -> Int {
         switch self {
@@ -60,6 +61,8 @@ enum OneWelcomeWrapperError {
             return 8058
         case .biometricAuthenticationNotAvailable:
             return 8060
+        case .idTokenNotAvailable:
+            return 8061
         }
     }
 
@@ -101,6 +104,8 @@ enum OneWelcomeWrapperError {
             return "Canceling the Browser registration right now is not allowed. Registration is not in progress or pin creation has already started."
         case .biometricAuthenticationNotAvailable:
             return "Biometric authentication is not supported on this device."
+        case .idTokenNotAvailable:
+            return "Id token not available."
         }
     }
 }

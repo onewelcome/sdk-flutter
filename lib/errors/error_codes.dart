@@ -38,6 +38,7 @@ class WrapperErrorCodes {
   static const String configError = "8059";
 
   static const String biometricAuthenticationNotAvailable = "8060";
+  static const String idTokenNotAvailable = "8061";
 }
 
 const String networkConnectivityProblem = "9000";

@@ -516,6 +516,7 @@ interface UserClientApi {
   fun pinAcceptRegistrationRequest(pin: String, callback: (Result<Unit>) -> Unit)
   /** Browser Registration Callbacks */
   fun cancelBrowserRegistration(callback: (Result<Unit>) -> Unit)
+  fun getIdToken(callback: (Result<String>) -> Unit)
 
   companion object {
     /** The codec used by UserClientApi. */
@@ -1260,6 +1261,24 @@ interface UserClientApi {
                 reply.reply(wrapError(error))
               } else {
                 reply.reply(wrapResult(null))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.UserClientApi.getIdToken", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            api.getIdToken() { result: Result<String> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
               }
             }
           }
