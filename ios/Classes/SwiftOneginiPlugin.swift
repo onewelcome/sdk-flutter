@@ -184,6 +184,21 @@ public class SwiftOneginiPlugin: NSObject, FlutterPlugin, UserClientApi, Resourc
         completion(.success)
     }
 
+    func showBiometricPrompt(messages: OWBiometricMessages, completion: @escaping (Result<Void, Error>) -> Void) {
+        Logger.log("showBiometricPrompt is Android only and should not be called on iOS")
+        completion(.success)
+    }
+
+    func biometricFallbackToPin(completion: @escaping (Result<Void, Error>) -> Void) {
+        Logger.log("biometricFallbackToPin is Android only and should not be called on iOS")
+        completion(.success)
+    }
+
+    func biometricDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
+        Logger.log("biometricDenyAuthenticationRequest is Android only and should not be called on iOS")
+        completion(.success)
+    }
+
     func otpDenyAuthenticationRequest(completion: @escaping (Result<Void, Error>) -> Void) {
         OneginiModuleSwift.sharedInstance.denyMobileAuthRequest { result in
             completion(result.mapError { $0 })
