@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:onegini/onegini.gen.dart';
 
-
 /// A callback of biometric authentication.
 /// Use this callback when user wants to authenticate by biometric and show biometric prompt.
 class OneginiBiometricCallback {
