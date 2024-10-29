@@ -39,6 +39,9 @@ class WrapperErrorCodes {
 
   static const String biometricAuthenticationNotAvailable = "8060";
   static const String idTokenNotAvailable = "8061";
+
+  /// Android only
+  static const String biometricAuthenticationNotInProgress = "8062";
 }
 
 const String networkConnectivityProblem = "9000";
