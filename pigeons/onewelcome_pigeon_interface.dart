@@ -128,7 +128,11 @@ class OWBiometricMessages {
   String negativeButtonText;
   String? description;
 
-  OWBiometricMessages({required this.title, required this.subTitle, required this.negativeButtonText, this.description});
+  OWBiometricMessages(
+      {required this.title,
+      required this.subTitle,
+      required this.negativeButtonText,
+      this.description});
 }
 
 /// Flutter calls native
@@ -228,16 +232,6 @@ abstract class UserClientApi {
   @async
   void cancelCustomRegistrationAction(String error);
 
-  /// Fingerprint Callbacks
-  @async
-  void fingerprintFallbackToPin();
-
-  @async
-  void fingerprintDenyAuthenticationRequest();
-
-  @async
-  void fingerprintAcceptAuthenticationRequest();
-
   /// Biometric Callbacks
   @async
   void showBiometricPrompt(OWBiometricMessages messages);
@@ -318,19 +312,6 @@ abstract class NativeCallFlutterApi {
 
   /// Called to close OTP authentication.
   void n2fCloseAuthOtp();
-
-  // Fingerprint Authentication
-  /// Called to open fingerprint screen.
-  void n2fOpenFingerprintScreen();
-
-  /// Called to close fingerprint screen.
-  void n2fCloseFingerprintScreen();
-
-  /// Called to scan fingerprint.
-  void n2fShowScanningFingerprint();
-
-  /// Called when fingerprint was received.
-  void n2fNextFingerprintAuthenticationAttempt();
 
   /// Called when new biometric authentication request is made.
   void n2fStartBiometricAuthentication();
