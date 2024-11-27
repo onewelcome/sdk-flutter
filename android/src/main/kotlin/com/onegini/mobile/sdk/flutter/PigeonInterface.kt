@@ -27,9 +27,6 @@ import com.onegini.mobile.sdk.flutter.useCases.ChangePinUseCase
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterBiometricAuthenticatorUseCase
 import com.onegini.mobile.sdk.flutter.useCases.DeregisterUserUseCase
 import com.onegini.mobile.sdk.flutter.useCases.EnrollMobileAuthenticationUseCase
-import com.onegini.mobile.sdk.flutter.useCases.FingerprintAuthenticationRequestAcceptUseCase
-import com.onegini.mobile.sdk.flutter.useCases.FingerprintAuthenticationRequestDenyUseCase
-import com.onegini.mobile.sdk.flutter.useCases.FingerprintFallbackToPinUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAccessTokenUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAppToWebSingleSignOnUseCase
 import com.onegini.mobile.sdk.flutter.useCases.GetAuthenticatedUserProfileUseCase
@@ -142,15 +139,6 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
 
   @Inject
   lateinit var pinRegistrationRequestDenyUseCase: PinRegistrationRequestDenyUseCase
-
-  @Inject
-  lateinit var fingerprintAuthenticationRequestDenyUseCase: FingerprintAuthenticationRequestDenyUseCase
-
-  @Inject
-  lateinit var fingerprintAuthenticationRequestAcceptUseCase: FingerprintAuthenticationRequestAcceptUseCase
-
-  @Inject
-  lateinit var fingerprintFallbackToPinUseCase: FingerprintFallbackToPinUseCase
 
   @Inject
   lateinit var getBiometricAuthenticatorUseCase: GetBiometricAuthenticatorUseCase
@@ -311,18 +299,6 @@ open class PigeonInterface : UserClientApi, ResourceMethodApi {
 
   override fun cancelCustomRegistrationAction(error: String, callback: (Result<Unit>) -> Unit) {
     callback(cancelCustomRegistrationActionUseCase(error))
-  }
-
-  override fun fingerprintFallbackToPin(callback: (Result<Unit>) -> Unit) {
-    callback(fingerprintFallbackToPinUseCase())
-  }
-
-  override fun fingerprintDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    callback(fingerprintAuthenticationRequestDenyUseCase())
-  }
-
-  override fun fingerprintAcceptAuthenticationRequest(callback: (Result<Unit>) -> Unit) {
-    callback(fingerprintAuthenticationRequestAcceptUseCase())
   }
 
   override fun otpDenyAuthenticationRequest(callback: (Result<Unit>) -> Unit) {

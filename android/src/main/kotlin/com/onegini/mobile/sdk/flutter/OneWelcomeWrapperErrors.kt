@@ -17,7 +17,6 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
   NOT_IN_PROGRESS_AUTHENTICATION(8052, "Authentication is currently not in progress"),
   NOT_IN_PROGRESS_OTP_AUTHENTICATION(8053, "OTP Authentication is currently not in progress"),
   NOT_IN_PROGRESS_PIN_CREATION(8054, "Pin Creation is currently not in progress"),
-  NOT_IN_PROGRESS_FINGERPRINT_AUTHENTICATION(8055, "Fingerprint Authentication is currently not in progress"),
   ACTION_NOT_ALLOWED_CUSTOM_REGISTRATION_CANCEL(
     8057,
     "Canceling the Custom registration right now is not allowed." +
@@ -31,7 +30,6 @@ enum class OneWelcomeWrapperErrors(val code: Int, val message: String) {
   CONFIG_ERROR(8059, "Something went wrong while setting the configuration"), // Android only
   BIOMETRIC_AUTHENTICATION_NOT_AVAILABLE(8060, "Biometric authentication is not supported on this device"),
   ID_TOKEN_NOT_AVAILABLE(8061, "Id Token not available"),
-
   BIOMETRIC_AUTHENTICATION_NOT_IN_PROGRESS(8062, "Biometric Authentication is currently not in progress"), // Android only
 
   // Only used for internal testing

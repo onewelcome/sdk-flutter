@@ -22,12 +22,6 @@ enum OWAction {
   closePinAuthentication, // Called to close pin authentication screen
   nextPinAuthenticationAttempt, // Called to attempt next authentication.
 
-  // Fingerprint Authentication
-  openFingerprint, // Called to open fingerprint screen.
-  closeFingerprint, // Called to close fingerprint screen.
-  showScanningFingerprint, // Called to scan fingerprint.
-  nextFingerprintAuthenticationAttempt, // Called when fingerprint was received but was incorrect.
-
   // Biometric Authentication
   startBiometric, // Called when new biometric auth request is made and to show biometric prompt.
   finishBiometric, // Called when biometric authentication finishes.
@@ -57,15 +51,6 @@ extension OWActionExtension on OWAction {
         return "closePinAuthentication";
       case OWAction.nextPinAuthenticationAttempt:
         return "nextPinAuthenticationAttempt";
-      // Fingerprint authentication
-      case OWAction.openFingerprint:
-        return "openFingerprint";
-      case OWAction.closeFingerprint:
-        return "closeFingerprint";
-      case OWAction.showScanningFingerprint:
-        return "showScanningFingerprint";
-      case OWAction.nextFingerprintAuthenticationAttempt:
-        return "nextFingerprintAuthenticationAttempt";
       // Biometric authentication
       case OWAction.startBiometric:
         return "startBiometric";

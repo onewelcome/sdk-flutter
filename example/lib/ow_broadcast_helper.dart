@@ -7,7 +7,6 @@ import 'package:onegini_example/subscription_handlers/biometric_subscriptions.da
 import 'package:onegini_example/subscription_handlers/browser_registration_subscriptions.dart';
 import 'package:onegini_example/subscription_handlers/create_pin_subscriptions.dart';
 import 'package:onegini_example/subscription_handlers/custom_registration_subscriptions.dart';
-import 'package:onegini_example/subscription_handlers/fingerprint_subscriptions.dart';
 import 'package:onegini_example/subscription_handlers/pin_authentication_subscriptions.dart';
 
 class OWBroadcastHelper {
@@ -29,10 +28,9 @@ class OWBroadcastHelper {
   static List<StreamSubscription<OWEvent>> initAuthenticationSubscriptions(
       BuildContext context) {
     var pinAuthSubs = initPinAuthenticationSubscriptions(context);
-    var fingerprintSubs = initFingerprintSubscriptions(context);
     var biometricSubs = initBiometricSubscriptions(context);
 
-    return pinAuthSubs + fingerprintSubs + biometricSubs;
+    return pinAuthSubs + biometricSubs;
   }
 
   static void stopListening(List<StreamSubscription<OWEvent>>? subscriptions) {

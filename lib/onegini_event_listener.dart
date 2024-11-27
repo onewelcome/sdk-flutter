@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:onegini/events/biometric_event.dart';
 import 'package:onegini/events/browser_event.dart';
 import 'package:onegini/events/custom_registration_event.dart';
-import 'package:onegini/events/fingerprint_event.dart';
 import 'package:onegini/events/onewelcome_events.dart';
 import 'package:onegini/events/otp_event.dart';
 import 'package:onegini/events/pin_event.dart';
@@ -64,27 +63,6 @@ class OneginiEventListener implements NativeCallFlutterApi {
   void n2fNextPinAuthenticationAttempt(
       OWAuthenticationAttempt authenticationAttempt) {
     _broadcastEvent(NextPinAuthenticationAttemptEvent(authenticationAttempt));
-  }
-
-  /// Fingerprint related events
-  @override
-  void n2fShowScanningFingerprint() {
-    _broadcastEvent(ShowScanningFingerprintEvent());
-  }
-
-  @override
-  void n2fOpenFingerprintScreen() {
-    _broadcastEvent(OpenFingerprintEvent());
-  }
-
-  @override
-  void n2fCloseFingerprintScreen() {
-    _broadcastEvent(CloseFingerprintEvent());
-  }
-
-  @override
-  void n2fNextFingerprintAuthenticationAttempt() {
-    _broadcastEvent(NextFingerprintAuthenticationAttempt());
   }
 
   /// Biometric related events

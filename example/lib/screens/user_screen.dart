@@ -370,7 +370,7 @@ class Home extends StatelessWidget {
   getFormattedUserInfo(String idToken) {
     Map<String, dynamic> decodedToken = JwtDecoder.decode(idToken);
     JsonEncoder encoder = new JsonEncoder.withIndent('  ');
-    return(encoder.convert(decodedToken));
+    return (encoder.convert(decodedToken));
   }
 
   performUnauthenticatedRequest() async {
@@ -458,7 +458,8 @@ class Info extends StatefulWidget {
 
 class _InfoState extends State<Info> {
   Future<ApplicationDetails> _getApplicationDetails() async {
-    await Onegini.instance.userClient.authenticateDevice(["application-details"]);
+    await Onegini.instance.userClient
+        .authenticateDevice(["application-details"]);
     final response = await Onegini.instance.resourcesMethods.requestResource(
         ResourceRequestType.anonymous,
         RequestDetails(
